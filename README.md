@@ -68,8 +68,8 @@ Follow these steps to set up the project locally:
 
 1. Clone the repository
 ```bash
-git clone https://github.com/MattYeend/Dashboard.git
-cd AdminDashboard
+git clone https://github.com/MattYeend/CRM.git
+cd CRM
 ```
 2. Install PHP dependencies
 ```bash
