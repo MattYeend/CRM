@@ -35,14 +35,22 @@ class FortifyServiceProvider extends ServiceProvider
      */
     private function configureViews(): void
     {
-        Fortify::loginView(fn (Request $request) => Inertia::render('auth/Login', [
-            'canResetPassword' => Features::enabled(Features::resetPasswords()),
-            'status' => $request->session()->get('status'),
-        ]));
+        Fortify::loginView(
+            fn (Request $request) => Inertia::render('auth/Login', [
+                'canResetPassword' => Features::enabled(
+                    Features::resetPasswords()
+                ),
+                'status' => $request->session()->get('status'),
+            ])
+        );
 
-        Fortify::twoFactorChallengeView(fn () => Inertia::render('auth/TwoFactorChallenge'));
+        Fortify::twoFactorChallengeView(
+            fn () => Inertia::render('auth/TwoFactorChallenge')
+        );
 
-        Fortify::confirmPasswordView(fn () => Inertia::render('auth/ConfirmPassword'));
+        Fortify::confirmPasswordView(
+            fn () => Inertia::render('auth/ConfirmPassword')
+        );
     }
 
     /**
@@ -51,11 +59,17 @@ class FortifyServiceProvider extends ServiceProvider
     private function configureRateLimiting(): void
     {
         RateLimiter::for('two-factor', function (Request $request) {
-            return Limit::perMinute(5)->by($request->session()->get('login.id'));
+            return Limit::perMinute(5)->by(
+                $request->session()->get('login.id')
+            );
         });
 
         RateLimiter::for('login', function (Request $request) {
-            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
+            $throttleKey = Str::transliterate(
+                Str::lower(
+                    $request->input(Fortify::username())
+                ).'|'.$request->ip()
+            );
 
             return Limit::perMinute(5)->by($throttleKey);
         });
