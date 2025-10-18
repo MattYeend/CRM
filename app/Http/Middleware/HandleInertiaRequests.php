@@ -22,10 +22,10 @@ class HandleInertiaRequests extends Middleware
      *
      * @see https://inertiajs.com/asset-versioning
      */
-    public function version(Request $request): ?string
-    {
-        return parent::version($request);
-    }
+    // public function version(Request $request): ?string
+    // {
+    //     return parent::version($request);
+    // }
 
     /**
      * Define the props that are shared by default.
