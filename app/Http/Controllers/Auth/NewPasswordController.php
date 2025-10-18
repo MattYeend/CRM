@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Services\NewPasswordLogService;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,6 +17,24 @@ use Inertia\Response;
 
 class NewPasswordController extends Controller
 {
+    /**
+     * Declare a protected propert to hold the
+     * NewPasswordLogService instance
+     */
+    protected NewPasswordLogService $logger;
+
+    /**
+     * Constructor for the controller
+     *
+     * @param NewPasswordLogService $logger
+     * An instance of the NewPasswordLogService used for
+     * logging password-related activities
+     */
+    public function __construct(NewPasswordLogService $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * Show the password reset page.
      */

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Services\ProfileLogService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,6 +14,23 @@ use Inertia\Response;
 
 class ProfileController extends Controller
 {
+    /**
+     * Declare a protected propert to hold the ProfileLogService instance
+     */
+    protected ProfileLogService $logger;
+
+    /**
+     * Constructor for the controller
+     *
+     * @param ProfileLogService $logger
+     * An instance of the ProfileLogService used for logging
+     * profile-related activities
+     */
+    public function __construct(ProfileLogService $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * Show the user's profile settings page.
      */
@@ -35,6 +53,9 @@ class ProfileController extends Controller
             $request->user()->email_verified_at = null;
         }
 
+        $user = $request->user();
+        $this->logger->update($user, auth()->id());
+
         $request->user()->save();
 
         return to_route('profile.edit');
@@ -50,6 +71,7 @@ class ProfileController extends Controller
         ]);
 
         $user = $request->user();
+        $this->logger->delete($user, auth()->id());
 
         Auth::logout();
 

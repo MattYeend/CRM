@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\RegisteredUserLogService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,6 +15,24 @@ use Inertia\Response;
 
 class RegisteredUserController extends Controller
 {
+    /**
+     * Declare a protected propert to hold the
+     * RegisteredUserLogService instance
+     */
+    protected RegisteredUserLogService $logger;
+
+    /**
+     * Constructor for the controller
+     *
+     * @param RegisteredUserLogService $logger
+     * An instance of the RegisteredUserLogService used for logging
+     * password-related activities
+     */
+    public function __construct(RegisteredUserLogService $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * Show the registration page.
      */
@@ -47,6 +66,7 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         $request->session()->regenerate();
+        $this->logger->register($user, auth()->id());
 
         return to_route('dashboard');
     }
