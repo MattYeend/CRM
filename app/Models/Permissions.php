@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Permissions extends Model
+{
+    use HasFactory;
+
+    protected $fillable = ['name', 'label'];
+
+    /**
+     * The roles that belong to the permission.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function roles()
+    {
+        return $this->belongsToMany(Roles::class)->withTimestamps();
+    }
+}

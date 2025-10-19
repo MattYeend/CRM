@@ -26,8 +26,8 @@ class Roles extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    // public function permissions()
-    // {
-    // return $this->belongsToMany(Permission::class)->withTimestamps();
-    // }
+    public function permissions()
+    {
+        return $this->belongsToMany(Permissions::class)->withTimestamps();
+    }
 }

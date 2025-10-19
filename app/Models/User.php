@@ -56,6 +56,36 @@ class User extends Authenticatable
     }
 
     /**
+     * The deals owned by the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    // public function deals()
+    // {
+    // return $this->hasMany(Deal::class, 'owner_id');
+    // }
+
+    /**
+     * The tasks assigned to the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    // public function tasks()
+    // {
+    // return $this->hasMany(Task::class, 'assigned_to');
+    // }
+
+    /**
+     * The notes created by the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    // public function notes()
+    // {
+    // return $this->hasMany(Note::class);
+    // }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
