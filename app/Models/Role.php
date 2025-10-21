@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Roles extends Model
+class Role extends Model
 {
     use HasFactory;
 
@@ -28,6 +28,6 @@ class Roles extends Model
      */
     public function permissions()
     {
-        return $this->belongsToMany(Permissions::class)->withTimestamps();
+        return $this->belongsToMany(Permission::class)->withTimestamps();
     }
 }
