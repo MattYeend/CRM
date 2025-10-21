@@ -14,7 +14,13 @@ class PipelineStage extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['pipeline_id','name','position','is_won_stage','is_lost_stage'];
+    protected $fillable = [
+        'pipeline_id',
+        'name',
+        'position',
+        'is_won_stage',
+        'is_lost_stage'
+    ];
 
     /**
      * Get the pipeline that owns the stage.

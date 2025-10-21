@@ -23,7 +23,7 @@ class Pipeline extends Model
      */
     public function stages()
     {
-    return $this->hasMany(PipelineStage::class);
+        return $this->hasMany(PipelineStage::class);
     }
 
     /**
