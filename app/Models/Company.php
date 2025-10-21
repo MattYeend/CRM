@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Company extends Model
@@ -25,7 +25,7 @@ class Company extends Model
         'region',
         'postal_code',
         'country',
-        'meta'
+        'meta',
     ];
 
     /**
@@ -55,7 +55,7 @@ class Company extends Model
     // {
     //     return $this->hasMany(Deal::class);
     // }
-    
+
     /**
      * Get the invoices for the company.
      *

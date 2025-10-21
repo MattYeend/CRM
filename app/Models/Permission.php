@@ -13,7 +13,7 @@ class Permission extends Model
 
     /**
      * The roles that belong to the permission.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function roles()
