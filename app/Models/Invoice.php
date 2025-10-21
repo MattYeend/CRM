@@ -27,7 +27,7 @@ class Invoice extends Model
         'tax',
         'total',
         'currency',
-        'meta'
+        'meta',
     ];
 
     /**

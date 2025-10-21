@@ -22,7 +22,7 @@ class Product extends Model
         'price',
         'currency',
         'quantity',
-        'meta'
+        'meta',
     ];
 
     /**

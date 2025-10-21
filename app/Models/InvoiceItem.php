@@ -21,7 +21,7 @@ class InvoiceItem extends Model
         'quantity',
         'unit_price',
         'line_total',
-        'meta'
+        'meta',
     ];
 
     /**

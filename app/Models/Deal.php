@@ -27,7 +27,7 @@ class Deal extends Model
         'currency',
         'close_date',
         'status',
-        'meta'
+        'meta',
     ];
 
     /**

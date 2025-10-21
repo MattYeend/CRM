@@ -20,7 +20,7 @@ class Attachment extends Model
         'path',
         'uploaded_by',
         'size',
-        'mime'
+        'mime',
     ];
 
     /**

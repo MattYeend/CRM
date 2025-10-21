@@ -19,7 +19,7 @@ class PipelineStage extends Model
         'name',
         'position',
         'is_won_stage',
-        'is_lost_stage'
+        'is_lost_stage',
     ];
 
     /**
