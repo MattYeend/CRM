@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Company extends Model
+class Contact extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -16,16 +16,7 @@ class Company extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'industry',
-        'website',
-        'phone',
-        'address',
-        'city',
-        'region',
-        'postal_code',
-        'country',
-        'meta',
+        'company_id','first_name','last_name','email','phone','job_title','meta'
     ];
 
     /**
@@ -38,16 +29,17 @@ class Company extends Model
     ];
 
     /**
-     * Get the contacts for the company.
+     * Get the company that owns the contact.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function contacts()
+    public function company()
     {
-        return $this->hasMany(Contact::class);
+        return $this->belongsTo(Company::class);
     }
 
-    /** Get the deals for the company.
+    /**
+     * Get the deals for the contact.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -57,17 +49,17 @@ class Company extends Model
     }
 
     /**
-     * Get the invoices for the company.
+     * Get the notes for the contact.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
-    public function invoices()
+    public function notes()
     {
-        return $this->hasMany(Invoice::class);
+        return $this->morphMany(Note::class, 'notable');
     }
 
     /**
-     * Get all of the company's attachments.
+     * Get the attachments for the contact.
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
