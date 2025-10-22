@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
+use App\Models\Role;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -31,6 +33,9 @@ class UserFactory extends Factory
             'two_factor_secret' => Str::random(10),
             'two_factor_recovery_codes' => Str::random(10),
             'two_factor_confirmed_at' => now(),
+            'phone' => $this->faker->optional()->phoneNumber(),
+            'avatar' => null,
+            'remember_token' => Str::random(10),
         ];
     }
 
@@ -54,5 +59,19 @@ class UserFactory extends Factory
             'two_factor_recovery_codes' => null,
             'two_factor_confirmed_at' => null,
         ]);
+    }
+
+    /**
+     * Configure the model factory.
+     */
+    public function configure()
+    {
+        return $this->afterCreating(function (User $user) {
+            // attach 0-2 roles randomly
+            if (random_int(0, 1)) {
+                $roles = Role::factory()->count(random_int(1, 2))->create();
+                $user->roles()->attach($roles->pluck('id')->toArray());
+            }
+        });
     }
 }
