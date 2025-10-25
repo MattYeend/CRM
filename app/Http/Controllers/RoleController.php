@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
-use App\Models\Perminssion;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -19,7 +18,11 @@ class RoleController extends Controller
     public function index(Request $request)
     {
         $perPage = (int) $request->query('per_page', 10);
-        return response()->json(Role::withCount('users')->with('permissions')->paginate($perPage));
+        return response()->json(
+            Role::withCount('users')
+                ->with('permissions')
+                ->paginate($perPage)
+        );
     }
 
     /**
