@@ -88,7 +88,7 @@ php artisan key:generate
 ```bash
 php artisan migrate
 ```
-6. Seed all tables:
+6. Seed all tables if needed:
 ```bash
 php artisan seed
 ```
