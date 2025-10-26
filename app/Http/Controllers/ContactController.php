@@ -22,14 +22,14 @@ class ContactController extends Controller
 
         $query = Contact::with('company');
 
-        if($companyId) {
+        if ($companyId) {
             $query->where('company_id', $companyId);
         }
-        if($q) {
-            $query->where(function($subQuery) use ($q) {
+        if ($q) {
+            $query->where(function ($subQuery) use ($q) {
                 $subQuery->where('first_name', 'like', '%' . $q . '%')
-                         ->orWhere('last_name', 'like', '%' . $q . '%')
-                         ->orWhere('email', 'like', '%' . $q . '%');
+                    ->orWhere('last_name', 'like', '%' . $q . '%')
+                    ->orWhere('email', 'like', '%' . $q . '%');
             });
         }
 
