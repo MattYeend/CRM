@@ -79,6 +79,8 @@ class ContactController extends Controller
      * @param Request $request
      *
      * @param Contact $contact
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, Contact $contact)
     {

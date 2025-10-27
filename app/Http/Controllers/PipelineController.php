@@ -58,6 +58,8 @@ class PipelineController extends Controller
      *
      * @param Request $request
      *
+     * @param Pipeline $pipeline
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, Pipeline $pipeline)
