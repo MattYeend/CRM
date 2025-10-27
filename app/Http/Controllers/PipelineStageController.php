@@ -57,11 +57,11 @@ class PipelineStageController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * 
+     *
      * @param Request $request
      *
      * @param PipelineStage $pipelineStage
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, PipelineStage $pipelineStage)
