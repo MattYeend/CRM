@@ -21,7 +21,13 @@ class DealController extends Controller
         $status = $request->query('status');
         $ownerId = $request->query('owner_id');
 
-        $query = Deal::with(['company', 'contact', 'owner', 'pipeline', 'stage']);
+        $query = Deal::with([
+            'company',
+            'contact',
+            'owner',
+            'pipeline',
+            'stage',
+        ]);
 
         if ($status) {
             $query->where('status', $status);
@@ -51,7 +57,7 @@ class DealController extends Controller
             'stage',
             'notes',
             'tasks',
-            'attachments'
+            'attachments',
         ]));
     }
 
@@ -80,7 +86,7 @@ class DealController extends Controller
 
         $deal = Deal::create($data);
 
-        return response()->json($deal->load(['company','contact','owner','pipeline','stage']), 201);
+        return response()->json($deal->load($this->relations()), 201);
     }
 
     /**
@@ -108,11 +114,11 @@ class DealController extends Controller
             'meta' => 'nullable|array',
         ]);
 
-        DB::transaction(function() use ($deal, $data) {
+        DB::transaction(function () use ($deal, $data) {
             $deal->update($data);
         });
 
-        return response()->json($deal->fresh()->load(['company','contact','owner','pipeline','stage']));
+        return response()->json($deal->fresh()->load($this->relations()));
     }
 
     /**
@@ -140,5 +146,15 @@ class DealController extends Controller
         $deal = Deal::withTrashed()->findOrFail($id);
         $deal->restore();
         return response()->json($deal);
+    }
+
+    /**
+     * Default relations to eager load for show/index responses.
+     *
+     * @return array
+     */
+    private function relations(): array
+    {
+        return ['company', 'contact', 'owner', 'pipeline', 'stage'];
     }
 }
