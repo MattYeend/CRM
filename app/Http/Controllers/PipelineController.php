@@ -70,7 +70,6 @@ class PipelineController extends Controller
 
         $pipeline->update($data);
         return response()->json($pipeline);
-
     }
 
     /**
