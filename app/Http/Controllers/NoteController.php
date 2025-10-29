@@ -18,7 +18,9 @@ class NoteController extends Controller
     {
         $perPage = (int) $request->query('per_page', 10);
 
-        return response()->json(Note::with('user', 'noteable')->paginate($perPage));
+        return response()->json(
+            Note::with('user', 'noteable')->paginate($perPage)
+        );
     }
 
     /**
@@ -52,18 +54,12 @@ class NoteController extends Controller
 
         $note = Note::create($data);
 
-        if (isset($data['notable_type']) && isset($data['notable_id'])) {
-            try {
-                $model = app($data['notable_type'])->find($data['notable_id']);
-                if ($model) {
-                    $model->notes()->save($note);
-                }
-            } catch (\Throwable $e) {
-                report($e);
-            }
-        }
+        $this->attachNoteToModel($note, $data);
 
-        return response()->json($note->load('user','notable'), 201);
+        return response()->json(
+            $note->load('user', 'notable'),
+            201
+        );
     }
 
     /**
@@ -97,5 +93,30 @@ class NoteController extends Controller
     {
         $note->delete();
         return response()->json(null, 204);
+    }
+
+    /**
+     * Attach the note to the appropriate polymorphic model.
+     *
+     * @param \App\Models\Note $note
+     *
+     * @param array $data
+     *
+     * @return void
+     */
+    protected function attachNoteToModel(Note $note, array $data): void
+    {
+        if (! isset($data['notable_type'], $data['notable_id'])) {
+            return;
+        }
+
+        try {
+            $model = app($data['notable_type'])->find($data['notable_id']);
+            if ($model) {
+                $model->notes()->save($note);
+            }
+        } catch (\Throwable $e) {
+            report($e);
+        }
     }
 }
