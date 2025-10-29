@@ -3,11 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attachment;
+use App\Services\AttachmentAttacher;
+use App\Services\AttachmentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class AttachmentController extends Controller
 {
+    protected AttachmentAttacher $attacher;
+    protected AttachmentService $service;
+
+    /**
+     * Constructor
+     *
+     * @param \App\Services\AttachmentAttacher $attacher
+     *
+     * @param \App\Services\AttachmentService $service
+     *
+     * @return void
+     */
+    public function __construct(
+        AttachmentAttacher $attacher,
+        AttachmentService $service
+    ) {
+        $this->attacher = $attacher;
+        $this->service = $service;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -49,43 +71,18 @@ class AttachmentController extends Controller
         ]);
 
         $file = $request->file('file');
-        $path = $file->store('attachments', 'public');
+        $attachment = $this->service->storeFile(
+            $file,
+            $data['uploaded_by'] ?? null
+        );
 
-        $attachment = Attachment::create([
-            'filename' => $file->getClientOriginalName(),
-            'disk' => 'public',
-            'path' => $path,
-            'size' => $file->getSize(),
-            'mime' => $file->getClientMimeType(),
-            'uploaded_by' => $data['uploaded_by'] ?? null,
-        ]);
-
-        if (isset($data['attachable_type']) && isset($data['attachable_id'])) {
-            try {
-                $model = app($data['attachable_type'])->find($data['attachable_id']);
-                if ($model) {
-                    $model->attachments()->save($attachment);
-                }
-            } catch (\Throwable $e) {
-                report($e); 
-            }
-        }
+        $this->attacher->attach(
+            $data['attachable_type'] ?? null,
+            $data['attachable_id'] ?? null,
+            $attachment
+        );
 
         return response()->json($attachment->load('uploader'), 201);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     *
-     * @param \App\Models\Attachment $attachment
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(Request $request, Attachment $attachment)
-    {
-        // No update functionality for attachments
     }
 
     /**
