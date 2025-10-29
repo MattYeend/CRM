@@ -71,7 +71,9 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $data = $request->validate([
-            'sku' => ['nullable','string', Rule::unique('products','sku')->ignore($product->id)],
+            'sku' => ['nullable','string',
+                Rule::unique('products', 'sku')->ignore($product->id),
+            ],
             'name' => 'sometimes|required|string',
             'description' => 'nullable|string',
             'price' => 'nullable|numeric',
