@@ -54,7 +54,8 @@ class InvoiceItemController extends Controller
             'meta' => 'nullable|array',
         ]);
 
-        $data['line_total'] = $data['line_total'] ?? ($data['quantity'] * $data['unit_price']);
+        $data['line_total'] = $data['line_total']
+            ?? $data['quantity'] * $data['unit_price'];
 
         $item = InvoiceItem::create($data);
         return response()->json($item->load('product'), 201);
