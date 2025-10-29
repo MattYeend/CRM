@@ -33,7 +33,9 @@ class InvoiceController extends Controller
      */
     public function show(Invoice $invoice)
     {
-        return response()->json($invoice->load('company','contact','items'));
+        return response()->json(
+            $invoice->load('company', 'contact', 'items')
+        );
     }
 
     /**
@@ -76,7 +78,9 @@ class InvoiceController extends Controller
     public function update(Request $request, Invoice $invoice)
     {
         $data = $request->validate([
-            'number' => ['sometimes','required','string', Rule::unique('invoices','number')->ignore($invoice->id)],
+            'number' => ['sometimes','required','string',
+                Rule::unique('invoices', 'number')->ignore($invoice->id),
+            ],
             'company_id' => 'nullable|integer|exists:companies,id',
             'contact_id' => 'nullable|integer|exists:contacts,id',
             'created_by' => 'nullable|integer|exists:users,id',
