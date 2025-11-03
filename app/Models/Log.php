@@ -50,6 +50,30 @@ class Log extends Model
     public const ACTION_FIVE_HUNDRED_ERRORS = 31;
     public const ACTION_CLEAR_CACHE = 32;
 
+    // Activities
+    public const ACTION_ACTIVITY_CREATED = 33;
+    public const ACTION_ACTIVITY_UPDATED = 34;
+    public const ACTION_ACTIVITY_DELETED = 35;
+    public const ACTION_ACTIVITY_COMPLETED = 36;
+    public const ACTION_ACTIVITY_REOPENED = 37;
+
+    // Attachments
+    public const ACTION_ATTACHMENT_UPLOADED = 38;
+    public const ACTION_ATTACHMENT_DELETED = 39;
+    public const ACTION_ATTACHMENT_DOWNLOADED = 40;
+
+    // Companies
+    public const ACTION_COMPANY_CREATED = 41;
+    public const ACTION_COMPANY_UPDATED = 42;
+    public const ACTION_COMPANY_DELETED = 43;
+    public const ACTION_COMPANY_RESTORED = 44;
+
+    // Contacts
+    public const ACTION_CONTACT_CREATED = 45;
+    public const ACTION_CONTACT_UPDATED = 46;
+    public const ACTION_CONTACT_DELETED = 47;
+    public const ACTION_CONTACT_RESTORED = 48;
+
     // New Logging Actions should go here to be reviewed
     // by the development team for future releases.
     // Ensure to update the documentation accordingly.
