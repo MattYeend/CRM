@@ -74,6 +74,75 @@ class Log extends Model
     public const ACTION_CONTACT_DELETED = 47;
     public const ACTION_CONTACT_RESTORED = 48;
 
+    // Deals
+    public const ACTION_DEAL_CREATED = 49;
+    public const ACTION_DEAL_UPDATED = 50;
+    public const ACTION_DEAL_DELETED = 51;
+    public const ACTION_DEAL_RESTORED = 52;
+
+    // Invoices
+    public const ACTION_INVOICE_CREATED = 53;
+    public const ACTION_INVOICE_UPDATED = 54;
+    public const ACTION_INVOICE_DELETED = 55;
+    public const ACTION_INVOICE_RESTORED = 56;
+    public const ACTION_INVOICE_SENT = 57;
+    public const ACTION_INVOICE_PAID = 58;
+    public const ACTION_INVOICE_OVERDUE = 59;
+
+    // Invoice Items
+    public const ACTION_INVOICE_ITEM_CREATED = 60;
+    public const ACTION_INVOICE_ITEM_UPDATED = 61;
+    public const ACTION_INVOICE_ITEM_DELETED = 62;
+    public const ACTION_INVOICE_ITEM_RESTORED = 63;
+
+    // Notes
+    public const ACTION_NOTE_CREATED = 64;
+    public const ACTION_NOTE_UPDATED = 65;
+    public const ACTION_NOTE_DELETED = 66;
+    public const ACTION_NOTE_RESTORED = 67;
+
+    // Permissions
+    public const ACTION_PERMISSION_CREATED = 68;
+    public const ACTION_PERMISSION_UPDATED = 69;
+    public const ACTION_PERMISSION_DELETED = 70;
+    public const ACTION_PERMISSION_RESTORED = 71;
+
+    // Pipelines
+    public const ACTION_PIPELINE_CREATED = 72;
+    public const ACTION_PIPELINE_UPDATED = 73;
+    public const ACTION_PIPELINE_DELETED = 74;
+    public const ACTION_PIPELINE_RESTORED = 75;
+
+    // Pipeline Stages
+    public const ACTION_PIPELINE_STAGE_CREATED = 76;
+    public const ACTION_PIPELINE_STAGE_UPDATED = 77;
+    public const ACTION_PIPELINE_STAGE_DELETED = 78;
+    public const ACTION_PIPELINE_STAGE_RESTORED = 79;
+
+    // Products
+    public const ACTION_PRODUCT_CREATED = 80;
+    public const ACTION_PRODUCT_UPDATED = 81;
+    public const ACTION_PRODUCT_DELETED = 82;
+    public const ACTION_PRODUCT_RESTORED = 83;
+
+    // Roles
+    public const ACTION_ROLE_CREATED = 84;
+    public const ACTION_ROLE_UPDATED = 85;
+    public const ACTION_ROLE_DELETED = 86;
+    public const ACTION_ROLE_RESTORED = 87;
+
+    // Tasks
+    public const ACTION_TASK_CREATED = 88;
+    public const ACTION_TASK_UPDATED = 89;
+    public const ACTION_TASK_DELETED = 90;
+    public const ACTION_TASK_RESTORED = 91;
+    public const ACTION_TASK_COMPLETED = 92;
+    public const ACTION_TASK_REOPENED = 93;
+
+    // Users
+    public const ACTION_USER_RESTORED = 94;
+    public const ACTION_USER_FORCED_DELETED = 95;
+
     // New Logging Actions should go here to be reviewed
     // by the development team for future releases.
     // Ensure to update the documentation accordingly.
