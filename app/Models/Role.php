@@ -10,6 +10,13 @@ class Role extends Model
     use HasFactory;
 
     /**
+     * Constants for predefined roles.
+     */
+    public const ROLE_USER = 1;
+    public const ROLE_ADMIN = 2;
+    public const ROLE_SUPER_ADMIN = 3;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>

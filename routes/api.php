@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DealController;
@@ -23,21 +23,38 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
-
     // Users + role pivot helpers
     Route::apiResource('users', UserController::class);
-    Route::post('users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
-    Route::delete('users/{id}/force', [UserController::class, 'forceDelete'])->name('users.forceDelete');
-    Route::post('users/{user}/roles', [UserController::class, 'attachRoles'])->name('users.roles.attach');
-    Route::delete('users/{user}/roles', [UserController::class, 'detachRoles'])->name('users.roles.detach');
+    Route::post(
+        'users/{id}/restore',
+        [UserController::class, 'restore']
+    )->name('users.restore');
+    Route::delete(
+        'users/{id}/force',
+        [UserController::class, 'forceDelete']
+    )->name('users.forceDelete');
+    Route::post(
+        'users/{user}/roles',
+        [UserController::class, 'attachRoles']
+    )->name('users.roles.attach');
+    Route::delete(
+        'users/{user}/roles',
+        [UserController::class, 'detachRoles']
+    )->name('users.roles.detach');
 
     // Roles & permissions (role <-> permission handled in RoleController)
     Route::apiResource('roles', RoleController::class);
-    Route::apiResource('permissions', PermissionController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::apiResource(
+        'permissions',
+        PermissionController::class
+    )->only(['index', 'show', 'store', 'update', 'destroy']);
 
     // Companies & Contacts
     Route::apiResource('companies', CompanyController::class);
-    Route::post('companies/{id}/restore', [CompanyController::class, 'restore'])->name('companies.restore');
+    Route::post(
+        'companies/{id}/restore',
+        [CompanyController::class, 'restore']
+    )->name('companies.restore');
 
     Route::apiResource('contacts', ContactController::class);
 
@@ -47,7 +64,10 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
     // Deals
     Route::apiResource('deals', DealController::class);
-    Route::post('deals/{id}/restore', [DealController::class, 'restore'])->name('deals.restore');
+    Route::post(
+        'deals/{id}/restore',
+        [DealController::class, 'restore']
+    )->name('deals.restore');
 
     // Tasks, Notes, Activities
     Route::apiResource('tasks', TaskController::class);
@@ -59,12 +79,24 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::apiResource('invoices', InvoiceController::class);
     Route::apiResource('invoice-items', InvoiceItemController::class);
 
-    Route::apiResource('attachments', AttachmentController::class)->except(['update']);
+    Route::apiResource(
+        'attachments',
+        AttachmentController::class
+    )->except(['update']);
 
     // Role permission sync (if you want a dedicated endpoint)
-  Route::post('roles/{role}/permissions', [RoleController::class, 'syncPermissions'])->name('roles.permissions.sync');
+    Route::post(
+        'roles/{role}/permissions',
+        [RoleController::class, 'syncPermissions']
+    )->name('roles.permissions.sync');
 
     // Force delete/restore endpoints for other soft-deletable resources
-    Route::delete('companies/{id}/force', [CompanyController::class, 'forceDelete'])->name('companies.forceDelete');
-    Route::delete('deals/{id}/force', [DealController::class, 'forceDelete'])->name('deals.forceDelete');
+    Route::delete(
+        'companies/{id}/force',
+        [CompanyController::class, 'forceDelete']
+    )->name('companies.forceDelete');
+    Route::delete(
+        'deals/{id}/force',
+        [DealController::class, 'forceDelete']
+    )->name('deals.forceDelete');
 });
