@@ -14,7 +14,14 @@ class Activity extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['user_id','type','description','meta'];
+    protected $fillable = [
+        'user_id',
+        'type',
+        'subject_type',
+        'subject_id',
+        'description',
+        'meta',
+    ];
 
     /**
      * The attributes that should be cast.
