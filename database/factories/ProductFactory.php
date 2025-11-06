@@ -18,7 +18,7 @@ class ProductFactory extends Factory
     {
         return [
             'sku' => strtoupper($this->faker->unique()->bothify('??###')),
-            'name' => $this->faker->productName ?? $this->faker->word(),
+            'name' => $this->faker->word(),
             'description' => $this->faker->optional()->sentence(),
             'price' => $this->faker->randomFloat(2, 1, 1000),
             'currency' => 'USD',
