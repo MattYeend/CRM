@@ -20,7 +20,7 @@ class InvoiceController extends Controller
         $perPage = (int) $request->query('per_page', 10);
 
         return response()->json(
-            Invoice::with('company', 'contract', 'items')->paginate($perPage)
+            Invoice::with('company', 'contact', 'items')->paginate($perPage)
         );
     }
 
