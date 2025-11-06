@@ -15,7 +15,13 @@ class Note extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['body','user_id','meta'];
+    protected $fillable = [
+        'body',
+        'user_id',
+        'meta',
+        'notable_type',
+        'notable_id',
+    ];
 
     /**
      * The attributes that should be cast.

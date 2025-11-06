@@ -19,7 +19,7 @@ class NoteController extends Controller
         $perPage = (int) $request->query('per_page', 10);
 
         return response()->json(
-            Note::with('user', 'noteable')->paginate($perPage)
+            Note::with('user', 'notable')->paginate($perPage)
         );
     }
 
@@ -32,7 +32,7 @@ class NoteController extends Controller
      */
     public function show(Note $note)
     {
-        return response()->json($note->load('user', 'noteable'));
+        return response()->json($note->load('user', 'notable'));
     }
 
     /**
