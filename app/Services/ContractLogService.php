@@ -51,43 +51,6 @@ class ContractLogService
     }
 
     /**
-     * Log the deletion of a contact.
-     *
-     * @param User $user The user that was deleted.
-     *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Contact $contact The contact being logged.
-     *
-     * @return Log The created log entry.
-     */
-    public function contractDeleted(
-        User $user,
-        int $userId,
-        Contact $contact
-    ): array {
-        $data = [
-            'id' => $contact->id,
-            'company_id' => $contact->company_id,
-            'first_name' => $contact->first_name,
-            'last_name' => $contact->last_name,
-            'email' => $contact->email,
-            'phone' => $contact->phone,
-            'job_title' => $contact->job_title,
-            'deleted_at' => now(),
-            'deleted_by' => $user->name,
-        ];
-
-        Log::log(
-            Log::ACTION_CONTACT_DELETED,
-            $data,
-            $userId,
-        );
-
-        return $data;
-    }
-
-    /**
      * Log the update of a contact.
      *
      * @param User $user The user that was updated.
@@ -117,6 +80,43 @@ class ContractLogService
 
         Log::log(
             Log::ACTION_CONTACT_UPDATED,
+            $data,
+            $userId,
+        );
+
+        return $data;
+    }
+
+    /**
+     * Log the deletion of a contact.
+     *
+     * @param User $user The user that was deleted.
+     *
+     * @param int $userId The ID of the user who performed the action.
+     *
+     * @param Contact $contact The contact being logged.
+     *
+     * @return Log The created log entry.
+     */
+    public function contractDeleted(
+        User $user,
+        int $userId,
+        Contact $contact
+    ): array {
+        $data = [
+            'id' => $contact->id,
+            'company_id' => $contact->company_id,
+            'first_name' => $contact->first_name,
+            'last_name' => $contact->last_name,
+            'email' => $contact->email,
+            'phone' => $contact->phone,
+            'job_title' => $contact->job_title,
+            'deleted_at' => now(),
+            'deleted_by' => $user->name,
+        ];
+
+        Log::log(
+            Log::ACTION_CONTACT_DELETED,
             $data,
             $userId,
         );

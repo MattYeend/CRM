@@ -53,45 +53,6 @@ class CompanyLogService
     }
 
     /**
-     * Log the deletion of a company.
-     *
-     * @param User $user The user that was deleted.
-     *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Company $company The company being logged.
-     *
-     * @return Log The created log entry.
-     */
-    public function companyDeleted(
-        User $user,
-        int $userId,
-        Company $company
-    ): array {
-        $data = [
-            'id' => $company->id,
-            'name' => $company->name,
-            'industry' => $company->industry,
-            'website' => $company->website,
-            'phone' => $company->phone,
-            'address' => $company->address,
-            'city' => $company->city,
-            'region' => $company->region,
-            'country' => $company->country,
-            'deleted_at' => $company->deleted_at,
-            'deleted_by' => $user->name,
-        ];
-
-        Log::log(
-            Log::ACTION_COMPANY_DELETED,
-            $data,
-            $userId,
-        );
-
-        return $data;
-    }
-
-    /**
      * Log the update of a company.
      *
      * @param User $user The user that was updated.
@@ -123,6 +84,45 @@ class CompanyLogService
 
         Log::log(
             Log::ACTION_COMPANY_UPDATED,
+            $data,
+            $userId,
+        );
+
+        return $data;
+    }
+
+    /**
+     * Log the deletion of a company.
+     *
+     * @param User $user The user that was deleted.
+     *
+     * @param int $userId The ID of the user who performed the action.
+     *
+     * @param Company $company The company being logged.
+     *
+     * @return Log The created log entry.
+     */
+    public function companyDeleted(
+        User $user,
+        int $userId,
+        Company $company
+    ): array {
+        $data = [
+            'id' => $company->id,
+            'name' => $company->name,
+            'industry' => $company->industry,
+            'website' => $company->website,
+            'phone' => $company->phone,
+            'address' => $company->address,
+            'city' => $company->city,
+            'region' => $company->region,
+            'country' => $company->country,
+            'deleted_at' => $company->deleted_at,
+            'deleted_by' => $user->name,
+        ];
+
+        Log::log(
+            Log::ACTION_COMPANY_DELETED,
             $data,
             $userId,
         );
