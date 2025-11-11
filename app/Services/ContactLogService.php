@@ -6,7 +6,7 @@ use App\Models\Contact;
 use App\Models\Log;
 use App\Models\User;
 
-class ContractLogService
+class ContactLogService
 {
     public function __construct()
     {
@@ -24,7 +24,7 @@ class ContractLogService
      *
      * @return Log The created log entry.
      */
-    public function contractCreated(
+    public function contactCreated(
         User $user,
         int $userId,
         Contact $contact
@@ -61,7 +61,7 @@ class ContractLogService
      *
      * @return Log The created log entry.
      */
-    public function contractUpdated(
+    public function contactUpdated(
         User $user,
         int $userId,
         Contact $contact
@@ -98,7 +98,7 @@ class ContractLogService
      *
      * @return Log The created log entry.
      */
-    public function contractDeleted(
+    public function contactDeleted(
         User $user,
         int $userId,
         Contact $contact
@@ -135,7 +135,7 @@ class ContractLogService
      *
      * @return Log The created log entry.
      */
-    public function contractRestored(
+    public function contactRestored(
         User $user,
         int $userId,
         Contact $contact
