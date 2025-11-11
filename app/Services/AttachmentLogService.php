@@ -61,6 +61,7 @@ class AttachmentLogService
     ): array {
         $data = $this->baseAttachmentData($attachment) + [
             'deleted_at' => now(),
+            'deleted_by' => $user->name,
         ];
 
         Log::log(
@@ -90,6 +91,7 @@ class AttachmentLogService
     ): array {
         $data = $this->baseAttachmentData($attachment) + [
             'downloaded_at' => now(),
+            'downloaded_by' => $user->name,
         ];
 
         Log::log(
