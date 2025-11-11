@@ -29,7 +29,7 @@ class DealLogService
         int $userId,
         Deal $deal
     ): array {
-        $data = $this->baseDealData($deal, $user) + [
+        $data = $this->baseDealData($deal) + [
             'created_at' => $deal->created_at,
             'created_by' => $user->name,
         ];
@@ -59,7 +59,7 @@ class DealLogService
         int $userId,
         Deal $deal
     ): array {
-        $data = $this->baseDealData($deal, $user) + [
+        $data = $this->baseDealData($deal) + [
             'updated_at' => $deal->updated_at,
             'updated_by' => $user->name,
         ];
@@ -89,8 +89,8 @@ class DealLogService
         int $userId,
         Deal $deal
     ): array {
-        $data = $this->baseDealData($deal, $user) + [
-            'deleted_at' => now(),
+        $data = $this->baseDealData($deal) + [
+            'deleted_at' => $deal->deleted_at,
             'deleted_by' => $user->name,
         ];
 
@@ -119,7 +119,7 @@ class DealLogService
         int $userId,
         Deal $deal
     ): array {
-        $data = $this->baseDealData($deal, $user) + [
+        $data = $this->baseDealData($deal) + [
             'restored_at' => now(),
             'restored_by' => $user->name,
         ];

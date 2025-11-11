@@ -29,14 +29,7 @@ class ContactLogService
         int $userId,
         Contact $contact
     ): array {
-        $data = [
-            'id' => $contact->id,
-            'company_id' => $contact->company_id,
-            'first_name' => $contact->first_name,
-            'last_name' => $contact->last_name,
-            'email' => $contact->email,
-            'phone' => $contact->phone,
-            'job_title' => $contact->job_title,
+        $data = $this->baseContactData($contact) + [
             'created_at' => $contact->created_at,
             'created_by' => $user->name,
         ];
@@ -66,15 +59,8 @@ class ContactLogService
         int $userId,
         Contact $contact
     ): array {
-        $data = [
-            'id' => $contact->id,
-            'company_id' => $contact->company_id,
-            'first_name' => $contact->first_name,
-            'last_name' => $contact->last_name,
-            'email' => $contact->email,
-            'phone' => $contact->phone,
-            'job_title' => $contact->job_title,
-            'updated_at' => now(),
+        $data = $this->baseContactData($contact) + [
+            'updated_at' => $contact->updated_at,
             'updated_by' => $user->name,
         ];
 
@@ -103,18 +89,10 @@ class ContactLogService
         int $userId,
         Contact $contact
     ): array {
-        $data = [
-            'id' => $contact->id,
-            'company_id' => $contact->company_id,
-            'first_name' => $contact->first_name,
-            'last_name' => $contact->last_name,
-            'email' => $contact->email,
-            'phone' => $contact->phone,
-            'job_title' => $contact->job_title,
-            'deleted_at' => now(),
+        $data = $this->baseContactData($contact) + [
+            'deleted_at' => $contact->deleted_at,
             'deleted_by' => $user->name,
         ];
-
         Log::log(
             Log::ACTION_CONTACT_DELETED,
             $data,
@@ -140,14 +118,7 @@ class ContactLogService
         int $userId,
         Contact $contact
     ): array {
-        $data = [
-            'id' => $contact->id,
-            'company_id' => $contact->company_id,
-            'first_name' => $contact->first_name,
-            'last_name' => $contact->last_name,
-            'email' => $contact->email,
-            'phone' => $contact->phone,
-            'job_title' => $contact->job_title,
+        $data = $this->baseContactData($contact) + [
             'restored_at' => now(),
             'restored_by' => $user->name,
         ];
@@ -159,5 +130,25 @@ class ContactLogService
         );
 
         return $data;
+    }
+
+    /**
+     * Build the common data array for a Contact log entry.
+     *
+     * @param Contact $contact
+     *
+     * @return array
+     */
+    private function baseContactData(Contact $contact): array
+    {
+        return [
+            'id' => $contact->id,
+            'company_id' => $contact->company_id,
+            'first_name' => $contact->first_name,
+            'last_name' => $contact->last_name,
+            'email' => $contact->email,
+            'phone' => $contact->phone,
+            'job_title' => $contact->job_title,
+        ];
     }
 }

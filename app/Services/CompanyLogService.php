@@ -29,16 +29,7 @@ class CompanyLogService
         int $userId,
         Company $company
     ): array {
-        $data = [
-            'id' => $company->id,
-            'name' => $company->name,
-            'industry' => $company->industry,
-            'website' => $company->website,
-            'phone' => $company->phone,
-            'address' => $company->address,
-            'city' => $company->city,
-            'region' => $company->region,
-            'country' => $company->country,
+        $data = $this->baseCompanyData($company) + [
             'created_at' => $company->created_at,
             'created_by' => $user->name,
         ];
@@ -68,16 +59,7 @@ class CompanyLogService
         int $userId,
         Company $company
     ): array {
-        $data = [
-            'id' => $company->id,
-            'name' => $company->name,
-            'industry' => $company->industry,
-            'website' => $company->website,
-            'phone' => $company->phone,
-            'address' => $company->address,
-            'city' => $company->city,
-            'region' => $company->region,
-            'country' => $company->country,
+        $data = $this->baseCompanyData($company) + [
             'updated_at' => $company->updated_at,
             'updated_by' => $user->name,
         ];
@@ -107,16 +89,7 @@ class CompanyLogService
         int $userId,
         Company $company
     ): array {
-        $data = [
-            'id' => $company->id,
-            'name' => $company->name,
-            'industry' => $company->industry,
-            'website' => $company->website,
-            'phone' => $company->phone,
-            'address' => $company->address,
-            'city' => $company->city,
-            'region' => $company->region,
-            'country' => $company->country,
+        $data = $this->baseCompanyData($company) + [
             'deleted_at' => $company->deleted_at,
             'deleted_by' => $user->name,
         ];
@@ -146,17 +119,8 @@ class CompanyLogService
         int $userId,
         Company $company
     ): array {
-        $data = [
-            'id' => $company->id,
-            'name' => $company->name,
-            'industry' => $company->industry,
-            'website' => $company->website,
-            'phone' => $company->phone,
-            'address' => $company->address,
-            'city' => $company->city,
-            'region' => $company->region,
-            'country' => $company->country,
-            'restored_at' => $company->updated_at,
+        $data = $this->baseCompanyData($company) + [
+            'restored_at' => now(),
             'restored_by' => $user->name,
         ];
 
@@ -167,5 +131,27 @@ class CompanyLogService
         );
 
         return $data;
+    }
+
+    /**
+     * Construct base data array for a Company.
+     *
+     * @param Company $company The company being logged.
+     *
+     * @return array The base data for logging.
+     */
+    protected function baseCompanyData(Company $company): array
+    {
+        return [
+            'id' => $company->id,
+            'name' => $company->name,
+            'industry' => $company->industry,
+            'website' => $company->website,
+            'phone' => $company->phone,
+            'address' => $company->address,
+            'city' => $company->city,
+            'region' => $company->region,
+            'country' => $company->country,
+        ];
     }
 }

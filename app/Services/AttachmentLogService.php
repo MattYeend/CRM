@@ -29,18 +29,9 @@ class AttachmentLogService
         int $userId,
         Attachment $attachment
     ): array {
-        $data = [
-            'id' => $user->id,
-            'name' => $user->name,
-            'file_name' => $attachment->file_name,
-            'disk' => $attachment->disk,
-            'path' => $attachment->path,
-            'attachment_type' => $attachment->attachment_type,
-            'attachment_id' => $attachment->attachment_id,
-            'uploaded_by' => $attachment->uploaded_by,
-            'size' => $attachment->size,
-            'mime' => $attachment->mime,
+        $data = $this->baseAttachmentData($attachment) + [
             'created_at' => $attachment->created_at,
+            'created_by' => $user->name,
         ];
 
         Log::log(
@@ -68,17 +59,7 @@ class AttachmentLogService
         int $userId,
         Attachment $attachment
     ): array {
-        $data = [
-            'id' => $user->id,
-            'name' => $user->name,
-            'file_name' => $attachment->file_name,
-            'disk' => $attachment->disk,
-            'path' => $attachment->path,
-            'attachment_type' => $attachment->attachment_type,
-            'attachment_id' => $attachment->attachment_id,
-            'uploaded_by' => $attachment->uploaded_by,
-            'size' => $attachment->size,
-            'mime' => $attachment->mime,
+        $data = $this->baseAttachmentData($attachment) + [
             'deleted_at' => now(),
         ];
 
@@ -107,17 +88,7 @@ class AttachmentLogService
         int $userId,
         Attachment $attachment
     ): array {
-        $data = [
-            'id' => $user->id,
-            'name' => $user->name,
-            'file_name' => $attachment->file_name,
-            'disk' => $attachment->disk,
-            'path' => $attachment->path,
-            'attachment_type' => $attachment->attachment_type,
-            'attachment_id' => $attachment->attachment_id,
-            'uploaded_by' => $attachment->uploaded_by,
-            'size' => $attachment->size,
-            'mime' => $attachment->mime,
+        $data = $this->baseAttachmentData($attachment) + [
             'downloaded_at' => now(),
         ];
 
@@ -128,5 +99,27 @@ class AttachmentLogService
         );
 
         return $data;
+    }
+
+    /**
+     * Prepare base data for Attachment logging.
+     *
+     * @param Attachment $attachment The attachment being logged.
+     *
+     * @return array The base data for logging.
+     */
+    protected function baseAttachmentData(Attachment $attachment): array
+    {
+        return [
+            'id' => $attachment->id,
+            'file_name' => $attachment->file_name,
+            'disk' => $attachment->disk,
+            'path' => $attachment->path,
+            'attachment_type' => $attachment->attachment_type,
+            'attachment_id' => $attachment->attachment_id,
+            'uploaded_by' => $attachment->uploaded_by,
+            'size' => $attachment->size,
+            'mime' => $attachment->mime,
+        ];
     }
 }

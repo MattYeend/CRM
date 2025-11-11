@@ -29,7 +29,7 @@ class InvoiceLogService
         int $userId,
         Invoice $invoice
     ): array {
-        $data = $this->baseInvoiceData($invoice, $user) + [
+        $data = $this->baseInvoiceData($invoice) + [
             'created_at' => $invoice->created_at,
             'created_by' => $user->name,
         ];
@@ -59,7 +59,7 @@ class InvoiceLogService
         int $userId,
         Invoice $invoice
     ): array {
-        $data = $this->baseInvoiceData($invoice, $user) + [
+        $data = $this->baseInvoiceData($invoice) + [
             'updated_at' => now(),
             'updated_by' => $user->name,
         ];
@@ -89,8 +89,8 @@ class InvoiceLogService
         int $userId,
         Invoice $invoice
     ): array {
-        $data = $this->baseInvoiceData($invoice, $user) + [
-            'deleted_at' => now(),
+        $data = $this->baseInvoiceData($invoice) + [
+            'deleted_at' => $invoice->deleted_at,
             'deleted_by' => $user->name,
         ];
 
@@ -119,7 +119,7 @@ class InvoiceLogService
         int $userId,
         Invoice $invoice
     ): array {
-        $data = $this->baseInvoiceData($invoice, $user) + [
+        $data = $this->baseInvoiceData($invoice) + [
             'restored_at' => now(),
             'restored_by' => $user->name,
         ];
@@ -149,7 +149,7 @@ class InvoiceLogService
         int $userId,
         Invoice $invoice
     ): array {
-        $data = $this->baseInvoiceData($invoice, $user) + [
+        $data = $this->baseInvoiceData($invoice) + [
             'sent_at' => now(),
             'sent_by' => $user->name,
         ];
@@ -179,7 +179,7 @@ class InvoiceLogService
         int $userId,
         Invoice $invoice
     ): array {
-        $data = $this->baseInvoiceData($invoice, $user) + [
+        $data = $this->baseInvoiceData($invoice) + [
             'paid_at' => now(),
             'paid_by' => $user->name,
         ];
@@ -209,7 +209,7 @@ class InvoiceLogService
         int $userId,
         Invoice $invoice
     ): array {
-        $data = $this->baseInvoiceData($invoice, $user) + [
+        $data = $this->baseInvoiceData($invoice) + [
             'overdue_at' => now(),
             'marked_overdue_by' => $user->name,
         ];
