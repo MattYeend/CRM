@@ -3,10 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Models\Activity;
+use App\Services\ActivityLogService;
 use Illuminate\Http\Request;
 
 class ActivityController extends Controller
 {
+    /**
+     * Declare a protected property to hold the ActivityLogService instance
+     */
+    protected ActivityLogService $logger;
+    /**
+     * Constructor for the controller
+     *
+     * @param ActivityLogService $logger
+     * An instance of the ActivityLogService used for logging
+     * activity-related actions
+     */
+    public function __construct(ActivityLogService $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -54,6 +71,11 @@ class ActivityController extends Controller
         ]);
 
         $activity = Activity::create($data);
+        $this->logger->activityCreated(
+            $request->user(),
+            auth()->id(),
+            $activity
+        );
         return response()->json($activity, 201);
     }
 
@@ -74,6 +96,11 @@ class ActivityController extends Controller
             'meta' => 'nullable|array',
         ]);
 
+        $this->logger->activityUpdated(
+            $request->user(),
+            auth()->id(),
+            $activity
+        );
         $activity->update($data);
         return response()->json($activity);
     }
@@ -88,6 +115,7 @@ class ActivityController extends Controller
     public function destroy(Activity $activity)
     {
         $activity->delete();
+        $this->logger->activityDeleted(auth()->user(), auth()->id(), $activity);
         return response()->json(null, 204);
     }
 }
