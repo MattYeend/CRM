@@ -3,10 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contact;
+use App\Services\ContactLogService;
 use Illuminate\Http\Request;
 
 class ContactController extends Controller
 {
+    /**
+     * Declare a protected property to hold the ContactLogService instance
+     */
+    protected ContactLogService $logger;
+
+    /**
+     * Constructor for the controller
+     *
+     * @param ContactLogService $logger
+     * An instance of the ContactLogService used for logging
+     * contact-related actions
+     */
+    public function __construct(ContactLogService $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -70,6 +88,13 @@ class ContactController extends Controller
         ]);
 
         $contact = Contact::create($data);
+
+        $this->logger->contactCreated(
+            auth()->user(),
+            auth()->id(),
+            $contact
+        );
+
         return response()->json($contact, 201);
     }
 
@@ -95,6 +120,13 @@ class ContactController extends Controller
         ]);
 
         $contact->update($data);
+
+        $this->logger->contactUpdated(
+            $request->user(),
+            auth()->id(),
+            $contact
+        );
+
         return response()->json($contact);
     }
 
@@ -106,6 +138,13 @@ class ContactController extends Controller
     public function destroy(Contact $contact)
     {
         $contact->delete();
+
+        $this->logger->contactDeleted(
+            auth()->user(),
+            auth()->id(),
+            $contact
+        );
+
         return response()->json(null, 204);
     }
 }
