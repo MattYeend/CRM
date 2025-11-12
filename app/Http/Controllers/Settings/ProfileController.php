@@ -16,6 +16,8 @@ class ProfileController extends Controller
 {
     /**
      * Declare a protected propert to hold the ProfileLogService instance
+     *
+     * @var ProfileLogService
      */
     protected ProfileLogService $logger;
 

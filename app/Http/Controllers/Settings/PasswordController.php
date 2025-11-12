@@ -14,6 +14,8 @@ class PasswordController extends Controller
 {
     /**
      * Declare a protected propert to hold the PasswordLogService instance
+     *
+     * @var PasswordLogService
      */
     protected PasswordLogService $logger;
 

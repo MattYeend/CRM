@@ -10,6 +10,8 @@ class CompanyController extends Controller
 {
     /**
      * Declare a protected property to hold the CompanyLogService instance
+     *
+     * @var CompanyLogService
      */
     protected CompanyLogService $logger;
 

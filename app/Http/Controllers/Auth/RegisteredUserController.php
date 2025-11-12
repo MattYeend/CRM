@@ -18,6 +18,8 @@ class RegisteredUserController extends Controller
     /**
      * Declare a protected propert to hold the
      * RegisteredUserLogService instance
+     *
+     * @var RegisteredUserLogService
      */
     protected RegisteredUserLogService $logger;
 

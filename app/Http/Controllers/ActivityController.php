@@ -10,6 +10,8 @@ class ActivityController extends Controller
 {
     /**
      * Declare a protected property to hold the ActivityLogService instance
+     *
+     * @var ActivityLogService
      */
     protected ActivityLogService $logger;
     /**

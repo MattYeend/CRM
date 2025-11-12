@@ -20,6 +20,8 @@ class NewPasswordController extends Controller
     /**
      * Declare a protected propert to hold the
      * NewPasswordLogService instance
+     *
+     * @var NewPasswordLogService
      */
     protected NewPasswordLogService $logger;
 

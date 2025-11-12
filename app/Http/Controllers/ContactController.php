@@ -10,6 +10,8 @@ class ContactController extends Controller
 {
     /**
      * Declare a protected property to hold the ContactLogService instance
+     *
+     * @var ContactLogService
      */
     protected ContactLogService $logger;
 

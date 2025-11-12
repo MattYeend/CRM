@@ -15,6 +15,10 @@ class AttachmentController extends Controller
      * Declare a protected property to hold the
      * AttachmentAttacher, ActivityLogService and
      * AttachmentService instances
+     *
+     * @var \App\Services\AttachmentAttacher
+     * @var \App\Services\AttachmentLogService
+     * @var \App\Services\AttachmentService
      */
     protected AttachmentAttacher $attacher;
     protected AttachmentLogService $logger;

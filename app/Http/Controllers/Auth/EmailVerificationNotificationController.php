@@ -12,6 +12,8 @@ class EmailVerificationNotificationController extends Controller
     /**
      * Declare a protected propert to hold the
      * EmailVerificationNotificationLogService instance
+     *
+     * @var EmailVerificationNotificationLogService
      */
     protected EmailVerificationNotificationLogService $logger;
 
