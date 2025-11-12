@@ -71,11 +71,13 @@ class ActivityController extends Controller
         ]);
 
         $activity = Activity::create($data);
+
         $this->logger->activityCreated(
             $request->user(),
             auth()->id(),
             $activity
         );
+
         return response()->json($activity, 201);
     }
 
@@ -101,6 +103,7 @@ class ActivityController extends Controller
             auth()->id(),
             $activity
         );
+
         $activity->update($data);
         return response()->json($activity);
     }
@@ -115,7 +118,9 @@ class ActivityController extends Controller
     public function destroy(Activity $activity)
     {
         $activity->delete();
+
         $this->logger->activityDeleted(auth()->user(), auth()->id(), $activity);
+
         return response()->json(null, 204);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Attachment;
 use App\Services\AttachmentAttacher;
+use App\Services\AttachmentLogService;
 use App\Services\AttachmentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 class AttachmentController extends Controller
 {
     protected AttachmentAttacher $attacher;
+    protected AttachmentLogService $logger;
     protected AttachmentService $service;
 
     /**
@@ -18,15 +20,19 @@ class AttachmentController extends Controller
      *
      * @param \App\Services\AttachmentAttacher $attacher
      *
+     * @param \App\Services\AttachmentLogService $logger
+     *
      * @param \App\Services\AttachmentService $service
      *
      * @return void
      */
     public function __construct(
         AttachmentAttacher $attacher,
+        AttachmentLogService $logger,
         AttachmentService $service
     ) {
         $this->attacher = $attacher;
+        $this->logger = $logger;
         $this->service = $service;
     }
 
@@ -82,6 +88,8 @@ class AttachmentController extends Controller
             $attachment
         );
 
+        $this->logUpload($request, $attachment);
+
         return response()->json($attachment->load('uploader'), 201);
     }
 
@@ -98,6 +106,31 @@ class AttachmentController extends Controller
             Storage::disk($attachment->disk)->delete($attachment->path);
         }
         $attachment->delete();
+
+        $this->logger->attachmentDeleted(
+            request()->user(),
+            auth()->id(),
+            $attachment
+        );
+
         return response()->json(null, 204);
+    }
+
+    /**
+     * Log the upload of an attachment.
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @param \App\Models\Attachment $attachment
+     *
+     * @return void
+     */
+    private function logUpload(Request $request, $attachment): void
+    {
+        $this->logger->attachmentUploaded(
+            $request->user(),
+            auth()->id(),
+            $attachment
+        );
     }
 }
