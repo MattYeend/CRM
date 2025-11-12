@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Storage;
 
 class AttachmentController extends Controller
 {
+    /**
+     * Declare a protected property to hold the
+     * AttachmentAttacher, ActivityLogService and
+     * AttachmentService instances
+     */
     protected AttachmentAttacher $attacher;
     protected AttachmentLogService $logger;
     protected AttachmentService $service;

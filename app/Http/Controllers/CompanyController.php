@@ -3,10 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Services\CompanyLogService;
 use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
+    /**
+     * Declare a protected property to hold the CompanyLogService instance
+     */
+    protected CompanyLogService $logger;
+
+    /**
+     * Constructor for the controller
+     *
+     * @param CompanyLogService $logger
+     * An instance of the CompanyLogService used for logging
+     * company-related actions
+     */
+    public function __construct(CompanyLogService $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -70,6 +88,13 @@ class CompanyController extends Controller
         ]);
 
         $company = Company::create($data);
+
+        $this->logger->companyCreated(
+            $request->user(),
+            auth()->id(),
+            $company
+        );
+
         return response()->json($company, 201);
     }
 
@@ -98,6 +123,13 @@ class CompanyController extends Controller
         ]);
 
         $company->update($data);
+
+        $this->logger->companyUpdated(
+            $request->user(),
+            auth()->id(),
+            $company
+        );
+
         return response()->json($company);
     }
 
@@ -111,6 +143,13 @@ class CompanyController extends Controller
     public function destroy(Company $company)
     {
         $company->delete();
+
+        $this->logger->companyDeleted(
+            request()->user(),
+            auth()->id(),
+            $company
+        );
+
         return response()->json(null, 204);
     }
 
@@ -124,7 +163,15 @@ class CompanyController extends Controller
     public function restore($id)
     {
         $company = Company::withTrashed()->findOrFail($id);
+
         $company->restore();
+
+        $this->logger->companyRestored(
+            request()->user(),
+            auth()->id(),
+            $company
+        );
+
         return response()->json($company);
     }
 }
