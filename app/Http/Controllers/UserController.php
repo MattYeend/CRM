@@ -3,21 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\UserLogService;
 use App\Services\UserManagementService;
 use App\Services\UserQueryService;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    private UserQueryService $queryService;
+    /**
+     * Declare a protected property to hold the UserLogService,
+     * UserQueryService, and UserManagementService instances
+     *
+     * @var UserLogService
+     * @var UserQueryService
+     * @var UserManagementService
+     */
+    private UserLogService $logger;
     private UserManagementService $managementService;
+    private UserQueryService $queryService;
 
     public function __construct(
-        UserQueryService $queryService,
-        UserManagementService $managementService
+        UserLogService $logger,
+        UserManagementService $managementService,
+        UserQueryService $queryService
     ) {
-        $this->queryService = $queryService;
+        $this->logger = $logger;
         $this->managementService = $managementService;
+        $this->queryService = $queryService;
     }
 
     /**
@@ -57,6 +69,12 @@ class UserController extends Controller
     {
         $user = $this->managementService->store($request);
 
+        $this->logger->userCreated(
+            auth()->user(),
+            auth()->id(),
+            $user
+        );
+
         return response()->json($user, 201);
     }
 
@@ -73,6 +91,12 @@ class UserController extends Controller
     {
         $user = $this->managementService->update($request, $user);
 
+        $this->logger->userUpdated(
+            auth()->user(),
+            auth()->id(),
+            $user
+        );
+
         return response()->json($user);
     }
 
@@ -86,6 +110,12 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $this->managementService->destroy($user);
+
+        $this->logger->userDeleted(
+            auth()->user(),
+            auth()->id(),
+            $user
+        );
 
         return response()->json(null, 204);
     }
@@ -101,6 +131,12 @@ class UserController extends Controller
     {
         $user = $this->managementService->restore((int) $id);
 
+        $this->logger->userRestored(
+            auth()->user(),
+            auth()->id(),
+            $user
+        );
+
         return response()->json($user);
     }
 
@@ -113,7 +149,15 @@ class UserController extends Controller
      */
     public function forceDelete($id)
     {
+        $user = User::withTrashed()->find((int) $id);
+
         $this->managementService->forceDelete((int) $id);
+
+        $this->logger->userForceDeleted(
+            auth()->user(),
+            auth()->id(),
+            $user
+        );
 
         return response()->json(null, 204);
     }

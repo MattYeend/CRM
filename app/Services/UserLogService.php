@@ -15,22 +15,21 @@ class UserLogService
     /**
      * Log the creation of a User.
      *
-     * @param User $actor The user that created the user.
+     * @param User|null $actor The user that created the user (nullable).
+     * @param int|null  $actorId The ID of the user who performed the
+     * action (nullable).
+     * @param User      $user The user being logged.
      *
-     * @param int $actorId The ID of the user who performed the action.
-     *
-     * @param User $user The user being logged.
-     *
-     * @return Log The created log entry.
+     * @return array The created log payload.
      */
     public function userCreated(
-        User $actor,
-        int $actorId,
+        ?User $actor,
+        ?int $actorId,
         User $user
     ): array {
         $data = $this->baseUserData($user) + [
             'created_at' => $user->created_at,
-            'created_by' => $actor->name,
+            'created_by' => $actor?->name,
         ];
 
         Log::log(
@@ -45,22 +44,23 @@ class UserLogService
     /**
      * Log the update of a User.
      *
-     * @param User $actor The user that updated the user.
+     * @param User|null $actor The user that updated the user (nullable).
      *
-     * @param int $actorId The ID of the user who performed the action.
+     * @param int|null $actorId The ID of the user who performed the
+     * action (nullable).
      *
      * @param User $user The user being logged.
      *
-     * @return Log The created log entry.
+     * @return array The updated log payload.
      */
     public function userUpdated(
-        User $actor,
-        int $actorId,
+        ?User $actor,
+        ?int $actorId,
         User $user
     ): array {
         $data = $this->baseUserData($user) + [
             'updated_at' => $user->updated_at,
-            'updated_by' => $actor->name,
+            'updated_by' => $actor?->name,
         ];
 
         Log::log(
@@ -75,22 +75,23 @@ class UserLogService
     /**
      * Log the deletion of a User.
      *
-     * @param User $actor The user that deleted the user.
+     * @param User|null $actor The user that deleted the user (nullable).
      *
-     * @param int $actorId The ID of the user who performed the action.
+     * @param int|null $actorId The ID of the user who performed the
+     * action (nullable).
      *
      * @param User $user The user being logged.
      *
-     * @return Log The created log entry.
+     * @return array The deleted log payload.
      */
     public function userDeleted(
-        User $actor,
-        int $actorId,
+        ?User $actor,
+        ?int $actorId,
         User $user
     ): array {
         $data = $this->baseUserData($user) + [
             'deleted_at' => $user->deleted_at,
-            'deleted_by' => $actor->name,
+            'deleted_by' => $actor?->name,
         ];
 
         Log::log(
@@ -105,22 +106,23 @@ class UserLogService
     /**
      * Log the verification of a User.
      *
-     * @param User $actor The user that verified the user.
+     * @param User|null $actor The user that verified the user (nullable).
      *
-     * @param int $actorId The ID of the user who performed the action.
+     * @param int|null $actorId The ID of the user who performed the
+     * action (nullable).
      *
      * @param User $user The user being logged.
      *
-     * @return Log The created log entry.
+     * @return array The verified log payload.
      */
     public function userVerified(
-        User $actor,
-        int $actorId,
+        ?User $actor,
+        ?int $actorId,
         User $user
     ): array {
         $data = $this->baseUserData($user) + [
             'verified_at' => now(),
-            'verified_by' => $actor->name,
+            'verified_by' => $actor?->name,
         ];
 
         Log::log(
@@ -135,22 +137,23 @@ class UserLogService
     /**
      * Log the restoration of a User.
      *
-     * @param User $actor The user that restored the user.
+     * @param User|null $actor The user that restored the user (nullable).
      *
-     * @param int $actorId The ID of the user who performed the action.
+     * @param int|null $actorId The ID of the user who performed the
+     * action (nullable).
      *
      * @param User $user The user being logged.
      *
-     * @return Log The created log entry.
+     * @return array The restored log payload.
      */
     public function userRestored(
-        User $actor,
-        int $actorId,
+        ?User $actor,
+        ?int $actorId,
         User $user
     ): array {
         $data = $this->baseUserData($user) + [
             'restored_at' => now(),
-            'restored_by' => $actor->name,
+            'restored_by' => $actor?->name,
         ];
 
         Log::log(
@@ -165,22 +168,23 @@ class UserLogService
     /**
      * Log the force deletion of a User.
      *
-     * @param User $actor The user that force deleted the user.
+     * @param User|null $actor The user that force deleted the user (nullable).
      *
-     * @param int $actorId The ID of the user who performed the action.
+     * @param int|null $actorId The ID of the user who performed the
+     * action (nullable).
      *
-     * @param User $user The user being logged.
+     * @param User|null $user The user being logged.
      *
-     * @return Log The created log entry.
+     * @return array The force deleted log payload.
      */
     public function userForceDeleted(
-        User $actor,
-        int $actorId,
-        User $user
+        ?User $actor,
+        ?int $actorId,
+        ?User $user
     ): array {
         $data = $this->baseUserData($user) + [
             'force_deleted_at' => now(),
-            'force_deleted_by' => $actor->name,
+            'force_deleted_by' => $actor?->name,
         ];
 
         Log::log(
@@ -195,17 +199,31 @@ class UserLogService
     /**
      * Prepare base user data for logging.
      *
-     * @param User $user The user being logged.
+     * Accepts nullable User and returns a safe array even when the
+     * model is missing.
      *
-     * @return array The base user data.
+     * @param User|null $user
+     *
+     * @return array
      */
-    protected function baseUserData(User $user): array
+    protected function baseUserData(?User $user): array
     {
+        if (! $user) {
+            return [
+                'id' => null,
+                'name' => null,
+                'email' => null,
+                'role' => null,
+                'phone' => null,
+                'avatar' => null,
+            ];
+        }
+
         return [
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
-            'role' => $user->role->name,
+            'role' => $user->role?->name,
             'phone' => $user->phone,
             'avatar' => $user->avatar,
         ];
