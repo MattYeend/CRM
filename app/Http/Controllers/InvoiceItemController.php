@@ -3,10 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Models\InvoiceItem;
+use App\Services\InvoiceItemLogService;
 use Illuminate\Http\Request;
 
 class InvoiceItemController extends Controller
 {
+    /**
+     * Declare a protected property to hold the InvoiceItemLogService instance
+     *
+     * @var InvoiceItemLogService
+     */
+    protected InvoiceItemLogService $logger;
+
+    /**
+     * Constructor for the controller
+     *
+     * @param InvoiceItemLogService $logger
+     * An instance of the InvoiceItemLogService used for logging
+     * invoice item-related actions
+     */
+    public function __construct(InvoiceItemLogService $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -58,6 +78,13 @@ class InvoiceItemController extends Controller
             ?? $data['quantity'] * $data['unit_price'];
 
         $item = InvoiceItem::create($data);
+
+        $this->logger->invoiceItemCreated(
+            auth()->user(),
+            auth()->id(),
+            $item
+        );
+
         return response()->json($item->load('product'), 201);
     }
 
@@ -85,6 +112,13 @@ class InvoiceItemController extends Controller
         }
 
         $invoiceItem->update($data);
+
+        $this->logger->invoiceItemUpdated(
+            auth()->user(),
+            auth()->id(),
+            $invoiceItem
+        );
+
         return response()->json($invoiceItem->fresh()->load('product'));
     }
 
@@ -98,6 +132,13 @@ class InvoiceItemController extends Controller
     public function destroy(InvoiceItem $invoiceItem)
     {
         $invoiceItem->delete();
+
+        $this->logger->invoiceItemDeleted(
+            auth()->user(),
+            auth()->id(),
+            $invoiceItem
+        );
+
         return response()->json(null, 204);
     }
 }
