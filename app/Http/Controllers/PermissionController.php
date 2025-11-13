@@ -3,11 +3,31 @@
 namespace App\Http\Controllers;
 
 use App\Models\Permission;
+use App\Services\PermissionLogService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class PermissionController extends Controller
 {
+    /**
+     * Declare a protected property to hold the PermissionLogService instance
+     *
+     * @var PermissionLogService
+     */
+    protected PermissionLogService $logger;
+
+    /**
+     * Constructor for the controller
+     *
+     * @param PermissionLogService $logger
+     * An instance of the PermissionLogService used for logging
+     * permission-related actions
+     */
+    public function __construct(PermissionLogService $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * Display a listing of the permissions with their roles.
      *
@@ -52,6 +72,12 @@ class PermissionController extends Controller
 
         $permission = Permission::create($data);
 
+        $this->logger->permissionCreated(
+            $request->user(),
+            $request->user()->id,
+            $permission
+        );
+
         return response()->json($permission, 201);
     }
 
@@ -77,6 +103,12 @@ class PermissionController extends Controller
 
         $permission->update($data);
 
+        $this->logger->permissionUpdated(
+            $request->user(),
+            $request->user()->id,
+            $permission
+        );
+
         return response()->json($permission);
     }
 
@@ -91,6 +123,12 @@ class PermissionController extends Controller
     {
         $permission->roles()->detach();
         $permission->delete();
+
+        $this->logger->permissionDeleted(
+            auth()->user(),
+            auth()->user()->id,
+            $permission
+        );
 
         return response()->json(null, 204);
     }
