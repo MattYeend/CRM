@@ -3,10 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Models\Note;
+use App\Services\NoteLogService;
 use Illuminate\Http\Request;
 
 class NoteController extends Controller
 {
+    /**
+     * Declare a protected property to hold the NoteLogService instance
+     *
+     * @var NoteLogService
+     */
+    protected NoteLogService $logger;
+
+    /**
+     * Constructor for the controller
+     *
+     * @param NoteLogService $logger
+     * An instance of the NoteLogService used for logging
+     * note-related actions
+     */
+    public function __construct(NoteLogService $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -54,6 +74,12 @@ class NoteController extends Controller
 
         $note = Note::create($data);
 
+        $this->logger->noteCreated(
+            $request->user(),
+            $request->user()->id,
+            $note
+        );
+
         $this->attachNoteToModel($note, $data);
 
         return response()->json(
@@ -79,6 +105,13 @@ class NoteController extends Controller
         ]);
 
         $note->update($data);
+
+        $this->logger->noteUpdated(
+            $request->user(),
+            $request->user()->id,
+            $note
+        );
+
         return response()->json($note);
     }
 
@@ -92,6 +125,13 @@ class NoteController extends Controller
     public function destroy(Note $note)
     {
         $note->delete();
+
+        $this->logger->noteDeleted(
+            auth()->user(),
+            auth()->id(),
+            $note
+        );
+
         return response()->json(null, 204);
     }
 
