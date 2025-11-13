@@ -3,11 +3,31 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
+use App\Services\RoleLogService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class RoleController extends Controller
 {
+    /**
+     * Declare a protected property to hold the RoleLogService instance
+     *
+     * @var RoleLogService
+     */
+    protected RoleLogService $logger;
+
+    /**
+     * Constructor for the controller
+     *
+     * @param RoleLogService $logger
+     * An instance of the RoleLogService used for logging
+     * role-related actions
+     */
+    public function __construct(RoleLogService $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * Display a listing of the roles with user counts and permissions.
      *
@@ -59,6 +79,12 @@ class RoleController extends Controller
             $role->permissions()->sync($data['permissions']);
         }
 
+        $this->logger->roleCreated(
+            $request->user(),
+            $request->user()->id,
+            $role
+        );
+
         return response()->json($role->load('permissions'), 201);
     }
 
@@ -73,23 +99,17 @@ class RoleController extends Controller
      */
     public function update(Request $request, Role $role)
     {
-        $data = $request->validate([
-            'name' => [
-                'sometimes',
-                'required',
-                'string',
-                Rule::unique('roles', 'name')->ignore($role->id),
-            ],
-            'label' => 'nullable|string',
-            'permissions' => 'array',
-            'permissions.*' => 'integer|exists:permissions,id',
-        ]);
+        $data = $this->validateRoleData($request, $role);
 
         $role->update($request->only(['name', 'label']));
 
-        if (isset($data['permissions'])) {
-            $role->permissions()->sync($data['permissions']);
-        }
+        $this->syncPermissions($role, $data);
+
+        $this->logger->roleUpdated(
+            $request->user(),
+            $request->user()->id,
+            $role
+        );
 
         return response()->json($role->load('permissions'));
     }
@@ -107,6 +127,52 @@ class RoleController extends Controller
         $role->users()->detach();
         $role->delete();
 
+        $this->logger->roleDeleted(
+            auth()->user(),
+            auth()->user()->id,
+            $role
+        );
+
         return response()->json(null, 204);
+    }
+
+    /**
+     * Validate role data for update.
+     *
+     * @param Request $request
+     *
+     * @param Role $role
+     *
+     * @return array The validated data.
+     */
+    protected function validateRoleData(Request $request, Role $role): array
+    {
+        return $request->validate([
+            'name' => [
+                'sometimes',
+                'required',
+                'string',
+                Rule::unique('roles', 'name')->ignore($role->id),
+            ],
+            'label' => 'nullable|string',
+            'permissions' => 'array',
+            'permissions.*' => 'integer|exists:permissions,id',
+        ]);
+    }
+
+    /**
+     * Sync permissions for the given role.
+     *
+     * @param Role $role
+     *
+     * @param array $data
+     *
+     * @return void
+     */
+    protected function syncPermissions(Role $role, array $data): void
+    {
+        if (isset($data['permissions'])) {
+            $role->permissions()->sync($data['permissions']);
+        }
     }
 }
