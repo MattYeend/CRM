@@ -3,10 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Models\PipelineStage;
+use App\Services\PipelineStageLogService;
 use Illuminate\Http\Request;
 
 class PipelineStageController extends Controller
 {
+    /**
+     * Declare a protected property to hold the PipelineStageLogService instance
+     *
+     * @var PipelineStageLogService
+     */
+    protected PipelineStageLogService $logger;
+
+    /**
+     * Constructor for the controller
+     *
+     * @param PipelineStageLogService $logger
+     * An instance of the PipelineStageLogService used for logging
+     * pipeline stage-related actions
+     */
+    public function __construct(PipelineStageLogService $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -52,6 +72,13 @@ class PipelineStageController extends Controller
         ]);
 
         $stage = PipelineStage::create($data);
+
+        $this->logger->pipelineStageCreated(
+            $request->user(),
+            $request->user()->id,
+            $stage
+        );
+
         return response()->json($stage, 201);
     }
 
@@ -75,6 +102,13 @@ class PipelineStageController extends Controller
         ]);
 
         $pipelineStage->update($data);
+
+        $this->logger->pipelineStageUpdated(
+            $request->user(),
+            $request->user()->id,
+            $pipelineStage
+        );
+
         return response()->json($pipelineStage);
     }
 
@@ -88,6 +122,13 @@ class PipelineStageController extends Controller
     public function destroy(PipelineStage $pipelineStage)
     {
         $pipelineStage->delete();
+
+        $this->logger->pipelineStageDeleted(
+            request()->user(),
+            request()->user()->id,
+            $pipelineStage
+        );
+
         return response()->json(null, 204);
     }
 }
