@@ -3,11 +3,31 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Services\ProductLogService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
+    /**
+     * Declare a protected property to hold the ProductLogService instance
+     *
+     * @var ProductLogService
+     */
+    protected ProductLogService $logger;
+
+    /**
+     * Constructor for the controller
+     *
+     * @param ProductLogService $logger
+     * An instance of the ProductLogService used for logging
+     * product-related actions
+     */
+    public function __construct(ProductLogService $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -56,6 +76,13 @@ class ProductController extends Controller
         ]);
 
         $product = Product::create($data);
+
+        $this->logger->productCreated(
+            $request->user(),
+            $request->user()->id,
+            $product
+        );
+
         return response()->json($product, 201);
     }
 
@@ -83,6 +110,13 @@ class ProductController extends Controller
         ]);
 
         $product->update($data);
+
+        $this->logger->productUpdated(
+            $request->user(),
+            $request->user()->id,
+            $product
+        );
+
         return response()->json($product);
     }
 
@@ -96,6 +130,13 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         $product->delete();
+
+        $this->logger->productDeleted(
+            request()->user(),
+            request()->user()->id,
+            $product
+        );
+
         return response()->json(null, 204);
     }
 }
