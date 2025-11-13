@@ -3,10 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\Services\TaskLogService;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
+    /**
+     * Declare a protected property to hold the TaskLogService instance
+     *
+     * @var TaskLogService
+     */
+    protected TaskLogService $logger;
+
+    /**
+     * Constructor for the controller
+     *
+     * @param TaskLogService $logger
+     * An instance of the TaskLogService used for logging
+     * task-related actions
+     */
+    public function __construct(TaskLogService $logger)
+    {
+        $this->logger = $logger;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -47,6 +66,12 @@ class TaskController extends Controller
         $data = $this->validateTaskData($request);
         $task = Task::create($data);
 
+        $this->logger->taskCreated(
+            auth()->user(),
+            auth()->id(),
+            $task,
+        );
+
         $this->handlePolymorphicAssignment($task, $data);
 
         return response()->json(
@@ -77,6 +102,13 @@ class TaskController extends Controller
         ]);
 
         $task->update($data);
+
+        $this->logger->taskUpdated(
+            auth()->user(),
+            auth()->id(),
+            $task,
+        );
+
         return response()->json($task->fresh()->load(
             'assignee',
             'creator',
@@ -94,6 +126,13 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         $task->delete();
+
+        $this->logger->taskDeleted(
+            auth()->user(),
+            auth()->id(),
+            $task,
+        );
+
         return response()->json(null, 204);
     }
 
