@@ -51,12 +51,13 @@ We welcome contributions! To contribute:
 
 1. Fork the repository.
 2. Create a new branch: `git checkout -b feature/your-feature-name`.
-3. Make your changes and commit: `git commit -m 'Add your message here'`.
-4. Run `php artisan insights` and make any relevant changes that it might suggest
-5. Ensure there's relevant tests and that they work and pass.
-6. If anything requires `vue.js` changes, run: `npm i && npm run build`.
-7. Push to your fork: `git push origin feature/your-feature-name`.
-8. Create a Pull Request.
+3. Make your changes and commit: `git commit -m '#issue-number Add your message here'`.
+4. Run `php artisan insights` and make any relevant changes that it might suggest.
+5. Ensure that the relevant language file(s) have been created.
+6. Ensure there's relevant tests and that they work and pass.
+7. If anything requires `vue.js` changes, run: `npm i && npm run build`.
+8. Push to your fork: `git push origin feature/your-feature-name`.
+9. Create a Pull Request.
 
 Please follow the code style and commit message conventions.
 
