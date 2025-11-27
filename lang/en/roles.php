@@ -12,7 +12,7 @@ return [
     | application's requirements.
     |
     */
-    
+
     'create' => 'Create a Role',
     'update' => 'Update Role',
     'show' => 'View Role Details',

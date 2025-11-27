@@ -29,5 +29,5 @@ return [
     'pipeline' => 'Pipeline',
     'position' => 'Position',
     'is_won_stage' => 'Is Won Stage',
-    'is_lost_stage' => 'Is Lost Stage', 
+    'is_lost_stage' => 'Is Lost Stage',
 ];
