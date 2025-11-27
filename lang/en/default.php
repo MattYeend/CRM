@@ -39,5 +39,6 @@ return [
     'back' => 'Back',
     'home' => 'Home',
     'dashboard' => 'Dashboard',
-    'settings' => 'Settings'
+    'settings' => 'Settings',
+    'not_found' => 'No records found',
 ];

@@ -32,6 +32,5 @@ return [
     'remove_permission' => 'Remove Permission',
     'assign_user' => 'Assign User',
     'remove_user' => 'Remove User',
-    'not_found' => 'No Roles Found',
     'label' => 'Label',
 ];
