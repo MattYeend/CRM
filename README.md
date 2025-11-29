@@ -36,8 +36,8 @@ It provides an all-in-one platform to manage and streamline business operations,
 
 ### Key Highlights
 - Built in Laravel 12 - leveraging the latest framework features for performance, security, and scalability
-- Modular & Extensible — easily add new modules or integrate with external APIs
-- User-Friendly Interface — modern, responsive design for smooth navigation and usability
+- Modular & Extensible - easily add new modules or integrate with external APIs
+- User-Friendly Interface - modern, responsive design for smooth navigation and usability
 
 ### Core Features
 - Customer & Lead Management: Organise contacts, track leads, and maintain detailed profiles
