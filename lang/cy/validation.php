@@ -75,7 +75,8 @@ return [
         peidio â gorffen gyda un o\'r canlynol: :values.',
     'doesnt_start_with' => 'Mae\'r maes :attribute yn rhaid
         peidio â dechrau gyda un o\'r canlynol: :values.',
-    'email' => 'Mae\'r maes :attribute yn rhaid i fod yn gyfeiriad e-bost dilys.',
+    'email' => 'Mae\'r maes :attribute yn rhaid i fod yn gyfeiriad e-bost 
+        dilys.',
     'ends_with' => 'Mae\'r maes :attribute yn rhaid i orffen gyda un o\'r 
         canlynol: :values.',
     'enum' => 'Mae\'r dewis :attribute yn annilys.',
@@ -142,7 +143,7 @@ return [
     ],
     'mac_address' => 'Mae\r maes :attribute yn rhaid i fod yn gyfeiriad 
         MAC dilys.',
-    'max' => [ 
+    'max' => [
         'array' => 'Mae\'r maes :attribute yn rhaid i beidio 
             â chael mwy na :max eitem.',
         'file' => 'Mae\'r maes :attribute yn rhaid i beidio â bod 
@@ -192,7 +193,8 @@ return [
         'symbols' => 'Mae\'r maes :attribute yn rhaid i gynnwys o leiaf
             un symbol.',
         'uncompromised' => 'Mae\'r :attribute a roddwyd wedi ymddangos
-            mewn datgeliad data. Dewiswch :attribute gwahanol os gwelwch yn dda.',
+            mewn datgeliad data. Dewiswch :attribute gwahanol os gwelwch 
+            yn dda.',
     ],
     'present' => 'Mae\'r maes :attribute yn rhaid i fod yn bresennol.',
     'present_if' => 'Mae\'r maes :attribute yn rhaid i fod yn bresennol 
