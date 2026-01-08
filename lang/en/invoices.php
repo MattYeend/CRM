@@ -35,4 +35,5 @@ return [
     'total' => 'Total',
     'currency' => 'Currency',
     'meta' => 'Meta Information',
+
 ];

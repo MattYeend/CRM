@@ -30,4 +30,5 @@ return [
     'position' => 'Position',
     'is_won_stage' => 'Is Won Stage',
     'is_lost_stage' => 'Is Lost Stage',
+
 ];

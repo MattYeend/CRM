@@ -35,4 +35,5 @@ return [
     'currency' => 'Currency',
     'close_date' => 'Close Date',
     'meta' => 'Meta Information',
+
 ];

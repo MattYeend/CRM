@@ -26,4 +26,5 @@ return [
     'deleted_by' => 'Deleted By',
     'deleted_at' => 'Deleted At',
     'label' => 'Label',
+
 ];

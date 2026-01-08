@@ -31,4 +31,5 @@ return [
     'unit_price' => 'Unit Price',
     'line_total' => 'Line Total',
     'meta' => 'Meta Information',
+
 ];

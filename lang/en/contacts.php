@@ -33,4 +33,5 @@ return [
     'job_title' => 'Job Title',
     'meta' => 'Meta Information',
     'company' => 'Company',
+
 ];

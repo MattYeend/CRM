@@ -29,4 +29,5 @@ return [
     'type' => 'Type',
     'subject_type' => 'Subject Type',
     'meta' => 'Meta Information',
+
 ];

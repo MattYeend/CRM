@@ -36,4 +36,5 @@ return [
     'country' => 'Country',
     'meta' => 'Meta Information',
     'number_of_employees' => 'Number of Employees',
+
 ];

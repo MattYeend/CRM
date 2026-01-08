@@ -29,4 +29,5 @@ return [
     'user' => 'User',
     'body' => 'Body',
     'meta' => 'Meta Information',
+
 ];

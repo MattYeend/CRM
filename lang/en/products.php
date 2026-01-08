@@ -31,4 +31,5 @@ return [
     'currency' => 'Currency',
     'quantity' => 'Quantity',
     'meta' => 'Meta Information',
+
 ];

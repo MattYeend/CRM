@@ -41,4 +41,5 @@ return [
     'dashboard' => 'Dashboard',
     'settings' => 'Settings',
     'not_found' => 'No records found',
+
 ];

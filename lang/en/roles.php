@@ -33,4 +33,5 @@ return [
     'assign_user' => 'Assign User',
     'remove_user' => 'Remove User',
     'label' => 'Label',
+
 ];

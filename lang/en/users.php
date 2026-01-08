@@ -31,4 +31,5 @@ return [
     'remove_role' => 'Remove Role',
     'phone' => 'Phone',
     'avatar' => 'Avatar',
+
 ];

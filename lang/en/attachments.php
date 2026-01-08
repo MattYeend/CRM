@@ -32,4 +32,5 @@ return [
     'attachable_id' => 'Attachable ID',
     'size' => 'Size',
     'mime' => 'MIME Type',
+
 ];

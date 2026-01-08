@@ -32,4 +32,5 @@ return [
     'priority' => 'Priority',
     'status' => 'Status',
     'due_date' => 'Due Date',
+
 ];

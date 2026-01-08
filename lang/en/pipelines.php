@@ -27,4 +27,5 @@ return [
     'deleted_by' => 'Deleted By',
     'deleted_at' => 'Deleted At',
     'is_default' => 'Is Default',
+
 ];
