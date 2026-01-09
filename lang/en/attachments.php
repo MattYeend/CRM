@@ -12,6 +12,7 @@ return [
     | application's requirements.
     |
     */
+
     'create' => 'Create an Attachment',
     'update' => 'Update Attachment',
     'show' => 'View Attachment Details',
