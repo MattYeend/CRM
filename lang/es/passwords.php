@@ -19,7 +19,7 @@ return [
     'throttled' => 'Por favor espera antes de reintentar.',
     'token' => 'Este token de restablecimiento de contraseña no 
         es válido.',
-    'user' => "No podemos encontrar un usuario con esa dirección 
-        de correo electrónico.",
+    'user' => 'No podemos encontrar un usuario con esa dirección 
+        de correo electrónico.',
 
 ];
