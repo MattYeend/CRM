@@ -23,8 +23,8 @@ return [
     'alpha' => 'El campo :attribute solo debe contener letras.',
     'alpha_dash' => 'El campo :attribute solo debe contener 
         letras, números, guiones y guiones bajos.',
-    'alpha_num' => 'El campo :attribute solo debe contener
-        letras y números.',
+    'alpha_num' => 'El campo :attribute solo debe 
+        contener letras y números.',
     'any_of' => 'El campo :attribute es inválido.',
     'array' => 'El campo :attribute debe ser un arreglo.',
     'ascii' => 'El campo :attribute solo debe contener 
@@ -49,7 +49,8 @@ return [
     'current_password' => 'La contraseña es incorrecta.',
     'date' => 'El campo :attribute debe ser una fecha válida.',
     'date_equals' => 'El campo :attribute debe ser una fecha igual a :date.',
-    'date_format' => 'El campo :attribute debe coincidir con el formato :format.',
+    'date_format' => 'El campo :attribute debe coincidir con el 
+        formato :format.',
     'decimal' => 'El campo :attribute debe tener :decimal lugares decimales.',
     'declined' => 'El campo :attribute debe ser rechazado.',
     'declined_if' => 'El campo :attribute debe ser rechazado cuando 
@@ -58,7 +59,8 @@ return [
     'digits' => 'El campo :attribute debe tener :digits dígitos.',
     'digits_between' => 'El campo :attribute debe tener entre 
         :min y :max dígitos.',
-    'dimensions' => 'El campo :attribute tiene dimensiones de imagen inválidas.',
+    'dimensions' => 'El campo :attribute tiene dimensiones de imagen 
+        inválidas.',
     'distinct' => 'El campo :attribute tiene un valor duplicado.',
     'doesnt_contain' => 'El campo :attribute no debe contener 
         ninguno de los siguientes: :values.',
@@ -66,7 +68,8 @@ return [
         uno de los siguientes: :values.',
     'doesnt_start_with' => 'El campo :attribute no debe comenzar con 
         uno de los siguientes: :values.',
-    'email' => 'El campo :attribute debe ser una dirección de correo electrónico válida.',
+    'email' => 'El campo :attribute debe ser una dirección de correo 
+        electrónico válida.',
     'ends_with' => 'El campo :attribute debe terminar con uno de los 
         siguientes: :values.',
     'enum' => 'El :attribute seleccionado es inválido.',

@@ -23,7 +23,8 @@ return [
     'forbidden' => 'Acceso prohibido',
     'not_found' => 'Recurso no encontrado',
     'server_error' => 'Error interno del servidor',
-    'contact_support' => 'Por favor, contacte al soporte si el problema persiste',
+    'contact_support' => 'Por favor, contacte al soporte si el 
+        problema persiste',
     'try_again' => 'Por favor, inténtelo de nuevo más tarde',
     'status' => 'Estado',
     'active' => 'Activo',
