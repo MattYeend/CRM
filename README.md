@@ -7,8 +7,10 @@ A Laravel 12 CRM system
 2. [General Information](#general-information)
     1. [Key Highlights](#key-highlights)
     2. [Core Features](#core-features)
-3. [How To Contribute](#how-to-contribute)
-4. [How To Setup](#how-to-setup)
+3. [How To Setup](#how-to-setup)
+4. [How To Contribute](#how-to-contribute)
+    1. [Commit Conventions](#commit-conventions)
+    2. [Maintainer Merge Strategy](#maintainer-merge-strategy)
 5. [General CLI Commands](#general-cli-commands)
 6. [Sponsor The Project](#sponsor-the-project)
 <!-- /TOC -->
@@ -31,8 +33,8 @@ A Laravel 12 CRM system
 ---
 
 ## General Information
-This project is a Customer Relationship Management (CRM) System built with Laravel 12.
-It provides an all-in-one platform to manage and streamline business operations, combining multiple CRM features into a single, cohesive application.
+This project is an all-in-one CRM system designed to help businesses manage customers, leads, and internal workflows from a single platform.
+It is built with Laravel 12, following common Laravel OSS conventions, with an emphasis on clean architecture, extensibility, and long-term maintainability.
 
 ### Key Highlights
 - Built in Laravel 12 - leveraging the latest framework features for performance, security, and scalability
@@ -43,23 +45,6 @@ It provides an all-in-one platform to manage and streamline business operations,
 - Customer & Lead Management: Organise contacts, track leads, and maintain detailed profiles
 - Role-Based Access Control: Secure user management with customizable permissions
 - Analytics & Reporting: Gain insights into business performance with dynamic dashboards
-
----
-
-## How To Contribute
-We welcome contributions! To contribute:
-
-1. Fork the repository.
-2. Create a new branch: `git checkout -b feature/your-feature-name`.
-3. Make your changes and commit: `git commit -m '#issue-number Add your message here'`.
-4. Run `php artisan insights` and make any relevant changes that it might suggest.
-5. Ensure that the relevant language file(s) have been created.
-6. Ensure there's relevant tests and that they work and pass.
-7. If anything requires `vue.js` changes, run: `npm i && npm run build`.
-8. Push to your fork: `git push origin feature/your-feature-name`.
-9. Create a Pull Request.
-
-Please follow the code style and commit message conventions.
 
 ---
 
@@ -102,6 +87,58 @@ php artisan storage:link
 php artisan serve
 npm run dev
 ```
+
+---
+
+## How To Contribute
+This project follows the standard Laravel OSS fork-and-pull-request workflow, used by most open-source Laravel packages and applications.
+
+1. Fork the repository.
+2. Create a new branch: `git checkout -b feature/your-feature-name`.
+3. Make your changes and commit: `git commit -m '#issue-number Add your message here'`.
+4. Run `php artisan insights` and make any relevant changes that it might suggest.
+5. Ensure that the relevant language file(s) have been created.
+6. Ensure there's relevant tests and that they work and pass.
+7. If anything requires `vue.js` changes, run: `npm i && npm run build`.
+8. Push to your fork: `git push origin feature/your-feature-name`.
+9. Create a Pull Request.
+
+Please follow the code style and commit message conventions.
+
+---
+
+### Commit Conventions
+To keep the commit history clean and consistent, please follow these conventions:
+```graphql
+#issue-number Short, clear description in the imperative mood
+```
+
+Examples
+```graphql
+#42 Add customer export feature
+#87 Fix validation for lead creation
+#101 Refactor role permission checks
+```
+
+Guidelines:
+- Reference an issue number where applicable
+- Use the imperative mood (“Add”, not “Added”)
+- Keep commits focused and descriptive
+- Avoid bundling unrelated changes into a single commit
+Maintainers may squash commits on merge.
+
+---
+
+### Maintainer Merge Strategy
+For clarity and transparency:
+- External contributors do not merge directly
+- All changes enter the project via Pull Requests
+- Pull Requests are reviewed before merging
+- The preferred merge method is Squash and Merge
+- Keeps `main` and `develop` history clean
+- One commit per feature or fix
+- Commit message may be edited by maintainers
+The `main` and `develop` branchs is protected and should never be pushed to directly.
 
 --- 
 
