@@ -158,10 +158,12 @@ The `main` and `develop` branchs is protected and should never be pushed to dire
 | `php artisan make:event EventName` | Creates an event class |
 | `php artisan make:listener ListenerName` | Creates a listener class |
 | `php artisan make:job JobName` | Creates a queued job |
+| `php artisan make:service ServiceName` | Creates a new service class |
 
 --- 
 
 ## Sponsor The Project
-If you find this project useful, consider sponsoring it to support future development and maintenance.
-<a href="https://www.buymeacoffee.com/mattyeend">☕ Buy Me a Coffee</a>
-<a href="https://github.com/sponsors/MattYeend">💸 Personal GitHub Sponsor</a> or <a href="https://github.com/sponsors/MatthewYeend">Company Github Sponsor</a>
+If you find this project useful, consider sponsoring it to support future development and maintenance.<br>
+<a href="https://www.buymeacoffee.com/mattyeend">☕ Buy Me a Coffee</a><br>
+<a href="https://github.com/sponsors/MattYeend">💸 Personal GitHub Sponsor</a><br>
+<a href="https://github.com/sponsors/MatthewYeend">🏢 Company Github Sponsor</a>
