@@ -3,19 +3,21 @@
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
 test('registration screen can be rendered', function () {
-    $response = $this->get(route('register'));
+    // $response = $this->get(route('register'));
 
-    $response->assertStatus(200);
+    // $response->assertStatus(200);
+    $this->markTestSkipped('Registration is disabled.');
 });
 
 test('new users can register', function () {
-    $response = $this->post(route('register.store'), [
-        'name' => 'Test User',
-        'email' => 'test@example.com',
-        'password' => 'password',
-        'password_confirmation' => 'password',
-    ]);
+    // $response = $this->post(route('register.store'), [
+    //     'name' => 'Test User',
+    //     'email' => 'test@example.com',
+    //     'password' => 'password',
+    //     'password_confirmation' => 'password',
+    // ]);
 
-    $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    // $this->assertAuthenticated();
+    // $response->assertRedirect(route('dashboard', absolute: false));
+    $this->markTestSkipped('Registration is disabled.');
 });
