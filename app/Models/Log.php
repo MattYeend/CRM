@@ -143,6 +143,16 @@ class Log extends Model
     public const ACTION_USER_RESTORED = 94;
     public const ACTION_USER_FORCED_DELETED = 95;
 
+    // Learning Material
+    public const ACTION_LEARNING_CREATED = 96;
+    public const ACTION_LEARNING_UPDATED = 97;
+    public const ACTION_LEARNING_DELETED = 98;
+    public const ACTION_LEARNING_RESTORED = 99;
+    public const ACTION_LEARNING_VIEWED = 100;
+    public const ACTION_LEARNING_COMPLETED = 101;
+    public const ACTION_LEARNING_INCOMPLETE = 102;
+    public const ACTION_LEARNING_ARCHIVED = 103;
+
     // New Logging Actions should go here to be reviewed
     // by the development team for future releases.
     // Ensure to update the documentation accordingly.

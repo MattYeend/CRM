@@ -7,6 +7,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DealController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceItemController;
+use App\Http\Controllers\LearningController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PipelineController;
@@ -57,6 +58,8 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     )->name('companies.restore');
 
     Route::apiResource('contacts', ContactController::class);
+
+    Route::apiResource('learnings', LearningController::class);
 
     // Pipelines & stages
     Route::apiResource('pipelines', PipelineController::class);

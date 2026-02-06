@@ -76,6 +76,12 @@ class PermissionRoleSeeder extends Seeder
 
             'settings.view',
             'settings.manage',
+
+            'learning.view',
+            'learning.create',
+            'learning.update',
+            'learning.delete',
+            'learning.access',
         ];
 
         foreach ($adminPermissions as $permissionName) {
@@ -115,6 +121,9 @@ class PermissionRoleSeeder extends Seeder
 
             'pipelines.view',
             'reports.view',
+
+            'learning.view',
+            'learning.access',
         ];
 
         foreach ($userPermissions as $permissionName) {

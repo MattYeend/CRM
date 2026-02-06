@@ -71,6 +71,14 @@ class PermissionSeeder extends Seeder
             // Settings
             ['name' => 'settings.view', 'label' => 'View settings'],
             ['name' => 'settings.manage', 'label' => 'Manage settings'],
+
+            // Learning Material
+            ['name' => 'learning.view', 'label' => 'View learning material'],
+            ['name' => 'learning.create', 'label' => 'Create learning material'],
+            ['name' => 'learning.update', 'label' => 'Update learning material'],
+            ['name' => 'learning.delete', 'label' => 'Delete learning material'],
+            ['name' => 'learning.manage', 'label' => 'Manage learning material'],
+            ['name' => 'learning.access', 'label' => 'Access learning material'],
         ];
 
         foreach ($permissions as $permission) {
