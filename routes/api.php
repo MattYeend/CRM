@@ -59,7 +59,17 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
     Route::apiResource('contacts', ContactController::class);
 
+    // Learnings
     Route::apiResource('learnings', LearningController::class);
+    Route::post(
+        'learnings/{learning}/complete',
+        [LearningController::class, 'complete']
+    )->name('learnings.complete');
+    
+    Route::post(
+        'learnings/{learning}/incomplete',
+        [LearningController::class, 'incomplete']
+    )->name('learnings.incomplete');
 
     // Pipelines & stages
     Route::apiResource('pipelines', PipelineController::class);
