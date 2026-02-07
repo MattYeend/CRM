@@ -65,7 +65,6 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         'learnings/{learning}/complete',
         [LearningController::class, 'complete']
     )->name('learnings.complete');
-    
     Route::post(
         'learnings/{learning}/incomplete',
         [LearningController::class, 'incomplete']

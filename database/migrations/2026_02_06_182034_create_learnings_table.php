@@ -19,9 +19,7 @@ return new class extends Migration
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
-            $table->foreignId('completed_by')->nullable()->constrained('users')->nullOnDelete();
-            $table->dateTime('completed_at')->nullable();
-            $table->boolean('is_completed')->default(false);
+            $table->json('meta')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

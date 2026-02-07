@@ -88,6 +88,18 @@ class User extends Authenticatable
     }
 
     /**
+     * The learnings belonging to the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function learnings()
+    {
+        return $this->belongsToMany(Learning::class)
+            ->withPivot(['is_completed', 'completed_by', 'completed_at'])
+            ->withTimestamps();
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

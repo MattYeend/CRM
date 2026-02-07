@@ -39,7 +39,7 @@ class LearningController extends Controller
         $perPage = (int) $request->query('per_page', 10);
 
         return response()->json(
-            Learning::with('user')->paginate($perPage)
+            Learning::with('users')->paginate($perPage)
         );
     }
 
@@ -52,7 +52,7 @@ class LearningController extends Controller
      */
     public function show(Learning $learning)
     {
-        return response()->json($learning->load('user'));
+        return response()->json($learning->load('users'));
     }
 
     /**
@@ -76,9 +76,9 @@ class LearningController extends Controller
         ]);
 
         $this->logger->learningCreated(
-            $learning,
             $request->user(),
-            $request->user()->id
+            $request->user()->id,
+            $learning,
         );
 
         return response()->json($learning, 201);

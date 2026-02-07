@@ -235,6 +235,7 @@ class LearningLogService
             'title' => $learning->title,
             'description' => $learning->description,
             'date' => $learning->date,
+            'meta' => $learning->meta,
         ];
     }
 }
