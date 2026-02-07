@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Builder;
 
 class Learning extends Model
 {
@@ -74,7 +74,7 @@ class Learning extends Model
     }
 
     /**
-     * The users that are assigned to this learning.     
+     * The users that are assigned to this learning.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
