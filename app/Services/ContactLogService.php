@@ -16,11 +16,11 @@ class ContactLogService
     /**
      * Log the creation of a contact.
      *
-     * @param User $user The user that was created.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Contact $contact The contact being logged.
+     * @param Contact $contact The contact that was created.
      *
      * @return Log The created log entry.
      */
@@ -46,11 +46,11 @@ class ContactLogService
     /**
      * Log the update of a contact.
      *
-     * @param User $user The user that was updated.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Contact $contact The contact being logged.
+     * @param Contact $contact The contact that was updated.
      *
      * @return Log The created log entry.
      */
@@ -76,11 +76,11 @@ class ContactLogService
     /**
      * Log the deletion of a contact.
      *
-     * @param User $user The user that was deleted.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Contact $contact The contact being logged.
+     * @param Contact $contact The contact that was deleted.
      *
      * @return Log The created log entry.
      */
@@ -105,11 +105,11 @@ class ContactLogService
     /**
      * Log the restoring of a contact.
      *
-     * @param User $user The user that was restored.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Contact $contact The contact being logged.
+     * @param Contact $contact The contact that was restored.
      *
      * @return Log The created log entry.
      */

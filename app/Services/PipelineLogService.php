@@ -16,11 +16,11 @@ class PipelineLogService
     /**
      * Log the creation of a Pipeline.
      *
-     * @param User $user The user that created the pipeline.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Pipeline $pipeline The pipeline being logged.
+     * @param Pipeline $pipeline The pipeline was created.
      *
      * @return Log The created log entry.
      */
@@ -46,11 +46,11 @@ class PipelineLogService
     /**
      * Log the update of a Pipeline.
      *
-     * @param User $user The user that updated the pipeline.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Pipeline $pipeline The pipeline being logged.
+     * @param Pipeline $pipeline The pipeline was updated.
      *
      * @return Log The created log entry.
      */
@@ -76,11 +76,11 @@ class PipelineLogService
     /**
      * Log the deletion of a Pipeline.
      *
-     * @param User $user The user that deleted the pipeline.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Pipeline $pipeline The pipeline being logged.
+     * @param Pipeline $pipeline The pipeline was deleted.
      *
      * @return Log The created log entry.
      */
@@ -106,11 +106,11 @@ class PipelineLogService
     /**
      * Log the restoration of a Pipeline.
      *
-     * @param User $user The user that restored the pipeline.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Pipeline $pipeline The pipeline being logged.
+     * @param Pipeline $pipeline The pipeline was restored.
      *
      * @return Log The created log entry.
      */

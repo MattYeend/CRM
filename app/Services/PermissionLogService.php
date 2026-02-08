@@ -16,11 +16,11 @@ class PermissionLogService
     /**
      * Log the creation of a Permission.
      *
-     * @param User $user The user that was created.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Permission $permission The permission being logged.
+     * @param Permission $permission The permission was created.
      *
      * @return Log The created log entry.
      */
@@ -46,11 +46,11 @@ class PermissionLogService
     /**
      * Log the update of a Permission.
      *
-     * @param User $user The user that was updated.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Permission $permission The permission being logged.
+     * @param Permission $permission The permission was updated.
      *
      * @return Log The created log entry.
      */
@@ -76,11 +76,11 @@ class PermissionLogService
     /**
      * Log the deletion of a Permission.
      *
-     * @param User $user The user that performed the deletion.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Permission $permission The permission being logged.
+     * @param Permission $permission The permission was deleted.
      *
      * @return Log The created log entry.
      */
@@ -106,11 +106,11 @@ class PermissionLogService
     /**
      * Log the restoration of a Permission.
      *
-     * @param User $user The user that performed the restoration.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Permission $permission The permission being logged.
+     * @param Permission $permission The permission was restored.
      *
      * @return Log The created log entry.
      */

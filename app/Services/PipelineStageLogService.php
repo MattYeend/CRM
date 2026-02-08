@@ -16,11 +16,11 @@ class PipelineStageLogService
     /**
      * Log the creation of a Pipeline Stage.
      *
-     * @param User $user The user that created the pipeline stage.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param PipelineStage $pipelineStage The pipeline stage being logged.
+     * @param PipelineStage $pipelineStage The pipeline stage was created.
      *
      * @return Log The created log entry.
      */
@@ -46,11 +46,11 @@ class PipelineStageLogService
     /**
      * Log the update of a Pipeline Stage.
      *
-     * @param User $user The user that updated the pipeline stage.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param PipelineStage $pipelineStage The pipeline stage being logged.
+     * @param PipelineStage $pipelineStage The pipeline stage was updated.
      *
      * @return Log The created log entry.
      */
@@ -76,11 +76,11 @@ class PipelineStageLogService
     /**
      * Log the deletion of a Pipeline Stage.
      *
-     * @param User $user The user that deleted the pipeline stage.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param PipelineStage $pipelineStage The pipeline stage being logged.
+     * @param PipelineStage $pipelineStage The pipeline stage was deleted.
      *
      * @return Log The created log entry.
      */
@@ -106,11 +106,11 @@ class PipelineStageLogService
     /**
      * Log the restoration of a Pipeline Stage.
      *
-     * @param User $user The user that restored the pipeline stage.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param PipelineStage $pipelineStage The pipeline stage being logged.
+     * @param PipelineStage $pipelineStage The pipeline stage was restored.
      *
      * @return Log The created log entry.
      */

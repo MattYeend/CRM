@@ -16,11 +16,11 @@ class DealLogService
     /**
      * Log the creation of a deal.
      *
-     * @param User $user The user that was created.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Deal $deal The deal being logged.
+     * @param Deal $deal The deal that was created.
      *
      * @return Log The created log entry.
      */
@@ -46,11 +46,11 @@ class DealLogService
     /**
      * Log the update of a deal.
      *
-     * @param User $user The user that was updated.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Deal $deal The deal being logged.
+     * @param Deal $deal The deal that was updated.
      *
      * @return Log The created log entry.
      */
@@ -76,11 +76,11 @@ class DealLogService
     /**
      * Log the deletion of a deal.
      *
-     * @param User $user The user that was deleted.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Deal $deal The deal being logged.
+     * @param Deal $deal The deal that was deleted.
      *
      * @return Log The created log entry.
      */
@@ -106,11 +106,11 @@ class DealLogService
     /**
      * Log the restoration of a deal.
      *
-     * @param User $user The user that was restored.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Deal $deal The deal being logged.
+     * @param Deal $deal The deal that was restored.
      *
      * @return Log The created log entry.
      */

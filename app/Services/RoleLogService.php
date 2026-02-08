@@ -16,11 +16,11 @@ class RoleLogService
     /**
      * Log the creation of a Role.
      *
-     * @param User $user The user that created the role.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Role $role The role being logged.
+     * @param Role $role The role was created.
      *
      * @return Log The created log entry.
      */
@@ -46,11 +46,11 @@ class RoleLogService
     /**
      * Log the update of a Role.
      *
-     * @param User $user The user that updated the role.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Role $role The role being logged.
+     * @param Role $role The role was updated.
      *
      * @return Log The created log entry.
      */
@@ -76,11 +76,11 @@ class RoleLogService
     /**
      * Log the deletion of a Role.
      *
-     * @param User $user The user that deleted the role.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Role $role The role being logged.
+     * @param Role $role The role was deleted.
      *
      * @return Log The created log entry.
      */
@@ -106,11 +106,11 @@ class RoleLogService
     /**
      * Log the restoration of a Role.
      *
-     * @param User $user The user that restored the role.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Role $role The role being logged.
+     * @param Role $role The role was restored.
      *
      * @return Log The created log entry.
      */

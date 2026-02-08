@@ -16,7 +16,7 @@ class ActivityLogService
     /**
      * Log activity when a new activity is created.
      *
-     * @param User $user The user that was created.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
@@ -51,7 +51,7 @@ class ActivityLogService
     /**
      * Log activity when an activity is updated.
      *
-     * @param User $user The user that was updated.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
@@ -86,7 +86,7 @@ class ActivityLogService
     /**
      * Log activity when an activity is deleted.
      *
-     * @param User $user The user that was deleted.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
@@ -121,7 +121,7 @@ class ActivityLogService
     /**
      * Log activity when an activity is completed.
      *
-     * @param User $user The user that completed the activity.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
@@ -156,7 +156,7 @@ class ActivityLogService
     /**
      * Log activity when an activity is reopened.
      *
-     * @param User $user The user that reopened the activity.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *

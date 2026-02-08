@@ -16,11 +16,11 @@ class InvoiceLogService
     /**
      * Log the creation of an Invoice.
      *
-     * @param User $user The user that was created.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Invoice $invoice The invoice being logged.
+     * @param Invoice $invoice The invoice that was created.
      *
      * @return Log The created log entry.
      */
@@ -46,11 +46,11 @@ class InvoiceLogService
     /**
      * Log the update of an Invoice.
      *
-     * @param User $user The user that was updated.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Invoice $invoice The invoice being logged.
+     * @param Invoice $invoice The invoice that was updated.
      *
      * @return Log The created log entry.
      */
@@ -76,11 +76,11 @@ class InvoiceLogService
     /**
      * Log the deletion of an Invoice.
      *
-     * @param User $user The user that was deleted.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Invoice $invoice The invoice being logged.
+     * @param Invoice $invoice The invoice that was deleted.
      *
      * @return Log The created log entry.
      */
@@ -106,11 +106,11 @@ class InvoiceLogService
     /**
      * Log the restoration of an Invoice.
      *
-     * @param User $user The user that was restored.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Invoice $invoice The invoice being logged.
+     * @param Invoice $invoice The invoice that was restored.
      *
      * @return Log The created log entry.
      */
@@ -136,11 +136,11 @@ class InvoiceLogService
     /**
      * Log the sending of an Invoice.
      *
-     * @param User $user The user that sent the invoice.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Invoice $invoice The invoice being logged.
+     * @param Invoice $invoice The invoice was sent.
      *
      * @return Log The created log entry.
      */
@@ -166,11 +166,11 @@ class InvoiceLogService
     /**
      * Log the payment of an Invoice.
      *
-     * @param User $user The user that paid the invoice.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Invoice $invoice The invoice being logged.
+     * @param Invoice $invoice The invoice was paid.
      *
      * @return Log The created log entry.
      */
@@ -196,11 +196,11 @@ class InvoiceLogService
     /**
      * Log the overdue status of an Invoice.
      *
-     * @param User $user The user that marked the invoice as overdue.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Invoice $invoice The invoice being logged.
+     * @param Invoice $invoice The invoice was marked as overdue.
      *
      * @return Log The created log entry.
      */

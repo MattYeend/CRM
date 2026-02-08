@@ -16,11 +16,11 @@ class ProductLogService
     /**
      * Log the creation of a Product.
      *
-     * @param User $user The user that created the product.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Product $product The product being logged.
+     * @param Product $product The product was created.
      *
      * @return Log The created log entry.
      */
@@ -46,11 +46,11 @@ class ProductLogService
     /**
      * Log the update of a Product.
      *
-     * @param User $user The user that updated the product.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Product $product The product being logged.
+     * @param Product $product The product was updated.
      *
      * @return Log The created log entry.
      */
@@ -76,11 +76,11 @@ class ProductLogService
     /**
      * Log the deletion of a Product.
      *
-     * @param User $user The user that deleted the product.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Product $product The product being logged.
+     * @param Product $product The product was deleted.
      *
      * @return Log The created log entry.
      */
@@ -106,11 +106,11 @@ class ProductLogService
     /**
      * Log the restoration of a Product.
      *
-     * @param User $user The user that restored the product.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Product $product The product being logged.
+     * @param Product $product The product was restored.
      *
      * @return Log The created log entry.
      */

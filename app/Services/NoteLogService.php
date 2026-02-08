@@ -16,11 +16,11 @@ class NoteLogService
     /**
      * Log the creation of a Note.
      *
-     * @param User $user The user that created the note.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Note $note The note being logged.
+     * @param Note $note The note was created.
      *
      * @return Log The created log entry.
      */
@@ -46,11 +46,11 @@ class NoteLogService
     /**
      * Log the update of a Note.
      *
-     * @param User $user The user that updated the note.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Note $note The note being logged.
+     * @param Note $note The note was updated.
      *
      * @return Log The created log entry.
      */
@@ -76,11 +76,11 @@ class NoteLogService
     /**
      * Log the deletion of a Note.
      *
-     * @param User $user The user that deleted the note.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Note $note The note being logged.
+     * @param Note $note The note was deleted.
      *
      * @return Log The created log entry.
      */
@@ -106,11 +106,11 @@ class NoteLogService
     /**
      * Log the restoration of a Note.
      *
-     * @param User $user The user that restored the note.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Note $note The note being logged.
+     * @param Note $note The note was restored.
      *
      * @return Log The created log entry.
      */

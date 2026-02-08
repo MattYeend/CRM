@@ -16,9 +16,11 @@ class UserLogService
      * Log the creation of a User.
      *
      * @param User|null $actor The user that created the user (nullable).
-     * @param int|null  $actorId The ID of the user who performed the
+     *
+     * @param int|null $actorId The ID of the user who performed the
      * action (nullable).
-     * @param User      $user The user being logged.
+     *
+     * @param User $user The user being logged.
      *
      * @return array The created log payload.
      */

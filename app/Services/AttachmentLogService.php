@@ -16,11 +16,11 @@ class AttachmentLogService
     /**
      * Log the attachment of a file.
      *
-     * @param User $user The user that was created.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Attachment $attachment The attachment being logged.
+     * @param Attachment $attachment The attachment that was updated.
      *
      * @return Log The created log entry.
      */
@@ -46,11 +46,11 @@ class AttachmentLogService
     /**
      * Log the attachment of a file being deleted.
      *
-     * @param User $user The user that was created.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Attachment $attachment The attachment being logged.
+     * @param Attachment $attachment The attachment that was deleted.
      *
      * @return Log The created log entry.
      */
@@ -76,11 +76,11 @@ class AttachmentLogService
     /**
      * Log the attachment of a file being downloaded.
      *
-     * @param User $user The user that was created.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Attachment $attachment The attachment being logged.
+     * @param Attachment $attachment The attachment that was downloaded.
      *
      * @return Log The created log entry.
      */

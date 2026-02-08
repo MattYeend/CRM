@@ -16,11 +16,11 @@ class InvoiceItemLogService
     /**
      * Log the creation of an Invoice Item.
      *
-     * @param User $user The user that created the invoice item.
+     * @param User $user The user being logged
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param InvoiceItem $invoiceItem The invoice item being logged.
+     * @param InvoiceItem $invoiceItem The invoice item was created.
      *
      * @return Log The created log entry.
      */
@@ -46,11 +46,11 @@ class InvoiceItemLogService
     /**
      * Log the update of an Invoice Item.
      *
-     * @param User $user The user that updated the invoice item.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param InvoiceItem $invoiceItem The invoice item being logged.
+     * @param InvoiceItem $invoiceItem The invoice item was updated.
      *
      * @return Log The created log entry.
      */
@@ -76,11 +76,11 @@ class InvoiceItemLogService
     /**
      * Log the deletion of an Invoice Item.
      *
-     * @param User $user The user that deleted the invoice item.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param InvoiceItem $invoiceItem The invoice item being logged.
+     * @param InvoiceItem $invoiceItem The invoice item was deleted.
      *
      * @return Log The created log entry.
      */
@@ -106,11 +106,11 @@ class InvoiceItemLogService
     /**
      * Log the restoration of an Invoice Item.
      *
-     * @param User $user The user that restored the invoice item.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param InvoiceItem $invoiceItem The invoice item being logged.
+     * @param InvoiceItem $invoiceItem The invoice item was restored.
      *
      * @return Log The created log entry.
      */

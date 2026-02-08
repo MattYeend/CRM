@@ -16,11 +16,11 @@ class LearningLogService
     /**
      * Log the creation of an Learning.
      *
-     * @param User $user The user that was created.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Learning $learning The learning being logged.
+     * @param Learning $learning The learning was created.
      *
      * @return Log The created log entry.
      */
@@ -46,11 +46,11 @@ class LearningLogService
     /**
      * Log the update of an Learning.
      *
-     * @param User $user The user that was updated.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Learning $learning The learning being logged.
+     * @param Learning $learning The learning was updated.
      *
      * @return Log The created log entry.
      */
@@ -76,11 +76,11 @@ class LearningLogService
     /**
      * Log the deletion of an Learning.
      *
-     * @param User $user The user that was doing the action.
+     * @param User $user The user was logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Learning $learning The learning being deleted.
+     * @param Learning $learning The learning was deleted.
      *
      * @return Log The created log entry.
      */
@@ -106,11 +106,11 @@ class LearningLogService
     /**
      * Log the restoration of an Learning.
      *
-     * @param User $user The user that was restored.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Learning $learning The learning being logged.
+     * @param Learning $learning The learning was restored.
      *
      * @return Log The created log entry.
      */
@@ -136,11 +136,11 @@ class LearningLogService
     /**
      * Log the complete status of an Learning.
      *
-     * @param User $user The user that marked the learning as overdue.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Learning $learning The learning being logged.
+     * @param Learning $learning The learning was marked as complete.
      *
      * @return Log The created log entry.
      */
@@ -167,11 +167,11 @@ class LearningLogService
     /**
      * Log the incomplete status of an Learning.
      *
-     * @param User $user The user that marked the learning as incomplete.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Learning $learning The learning being logged.
+     * @param Learning $learning The learning was marked as incomplete.
      */
     public function learningIncomplete(
         User $user,
@@ -196,11 +196,11 @@ class LearningLogService
     /**
      * Log the viewing of an Learning.
      *
-     * @param User $user The user that viewed the learning.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Learning $learning The learning being logged.
+     * @param Learning $learning The learning was viewed.
      */
     public function learningViewed(
         User $user,

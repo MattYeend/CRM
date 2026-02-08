@@ -16,11 +16,11 @@ class TaskLogService
     /**
      * Log the creation of a Task.
      *
-     * @param User $user The user that created the task.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Task $task The task being logged.
+     * @param Task $task The task was created.
      *
      * @return Log The created log entry.
      */
@@ -46,11 +46,11 @@ class TaskLogService
     /**
      * Log the update of a Task.
      *
-     * @param User $user The user that updated the task.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Task $task The task being logged.
+     * @param Task $task The task was updated.
      *
      * @return Log The created log entry.
      */
@@ -76,11 +76,11 @@ class TaskLogService
     /**
      * Log the deletion of a Task.
      *
-     * @param User $user The user that deleted the task.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Task $task The task being logged.
+     * @param Task $task The task was deleted.
      *
      * @return Log The created log entry.
      */
@@ -106,11 +106,11 @@ class TaskLogService
     /**
      * Log the restoration of a Task.
      *
-     * @param User $user The user that restored the task.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Task $task The task being logged.
+     * @param Task $task The task was restored.
      *
      * @return Log The created log entry.
      */
@@ -136,11 +136,11 @@ class TaskLogService
     /**
      * Log the completion of a Task.
      *
-     * @param User $user The user that completed the task.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Task $task The task being logged.
+     * @param Task $task The task was completed.
      *
      * @return Log The created log entry.
      */
@@ -166,11 +166,11 @@ class TaskLogService
     /**
      * Log the reopening of a Task.
      *
-     * @param User $user The user that reopened the task.
+     * @param User $user The user being logged.
      *
      * @param int $userId The ID of the user who performed the action.
      *
-     * @param Task $task The task being logged.
+     * @param Task $task The task was reopened.
      *
      * @return Log The created log entry.
      */
