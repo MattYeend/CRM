@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import ErrorLayout from './ErrorLayout.vue'
 
-const props = defineProps({
-    code: Number,
-    title: String,
-    description: String
-})
+defineProps<{
+  code: number
+  title: string
+  description: string
+}>()
 </script>
 
 <template>
