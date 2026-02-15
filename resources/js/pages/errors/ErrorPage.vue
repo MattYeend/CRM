@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import ErrorLayout from './ErrorLayout.vue'
 
 const props = defineProps({
