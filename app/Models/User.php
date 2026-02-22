@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -55,6 +56,77 @@ class User extends Authenticatable
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class)->withTimestamps();
+    }
+
+    /**
+     * The permissions that belong to the user through roles.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function permissions()
+    {
+        return $this->roles()
+            ->join(
+                'permission_role',
+                'roles.id',
+                '=',
+                'permission_role.role_id'
+            )
+            ->join(
+                'permissions',
+                'permissions.id',
+                '=',
+                'permission_role.permission_id'
+            )
+            ->select('permissions.name');
+    }
+
+    /**
+     * Get all permissions for the user, caching the result for 60 minutes.
+     *
+     * @return array<int, string>
+     */
+    public function getAllPermissions(): array
+    {
+        return Cache::remember(
+            "user_permissions_{$this->id}",
+            60,
+            fn () => $this->permissions()->pluck('name')->toArray()
+        );
+    }
+
+    /**
+     * Check if the user has a specific permission.
+     *
+     * @param string $permission
+     *
+     * @return bool
+     */
+    public function hasPermission(string $permission): bool
+    {
+        return in_array($permission, $this->getAllPermissions());
+    }
+
+    /**
+     * Check if the user has a specific role.
+     *
+     * @param string $role
+     *
+     * @return bool
+     */
+    public function hasRole(string $role): bool
+    {
+        return $this->roles()->where('label', $role)->exists();
+    }
+
+    /**
+     * Clear the cached permissions for the user.
+     *
+     * @return void
+     */
+    public function clearPermissionCache(): void
+    {
+        Cache::forget("user_permissions_{$this->id}");
     }
 
     /**
