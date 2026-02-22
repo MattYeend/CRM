@@ -12,7 +12,8 @@ A Laravel 12 CRM system
     1. [Commit Conventions](#commit-conventions)
     2. [Maintainer Merge Strategy](#maintainer-merge-strategy)
 5. [General CLI Commands](#general-cli-commands)
-6. [Sponsor The Project](#sponsor-the-project)
+6. [Specific CLI Commands](#specific-cli-commands)
+7. [Sponsor The Project](#sponsor-the-project)
 <!-- /TOC -->
 
 ---
@@ -158,9 +159,17 @@ The `main` and `develop` branchs is protected and should never be pushed to dire
 | `php artisan make:event EventName` | Creates an event class |
 | `php artisan make:listener ListenerName` | Creates a listener class |
 | `php artisan make:job JobName` | Creates a queued job |
-| `php artisan make:service ServiceName` | Creates a new service class |
 
 --- 
+
+## Specific CLI Commands
+
+| Command | Description | 
+| --- | --- |
+| `php artisan make:service ServiceName` | Creates a new service class |
+| `php artisan permission:clear` | Clear permissions if changed |
+
+---
 
 ## Sponsor The Project
 If you find this project useful, consider sponsoring it to support future development and maintenance.<br>
