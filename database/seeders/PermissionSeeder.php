@@ -22,13 +22,6 @@ class PermissionSeeder extends Seeder
             ['name' => 'users.delete', 'label' => 'Delete users'],
             ['name' => 'users.manage', 'label' => 'Manage users'],
 
-            // Leads
-            ['name' => 'leads.view', 'label' => 'View leads'],
-            ['name' => 'leads.create', 'label' => 'Create leads'],
-            ['name' => 'leads.update.own', 'label' => 'Update own leads'],
-            ['name' => 'leads.update.any', 'label' => 'Update any leads'],
-            ['name' => 'leads.delete', 'label' => 'Delete leads'],
-
             // Deals
             ['name' => 'deals.view', 'label' => 'View deals'],
             ['name' => 'deals.create', 'label' => 'Create deals'],

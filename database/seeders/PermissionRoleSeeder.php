@@ -43,11 +43,6 @@ class PermissionRoleSeeder extends Seeder
             'users.update',
             'users.delete',
 
-            'leads.view',
-            'leads.create',
-            'leads.update.any',
-            'leads.delete',
-
             'deals.view',
             'deals.create',
             'deals.update.any',
@@ -100,10 +95,6 @@ class PermissionRoleSeeder extends Seeder
         |--------------------------------------------------------------------------
         */
         $userPermissions = [
-            'leads.view',
-            'leads.create',
-            'leads.update.own',
-
             'deals.view',
             'deals.create',
             'deals.update.own',
