@@ -168,6 +168,7 @@ The `main` and `develop` branchs is protected and should never be pushed to dire
 | --- | --- |
 | `php artisan make:service ServiceName` | Creates a new service class |
 | `php artisan permission:clear` | Clear permissions if changed |
+| `php artisan insights` | Run insights package | 
 
 ---
 
