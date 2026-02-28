@@ -40,30 +40,30 @@ A Laravel 12 CRM system
 This project is an all-in-one CRM/ERP system designed to help businesses manage customers, leads, sales pipelines, projects, and internal workflows from a single, unified platform. It is built with Laravel 12, following established Laravel open-source conventions and best practices. The architecture emphasises clean separation of concerns, modular design, extensibility, and long-term maintainability.
 
 ### Key Highlights
-- Built in Laravel 12 - leveraging the latest framework features for performance, security, and scalability
-- Modular & Extensible - easily add new modules or integrate with external APIs
-- User-Friendly Interface - modern, responsive design for smooth navigation and usability
+- **Built in Laravel 12** - Leveraging the latest framework features for performance, security, and scalability
+- **Modular & Extensible** - Easily add new modules or integrate with external APIs
+- **User-Friendly Interface** - Modern, responsive design for smooth navigation and usability
 
 ### Core Features
-- Customer & Lead Management: Organise contacts, track leads, and maintain detailed profiles
-- Role-Based Access Control: Secure user management with customizable permissions
-- Analytics & Reporting: Gain insights into business performance with dynamic dashboards
+- **Customer & Lead Management** - Organise contacts, track leads, and maintain detailed profiles
+- **Role-Based Access Control** - Secure user management with customizable permissions
+- **Analytics & Reporting** - Gain insights into business performance with dynamic dashboards
 
 ### Key Functional Areas
 
 #### CRM Features
-- Lead management & qualification
-- Deal pipelines & stage tracking
-- Contact & company management
-- Activity logging (calls, emails, notes)
-- Task assignment & follow-ups
+- **Lead management & qualification** - Capture leads from multiple sources, track status, score and qualify prospects, and convert them into deals or customers
+- **Deal pipelines & stage tracking** - Visual sales pipelines with configurable stages, probability tracking, forecasting, and performance insights
+- **Contact & company management** - Centralised database of individuals and organisations, including communication history, linked deals, and related projects
+- **Activity logging (calls, emails, notes)** - Full interaction timeline per lead, contact, or deal to maintain context and improve collaboration
+- **Task assignment & follow-ups** - Assign tasks to team members, set deadlines, reminders, and ensure timely follow-ups
 
 #### ERP Features
-- Project management
-- Invoicing & billing
-- Role-based access control
-- Workflow automation
-- Reporting & dashboards
+- **Project management** - Manage projects from initiation to completion, assign team members, track progress, and monitor milestones
+- **Invoicing & billing** - Generate invoices, manage payment statuses, track outstanding balances, and maintain financial records
+- **Role-based access control** - Fine-grained permission system to control access to modules, actions, and sensitive data
+- **Workflow automation** - Automate repetitive processes such as status changes, notifications, and task creation based on business rules
+- **Reporting & dashboards** - Real-time insights into sales performance, revenue, pipeline health, and operational metrics
 
 ---
 
