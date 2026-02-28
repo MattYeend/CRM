@@ -48,6 +48,11 @@ class PermissionRoleSeeder extends Seeder
             'deals.update.any',
             'deals.delete',
 
+            'leads.view',
+            'leads.create',
+            'leads.update.any',
+            'leads.delete',
+
             'contacts.view',
             'contacts.create',
             'contacts.update',
@@ -98,6 +103,10 @@ class PermissionRoleSeeder extends Seeder
             'deals.view',
             'deals.create',
             'deals.update.own',
+
+            'leads.view',
+            'leads.create',
+            'leads.update.own',
 
             'contacts.view',
             'contacts.create',

@@ -153,6 +153,16 @@ class Log extends Model
     public const ACTION_LEARNING_INCOMPLETE = 102;
     public const ACTION_LEARNING_ARCHIVED = 103;
 
+    // Leads
+    public const ACTION_LEAD_CREATED = 104;
+    public const ACTION_LEAD_UPDATED = 105;
+    public const ACTION_LEAD_DELETED = 106;
+    public const ACTION_LEAD_RESTORED = 107;
+    public const ACTION_LEAD_CONVERTED = 108;
+    public const ACTION_LEAD_UNCONVERTED = 109;
+    public const ACTION_LEAD_VIEWED = 110;
+    public const ACTION_LEAD_ASSIGNED = 111;
+
     // New Logging Actions should go here to be reviewed
     // by the development team for future releases.
     // Ensure to update the documentation accordingly.

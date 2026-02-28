@@ -12,6 +12,8 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Gate;
 use App\Models\Deal;
 use App\Policies\DealPolicy;
+use App\Models\Lead;
+use App\Policies\LeadPolicy;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -93,9 +95,12 @@ return Application::configure(basePath: dirname(__DIR__))
         |
         | Here we register the DealPolicy for the Deal model. This allows us 
         | to use the policy methods for authorization checks on Deal instances.
+        | We also register the LeadPolicy for the Lead model to handle authorization
+        | for Lead instances.
         |--------------------------------------------------------------------------
         */
         Gate::policy(Deal::class, DealPolicy::class);
+        Gate::policy(Lead::class, LeadPolicy::class);
     })
 
     ->create();

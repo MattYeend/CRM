@@ -7,6 +7,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DealController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceItemController;
+use App\Http\Controllers\LeadController;
 use App\Http\Controllers\LearningController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\PermissionController;
@@ -80,6 +81,10 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         'deals/{id}/restore',
         [DealController::class, 'restore']
     )->name('deals.restore');
+    Route::delete(
+        'deals/{id}/force',
+        [DealController::class, 'forceDelete']
+    )->name('deals.forceDelete');
 
     // Tasks, Notes, Activities
     Route::apiResource('tasks', TaskController::class);
@@ -107,8 +112,14 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         'companies/{id}/force',
         [CompanyController::class, 'forceDelete']
     )->name('companies.forceDelete');
+
+    Route::apiResource('leads', LeadController::class);
+    Route::post(
+        'leads/{id}/restore',
+        [LeadController::class, 'restore']
+    )->name('leads.restore');
     Route::delete(
-        'deals/{id}/force',
-        [DealController::class, 'forceDelete']
-    )->name('deals.forceDelete');
+        'leads/{id}/force',
+        [LeadController::class, 'forceDelete']
+    )->name('leads.forceDelete');
 });
