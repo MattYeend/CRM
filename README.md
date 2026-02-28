@@ -7,6 +7,9 @@ A Laravel 12 CRM system
 2. [General Information](#general-information)
     1. [Key Highlights](#key-highlights)
     2. [Core Features](#core-features)
+    3. [Key Functional Areas](#key-functional-areas)
+        1. [CRM Features](#crm-features)
+        2. [ERP Features](#erp-features)
 3. [How To Setup](#how-to-setup)
 4. [How To Contribute](#how-to-contribute)
     1. [Commit Conventions](#commit-conventions)
@@ -34,8 +37,7 @@ A Laravel 12 CRM system
 ---
 
 ## General Information
-This project is an all-in-one CRM system designed to help businesses manage customers, leads, and internal workflows from a single platform.
-It is built with Laravel 12, following common Laravel OSS conventions, with an emphasis on clean architecture, extensibility, and long-term maintainability.
+This project is an all-in-one CRM/ERP system designed to help businesses manage customers, leads, sales pipelines, projects, and internal workflows from a single, unified platform. It is built with Laravel 12, following established Laravel open-source conventions and best practices. The architecture emphasises clean separation of concerns, modular design, extensibility, and long-term maintainability.
 
 ### Key Highlights
 - Built in Laravel 12 - leveraging the latest framework features for performance, security, and scalability
@@ -46,6 +48,22 @@ It is built with Laravel 12, following common Laravel OSS conventions, with an e
 - Customer & Lead Management: Organise contacts, track leads, and maintain detailed profiles
 - Role-Based Access Control: Secure user management with customizable permissions
 - Analytics & Reporting: Gain insights into business performance with dynamic dashboards
+
+### Key Functional Areas
+
+#### CRM Features
+- Lead management & qualification
+- Deal pipelines & stage tracking
+- Contact & company management
+- Activity logging (calls, emails, notes)
+- Task assignment & follow-ups
+
+#### ERP Features
+- Project management
+- Invoicing & billing
+- Role-based access control
+- Workflow automation
+- Reporting & dashboards
 
 ---
 
