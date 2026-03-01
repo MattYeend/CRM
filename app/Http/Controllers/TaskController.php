@@ -125,13 +125,13 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        $task->delete();
-
         $this->logger->taskDeleted(
             auth()->user(),
             auth()->id(),
             $task,
         );
+
+        $task->delete();
 
         return response()->json(null, 204);
     }

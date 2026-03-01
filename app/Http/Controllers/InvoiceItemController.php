@@ -131,13 +131,13 @@ class InvoiceItemController extends Controller
      */
     public function destroy(InvoiceItem $invoiceItem)
     {
-        $invoiceItem->delete();
-
         $this->logger->invoiceItemDeleted(
             auth()->user(),
             auth()->id(),
             $invoiceItem
         );
+
+        $invoiceItem->delete();
 
         return response()->json(null, 204);
     }

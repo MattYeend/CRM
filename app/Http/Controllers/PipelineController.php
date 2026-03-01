@@ -117,13 +117,13 @@ class PipelineController extends Controller
      */
     public function destroy(Pipeline $pipeline)
     {
-        $pipeline->delete();
-
         $this->logger->pipelineDeleted(
             request()->user(),
             request()->user()->id,
             $pipeline
         );
+
+        $pipeline->delete();
 
         return response()->json(null, 204);
     }

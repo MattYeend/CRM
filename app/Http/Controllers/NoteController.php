@@ -124,13 +124,13 @@ class NoteController extends Controller
      */
     public function destroy(Note $note)
     {
-        $note->delete();
-
         $this->logger->noteDeleted(
             auth()->user(),
             auth()->id(),
             $note
         );
+
+        $note->delete();
 
         return response()->json(null, 204);
     }

@@ -109,13 +109,13 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        $this->managementService->destroy($user);
-
         $this->logger->userDeleted(
             auth()->user(),
             auth()->id(),
             $user
         );
+
+        $this->managementService->destroy($user);
 
         return response()->json(null, 204);
     }
@@ -151,13 +151,13 @@ class UserController extends Controller
     {
         $user = User::withTrashed()->find((int) $id);
 
-        $this->managementService->forceDelete((int) $id);
-
         $this->logger->userForceDeleted(
             auth()->user(),
             auth()->id(),
             $user
         );
+
+        $this->managementService->forceDelete((int) $id);
 
         return response()->json(null, 204);
     }

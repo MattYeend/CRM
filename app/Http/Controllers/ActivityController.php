@@ -119,9 +119,13 @@ class ActivityController extends Controller
      */
     public function destroy(Activity $activity)
     {
-        $activity->delete();
+        $this->logger->activityDeleted(
+            auth()->user(),
+            auth()->id(),
+            $activity
+        );
 
-        $this->logger->activityDeleted(auth()->user(), auth()->id(), $activity);
+        $activity->delete();
 
         return response()->json(null, 204);
     }

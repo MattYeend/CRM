@@ -123,15 +123,15 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-        $role->permissions()->detach();
-        $role->users()->detach();
-        $role->delete();
-
         $this->logger->roleDeleted(
             auth()->user(),
             auth()->user()->id,
             $role
         );
+
+        $role->permissions()->detach();
+        $role->users()->detach();
+        $role->delete();
 
         return response()->json(null, 204);
     }

@@ -143,13 +143,13 @@ class LeadController extends Controller
      */
     public function destroy(Lead $lead)
     {
-        $lead->delete();
-
         $this->logger->leadDeleted(
             auth()->user(),
             auth()->id(),
             $lead
         );
+
+        $lead->delete();
 
         return response()->json(null, 204);
     }

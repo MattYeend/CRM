@@ -111,16 +111,16 @@ class AttachmentController extends Controller
      */
     public function destroy(Attachment $attachment)
     {
-        if ($attachment->disk && $attachment->path) {
-            Storage::disk($attachment->disk)->delete($attachment->path);
-        }
-        $attachment->delete();
-
         $this->logger->attachmentDeleted(
             request()->user(),
             auth()->id(),
             $attachment
         );
+
+        if ($attachment->disk && $attachment->path) {
+            Storage::disk($attachment->disk)->delete($attachment->path);
+        }
+        $attachment->delete();
 
         return response()->json(null, 204);
     }

@@ -121,13 +121,13 @@ class LearningController extends Controller
      */
     public function destroy(Learning $learning)
     {
-        $learning->delete();
-
         $this->logger->learningDeleted(
             auth()->user(),
             auth()->user()->id,
             $learning,
         );
+
+        $learning->delete();
 
         return response()->json(null, 204);
     }

@@ -149,13 +149,13 @@ class DealController extends Controller
      */
     public function destroy(Deal $deal)
     {
-        $deal->delete();
-
         $this->logger->dealDeleted(
             auth()->user(),
             auth()->id(),
             $deal
         );
+
+        $deal->delete();
 
         return response()->json(null, 204);
     }
@@ -170,12 +170,15 @@ class DealController extends Controller
     public function restore($id)
     {
         $deal = Deal::withTrashed()->findOrFail($id);
+
         $deal->restore();
+
         $this->logger->dealRestored(
             auth()->user(),
             auth()->id(),
             $deal
         );
+
         return response()->json($deal);
     }
 

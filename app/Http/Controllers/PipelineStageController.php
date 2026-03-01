@@ -121,13 +121,13 @@ class PipelineStageController extends Controller
      */
     public function destroy(PipelineStage $pipelineStage)
     {
-        $pipelineStage->delete();
-
         $this->logger->pipelineStageDeleted(
             request()->user(),
             request()->user()->id,
             $pipelineStage
         );
+
+        $pipelineStage->delete();
 
         return response()->json(null, 204);
     }

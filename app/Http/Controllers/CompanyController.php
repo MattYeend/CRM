@@ -144,13 +144,13 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
-        $company->delete();
-
         $this->logger->companyDeleted(
             request()->user(),
             auth()->id(),
             $company
         );
+
+        $company->delete();
 
         return response()->json(null, 204);
     }

@@ -139,13 +139,13 @@ class ContactController extends Controller
      */
     public function destroy(Contact $contact)
     {
-        $contact->delete();
-
         $this->logger->contactDeleted(
             auth()->user(),
             auth()->id(),
             $contact
         );
+
+        $contact->delete();
 
         return response()->json(null, 204);
     }

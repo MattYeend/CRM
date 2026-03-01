@@ -121,14 +121,14 @@ class PermissionController extends Controller
      */
     public function destroy(Permission $permission)
     {
-        $permission->roles()->detach();
-        $permission->delete();
-
         $this->logger->permissionDeleted(
             auth()->user(),
             auth()->user()->id,
             $permission
         );
+
+        $permission->roles()->detach();
+        $permission->delete();
 
         return response()->json(null, 204);
     }
