@@ -37,6 +37,8 @@ class UserFactory extends Factory
 
     /**
      * Indicate that the model's email address should be unverified.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
     public function unverified(): static
     {
@@ -47,6 +49,8 @@ class UserFactory extends Factory
 
     /**
      * Indicate that the model does not have two-factor authentication configured.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
     public function withoutTwoFactor(): static
     {
@@ -58,18 +62,28 @@ class UserFactory extends Factory
     }
 
     /**
-     * Configure the model factory.
+     * Attach one or more roles.
      *
-     * @return $this
+     * @param int $count
+     *
+     * @return static
      */
-    public function configure()
+    public function withRoles(int $count = 1): static
     {
-        return $this->afterCreating(function (User $user) {
-            // attach 0-2 roles randomly
-            if (random_int(0, 1)) {
-                $roles = Role::factory()->count(random_int(1, 2))->create();
-                $user->roles()->attach($roles->pluck('id')->toArray());
-            }
-        });
+        return $this->hasAttached(
+            Role::factory()->count($count)
+        );
+    }
+
+    /**
+     * Attach a specific role instance.
+     *
+     * @param Role $role
+     *
+     * @return static
+     */
+    public function withRole(Role $role): static
+    {
+        return $this->hasAttached($role);
     }
 }

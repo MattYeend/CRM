@@ -19,28 +19,13 @@ class ContactFactory extends Factory
     public function definition(): array
     {
         return [
-            'company_id' => null,
-            'first_name' => $this->faker->firstName(),
-            'last_name' => $this->faker->lastName(),
-            'email' => $this->faker->optional()->safeEmail(),
-            'phone' => $this->faker->optional()->phoneNumber(),
-            'job_title' => $this->faker->optional()->jobTitle(),
+            'company_id' => Company::factory(),
+            'first_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
+            'email' => fake()->optional()->safeEmail(),
+            'phone' => fake()->optional()->phoneNumber(),
+            'job_title' => fake()->optional()->jobTitle(),
             'meta' => [],
         ];
-    }
-
-    /**
-     * Configure the factory.
-     *
-     * @return $this
-     */
-    public function configure()
-    {
-        return $this->afterCreating(function (Contact $contact) {
-            if (!$contact->company_id) {
-                $contact->company()->associate(Company::factory()->create());
-                $contact->save();
-            }
-        });
     }
 }

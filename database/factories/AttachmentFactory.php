@@ -19,27 +19,12 @@ class AttachmentFactory extends Factory
     public function definition(): array
     {
         return [
-            'filename' => $this->faker->word() . '.txt',
+            'filename' => fake()->word() . '.txt',
             'disk' => 'public',
-            'path' => 'attachments/' . $this->faker->uuid() . '/file.txt',
-            'uploaded_by' => null,
-            'size' => $this->faker->numberBetween(100, 1000000),
+            'path' => 'attachments/' . fake()->uuid() . '/file.txt',
+            'uploaded_by' => User::factory(),
+            'size' => fake()->numberBetween(100, 1000000),
             'mime' => 'text/plain'
         ];
-    }
-
-    /**
-     * Configure the factory.
-     *
-     * @return $this
-     */
-    public function configure()
-    {
-        return $this->afterCreating(function (Attachment $attachment) {
-            if (!$attachment->uploaded_by) {
-                $attachment->uploader()->associate(User::factory()->create());
-                $attachment->save();
-            }
-        });
     }
 }

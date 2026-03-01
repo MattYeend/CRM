@@ -26,24 +26,8 @@ class TaskFactory extends Factory
             'priority' => 'medium',
             'status' => 'pending',
             'due_at' => $this->faker->optional()->dateTimeBetween('now', '+30 days'),
+            'assigned_to' => User::factory(),
+            'created_by' => User::factory(),
         ];
-    }
-
-    /**
-     * Configure the factory.
-     *
-     * @return $this
-     */
-    public function configure()
-    {
-        return $this->afterCreating(function (Task $task) {
-            if (!$task->assigned_to) {
-                $task->assignee()->associate(User::factory()->create());
-            }
-            if (!$task->created_by) {
-                $task->creator()->associate(User::factory()->create());
-            }
-            $task->save();
-        });
     }
 }

@@ -19,25 +19,10 @@ class ActivityFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => null,
+            'user_id' => User::factory(),
             'type' => 'generic',
-            'description' => $this->faker->optional()->sentence(),
+            'description' => fake()->optional()->sentence(),
             'meta' => [],
         ];
-    }
-
-    /**
-     * Configure the factory.
-     *
-     * @return $this
-     */
-    public function configure()
-    {
-        return $this->afterCreating(function (Activity $activity) {
-            if (!$activity->user_id) {
-                $activity->user()->associate(User::factory()->create());
-                $activity->save();
-            }
-        });
     }
 }

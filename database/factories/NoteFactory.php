@@ -21,29 +21,32 @@ class NoteFactory extends Factory
      */
     public function definition(): array
     {
-        $notable = Deal::factory()->create();
-
         return [
-            'user_id' => null,
-            'body' => $this->faker->paragraph(),
+            'user_id' => User::factory(),
+            'body' => fake()->paragraph(),
             'meta' => [],
-            'notable_type' => get_class($notable),
-            'notable_id' => $notable->id,
         ];
     }
 
     /**
-     * Configure the factory.
+     * Associate the note with a deal.
      *
-     * @return $this
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function configure()
+    public function forDeal(): static
     {
-        return $this->afterCreating(function (Note $note) {
-            if (!$note->user_id) {
-                $note->user()->associate(User::factory()->create());
-                $note->save();
-            }
-        });
+        return $this->for(Deal::factory(), 'notable');
+    }
+
+    /**
+     * Associate the note with any model.
+     *
+     * @param mixed $model
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function forModel($model): static
+    {
+        return $this->for($model, 'notable');
     }
 }

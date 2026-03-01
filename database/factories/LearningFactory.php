@@ -24,7 +24,7 @@ class LearningFactory extends Factory
             'title' => $this->faker->sentence(4),
             'description' => $this->faker->optional()->paragraph(),
             'date' => $this->faker->optional()->date(),
-            'created_by' => null, // tests override as needed
+            'created_by' => User::factory(),
             'updated_by' => null,
             'deleted_by' => null,
             'meta' => null,
@@ -35,6 +35,7 @@ class LearningFactory extends Factory
      * Indicate that the learning is completed.
      *
      * @param User|null $user
+     
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
     public function completed(?User $user = null)

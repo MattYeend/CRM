@@ -28,18 +28,28 @@ class PipelineStageFactory extends Factory
     }
 
     /**
-     * Configure the factory.
+     * Indicate that the won stage belongs to a pipeline.
      *
-     * @return $this
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function configure()
+    public function won(): static
     {
-        return $this->afterCreating(function (PipelineStage $stage) {
-            if (!$stage->pipeline_id) {
-                $pipeline = Pipeline::factory()->create();
-                $stage->pipeline()->associate($pipeline);
-                $stage->save();
-            }
-        });
+        return $this->state([
+            'is_won_stage' => true,
+            'is_lost_stage' => false,
+        ]);
+    }
+
+    /**
+     * Indicate that the lost stage belongs to a pipeline.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function lost(): static
+    {
+        return $this->state([
+            'is_won_stage' => false,
+            'is_lost_stage' => true,
+        ]);
     }
 }

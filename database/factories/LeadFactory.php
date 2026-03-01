@@ -20,32 +20,27 @@ class LeadFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->sentence(3),
-            'email' => $this->faker->optional()->safeEmail(),
-            'phone' => $this->faker->optional()->phoneNumber(),
-            'source' => $this->faker->randomElement(['website', 'email', 'phone', 'referral', 'social_media']),
-            'assigned_to' => null,
-            'assigned_at' => null,
-            'owner_id' => null,
+            'name' => fake()->sentence(3),
+            'email' => fake()->optional()->safeEmail(),
+            'phone' => fake()->optional()->phoneNumber(),
+            'source' => fake()->randomElement(['website', 'email', 'phone', 'referral', 'social_media']),
+            'owner_id' => User::factory(),
+            'assigned_to' => User::factory(),
+            'assigned_at' => now(),
             'meta' => [],
         ];
     }
 
     /**
-     * Configure the factory.
+     * Indicate that the lead is unassigned.
      *
-     * @return $this
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function configure()
+    public function unassigned(): static
     {
-        return $this->afterCreating(function (Lead $lead) {
-            if (!$lead->owner_id) {
-                $lead->owner()->associate(User::factory()->create());
-            }
-            if(!$lead->assigned_to) {
-                $lead->assigned_to = User::factory()->create()->id;
-            }
-            $lead->save();
-        });
+        return $this->state([
+            'assigned_to' => null,
+            'assigned_at' => null,
+        ]);
     }
 }

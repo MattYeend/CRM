@@ -23,15 +23,14 @@ class DealFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->sentence(3),
-            'company_id' => null,
-            'contact_id' => null,
-            'owner_id' => null,
-            'pipeline_id' => null,
-            'stage_id' => null,
-            'value' => $this->faker->randomFloat(2, 100, 10000),
+            'title' => fake()->sentence(3),
+            'company_id' => Company::factory(),
+            'contact_id' => Contact::factory(),
+            'owner_id' => User::factory(),
+            'pipeline_id' => Pipeline::factory(),
+            'value' => fake()->randomFloat(2, 100, 10000),
             'currency' => 'USD',
-            'close_date' => $this->faker->optional()->dateTimeBetween('now', '+1 year'),
+            'close_date' => fake()->optional()->dateTimeBetween('now', '+1 year'),
             'status' => 'open',
             'meta' => [],
         ];
@@ -40,30 +39,18 @@ class DealFactory extends Factory
     /**
      * Configure the factory.
      *
-     * @return $this
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
     public function configure()
     {
-        return $this->afterCreating(function (Deal $deal) {
-            if (!$deal->company_id) {
-                $deal->company()->associate(Company::factory()->create());
+        return $this->afterMaking(function (Deal $deal) {
+            if (!$deal->stage_id && $deal->pipeline_id) {
+                $stage = PipelineStage::factory()
+                    ->for($deal->pipeline)
+                    ->create();
+    
+                $deal->stage_id = $stage->id;
             }
-            if (!$deal->contact_id) {
-                $deal->contact()->associate(Contact::factory()->create());
-            }
-            if (!$deal->owner_id) {
-                $deal->owner()->associate(User::factory()->create());
-            }
-            if (!$deal->pipeline_id) {
-                $pipeline = Pipeline::factory()->create();
-                $deal->pipeline()->associate($pipeline);
-            }
-            if (!$deal->stage_id) {
-                // ensure a stage exists for the pipeline
-                $stage = PipelineStage::factory()->for($deal->pipeline)->create();
-                $deal->stage()->associate($stage);
-            }
-            $deal->save();
         });
     }
 }

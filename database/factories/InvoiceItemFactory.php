@@ -19,36 +19,17 @@ class InvoiceItemFactory extends Factory
      */
     public function definition(): array
     {
+        $quantity = fake()->numberBetween(1, 10);
+        $unitPrice = fake()->randomFloat(2, 1, 500);
+
         return [
-            'invoice_id' => null,
-            'product_id' => null,
-            'description' => $this->faker->sentence(3),
-            'quantity' => $this->faker->numberBetween(1, 10),
-            'unit_price' => $this->faker->randomFloat(2, 1, 500),
-            'line_total' => 0,
+            'invoice_id' => Invoice::factory(),
+            'product_id' => Product::factory(),
+            'description' => fake()->sentence(3),
+            'quantity' => $quantity,
+            'unit_price' => $unitPrice,
+            'line_total' => bcmul((string)$quantity, (string)$unitPrice, 2),
             'meta' => [],
         ];
-    }
-
-    /**
-     * Configure the factory.
-     *
-     * @return $this
-     */
-    public function configure()
-    {
-        return $this->afterCreating(function (InvoiceItem $item) {
-            if (!$item->invoice_id) {
-                $invoice = Invoice::factory()->create();
-                $item->invoice()->associate($invoice);
-            }
-            if (!$item->product_id) {
-                $product = Product::factory()->create();
-                $item->product()->associate($product);
-            }
-            // compute line_total
-            $item->line_total = bcmul((string)$item->quantity, (string)$item->unit_price, 2);
-            $item->save();
-        });
     }
 }

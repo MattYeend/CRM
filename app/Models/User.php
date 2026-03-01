@@ -59,6 +59,20 @@ class User extends Authenticatable
     }
 
     /**
+     * Attach roles to the user for testing purposes.
+     *
+     * @param int $count
+     *
+     * @return static
+     */
+    public function withRoles(int $count = 1): static
+    {
+        return $this->hasAttached(
+            Role::factory()->count($count)
+        );
+    }
+
+    /**
      * The permissions that belong to the user through roles.
      *
      * @return \Illuminate\Support\Collection
