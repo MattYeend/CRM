@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Services\RoleLogService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -35,9 +36,13 @@ class RoleController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $perPage = (int) $request->query('per_page', 10);
+        $perPage = max(
+            1,
+            min((int) $request->query('per_page', 10), 100)
+        );
+
         return response()->json(
             Role::withCount('users')
                 ->with('permissions')
@@ -52,7 +57,7 @@ class RoleController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Role $role)
+    public function show(Role $role): JsonResponse
     {
         return response()->json($role->load('permissions', 'users'));
     }
@@ -64,7 +69,7 @@ class RoleController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
             'name' => 'required|string|unique:roles,name',
@@ -97,7 +102,7 @@ class RoleController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Role $role)
+    public function update(Request $request, Role $role): JsonResponse
     {
         $data = $this->validateRoleData($request, $role);
 
@@ -121,7 +126,7 @@ class RoleController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Role $role)
+    public function destroy(Role $role): JsonResponse
     {
         $this->logger->roleDeleted(
             auth()->user(),

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PipelineStage;
 use App\Services\PipelineStageLogService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PipelineStageController extends Controller
@@ -34,9 +35,13 @@ class PipelineStageController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $perPage = (int) $request->query('per_page', 10);
+        $perPage = max(
+            1,
+            min((int) $request->query('per_page', 10), 100)
+        );
+
         return response()->json(
             PipelineStage::with('pipeline')->paginate($perPage)
         );
@@ -49,7 +54,7 @@ class PipelineStageController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(PipelineStage $pipelineStage)
+    public function show(PipelineStage $pipelineStage): JsonResponse
     {
         return response()->json($pipelineStage->load('pipeline'));
     }
@@ -61,7 +66,7 @@ class PipelineStageController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
             'pipeline_id' => 'required|integer|exists:pipelines,id',
@@ -91,8 +96,10 @@ class PipelineStageController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, PipelineStage $pipelineStage)
-    {
+    public function update(
+        Request $request,
+        PipelineStage $pipelineStage
+    ): JsonResponse {
         $data = $request->validate([
             'pipeline_id' => 'nullable|integer|exists:pipelines,id',
             'name' => 'sometimes|required|string',
@@ -119,7 +126,7 @@ class PipelineStageController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(PipelineStage $pipelineStage)
+    public function destroy(PipelineStage $pipelineStage): JsonResponse
     {
         $this->logger->pipelineStageDeleted(
             request()->user(),

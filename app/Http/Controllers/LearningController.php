@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Learning;
 use App\Services\LearningLogService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class LearningController extends Controller
@@ -34,9 +35,12 @@ class LearningController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $perPage = (int) $request->query('per_page', 10);
+        $perPage = max(
+            1,
+            min((int) $request->query('per_page', 10), 100)
+        );
 
         return response()->json(
             Learning::with('users')->paginate($perPage)
@@ -50,7 +54,7 @@ class LearningController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Learning $learning)
+    public function show(Learning $learning): JsonResponse
     {
         return response()->json($learning->load('users'));
     }
@@ -62,7 +66,7 @@ class LearningController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -93,7 +97,7 @@ class LearningController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Learning $learning)
+    public function update(Request $request, Learning $learning): JsonResponse
     {
         $validated = $request->validate([
             'title' => 'sometimes|required|string|max:255',
@@ -119,7 +123,7 @@ class LearningController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Learning $learning)
+    public function destroy(Learning $learning): JsonResponse
     {
         $this->logger->learningDeleted(
             auth()->user(),
@@ -141,7 +145,7 @@ class LearningController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function complete(Request $request, Learning $learning)
+    public function complete(Request $request, Learning $learning): JsonResponse
     {
         $learning->update([
             'is_completed' => true,
@@ -167,8 +171,10 @@ class LearningController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function incomplete(Request $request, Learning $learning)
-    {
+    public function incomplete(
+        Request $request,
+        Learning $learning
+    ): JsonResponse {
         $learning->update([
             'is_completed' => false,
             'completed_by' => null,

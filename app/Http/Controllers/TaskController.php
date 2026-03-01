@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use App\Services\TaskLogService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
@@ -33,9 +34,12 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $perPage = (int) $request->query('per_page', 10);
+        $perPage = max(
+            1,
+            min((int) $request->query('per_page', 10), 100)
+        );
 
         return response()->json(
             Task::with('assignee', 'creator', 'taskable')->paginate($perPage)
@@ -49,7 +53,7 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Task $task)
+    public function show(Task $task): JsonResponse
     {
         return response()->json($task->load('assignee', 'creator', 'taskable'));
     }
@@ -61,7 +65,7 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $data = $this->validateTaskData($request);
         $task = Task::create($data);
@@ -89,7 +93,7 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Task $task)
+    public function update(Request $request, Task $task): JsonResponse
     {
         $data = $request->validate([
             'title' => 'sometimes|required|string',
@@ -123,7 +127,7 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Task $task)
+    public function destroy(Task $task): JsonResponse
     {
         $this->logger->taskDeleted(
             auth()->user(),

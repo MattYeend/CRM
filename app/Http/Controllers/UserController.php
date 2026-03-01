@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Services\UserLogService;
 use App\Services\UserManagementService;
 use App\Services\UserQueryService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -39,7 +40,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         $users = $this->queryService->list($request);
 
@@ -53,7 +54,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(User $user)
+    public function show(User $user): JsonResponse
     {
         return response()->json($this->queryService->show($user));
     }
@@ -65,7 +66,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $user = $this->managementService->store($request);
 
@@ -87,7 +88,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, User $user): JsonResponse
     {
         $user = $this->managementService->update($request, $user);
 
@@ -107,7 +108,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(User $user)
+    public function destroy(User $user): JsonResponse
     {
         $this->logger->userDeleted(
             auth()->user(),
@@ -127,7 +128,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function restore($id)
+    public function restore($id): JsonResponse
     {
         $user = $this->managementService->restore((int) $id);
 
@@ -147,7 +148,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function forceDelete($id)
+    public function forceDelete($id): JsonResponse
     {
         $user = User::withTrashed()->find((int) $id);
 
@@ -171,7 +172,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function attachRoles(Request $request, User $user)
+    public function attachRoles(Request $request, User $user): JsonResponse
     {
         $user = $this->managementService->attachRoles($request, $user);
 
@@ -187,7 +188,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function detachRoles(Request $request, User $user)
+    public function detachRoles(Request $request, User $user): JsonResponse
     {
         $user = $this->managementService->detachRoles($request, $user);
 

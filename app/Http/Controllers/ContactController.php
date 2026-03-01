@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Contact;
 use App\Services\ContactLogService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ContactController extends Controller
@@ -34,9 +35,12 @@ class ContactController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $perPage = (int) $request->query('per_page', 10);
+        $perPage = max(
+            1,
+            min((int) $request->query('per_page', 10), 100)
+        );
         $q = $request->query('q');
         $companyId = $request->query('company_id');
 
@@ -63,7 +67,7 @@ class ContactController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Contact $contact)
+    public function show(Contact $contact): JsonResponse
     {
         return response()->json(
             $contact->load('company', 'deals', 'attachments')
@@ -77,7 +81,7 @@ class ContactController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
             'company_id' => 'nullable|integer|exists:companies,id',
@@ -109,7 +113,7 @@ class ContactController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Contact $contact)
+    public function update(Request $request, Contact $contact): JsonResponse
     {
         $data = $request->validate([
             'company_id' => 'nullable|integer|exists:companies,id',
@@ -137,7 +141,7 @@ class ContactController extends Controller
      *
      * @param Contact $contact
      */
-    public function destroy(Contact $contact)
+    public function destroy(Contact $contact): JsonResponse
     {
         $this->logger->contactDeleted(
             auth()->user(),

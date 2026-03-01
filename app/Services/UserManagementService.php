@@ -35,7 +35,6 @@ class UserManagementService
     {
         $user = $this->creator->create($request);
 
-        // roles come from the validated payload; re-validate via request object
         $data = $request->all();
         $this->rolesManager->syncIfProvided($user, $data);
 

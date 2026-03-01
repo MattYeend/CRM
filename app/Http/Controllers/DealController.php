@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Deal;
 use App\Services\DealLogService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -35,9 +36,12 @@ class DealController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $perPage = (int) $request->query('per_page', 10);
+        $perPage = max(
+            1,
+            min((int) $request->query('per_page', 10), 100)
+        );
         $status = $request->query('status');
         $ownerId = $request->query('owner_id');
 
@@ -67,7 +71,7 @@ class DealController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Deal $deal)
+    public function show(Deal $deal): JsonResponse
     {
         return response()->json($deal->load([
             'company',
@@ -88,7 +92,7 @@ class DealController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
             'title' => 'required|string',
@@ -124,7 +128,7 @@ class DealController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Deal $deal)
+    public function update(Request $request, Deal $deal): JsonResponse
     {
         $data = $this->validateUpdateData($request);
 
@@ -147,7 +151,7 @@ class DealController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Deal $deal)
+    public function destroy(Deal $deal): JsonResponse
     {
         $this->logger->dealDeleted(
             auth()->user(),
@@ -167,7 +171,7 @@ class DealController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function restore($id)
+    public function restore($id): JsonResponse
     {
         $deal = Deal::withTrashed()->findOrFail($id);
 

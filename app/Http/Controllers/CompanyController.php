@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use App\Services\CompanyLogService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CompanyController extends Controller
@@ -34,18 +35,23 @@ class CompanyController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $perPage = (int) $request->query('per_page', 10);
+        $this->authorize('viewAny', Company::class);
+
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
         $q = $request->query('q');
 
-        $query = Company::query()->withCount(['contacts', 'deals', 'invoices']);
+        $query = Company::query()
+            ->withCount(['contacts', 'deals', 'invoices']);
 
         if ($q) {
-            $query->where('name', 'like', '%' . $q . '%');
+            $query->where('name', 'like', "%{$q}%");
         }
 
-        return response()->json($query->paginate($perPage));
+        return response()->json(
+            $query->paginate($perPage)
+        );
     }
 
     /**
@@ -55,7 +61,7 @@ class CompanyController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Company $company)
+    public function show(Company $company): JsonResponse
     {
         return response()->json(
             $company->load(
@@ -74,7 +80,7 @@ class CompanyController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
             'name' => 'required|string',
@@ -109,7 +115,7 @@ class CompanyController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Company $company)
+    public function update(Request $request, Company $company): JsonResponse
     {
         $data = $request->validate([
             'name' => 'sometimes|required|string',
@@ -142,7 +148,7 @@ class CompanyController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Company $company)
+    public function destroy(Company $company): JsonResponse
     {
         $this->logger->companyDeleted(
             request()->user(),
@@ -162,7 +168,7 @@ class CompanyController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function restore($id)
+    public function restore($id): JsonResponse
     {
         $company = Company::withTrashed()->findOrFail($id);
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Note;
 use App\Services\NoteLogService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class NoteController extends Controller
@@ -34,9 +35,12 @@ class NoteController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $perPage = (int) $request->query('per_page', 10);
+        $perPage = max(
+            1,
+            min((int) $request->query('per_page', 10), 100)
+        );
 
         return response()->json(
             Note::with('user', 'notable')->paginate($perPage)
@@ -50,7 +54,7 @@ class NoteController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Note $note)
+    public function show(Note $note): JsonResponse
     {
         return response()->json($note->load('user', 'notable'));
     }
@@ -62,7 +66,7 @@ class NoteController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
             'user_id' => 'nullable|integer|exists:users,id',
@@ -97,7 +101,7 @@ class NoteController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Note $note)
+    public function update(Request $request, Note $note): JsonResponse
     {
         $data = $request->validate([
             'body' => 'sometimes|required|string',
@@ -122,7 +126,7 @@ class NoteController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Note $note)
+    public function destroy(Note $note): JsonResponse
     {
         $this->logger->noteDeleted(
             auth()->user(),

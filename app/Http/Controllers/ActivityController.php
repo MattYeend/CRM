@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Activity;
 use App\Services\ActivityLogService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ActivityController extends Controller
@@ -33,9 +34,12 @@ class ActivityController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $perPage = (int) $request->query('per_page', 10);
+        $perPage = max(
+            1,
+            min((int) $request->query('per_page', 10), 100)
+        );
 
         return response()->json(
             Activity::with('user', 'subject')->paginate($perPage)
@@ -49,7 +53,7 @@ class ActivityController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Activity $activity)
+    public function show(Activity $activity): JsonResponse
     {
         return response()->json($activity->load('user', 'subject'));
     }
@@ -61,7 +65,7 @@ class ActivityController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
             'user_id' => 'nullable|integer|exists:users,id',
@@ -92,7 +96,7 @@ class ActivityController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Activity $activity)
+    public function update(Request $request, Activity $activity): JsonResponse
     {
         $data = $request->validate([
             'type' => 'sometimes|required|string',
@@ -117,7 +121,7 @@ class ActivityController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Activity $activity)
+    public function destroy(Activity $activity): JsonResponse
     {
         $this->logger->activityDeleted(
             auth()->user(),

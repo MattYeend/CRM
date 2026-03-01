@@ -6,6 +6,7 @@ use App\Models\Attachment;
 use App\Services\AttachmentAttacher;
 use App\Services\AttachmentLogService;
 use App\Services\AttachmentService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -52,9 +53,12 @@ class AttachmentController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $perPage = (int) $request->query('per_page', 10);
+        $perPage = max(
+            1,
+            min((int) $request->query('per_page', 10), 100)
+        );
 
         return response()->json(
             Attachment::with('uploader')->paginate($perPage)
@@ -68,7 +72,7 @@ class AttachmentController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Attachment $attachment)
+    public function show(Attachment $attachment): JsonResponse
     {
         return response()->json($attachment->load('uploader'));
     }
@@ -76,7 +80,7 @@ class AttachmentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
             'file' => 'required|file|max:10000',
@@ -109,7 +113,7 @@ class AttachmentController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Attachment $attachment)
+    public function destroy(Attachment $attachment): JsonResponse
     {
         $this->logger->attachmentDeleted(
             request()->user(),

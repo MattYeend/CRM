@@ -4,15 +4,24 @@ namespace App\Policies;
 
 use App\Models\Deal;
 use App\Models\User;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
 class DealPolicy
 {
-    /**
-     * Create a new policy instance.
-     */
-    public function __construct()
+    use HandlesAuthorization;
+
+    public function before(User $user): ?bool
     {
-        // Empty constructor for the time being
+        if ($user->hasPermission('admin')) {
+            return true;
+        }
+
+        return null;
+    }
+
+    public function viewAny(User $user): bool
+    {
+        return $user->hasPermission('deals.view');
     }
 
     public function view(User $user): bool
@@ -27,18 +36,10 @@ class DealPolicy
 
     public function update(User $user, Deal $deal): bool
     {
-        if ($user->hasPermission('deals.update.any')) {
-            return true;
-        }
-
-        if (
-            $user->hasPermission('deals.update.own') &&
-            $deal->owner_id === $user->id
-        ) {
-            return true;
-        }
-
-        return false;
+        return $user->hasPermission('deals.update.any') ||
+            ($user->hasPermission(
+                'deals.update.own'
+            ) && $deal->owner_id === $user->id);
     }
 
     public function delete(User $user): bool

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\InvoiceItem;
 use App\Services\InvoiceItemLogService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class InvoiceItemController extends Controller
@@ -34,9 +35,12 @@ class InvoiceItemController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $perPage = (int) $request->query('per_page', 10);
+        $perPage = max(
+            1,
+            min((int) $request->query('per_page', 10), 100)
+        );
 
         return response()->json(
             InvoiceItem::with('invoice', 'product')->paginate($perPage)
@@ -50,7 +54,7 @@ class InvoiceItemController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(InvoiceItem $invoiceItem)
+    public function show(InvoiceItem $invoiceItem): JsonResponse
     {
         return response()->json($invoiceItem->load('invoice', 'product'));
     }
@@ -62,7 +66,7 @@ class InvoiceItemController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
             'invoice_id' => 'required|integer|exists:invoices,id',
@@ -97,8 +101,10 @@ class InvoiceItemController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, InvoiceItem $invoiceItem)
-    {
+    public function update(
+        Request $request,
+        InvoiceItem $invoiceItem
+    ): JsonResponse {
         $data = $request->validate([
             'description' => 'sometimes|required|string',
             'quantity' => 'nullable|integer|min:1',
@@ -129,7 +135,7 @@ class InvoiceItemController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(InvoiceItem $invoiceItem)
+    public function destroy(InvoiceItem $invoiceItem): JsonResponse
     {
         $this->logger->invoiceItemDeleted(
             auth()->user(),

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Invoice;
 use App\Services\InvoiceLogService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -35,9 +36,12 @@ class InvoiceController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $perPage = (int) $request->query('per_page', 10);
+        $perPage = max(
+            1,
+            min((int) $request->query('per_page', 10), 100)
+        );
 
         return response()->json(
             Invoice::with('company', 'contact', 'items')->paginate($perPage)
@@ -51,7 +55,7 @@ class InvoiceController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Invoice $invoice)
+    public function show(Invoice $invoice): JsonResponse
     {
         return response()->json(
             $invoice->load('company', 'contact', 'items')
@@ -65,7 +69,7 @@ class InvoiceController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $data = $this->validateInvoice($request);
 
@@ -85,7 +89,7 @@ class InvoiceController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Invoice $invoice)
+    public function update(Request $request, Invoice $invoice): JsonResponse
     {
         $data = $this->validateInvoice($request, $invoice);
 
@@ -103,7 +107,7 @@ class InvoiceController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Invoice $invoice)
+    public function destroy(Invoice $invoice): JsonResponse
     {
         $this->logger->invoiceDeleted(
             auth()->user(),

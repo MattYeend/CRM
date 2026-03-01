@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Permission;
 use App\Services\PermissionLogService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -35,9 +36,13 @@ class PermissionController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $perPage = (int) $request->query('per_page', 10);
+        $perPage = max(
+            1,
+            min((int) $request->query('per_page', 10), 100)
+        );
+
         return response()->json(
             Permission::with('roles')
                 ->paginate($perPage)
@@ -51,7 +56,7 @@ class PermissionController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Permission $permission)
+    public function show(Permission $permission): JsonResponse
     {
         return response()->json($permission->load('roles'));
     }
@@ -63,7 +68,7 @@ class PermissionController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
             'name' => 'required|string|unique:permissions,name',
@@ -90,8 +95,10 @@ class PermissionController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Permission $permission)
-    {
+    public function update(
+        Request $request,
+        Permission $permission
+    ): JsonResponse {
         $data = $request->validate([
             'name' => [
                 'required',
@@ -119,7 +126,7 @@ class PermissionController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Permission $permission)
+    public function destroy(Permission $permission): JsonResponse
     {
         $this->logger->permissionDeleted(
             auth()->user(),

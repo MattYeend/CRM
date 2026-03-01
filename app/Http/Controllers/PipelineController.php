@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pipeline;
 use App\Services\PipelineLogService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PipelineController extends Controller
@@ -34,9 +35,13 @@ class PipelineController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $perPage = (int) $request->query('per_page', 10);
+        $perPage = max(
+            1,
+            min((int) $request->query('per_page', 10), 100)
+        );
+
         return response()->json(
             Pipeline::with('stages')->paginate($perPage)
         );
@@ -49,7 +54,7 @@ class PipelineController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Pipeline $pipeline)
+    public function show(Pipeline $pipeline): JsonResponse
     {
         return response()->json($pipeline->load('stages'));
     }
@@ -61,7 +66,7 @@ class PipelineController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
             'name' => 'required|string',
@@ -89,7 +94,7 @@ class PipelineController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Pipeline $pipeline)
+    public function update(Request $request, Pipeline $pipeline): JsonResponse
     {
         $data = $request->validate([
             'name' => 'sometimes|required|string',
@@ -115,7 +120,7 @@ class PipelineController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Pipeline $pipeline)
+    public function destroy(Pipeline $pipeline): JsonResponse
     {
         $this->logger->pipelineDeleted(
             request()->user(),

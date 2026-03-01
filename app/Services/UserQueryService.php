@@ -18,7 +18,7 @@ class UserQueryService
     {
         $perPage = max(
             1,
-            min(100, (int) $request->query('per_page', 10))
+            min((int) $request->query('per_page', 10), 100)
         );
 
         $query = User::with('roles');

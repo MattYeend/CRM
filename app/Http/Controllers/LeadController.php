@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Lead;
 use App\Services\LeadLogService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -35,9 +36,12 @@ class LeadController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $perPage = (int) $request->query('per_page', 10);
+        $perPage = max(
+            1,
+            min((int) $request->query('per_page', 10), 100)
+        );
         $ownerId = $request->query('owner_id');
 
         $query = Lead::with([
@@ -59,7 +63,7 @@ class LeadController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Lead $lead)
+    public function show(Lead $lead): JsonResponse
     {
         return response()->json(
             Lead::with($this->relations())->findOrFail($lead->id)
@@ -73,7 +77,7 @@ class LeadController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
@@ -108,7 +112,7 @@ class LeadController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Lead $lead)
+    public function update(Request $request, Lead $lead): JsonResponse
     {
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
@@ -141,7 +145,7 @@ class LeadController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Lead $lead)
+    public function destroy(Lead $lead): JsonResponse
     {
         $this->logger->leadDeleted(
             auth()->user(),
@@ -161,7 +165,7 @@ class LeadController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function restore(int $id)
+    public function restore(int $id): JsonResponse
     {
         $lead = Lead::withTrashed()->findOrFail($id);
         $lead->restore();
