@@ -37,8 +37,6 @@ class CompanyController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $this->authorize('viewAny', Company::class);
-
         $perPage = max(1, min((int) $request->query('per_page', 10), 100));
         $q = $request->query('q');
 
