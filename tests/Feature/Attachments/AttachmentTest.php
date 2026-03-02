@@ -168,5 +168,5 @@ test('destroy deletes file from disk (if present) and deletes the model', functi
 
     // file should be gone and model deleted
     Storage::disk('public')->assertMissing($attachment->path);
-    $this->assertDatabaseMissing('attachments', ['id' => $attachment->id]);
+    $this->assertSoftDeleted('attachments', ['id' => $attachment->id]);
 });
