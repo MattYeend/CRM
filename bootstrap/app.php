@@ -10,10 +10,40 @@ use Inertia\Inertia;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Gate;
+use App\Models\Activity;
+use App\Policies\ActivityPolicy;
+use App\Models\Attachment;
+use App\Policies\AttachmentPolicy;
+use App\Models\Company;
+use App\Policies\CompanyPolicy;
+use App\Models\Contact;
+use App\Policies\ContactPolicy;
 use App\Models\Deal;
 use App\Policies\DealPolicy;
+use App\Models\Invoice;
+use App\Policies\InvoicePolicy;
+use App\Models\InvoiceItem;
+use App\Policies\InvoiceItemPolicy;
 use App\Models\Lead;
 use App\Policies\LeadPolicy;
+use App\Models\Learning;
+use App\Policies\LearningPolicy;
+use App\Models\Note;
+use App\Policies\NotePolicy;
+use App\Models\Permission;
+use App\Policies\PermissionPolicy;
+use App\Models\Pipeline;
+use App\Policies\PipelinePolicy;
+use App\Models\PipelineStage;
+use App\Policies\PipelineStagePolicy;
+use App\Models\Product;
+use App\Policies\ProductPolicy;
+use App\Models\Role;
+use App\Policies\RolePolicy;
+use App\Models\Task;
+use App\Policies\TaskPolicy;
+use App\Models\User;
+use App\Policies\UserPolicy;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -99,8 +129,23 @@ return Application::configure(basePath: dirname(__DIR__))
         | for Lead instances.
         |--------------------------------------------------------------------------
         */
+        Gate::policy(Activity::class, ActivityPolicy::class);
+        Gate::policy(Attachment::class, AttachmentPolicy::class);
+        Gate::policy(Company::class, CompanyPolicy::class);
+        Gate::policy(Contact::class, ContactPolicy::class);
         Gate::policy(Deal::class, DealPolicy::class);
+        // Gate::policy(Invoice::class, InvoicePolicy::class);
+        // Gate::policy(InvoiceItem::class, InvoiceItemPolicy::class);
         Gate::policy(Lead::class, LeadPolicy::class);
+        // Gate::policy(Learning::class, LearningPolicy::class);
+        // Gate::policy(Note::class, NotePolicy::class);
+        // Gate::policy(Permission::class, PermissionPolicy::class);
+        // Gate::policy(Pipeline::class, PipelinePolicy::class);
+        // Gate::policy(PipelineStage::class, PipelineStagePolicy::class);
+        // Gate::policy(Product::class, ProductPolicy::class);
+        // Gate::policy(Role::class, RolePolicy::class);
+        // Gate::policy(Task::class, TaskPolicy::class);
+        // Gate::policy(User::class, UserPolicy::class);
     })
 
     ->create();

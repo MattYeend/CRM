@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Deal;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -12,7 +13,7 @@ class DealPolicy
 
     public function before(User $user): ?bool
     {
-        if ($user->hasPermission('admin')) {
+        if ($user->hasRole(Role::ROLE_SUPER_ADMIN)) {
             return true;
         }
 

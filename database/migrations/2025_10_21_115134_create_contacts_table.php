@@ -20,6 +20,9 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('job_title')->nullable();
             $table->json('meta')->nullable();
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
             $table->index(['company_id','email']);

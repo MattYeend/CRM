@@ -2,12 +2,12 @@
 
 namespace App\Policies;
 
-use App\Models\Lead;
+use App\Models\Company;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class LeadPolicy
+class CompanyPolicy
 {
     use HandlesAuthorization;
 
@@ -22,29 +22,29 @@ class LeadPolicy
 
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('leads.view');
+        return $user->hasPermission('companies.view');
     }
 
     public function view(User $user): bool
     {
-        return $user->hasPermission('leads.view');
+        return $user->hasPermission('companies.view');
     }
 
     public function create(User $user): bool
     {
-        return $user->hasPermission('leads.create');
+        return $user->hasPermission('companies.create');
     }
 
-    public function update(User $user, Lead $lead): bool
+    public function update(User $user, Company $company): bool
     {
-        return $user->hasPermission('leads.update.any') ||
+        return $user->hasPermission('companies.update.any') ||
             ($user->hasPermission(
-                'leads.update.own'
-            ) && $lead->owner_id === $user->id);
+                'companies.update.own'
+            ) && $company->created_by === $user->id);
     }
 
     public function delete(User $user): bool
     {
-        return $user->hasPermission('leads.delete');
+        return $user->hasPermission('companies.delete');
     }
 }

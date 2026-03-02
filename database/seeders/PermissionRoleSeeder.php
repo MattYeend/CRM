@@ -38,25 +38,52 @@ class PermissionRoleSeeder extends Seeder
         |--------------------------------------------------------------------------
         */
         $adminPermissions = [
-            'users.view',
-            'users.create',
-            'users.update',
-            'users.delete',
+            'attachments.upload.any',
+            'attachments.delete',
+            'attachments.view',
+            'attachments.create',
+            'attachments.update.any',
+
+            'activities.view',
+            'activities.create',
+            'activities.update.any',
+            'activities.delete',
+
+            'companies.view',
+            'companies.create',
+            'companies.update.any',
+            'companies.delete',
+
+            'contacts.view',
+            'contacts.create',
+            'contacts.update.any',
+            'contacts.delete',
 
             'deals.view',
             'deals.create',
             'deals.update.any',
             'deals.delete',
 
+            'invoices.view',
+            'invoices.create',
+            'invoices.update',
+            'invoices.delete',
+
             'leads.view',
             'leads.create',
             'leads.update.any',
             'leads.delete',
 
-            'contacts.view',
-            'contacts.create',
-            'contacts.update',
-            'contacts.delete',
+            'learning.view',
+            'learning.create',
+            'learning.update',
+            'learning.delete',
+            'learning.access',
+
+            'notes.view',
+            'notes.create',
+            'notes.update',
+            'notes.delete',
 
             'tasks.view',
             'tasks.create',
@@ -66,22 +93,16 @@ class PermissionRoleSeeder extends Seeder
             'pipelines.view',
             'pipelines.manage',
 
-            'invoices.view',
-            'invoices.create',
-            'invoices.update',
-            'invoices.delete',
-
             'reports.view',
             'data.export',
 
             'settings.view',
             'settings.manage',
 
-            'learning.view',
-            'learning.create',
-            'learning.update',
-            'learning.delete',
-            'learning.access',
+            'users.view',
+            'users.create',
+            'users.update',
+            'users.delete',
         ];
 
         foreach ($adminPermissions as $permissionName) {
@@ -100,6 +121,23 @@ class PermissionRoleSeeder extends Seeder
         |--------------------------------------------------------------------------
         */
         $userPermissions = [
+            'attachments.upload.own',
+            'attachments.view',
+            'attachments.create',
+            'attachments.update.own',
+
+            'activities.view',
+            'activities.create',
+            'activities.update.own',
+
+            'companies.view',
+            'companies.create',
+            'companies.update.own',
+
+            'contacts.view',
+            'contacts.create',
+            'contacts.update.own',
+
             'deals.view',
             'deals.create',
             'deals.update.own',
@@ -108,22 +146,21 @@ class PermissionRoleSeeder extends Seeder
             'leads.create',
             'leads.update.own',
 
-            'contacts.view',
-            'contacts.create',
-            'contacts.update',
+            'learning.view',
+            'learning.access',
+
+            'notes.view',
+            'notes.create',
+            'notes.update',
 
             'tasks.view',
             'tasks.create',
             'tasks.update',
 
-            'notes.create',
-            'attachments.upload',
-
             'pipelines.view',
             'reports.view',
 
-            'learning.view',
-            'learning.access',
+            'users.view',
         ];
 
         foreach ($userPermissions as $permissionName) {

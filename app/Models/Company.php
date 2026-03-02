@@ -26,6 +26,12 @@ class Company extends Model
         'postal_code',
         'country',
         'meta',
+        'created_by',
+        'updated_by',
+        'deleted_by',
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
 
     /**
