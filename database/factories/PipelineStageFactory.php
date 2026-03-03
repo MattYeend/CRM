@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\PipelineStage;
 use App\Models\Pipeline;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,11 +20,14 @@ class PipelineStageFactory extends Factory
     public function definition(): array
     {
         return [
-            'pipeline_id' => null,
+            'pipeline_id' => PipelineStage::factory(),
             'name' => $this->faker->word(),
             'position' => 0,
             'is_won_stage' => false,
             'is_lost_stage' => false,
+            'created_by' => User::factory(),
+            'updated_by' => null,
+            'deleted_by' => null,
         ];
     }
 

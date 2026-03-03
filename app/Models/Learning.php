@@ -23,6 +23,9 @@ class Learning extends Model
         'updated_by',
         'deleted_by',
         'meta',
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
 
     /**

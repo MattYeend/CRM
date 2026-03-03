@@ -137,15 +137,15 @@ return Application::configure(basePath: dirname(__DIR__))
         Gate::policy(Invoice::class, InvoicePolicy::class);
         Gate::policy(InvoiceItem::class, InvoiceItemPolicy::class);
         Gate::policy(Lead::class, LeadPolicy::class);
-        // Gate::policy(Learning::class, LearningPolicy::class);
-        // Gate::policy(Note::class, NotePolicy::class);
-        // Gate::policy(Permission::class, PermissionPolicy::class);
-        // Gate::policy(Pipeline::class, PipelinePolicy::class);
-        // Gate::policy(PipelineStage::class, PipelineStagePolicy::class);
-        // Gate::policy(Product::class, ProductPolicy::class);
-        // Gate::policy(Role::class, RolePolicy::class);
-        // Gate::policy(Task::class, TaskPolicy::class);
-        // Gate::policy(User::class, UserPolicy::class);
+        Gate::policy(Learning::class, LearningPolicy::class);
+        Gate::policy(Note::class, NotePolicy::class);
+        Gate::policy(Permission::class, PermissionPolicy::class);
+        Gate::policy(Pipeline::class, PipelinePolicy::class);
+        Gate::policy(PipelineStage::class, PipelineStagePolicy::class);
+        Gate::policy(Product::class, ProductPolicy::class);
+        Gate::policy(Role::class, RolePolicy::class);
+        Gate::policy(Task::class, TaskPolicy::class);
+        Gate::policy(User::class, UserPolicy::class);
     })
 
     ->create();

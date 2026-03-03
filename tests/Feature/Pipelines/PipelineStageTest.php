@@ -102,5 +102,5 @@ test('destroy deletes the pipeline stage', function () {
 
     $response->assertStatus(204);
 
-    $this->assertDatabaseMissing('pipeline_stages', ['id' => $stage->id]);
+    $this->assertSoftDeleted('pipeline_stages', ['id' => $stage->id]);
 });

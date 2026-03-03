@@ -81,22 +81,49 @@ class PermissionRoleSeeder extends Seeder
 
             'learning.view',
             'learning.create',
-            'learning.update',
+            'learning.update.any',
             'learning.delete',
+            'learning.manage',
             'learning.access',
 
             'notes.view',
             'notes.create',
-            'notes.update',
+            'notes.update.any',
             'notes.delete',
 
             'tasks.view',
             'tasks.create',
-            'tasks.update',
+            'tasks.update.any',
             'tasks.delete',
 
+            'permissions.view',
+            'permissions.create',
+            'permissions.update.any',
+            'permissions.delete',
+    
             'pipelines.view',
+            'pipelines.create',
+            'pipelines.update.any',
+            'pipelines.delete',
             'pipelines.manage',
+            'pipelines.assign',
+
+            'pipelineStages.view',
+            'pipelineStages.create',
+            'pipelineStages.update.any',
+            'pipelineStages.delete',
+            'pipelineStages.assign',
+            'pipelineStages.manage',
+
+            'products.view',
+            'products.create',
+            'products.update.any',
+            'products.delete',
+
+            'tasks.view',
+            'tasks.create',
+            'tasks.update.any',
+            'tasks.delete',
 
             'reports.view',
             'data.export',
@@ -104,10 +131,15 @@ class PermissionRoleSeeder extends Seeder
             'settings.view',
             'settings.manage',
 
+            'roles.view',
+
             'users.view',
             'users.create',
-            'users.update',
+            'users.update.any',
             'users.delete',
+            'users.assign.roles',
+            'users.assign.permissions',
+            'users.manage',
         ];
 
         foreach ($adminPermissions as $permissionName) {
@@ -161,19 +193,41 @@ class PermissionRoleSeeder extends Seeder
 
             'learning.view',
             'learning.access',
+            'learning.create',
+            'learning.update.own',
 
             'notes.view',
             'notes.create',
-            'notes.update',
+            'notes.update.own',
 
             'tasks.view',
             'tasks.create',
-            'tasks.update',
+            'tasks.update.own',
 
+            'permissions.view',
+    
             'pipelines.view',
+            'pipelines.create',
+            'pipelines.update.own',
+
+            'pipelineStages.view',
+            'pipelineStages.create',
+            'pipelineStages.update.own',
+            'pipelineStages.assign',
+
+            'tasks.view',
+            'tasks.create',
+            'tasks.update.own',
+
+            'products.view',
+            'products.create',
+            'products.update.own',
+
             'reports.view',
+            'roles.view',
 
             'users.view',
+            'users.update.own',
         ];
 
         foreach ($userPermissions as $permissionName) {

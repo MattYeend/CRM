@@ -23,6 +23,12 @@ class Product extends Model
         'currency',
         'quantity',
         'meta',
+        'created_by',
+        'updated_by',
+        'deleted_by',
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
 
     /**

@@ -19,13 +19,18 @@ class Task extends Model
         'title',
         'description',
         'assigned_to',
-        'created_by',
         'taskable_type',
         'taskable_id',
         'priority',
         'status',
         'due_at',
         'meta',
+        'created_by',
+        'updated_by',
+        'deleted_by',
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
 
     /**

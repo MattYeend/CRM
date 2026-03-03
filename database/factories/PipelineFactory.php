@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,6 +21,9 @@ class PipelineFactory extends Factory
             'name' => $this->faker->words(2, true),
             'description' => $this->faker->optional()->sentence(),
             'is_default' => false,
+            'created_by' => User::factory(),
+            'updated_by' => null,
+            'deleted_by' => null,
         ];
     }
 }

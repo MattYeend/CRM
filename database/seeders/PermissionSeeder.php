@@ -74,7 +74,8 @@ class PermissionSeeder extends Seeder
             // Learning Material
             ['name' => 'learning.view', 'label' => 'View learning material'],
             ['name' => 'learning.create', 'label' => 'Create learning material'],
-            ['name' => 'learning.update', 'label' => 'Update learning material'],
+            ['name' => 'learning.update.own', 'label' => 'Update own learning material'],
+            ['name' => 'learning.update.any', 'label' => 'Update any learning material'],
             ['name' => 'learning.delete', 'label' => 'Delete learning material'],
             ['name' => 'learning.manage', 'label' => 'Manage learning material'],
             ['name' => 'learning.access', 'label' => 'Access learning material'],
@@ -82,22 +83,54 @@ class PermissionSeeder extends Seeder
             // Notes
             ['name' => 'notes.view', 'label' => 'View notes'],
             ['name' => 'notes.create', 'label' => 'Create notes'],
-            ['name' => 'notes.update', 'label' => 'Update notes'],
+            ['name' => 'notes.update.own', 'label' => 'Update own notes'],
+            ['name' => 'notes.update.any', 'label' => 'Update any notes'],
             ['name' => 'notes.delete', 'label' => 'Delete notes'],
 
-            // Tasks
-            ['name' => 'tasks.view', 'label' => 'View tasks'],
-            ['name' => 'tasks.create', 'label' => 'Create tasks'],
-            ['name' => 'tasks.update', 'label' => 'Update tasks'],
-            ['name' => 'tasks.delete', 'label' => 'Delete tasks'],
+            // Permissions
+            ['name' => 'permissions.view', 'label' => 'View permissions'],
+            ['name' => 'permissions.create', 'label' => 'Create permissions'],
+            ['name' => 'permissions.update.any', 'label' => 'Update any permissions'],
+            ['name' => 'permissions.delete', 'label' => 'Delete permissions'],
 
             // Pipelines
             ['name' => 'pipelines.view', 'label' => 'View pipelines'],
+            ['name' => 'pipelines.create', 'label' => 'Create pipelines'],
+            ['name' => 'pipelines.update.own', 'label' => 'Update own pipelines'],
+            ['name' => 'pipelines.update.any', 'label' => 'Update any pipelines'],
+            ['name' => 'pipelines.delete', 'label' => 'Delete pipelines'],
             ['name' => 'pipelines.manage', 'label' => 'Manage pipelines'],
+            ['name' => 'pipelines.assign', 'label' => 'Assign pipelines to entities'],
+
+            // Pipeline Stages
+            ['name' => 'pipelineStages.view', 'label' => 'View pipeline stages'],
+            ['name' => 'pipelineStages.create', 'label' => 'Create pipeline stages'],
+            ['name' => 'pipelineStages.update.own', 'label' => 'Update own pipeline stages'],
+            ['name' => 'pipelineStages.update.any', 'label' => 'Update any pipeline stages'],
+            ['name' => 'pipelineStages.delete', 'label' => 'Delete pipeline stages'],
+            ['name' => 'pipelineStages.manage', 'label' => 'Manage pipeline stages'],
+            ['name' => 'pipelineStages.assign', 'label' => 'Assign pipeline stages to pipelines'],
+
+            // Products
+            ['name' => 'products.view', 'label' => 'View products'],
+            ['name' => 'products.create', 'label' => 'Create products'],
+            ['name' => 'products.update.own', 'label' => 'Update own products'],
+            ['name' => 'products.update.any', 'label' => 'Update any products'],
+            ['name' => 'products.delete', 'label' => 'Delete products'],
 
             // Reports & exports
             ['name' => 'reports.view', 'label' => 'View reports'],
             ['name' => 'data.export', 'label' => 'Export data'],
+
+            // Roles
+            ['name' => 'roles.view', 'label' => 'View roles'],
+
+            // Tasks
+            ['name' => 'tasks.view', 'label' => 'View tasks'],
+            ['name' => 'tasks.create', 'label' => 'Create tasks'],
+            ['name' => 'tasks.update.own', 'label' => 'Update own tasks'],
+            ['name' => 'tasks.update.any', 'label' => 'Update any tasks'],
+            ['name' => 'tasks.delete', 'label' => 'Delete tasks'],
 
             // Settings
             ['name' => 'settings.view', 'label' => 'View settings'],
@@ -106,9 +139,12 @@ class PermissionSeeder extends Seeder
             // Users
             ['name' => 'users.view', 'label' => 'View users'],
             ['name' => 'users.create', 'label' => 'Create users'],
-            ['name' => 'users.update', 'label' => 'Update users'],
+            ['name' => 'users.update.own', 'label' => 'Update own user'],
+            ['name' => 'users.update.any', 'label' => 'Update any user'],
             ['name' => 'users.delete', 'label' => 'Delete users'],
             ['name' => 'users.manage', 'label' => 'Manage users'],
+            ['name' => 'users.assign.roles', 'label' => 'Assign roles to users'],
+            ['name' => 'users.assign.permissions', 'label' => 'Assign permissions to users'],
         ];
 
         foreach ($permissions as $permission) {

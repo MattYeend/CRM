@@ -89,5 +89,5 @@ test('destroy deletes the pipeline', function () {
     $response = $this->deleteJson(route('pipelines.destroy', $pipeline));
 
     $response->assertStatus(204);
-    $this->assertDatabaseMissing('pipelines', ['id' => $pipeline->id]);
+    $this->assertSoftDeleted('pipelines', ['id' => $pipeline->id]);
 });

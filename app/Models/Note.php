@@ -21,6 +21,12 @@ class Note extends Model
         'meta',
         'notable_type',
         'notable_id',
+        'created_by',
+        'updated_by',
+        'deleted_by',
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
 
     /**
