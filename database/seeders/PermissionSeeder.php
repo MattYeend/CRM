@@ -55,8 +55,14 @@ class PermissionSeeder extends Seeder
             // Invoices / finance
             ['name' => 'invoices.view', 'label' => 'View invoices'],
             ['name' => 'invoices.create', 'label' => 'Create invoices'],
-            ['name' => 'invoices.update', 'label' => 'Update invoices'],
+            ['name' => 'invoices.update.own', 'label' => 'Update own invoices'],
+            ['name' => 'invoices.update.any', 'label' => 'Update any invoices'],
             ['name' => 'invoices.delete', 'label' => 'Delete invoices'],
+            ['name' => 'invoiceItems.view', 'label' => 'View invoice items'],
+            ['name' => 'invoiceItems.create', 'label' => 'Create invoice items'],
+            ['name' => 'invoiceItems.update.own', 'label' => 'Update own invoice items'],
+            ['name' => 'invoiceItems.update.any', 'label' => 'Update any invoice items'],
+            ['name' => 'invoiceItems.delete', 'label' => 'Delete invoice items'],
 
             // Leads 
             ['name' => 'leads.view', 'label' => 'View leads'],

@@ -134,8 +134,8 @@ return Application::configure(basePath: dirname(__DIR__))
         Gate::policy(Company::class, CompanyPolicy::class);
         Gate::policy(Contact::class, ContactPolicy::class);
         Gate::policy(Deal::class, DealPolicy::class);
-        // Gate::policy(Invoice::class, InvoicePolicy::class);
-        // Gate::policy(InvoiceItem::class, InvoiceItemPolicy::class);
+        Gate::policy(Invoice::class, InvoicePolicy::class);
+        Gate::policy(InvoiceItem::class, InvoiceItemPolicy::class);
         Gate::policy(Lead::class, LeadPolicy::class);
         // Gate::policy(Learning::class, LearningPolicy::class);
         // Gate::policy(Note::class, NotePolicy::class);

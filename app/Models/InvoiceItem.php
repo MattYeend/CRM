@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class InvoiceItem extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -22,6 +23,12 @@ class InvoiceItem extends Model
         'unit_price',
         'line_total',
         'meta',
+        'created_by',
+        'updated_by',
+        'deleted_by',
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
 
     /**

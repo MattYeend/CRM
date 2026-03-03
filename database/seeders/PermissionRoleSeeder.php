@@ -66,8 +66,13 @@ class PermissionRoleSeeder extends Seeder
 
             'invoices.view',
             'invoices.create',
-            'invoices.update',
+            'invoices.update.any',
             'invoices.delete',
+
+            'invoiceItems.view',
+            'invoiceItems.create',
+            'invoiceItems.update.any',
+            'invoiceItems.delete',
 
             'leads.view',
             'leads.create',
@@ -141,6 +146,14 @@ class PermissionRoleSeeder extends Seeder
             'deals.view',
             'deals.create',
             'deals.update.own',
+
+            'invoices.view',
+            'invoices.create',
+            'invoices.update.own',
+
+            'invoiceItems.view',
+            'invoiceItems.create',
+            'invoiceItems.update.own',
 
             'leads.view',
             'leads.create',

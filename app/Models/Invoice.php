@@ -19,7 +19,6 @@ class Invoice extends Model
         'number',
         'company_id',
         'contact_id',
-        'created_by',
         'issue_date',
         'due_date',
         'status',
@@ -28,6 +27,12 @@ class Invoice extends Model
         'total',
         'currency',
         'meta',
+        'created_by',
+        'updated_by',
+        'deleted_by',
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
 
     /**

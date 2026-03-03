@@ -131,5 +131,5 @@ test('destroy deletes an invoice item', function () {
 
     $response->assertStatus(204);
 
-    $this->assertDatabaseMissing('invoice_items', ['id' => $invoiceItem->id]);
+    $this->assertSoftDeleted('invoice_items', ['id' => $invoiceItem->id]);
 });

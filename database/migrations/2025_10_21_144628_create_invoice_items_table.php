@@ -20,7 +20,11 @@ return new class extends Migration
             $table->decimal('unit_price', 15, 2)->default(0);
             $table->decimal('line_total', 15, 2)->default(0);
             $table->json('meta')->nullable();
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
