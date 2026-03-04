@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('note_user', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('note_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->unique(['note_id','user_id']);
