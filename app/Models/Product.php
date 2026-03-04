@@ -40,7 +40,7 @@ class Product extends Model
      */
     protected $casts = [
         'meta' => 'array',
-        'price' => 'decimal:2',
+        'price' => 'float',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
