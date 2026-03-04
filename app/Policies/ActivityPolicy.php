@@ -11,6 +11,13 @@ class ActivityPolicy
 {
     use HandlesAuthorization;
 
+    /**
+     * Handle all permissions for super admin role.
+     *
+     * @param User $user
+     *
+     * @return bool|null
+     */
     public function before(User $user): ?bool
     {
         if ($user->hasRole(Role::ROLE_SUPER_ADMIN)) {
@@ -20,21 +27,51 @@ class ActivityPolicy
         return null;
     }
 
+    /**
+     * Determine whether the user can view any activities.
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
     public function viewAny(User $user): bool
     {
         return $user->hasPermission('activities.view');
     }
 
+    /**
+     * Determine whether the user can view the activity.
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
     public function view(User $user): bool
     {
         return $user->hasPermission('activities.view');
     }
 
+    /**
+     * Determine whether the user can create activities.
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
     public function create(User $user): bool
     {
         return $user->hasPermission('activities.create');
     }
 
+    /**
+     * Determine whether the user can update the activity.
+     *
+     * @param User $user
+     *
+     * @param Activity $activity
+     *
+     * @return bool
+     */
     public function update(User $user, Activity $activity): bool
     {
         return $user->hasPermission('activities.update.any') ||
@@ -43,6 +80,13 @@ class ActivityPolicy
             ) && $activity->created_by === $user->id);
     }
 
+    /**
+     * Determine whether the user can delete the activity.
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
     public function delete(User $user): bool
     {
         return $user->hasPermission('activities.delete');

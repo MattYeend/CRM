@@ -11,30 +11,67 @@ class LearningPolicy
 {
     use HandlesAuthorization;
 
+    /**
+     * Handle all permissions for super admin role.
+     *
+     * @param User $user
+     *
+     * @return bool|null
+     */
     public function before(User $user): ?bool
     {
         if ($user->hasRole(Role::ROLE_SUPER_ADMIN)) {
             return true;
         }
-    
+
         return null;
     }
 
+    /**
+     * Determine whether the user can view any learnings.
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
     public function viewAny(User $user): bool
     {
         return $user->hasPermission('learnings.view');
     }
 
+    /**
+     * Determine whether the user can view the learning.
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
     public function view(User $user): bool
     {
         return $user->hasPermission('learnings.view');
     }
 
+    /**
+     * Determine whether the user can create learnings.
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
     public function create(User $user): bool
     {
         return $user->hasPermission('learnings.create');
     }
 
+    /**
+     * Determine whether the user can update the learning.
+     *
+     * @param User $user
+     *
+     * @param Learning $learning
+     *
+     * @return bool
+     */
     public function update(User $user, Learning $learning): bool
     {
         return $user->hasPermission('learnings.update.any') ||
@@ -43,21 +80,49 @@ class LearningPolicy
             ) && $learning->created_by === $user->id);
     }
 
+    /**
+     * Determine whether the user can delete the learning.
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
     public function delete(User $user): bool
     {
         return $user->hasPermission('learnings.delete');
     }
 
+    /**
+     * Determine whether the user can manage learnings.
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
     public function manage(User $user): bool
     {
         return $user->hasPermission('learnings.manage');
     }
 
+    /**
+     * Determine whether the user can assign learnings.
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
     public function assign(User $user): bool
     {
         return $user->hasPermission('learnings.assign');
     }
 
+    /**
+     * Determine whether the user can access learnings.
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
     public function access(User $user): bool
     {
         return $user->hasPermission('learnings.access');
