@@ -13,18 +13,12 @@ return new class extends Migration
     {
         Schema::create('learning_user', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('learning_id')
-                ->constrained()
-                ->cascadeOnDelete();
-            $table->foreignId('user_id')
-                ->constrained()
-                ->cascadeOnDelete();
+            $table->foreignId('learning_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('completed_by')->nullable()->constrained('users')->nullOnDelete();
             $table->boolean('is_completed')->default(false);
             $table->timestamp('completed_at')->nullable();
-
             $table->timestamps();
-
             $table->unique(['learning_id', 'user_id']);
         });
     }
