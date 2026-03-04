@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Invoice extends Model
@@ -41,9 +43,12 @@ class Invoice extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'meta' => 'array',
         'issue_date' => 'date',
         'due_date' => 'date',
-        'meta' => 'array',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     /**
@@ -51,7 +56,7 @@ class Invoice extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function company()
+    public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
     }
@@ -61,7 +66,7 @@ class Invoice extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function contact()
+    public function contact(): BelongsTo
     {
         return $this->belongsTo(Contact::class);
     }
@@ -71,7 +76,7 @@ class Invoice extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function items()
+    public function items(): HasMany
     {
         return $this->hasMany(InvoiceItem::class);
     }
@@ -81,8 +86,58 @@ class Invoice extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function creator()
+    public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Get the user who updated the invoice.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function updater(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    /**
+     * Get the user who deleted the invoice.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function deleter(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
+    }
+
+    /**
+     * See if the invoice is overdue.
+     *
+     * @return bool
+     */
+    public function getIsOverdueAttribute(): bool
+    {
+        return $this->due_date < now() && $this->status !== 'paid';
+    }
+
+    /**
+     * See if the invoice is paid.
+     *
+     * @return bool
+     */
+    public function getIsPaidAttribute(): bool
+    {
+        return $this->status === 'paid';
+    }
+
+    /**
+     * See if the invoice is draft.
+     *
+     * @return bool
+     */
+    public function getIsDraftAttribute(): bool
+    {
+        return $this->status === 'draft';
     }
 }

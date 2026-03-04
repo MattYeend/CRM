@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Deal extends Model
@@ -27,6 +29,12 @@ class Deal extends Model
         'close_date',
         'status',
         'meta',
+        'created_by',
+        'updated_by',
+        'deleted_by',
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
 
     /**
@@ -35,8 +43,11 @@ class Deal extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'close_date' => 'date',
         'meta' => 'array',
+        'close_date' => 'date',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     /**
@@ -44,7 +55,7 @@ class Deal extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function company()
+    public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
     }
@@ -54,7 +65,7 @@ class Deal extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function contact()
+    public function contact(): BelongsTo
     {
         return $this->belongsTo(Contact::class);
     }
@@ -64,7 +75,7 @@ class Deal extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function owner()
+    public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
@@ -74,7 +85,7 @@ class Deal extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function pipeline()
+    public function pipeline(): BelongsTo
     {
         return $this->belongsTo(Pipeline::class);
     }
@@ -84,7 +95,7 @@ class Deal extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function stage()
+    public function stage(): BelongsTo
     {
         return $this->belongsTo(PipelineStage::class, 'stage_id');
     }
@@ -94,7 +105,7 @@ class Deal extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
-    public function tasks()
+    public function tasks(): MorphMany
     {
         return $this->morphMany(Task::class, 'taskable');
     }
@@ -104,7 +115,7 @@ class Deal extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
-    public function notes()
+    public function notes(): MorphMany
     {
         return $this->morphMany(Note::class, 'notable');
     }
@@ -114,8 +125,38 @@ class Deal extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
-    public function attachments()
+    public function attachments(): MorphMany
     {
         return $this->morphMany(Attachment::class, 'attachable');
+    }
+
+    /**
+     * Get the user that created the deal.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Get the user that updated the deal.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function updater(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    /**
+     * Get the user that deleted the deal.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function deleter(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
     }
 }

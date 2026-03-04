@@ -7,9 +7,11 @@ namespace App\Models;
 use Illuminate\Console\View\Components\Task;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
@@ -77,7 +79,7 @@ class User extends Authenticatable
      *
      * @return \Illuminate\Support\Collection
      */
-    public function permissions()
+    public function permissions(): Collection
     {
         return $this->roles()
             ->join(
@@ -148,7 +150,7 @@ class User extends Authenticatable
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function deals()
+    public function deals(): HasMany
     {
         return $this->hasMany(Deal::class, 'owner_id');
     }
@@ -158,7 +160,7 @@ class User extends Authenticatable
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function tasks()
+    public function tasks(): HasMany
     {
         return $this->hasMany(Task::class, 'assigned_to');
     }
@@ -168,7 +170,7 @@ class User extends Authenticatable
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function notes()
+    public function notes(): HasMany
     {
         return $this->hasMany(Note::class);
     }
@@ -178,7 +180,7 @@ class User extends Authenticatable
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function learnings()
+    public function learnings(): BelongsToMany
     {
         return $this->belongsToMany(Learning::class)
             ->withPivot(['is_completed', 'completed_by', 'completed_at'])

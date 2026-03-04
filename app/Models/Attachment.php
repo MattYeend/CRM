@@ -4,7 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Attachment extends Model
 {
@@ -31,11 +34,22 @@ class Attachment extends Model
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+    ];
+
+    /**
      * Get the parent attachable model (contact, deal, etc.).
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
-    public function attachable()
+    public function attachable(): MorphTo
     {
         return $this->morphTo();
     }
@@ -45,8 +59,96 @@ class Attachment extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function uploader()
+    public function uploader(): BelongsTo
     {
         return $this->belongsTo(User::class, 'uploaded_by');
+    }
+
+    /**
+     * Get the size of the attachment in a human-readable format.
+     *
+     * @return string
+     */
+    public function getSizeFormattedAttribute(): string
+    {
+        $size = $this->size;
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $factor = floor((strlen($size) - 1) / 3);
+        return sprintf(
+            '%.2f',
+            $size / pow(1024, $factor)
+        ) . ' ' . $units[$factor];
+    }
+
+    /**
+     * Get the MIME type of the attachment.
+     *
+     * @return string
+     */
+    public function getMimeTypeAttribute(): string
+    {
+        return $this->mime;
+    }
+
+    /**
+     * Get the filename without the extension.
+     *
+     * @return string
+     */
+    public function getFilenameWithoutExtensionAttribute(): string
+    {
+        return pathinfo($this->filename, PATHINFO_FILENAME);
+    }
+
+    /**
+     * Get the file extension of the attachment.
+     *
+     * @return string
+     */
+    public function getFileExtensionAttribute(): string
+    {
+        return pathinfo($this->filename, PATHINFO_EXTENSION);
+    }
+
+    /**
+     * Get the user that created the attachment.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Get the user that updated the attachment.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function updater(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    /**
+     * Get the user that deleted the attachment.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function deleter(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
+    }
+
+    /**
+     * Delete the attachment file from storage when the model is deleted.
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::deleting(function (Attachment $attachment) {
+            Storage::disk($attachment->disk)->delete($attachment->path);
+        });
     }
 }

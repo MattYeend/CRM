@@ -24,6 +24,9 @@ return new class extends Migration
             $table->date('close_date')->nullable();
             $table->enum('status', ['open','won','lost','archived'])->default('open');
             $table->json('meta')->nullable();
+            $table->unsignedBigInteger('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->unsignedBigInteger('updated_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->unsignedBigInteger('deleted_by')->nullable()->costrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
             $table->index(['owner_id','status']);

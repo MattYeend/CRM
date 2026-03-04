@@ -50,7 +50,9 @@ test('show returns a lead with relations loaded', function () {
 
     $response->assertJsonStructure([
         'id',
-        'name',
+        'title',
+        'first_name',
+        'last_name',
         'email',
         'phone',
         'source',
@@ -70,7 +72,9 @@ test('store creates a new lead and returns 201', function () {
     $assignedTo = User::factory()->create();
 
     $payload = [
-        'name' => 'New Lead',
+        'title' => 'New Lead',
+        'first_name' => 'John',
+        'last_name' => 'Doe',
         'email' => 'lead@example.com',
         'phone' => '0123456789',
         'source' => 'website',
@@ -82,20 +86,20 @@ test('store creates a new lead and returns 201', function () {
     $response = $this->postJson(route('leads.store'), $payload);
 
     $response->assertStatus(201);
-    $response->assertJsonFragment(['name' => 'New Lead']);
+    $response->assertJsonFragment(['title' => 'New Lead']);
 
     $this->assertDatabaseHas('leads', [
-        'name' => 'New Lead',
+        'title' => 'New Lead',
         'owner_id' => $owner->id,
         'assigned_to' => $assignedTo->id,
     ]);
 });
 
 test('update modifies an existing lead', function () {
-    $lead = Lead::factory()->create(['name' => 'Old Lead']);
+    $lead = Lead::factory()->create(['title' => 'Old Lead']);
 
     $payload = [
-        'name' => 'Updated Lead',
+        'title' => 'Updated Lead',
         'source' => 'referral',
     ];
 
@@ -103,13 +107,15 @@ test('update modifies an existing lead', function () {
 
     $response->assertStatus(200);
     $response->assertJsonFragment([
-        'name' => 'Updated Lead',
+        'title' => 'Updated Lead',
         'source' => 'referral',
     ]);
 
     $this->assertDatabaseHas('leads', [
         'id' => $lead->id,
-        'name' => 'Updated Lead',
+        'title' => 'Updated Lead',
+        'first_name' => $lead->first_name,
+        'last_name' => $lead->last_name,
         'source' => 'referral',
     ]);
 });

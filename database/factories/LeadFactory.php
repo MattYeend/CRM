@@ -20,7 +20,9 @@ class LeadFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->sentence(3),
+            'title' => fake()->sentence(3),
+            'first_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
             'email' => fake()->optional()->safeEmail(),
             'phone' => fake()->optional()->phoneNumber(),
             'source' => fake()->randomElement(['website', 'email', 'phone', 'referral', 'social_media']),
