@@ -53,6 +53,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
 
+    ->withEvents(discover: [
+        __DIR__.'/../app/Listeners',
+    ])
+
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
