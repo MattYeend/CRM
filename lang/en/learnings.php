@@ -28,5 +28,6 @@ return [
     'updated_at' => 'Updated At',
     'deleted_by' => 'Deleted By',
     'deleted_at' => 'Deleted At',
+    'meta' => 'Meta Information',
 
 ];

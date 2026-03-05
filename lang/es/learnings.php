@@ -28,5 +28,6 @@ return [
     'updated_at' => 'Actualizado En',
     'deleted_by' => 'Eliminado Por',
     'deleted_at' => 'Eliminado En',
+    'meta' => 'Información Meta',
 
 ];

@@ -35,5 +35,6 @@ return [
     'updated_at' => 'Wedi\'i ddiweddaru ar',
     'deleted_by' => 'Wedi\'i ddileu gan',
     'deleted_at' => 'Wedi\'i ddileu ar',
+    'meta' => 'Gwybodaeth Meta',
 
 ];
