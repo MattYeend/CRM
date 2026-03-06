@@ -76,6 +76,7 @@ class PermissionSeeder extends Seeder
             ['name' => 'invoices.delete.any', 'label' => 'Delete any invoices'],
             ['name' => 'invoices.delete.own', 'label' => 'Delete own invoices'],
 
+            // Invoice Items
             ['name' => 'invoiceItems.view.all', 'label' => 'View invoice items'],
             ['name' => 'invoiceItems.view.own', 'label' => 'View own invoice items'],
             ['name' => 'invoiceItems.create', 'label' => 'Create invoice items'],
@@ -92,6 +93,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'leads.update.own', 'label' => 'Update  own leads'],
             ['name' => 'leads.delete.any', 'label' => 'Delete any leads'],
             ['name' => 'leads.delete.own', 'label' => 'Delete own leads'],
+            ['name' => 'leads.restore.any', 'label' => 'Restore any leads'],
+            ['name' => 'leads.restore.own', 'label' => 'Restore own leads'],
 
             // Learning Material
             ['name' => 'learning.view.all', 'label' => 'View learning materials'],
@@ -103,6 +106,10 @@ class PermissionSeeder extends Seeder
             ['name' => 'learning.delete.own', 'label' => 'Delete own learning materials'],
             ['name' => 'learning.manage', 'label' => 'Manage learning materials'],
             ['name' => 'learning.access', 'label' => 'Access learning materials'],
+            ['name' => 'learning.complete.any', 'label' => 'Can complete any learning materials'],
+            ['name' => 'learning.complete.own', 'label' => 'Can complete own learning materials'],
+            ['name' => 'learning.incomplete.any', 'label' => 'Can incomplete any learning materials'],
+            ['name' => 'learning.incomplete.own', 'label' => 'Can incomplete own learning materials'],
 
             // Notes
             ['name' => 'notes.view.all', 'label' => 'View notes'],

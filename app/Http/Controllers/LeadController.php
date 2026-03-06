@@ -38,6 +38,8 @@ class LeadController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', Lead::class);
+
         $perPage = max(
             1,
             min((int) $request->query('per_page', 10), 100)
@@ -65,6 +67,8 @@ class LeadController extends Controller
      */
     public function show(Lead $lead): JsonResponse
     {
+        $this->authorize('view', $lead);
+
         return response()->json(
             Lead::with($this->relations())->findOrFail($lead->id)
         );
@@ -79,6 +83,8 @@ class LeadController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $this->authorize('create', Lead::class);
+
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'first_name' => 'required|string|max:255',
@@ -116,6 +122,7 @@ class LeadController extends Controller
      */
     public function update(Request $request, Lead $lead): JsonResponse
     {
+        $this->authorize('update', $lead);
         $validated = $request->validate([
             'title' => 'sometimes|required|string|max:255',
             'first_name' => 'sometimes|required|string|max:255',
@@ -151,6 +158,8 @@ class LeadController extends Controller
      */
     public function destroy(Lead $lead): JsonResponse
     {
+        $this->authorize('delete', $lead);
+
         $this->logger->leadDeleted(
             auth()->user(),
             auth()->id(),
@@ -172,6 +181,8 @@ class LeadController extends Controller
     public function restore(int $id): JsonResponse
     {
         $lead = Lead::withTrashed()->findOrFail($id);
+        $this->authorize('restore', $lead);
+
         $lead->restore();
 
         $this->logger->leadRestored(

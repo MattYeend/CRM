@@ -88,6 +88,7 @@ class PermissionRoleSeeder extends Seeder
             'leads.create',
             'leads.update.any',
             'leads.delete.any',
+            'leads.restore.any',
 
             'learning.view.all',
             'learning.view.own',
@@ -96,6 +97,8 @@ class PermissionRoleSeeder extends Seeder
             'learning.delete.any',
             'learning.manage',
             'learning.access',
+            'learning.complete.any',
+            'learning.incomplete.any',
 
             'notes.view.all',
             'notes.view.own',
@@ -227,6 +230,7 @@ class PermissionRoleSeeder extends Seeder
             'leads.create',
             'leads.update.own',
             'leads.delete.own',
+            'leads.restore.own',
 
             'learning.view.all',
             'learning.view.own',
@@ -234,6 +238,8 @@ class PermissionRoleSeeder extends Seeder
             'learning.create',
             'learning.update.own',
             'learning.delete.own',
+            'learning.complete.own',
+            'learning.incomplete.own',
 
             'notes.view.all',
             'notes.view.own',

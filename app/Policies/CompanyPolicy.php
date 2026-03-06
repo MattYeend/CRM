@@ -114,8 +114,8 @@ class CompanyPolicy
      */
     public function restore(User $user, Company $company): bool
     {
-        return $user->hasPermission('companies.delete.any') ||
-        ($user->hasPermission('companies.delete.own') &&
+        return $user->hasPermission('companies.restore.any') ||
+        ($user->hasPermission('companies.restore.own') &&
             $company->created_by === $user->id);
     }
 }

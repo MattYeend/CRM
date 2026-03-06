@@ -44,11 +44,18 @@ class NotePolicy
      *
      * @param User $user
      *
+     * @param Note $note
+     *
      * @return bool
      */
-    public function view(User $user): bool
+    public function view(User $user, Note $note): bool
     {
-        return $user->hasPermission('notes.view');
+        if ($user->hasPermission('notes.view.all')) {
+            return true;
+        }
+
+        return $user->hasPermission('notes.view.own') &&
+            $note->created_by === $user->id;
     }
 
     /**
@@ -67,6 +74,7 @@ class NotePolicy
      * Determine whether the user can update the note.
      *
      * @param User $user
+     *
      * @param Note $note
      *
      * @return bool
@@ -84,10 +92,14 @@ class NotePolicy
      *
      * @param User $user
      *
+     * @param Note $note
+     *
      * @return bool
      */
-    public function delete(User $user): bool
+    public function delete(User $user, Note $note): bool
     {
-        return $user->hasPermission('notes.delete');
+        return $user->hasPermission('notes.delete.any') ||
+        ($user->hasPermission('notes.delete.own') &&
+            $note->created_by === $user->id);
     }
 }

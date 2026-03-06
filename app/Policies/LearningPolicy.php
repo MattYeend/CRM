@@ -44,11 +44,18 @@ class LearningPolicy
      *
      * @param User $user
      *
+     * @param Learning $learning
+     *
      * @return bool
      */
-    public function view(User $user): bool
+    public function view(User $user, Learning $learning): bool
     {
-        return $user->hasPermission('learnings.view');
+        if ($user->hasPermission('learnings.view.all')) {
+            return true;
+        }
+
+        return $user->hasPermission('learnings.view.own') &&
+            $learning->created_by === $user->id;
     }
 
     /**
@@ -85,11 +92,15 @@ class LearningPolicy
      *
      * @param User $user
      *
+     * @param Learning $learning
+     *
      * @return bool
      */
-    public function delete(User $user): bool
+    public function delete(User $user, Learning $learning): bool
     {
-        return $user->hasPermission('learnings.delete');
+        return $user->hasPermission('learnings.delete.any') ||
+        ($user->hasPermission('learnings.delete.own') &&
+            $learning->created_by === $user->id);
     }
 
     /**
@@ -126,5 +137,37 @@ class LearningPolicy
     public function access(User $user): bool
     {
         return $user->hasPermission('learnings.access');
+    }
+
+    /**
+     * Determine whether the user can complete their own learnings.
+     *
+     * @param User $user
+     *
+     * @param Learning $learning
+     *
+     * @return bool
+     */
+    public function complete(User $user, Learning $learning)
+    {
+        return $user->hasPermission('learnings.complete.any') ||
+        ($user->hasPermission('learnings.complete.own') &&
+            $learning->created_by === $user->id);
+    }
+
+    /**
+     * Determine whether the user can incomplete their own learnings.
+     *
+     * @param User $user
+     *
+     * @param Learning $learning
+     *
+     * @return bool
+     */
+    public function incomplete(User $user, Learning $learning)
+    {
+        return $user->hasPermission('companies.incomplete.any') ||
+        ($user->hasPermission('companies.incomplete.own') &&
+            $learning->created_by === $user->id);
     }
 }

@@ -37,6 +37,8 @@ class NoteController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', Note::class);
+
         $perPage = max(
             1,
             min((int) $request->query('per_page', 10), 100)
@@ -56,6 +58,8 @@ class NoteController extends Controller
      */
     public function show(Note $note): JsonResponse
     {
+        $this->authorize('view', $note);
+
         return response()->json($note->load('user', 'notable'));
     }
 
@@ -68,6 +72,8 @@ class NoteController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $this->authorize('create', Note::class);
+
         $data = $request->validate([
             'user_id' => 'nullable|integer|exists:users,id',
             'notable_type' => 'nullable|string',
@@ -103,6 +109,8 @@ class NoteController extends Controller
      */
     public function update(Request $request, Note $note): JsonResponse
     {
+        $this->authorize('update', $note);
+
         $data = $request->validate([
             'body' => 'sometimes|required|string',
             'meta' => 'nullable|array',
@@ -128,6 +136,8 @@ class NoteController extends Controller
      */
     public function destroy(Note $note): JsonResponse
     {
+        $this->authorize('delete', $note);
+
         $this->logger->noteDeleted(
             auth()->user(),
             auth()->id(),

@@ -37,6 +37,8 @@ class LearningController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', Learning::class);
+
         $perPage = max(
             1,
             min((int) $request->query('per_page', 10), 100)
@@ -56,6 +58,8 @@ class LearningController extends Controller
      */
     public function show(Learning $learning): JsonResponse
     {
+        $this->authorize('view', $learning);
+
         return response()->json($learning->load('users'));
     }
 
@@ -68,6 +72,8 @@ class LearningController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $this->authorize('create', Learning::class);
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -99,6 +105,8 @@ class LearningController extends Controller
      */
     public function update(Request $request, Learning $learning): JsonResponse
     {
+        $this->authorize('update', $learning);
+
         $validated = $request->validate([
             'title' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
@@ -125,6 +133,8 @@ class LearningController extends Controller
      */
     public function destroy(Learning $learning): JsonResponse
     {
+        $this->authorize('delete', $learning);
+
         $this->logger->learningDeleted(
             auth()->user(),
             auth()->user()->id,
@@ -147,6 +157,8 @@ class LearningController extends Controller
      */
     public function complete(Request $request, Learning $learning): JsonResponse
     {
+        $this->authorize('complete', $learning);
+
         $learning->update([
             'is_completed' => true,
             'completed_by' => $request->user()->id,
@@ -175,6 +187,8 @@ class LearningController extends Controller
         Request $request,
         Learning $learning
     ): JsonResponse {
+        $this->authorize('incomplete', $learning);
+
         $learning->update([
             'is_completed' => false,
             'completed_by' => null,

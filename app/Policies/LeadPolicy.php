@@ -44,11 +44,18 @@ class LeadPolicy
      *
      * @param User $user
      *
+     * @param Lead $lead
+     *
      * @return bool
      */
-    public function view(User $user): bool
+    public function view(User $user, Lead $lead): bool
     {
-        return $user->hasPermission('leads.view');
+        if ($user->hasPermission('leads.view.all')) {
+            return true;
+        }
+
+        return $user->hasPermission('leads.view.own') &&
+            $lead->created_by === $user->id;
     }
 
     /**
@@ -85,10 +92,30 @@ class LeadPolicy
      *
      * @param User $user
      *
+     * @param Lead $lead
+     *
      * @return bool
      */
-    public function delete(User $user): bool
+    public function delete(User $user, Lead $lead): bool
     {
-        return $user->hasPermission('leads.delete');
+        return $user->hasPermission('leads.delete.any') ||
+        ($user->hasPermission('leads.delete.own') &&
+            $lead->created_by === $user->id);
+    }
+
+    /**
+     * Determine wheter the user can restore the lead
+     *
+     * @param User $user
+     *
+     * @param Lead $lead
+     *
+     * @return bool
+     */
+    public function restore(User $user, Lead $lead)
+    {
+        return $user->hasPermission('leads.restore.any') ||
+        ($user->hasPermission('leads.restore.own') &&
+            $lead->created_by === $user->id);
     }
 }
