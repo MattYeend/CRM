@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\UserController;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use App\Services\UserManagementService;
 use App\Services\UserQueryService;
@@ -11,11 +13,31 @@ use Illuminate\Routing\Middleware\ThrottleRequests;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    // create an authenticated user (routes expect auth)
     $this->auth = User::factory()->create();
+
+    $permissions = [
+        'users.view.all',
+        'users.create',
+        'users.update.any',
+        'users.delete.any',
+        'users.restore.any',
+    ];
+
+    // Create permissions in DB
+    $permissionModels = collect($permissions)
+        ->map(fn($name) => Permission::firstOrCreate(['name' => $name]));
+
+    // Create admin role and attach permissions
+    $role = Role::factory()->create(['name' => 'admin']);
+    $role->permissions()->sync($permissionModels->pluck('id'));
+
+    // Attach role to the user
+    $this->auth->roles()->sync([$role->id]);
+
+    // Authenticate the user
     $this->actingAs($this->auth, 'sanctum');
 
-    // disable throttle middleware (routes use throttle:api)
+    // Disable throttling for tests
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 

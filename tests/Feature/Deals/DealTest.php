@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\Deal;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use App\Models\Company;
 use App\Models\Contact;
@@ -10,11 +12,31 @@ use Illuminate\Routing\Middleware\ThrottleRequests;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    // Create an authenticated user for API requests
     $this->auth = User::factory()->create();
+
+    $permissions = [
+        'deals.view.all',
+        'deals.create',
+        'deals.update.any',
+        'deals.delete.any',
+        'deals.restore.any',
+    ];
+
+    // Create permissions in DB
+    $permissionModels = collect($permissions)
+        ->map(fn($name) => Permission::firstOrCreate(['name' => $name]));
+
+    // Create admin role and attach permissions
+    $role = Role::factory()->create(['name' => 'admin']);
+    $role->permissions()->sync($permissionModels->pluck('id'));
+
+    // Attach role to the user
+    $this->auth->roles()->sync([$role->id]);
+
+    // Authenticate the user
     $this->actingAs($this->auth, 'sanctum');
 
-    // Disable throttle middleware for tests
+    // Disable throttling for tests
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 

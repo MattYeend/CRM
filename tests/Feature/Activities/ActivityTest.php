@@ -1,29 +1,44 @@
 <?php
 
 use App\Models\Activity;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 
 uses(RefreshDatabase::class);
 
-/**
- * Disable the throttle middleware during tests to avoid:
- * "Rate limiter [App\Models\User::api] is not defined."
- */
 beforeEach(function () {
-    // Turn off the throttle middleware which is applied with 'throttle:api' in your routes
+    // Create an authenticated user for API requests
+    $this->auth = User::factory()->create();
+    
+    $permissions = [
+        'activities.view.all',
+        'activities.create',
+        'activities.update.any',
+        'activities.delete.any',
+    ];
+    
+    // Create permission records
+    $permissionModels = collect($permissions)->map(fn($name) => Permission::firstOrCreate(['name' => $name]));
+    
+    // Create a role and attach permissions
+    $role = Role::factory()->create(['name' => 'admin']);
+    $role->permissions()->sync($permissionModels->pluck('id'));
+    
+    // Attach role to user — this was missing
+    $this->auth->roles()->sync([$role->id]);
+    $this->actingAs($this->auth, 'sanctum');
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
-test('index returns paginated activities and respects per_page query', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
 
+test('index returns paginated activities and respects per_page query', function () {
     $subject = User::factory()->create();
 
     Activity::factory()->count(15)->create([
-        'user_id' => $auth->id,
+        'user_id' => $this->auth->id,
         'subject_type' => User::class,
         'subject_id' => $subject->id,
     ]);
@@ -36,9 +51,6 @@ test('index returns paginated activities and respects per_page query', function 
 });
 
 test('show returns the activity with user and subject relationships loaded', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     $user = User::factory()->create();
     $subject = User::factory()->create();
 
@@ -64,9 +76,6 @@ test('show returns the activity with user and subject relationships loaded', fun
 });
 
 test('store creates an activity with valid payload and returns 201', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     $user = User::factory()->create();
 
     $payload = [
@@ -91,9 +100,6 @@ test('store creates an activity with valid payload and returns 201', function ()
 });
 
 test('store returns 422 when required fields are missing', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     $payload = ['description' => 'no type provided'];
 
     $response = $this->postJson(route('activities.store'), $payload);
@@ -103,13 +109,10 @@ test('store returns 422 when required fields are missing', function () {
 });
 
 test('update modifies allowed fields and returns the updated activity', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     $subject = User::factory()->create();
 
     $activity = Activity::factory()->create([
-        'user_id' => $auth->id,
+        'user_id' => $this->auth->id,
         'subject_type' => User::class,
         'subject_id' => $subject->id,
         'type' => 'old-type',
@@ -136,13 +139,10 @@ test('update modifies allowed fields and returns the updated activity', function
 });
 
 test('destroy deletes the activity and returns 204', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     $subject = User::factory()->create();
 
     $activity = Activity::factory()->create([
-        'user_id' => $auth->id,
+        'user_id' => $this->auth->id,
         'subject_type' => User::class,
         'subject_id' => $subject->id,
     ]);

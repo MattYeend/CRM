@@ -81,20 +81,10 @@ class User extends Authenticatable
      */
     public function permissions(): Collection
     {
-        return $this->roles()
-            ->join(
-                'permission_role',
-                'roles.id',
-                '=',
-                'permission_role.role_id'
-            )
-            ->join(
-                'permissions',
-                'permissions.id',
-                '=',
-                'permission_role.permission_id'
-            )
-            ->select('permissions.name');
+        return $this->roles
+            ->load('permissions')
+            ->flatMap(fn ($role) => $role->permissions->pluck('name'))
+            ->unique();
     }
 
     /**
@@ -107,7 +97,7 @@ class User extends Authenticatable
         return Cache::remember(
             "user_permissions_{$this->id}",
             60,
-            fn () => $this->permissions()->pluck('name')->toArray()
+            fn () => $this->permissions()->toArray()
         );
     }
 
@@ -130,9 +120,12 @@ class User extends Authenticatable
      *
      * @return bool
      */
-    public function hasRole(int $roleId): bool
+    public function hasRole(int|string $role): bool
     {
-        return $this->roles()->where('id', $roleId)->exists();
+        return $this->roles()
+            ->when(is_int($role), fn ($q) => $q->where('roles.id', $role))
+            ->when(is_string($role), fn ($q) => $q->where('roles.name', $role))
+            ->exists();
     }
 
     /**
@@ -195,6 +188,7 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
+            'permissions' => 'array',
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',

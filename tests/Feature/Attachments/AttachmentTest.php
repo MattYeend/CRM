@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\Attachment;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use App\Services\AttachmentAttacher;
 use App\Services\AttachmentService;
@@ -11,17 +13,35 @@ use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
 
-/**
- * Disable the throttle middleware (your routes use throttle:api).
- */
 beforeEach(function () {
+    $this->auth = User::factory()->create();
+
+    $permissions = [
+        'attachments.view.all',
+        'attachments.create',
+        'attachments.update.any',
+        'attachments.delete.any',
+    ];
+
+    // Create permissions in DB
+    $permissionModels = collect($permissions)
+        ->map(fn($name) => Permission::firstOrCreate(['name' => $name]));
+
+    // Create admin role and attach permissions
+    $role = Role::factory()->create(['name' => 'admin']);
+    $role->permissions()->sync($permissionModels->pluck('id'));
+
+    // Attach role to the user
+    $this->auth->roles()->sync([$role->id]);
+
+    // Authenticate the user
+    $this->actingAs($this->auth, 'sanctum');
+
+    // Disable throttling for tests
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
 test('index returns paginated attachments and respects per_page query', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     // create uploader user and attachments — ensure attachable_type/id are present to satisfy NOT NULL constraints
     $uploader = User::factory()->create();
     Attachment::factory()->count(12)->create([
@@ -40,9 +60,6 @@ test('index returns paginated attachments and respects per_page query', function
 });
 
 test('show returns the attachment with uploader relationship loaded', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     $uploader = User::factory()->create();
 
     // create a valid attachment record — include attachable_type/id
@@ -73,16 +90,13 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
     // Fake the storage used by AttachmentService
     Storage::fake('public');
 
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     // Mock the AttachmentAttacher so we can assert attach() is called
     $attacherMock = Mockery::mock(AttachmentAttacher::class);
     $attacherMock->shouldReceive('attach')
         ->once()
-        ->withArgs(function ($type, $id, $attachment) use ($auth) {
+        ->withArgs(function ($type, $id, $attachment) {
             return $type === User::class
-                && $id === $auth->id
+                && $id === $this->auth->id
                 && $attachment instanceof Attachment;
         });
     $this->app->instance(AttachmentAttacher::class, $attacherMock);
@@ -96,9 +110,9 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
         'path' => $fakePath,
         'size' => 120_000,
         'mime' => 'application/pdf',
-        'uploaded_by' => $auth->id,
+        'uploaded_by' => $this->auth->id,
         'attachable_type' => User::class,
-        'attachable_id' => $auth->id,
+        'attachable_id' => $this->auth->id,
     ]);
 
     // Ensure the file exists on the fake disk so later assertExists will pass
@@ -117,8 +131,8 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
     $payload = [
         'file' => $file,
         'attachable_type' => User::class,
-        'attachable_id' => $auth->id,
-        'uploaded_by' => $auth->id,
+        'attachable_id' => $this->auth->id,
+        'uploaded_by' => $this->auth->id,
     ];
 
     $response = $this->postJson(route('attachments.store'), $payload);
@@ -132,7 +146,7 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
     // DB has the attachment record (created by the factory above)
     $this->assertDatabaseHas('attachments', [
         'filename' => 'document.pdf',
-        'uploaded_by' => $auth->id,
+        'uploaded_by' => $this->auth->id,
         'disk' => 'public',
     ]);
 
@@ -143,9 +157,6 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
 test('destroy deletes file from disk (if present) and deletes the model', function () {
     Storage::fake('public');
 
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     // Put a fake file in storage and make an attachment record pointing to it.
     // Include attachable_type/id so factory insert doesn't violate NOT NULL.
     $path = 'attachments/fake-file.txt';
@@ -155,8 +166,8 @@ test('destroy deletes file from disk (if present) and deletes the model', functi
         'disk' => 'public',
         'path' => $path,
         'attachable_type' => User::class,
-        'attachable_id' => $auth->id,
-        'uploaded_by' => $auth->id,
+        'attachable_id' => $this->auth->id,
+        'uploaded_by' => $this->auth->id,
     ]);
 
     // ensure file exists before delete

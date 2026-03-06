@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\Note;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use App\Models\Deal;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,7 +13,29 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->auth = User::factory()->create();
+
+    $permissions = [
+        'notes.view.all',
+        'notes.create',
+        'notes.update.any',
+        'notes.delete.any',
+    ];
+
+    // Create permissions in DB
+    $permissionModels = collect($permissions)
+        ->map(fn($name) => Permission::firstOrCreate(['name' => $name]));
+
+    // Create admin role and attach permissions
+    $role = Role::factory()->create(['name' => 'admin']);
+    $role->permissions()->sync($permissionModels->pluck('id'));
+
+    // Attach role to the user
+    $this->auth->roles()->sync([$role->id]);
+
+    // Authenticate the user
     $this->actingAs($this->auth, 'sanctum');
+
+    // Disable throttling for tests
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 

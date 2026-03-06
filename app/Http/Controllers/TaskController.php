@@ -36,6 +36,8 @@ class TaskController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', Task::class);
+
         $perPage = max(
             1,
             min((int) $request->query('per_page', 10), 100)
@@ -55,6 +57,8 @@ class TaskController extends Controller
      */
     public function show(Task $task): JsonResponse
     {
+        $this->authorize('view', $task);
+
         return response()->json($task->load('assignee', 'creator', 'taskable'));
     }
 
@@ -67,6 +71,8 @@ class TaskController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $this->authorize('create', Task::class);
+
         $data = $this->validateTaskData($request);
         $task = Task::create($data);
 
@@ -95,6 +101,8 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task): JsonResponse
     {
+        $this->authorize('update', $task);
+
         $data = $request->validate([
             'title' => 'sometimes|required|string',
             'description' => 'nullable|string',
@@ -129,6 +137,8 @@ class TaskController extends Controller
      */
     public function destroy(Task $task): JsonResponse
     {
+        $this->authorize('delete', $task);
+
         $this->logger->taskDeleted(
             auth()->user(),
             auth()->id(),

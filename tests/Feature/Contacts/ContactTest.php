@@ -2,23 +2,43 @@
 
 use App\Models\Company;
 use App\Models\Contact;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 
 uses(RefreshDatabase::class);
 
-/**
- * Disable throttle middleware (your routes use throttle:api).
- */
 beforeEach(function () {
+    $this->auth = User::factory()->create();
+
+    $permissions = [
+        'contacts.view.all',
+        'contacts.create',
+        'contacts.update.any',
+        'contacts.delete.any',
+    ];
+
+    // Create permissions in DB
+    $permissionModels = collect($permissions)
+        ->map(fn($name) => Permission::firstOrCreate(['name' => $name]));
+
+    // Create admin role and attach permissions
+    $role = Role::factory()->create(['name' => 'admin']);
+    $role->permissions()->sync($permissionModels->pluck('id'));
+
+    // Attach role to the user
+    $this->auth->roles()->sync([$role->id]);
+
+    // Authenticate the user
+    $this->actingAs($this->auth, 'sanctum');
+
+    // Disable throttling for tests
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
 test('index returns paginated contacts and respects per_page query', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     Contact::factory()->count(15)->create();
 
     $response = $this->getJson(route('contacts.index', ['per_page' => 5]));
@@ -29,9 +49,6 @@ test('index returns paginated contacts and respects per_page query', function ()
 });
 
 test('index filters contacts by company_id', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     $companyA = Company::factory()->create();
     $companyB = Company::factory()->create();
 
@@ -52,9 +69,6 @@ test('index filters contacts by company_id', function () {
 });
 
 test('index searches contacts by q (first_name, last_name, email)', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     Contact::factory()->create(['first_name' => 'Alice', 'last_name' => 'Smith', 'email' => 'alice@example.com']);
     Contact::factory()->create(['first_name' => 'Bob', 'last_name' => 'Jones', 'email' => 'bob@example.com']);
 
@@ -67,9 +81,6 @@ test('index searches contacts by q (first_name, last_name, email)', function () 
 });
 
 test('show returns the contact with relationships loaded', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     $company = Company::factory()->create();
     $contact = Contact::factory()->create(['company_id' => $company->id]);
 
@@ -94,9 +105,6 @@ test('show returns the contact with relationships loaded', function () {
 });
 
 test('store creates a contact with valid payload and returns 201', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     $company = Company::factory()->create();
 
     $payload = [
@@ -122,9 +130,6 @@ test('store creates a contact with valid payload and returns 201', function () {
 });
 
 test('store returns 422 when required fields are missing', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     // Missing required first_name
     $payload = [
         'email' => 'no-name@example.com',
@@ -137,9 +142,6 @@ test('store returns 422 when required fields are missing', function () {
 });
 
 test('update modifies allowed fields and returns the updated contact', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     $contact = Contact::factory()->create([
         'first_name' => 'Old',
         'last_name' => 'Name',
@@ -165,9 +167,6 @@ test('update modifies allowed fields and returns the updated contact', function 
 });
 
 test('destroy soft deletes the contact and returns 204', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     $contact = Contact::factory()->create();
 
     $response = $this->deleteJson(route('contacts.destroy', $contact));

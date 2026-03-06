@@ -43,10 +43,17 @@ class RolePolicy
      *
      * @param User $user
      *
+     * @param Role $role
+     *
      * @return bool
      */
-    public function view(User $user): bool
+    public function view(User $user, Role $role): bool
     {
-        return $user->hasPermission('roles.view');
+        if ($user->hasPermission('roles.view.all')) {
+            return true;
+        }
+
+        return $user->hasPermission('roles.view.own') &&
+            $role->created_by === $user->id;
     }
 }

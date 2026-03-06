@@ -2,6 +2,8 @@
 
 use App\Models\Pipeline;
 use App\Models\PipelineStage;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Middleware\ThrottleRequests;
@@ -9,11 +11,34 @@ use Illuminate\Routing\Middleware\ThrottleRequests;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    // Authenticated user for API requests
     $this->auth = User::factory()->create();
+
+    $permissions = [
+        'pipelines.view.all',
+        'pipelines.create',
+        'pipelines.update.any',
+        'pipelines.delete.any',
+        'pipelineStages.view.all',
+        'pipelineStages.create',
+        'pipelineStages.update.any',
+        'pipelineStages.delete.any',
+    ];
+
+    // Create permissions in DB
+    $permissionModels = collect($permissions)
+        ->map(fn($name) => Permission::firstOrCreate(['name' => $name]));
+
+    // Create admin role and attach permissions
+    $role = Role::factory()->create(['name' => 'admin']);
+    $role->permissions()->sync($permissionModels->pluck('id'));
+
+    // Attach role to the user
+    $this->auth->roles()->sync([$role->id]);
+
+    // Authenticate the user
     $this->actingAs($this->auth, 'sanctum');
 
-    // Disable throttle middleware (routes use throttle:api)
+    // Disable throttling for tests
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 

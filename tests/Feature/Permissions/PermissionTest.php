@@ -9,11 +9,30 @@ use Illuminate\Routing\Middleware\ThrottleRequests;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    // Authenticated user for API requests
     $this->auth = User::factory()->create();
+
+    $permissions = [
+        'permissions.view.all',
+        'permissions.create',
+        'permissions.update.any',
+        'permissions.delete.any',
+    ];
+
+    // Create permissions in DB
+    $permissionModels = collect($permissions)
+        ->map(fn($name) => Permission::firstOrCreate(['name' => $name]));
+
+    // Create admin role and attach permissions
+    $role = Role::factory()->create(['name' => 'admin']);
+    $role->permissions()->sync($permissionModels->pluck('id'));
+
+    // Attach role to the user
+    $this->auth->roles()->sync([$role->id]);
+
+    // Authenticate the user
     $this->actingAs($this->auth, 'sanctum');
 
-    // Disable throttle middleware for tests
+    // Disable throttling for tests
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 

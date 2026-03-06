@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\Learning;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Middleware\ThrottleRequests;
@@ -9,7 +11,29 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->auth = User::factory()->create();
+
+    $permissions = [
+        'learnings.view.all',
+        'learnings.create',
+        'learnings.update.any',
+        'learnings.delete.any',
+    ];
+
+    // Create permissions in DB
+    $permissionModels = collect($permissions)
+        ->map(fn($name) => Permission::firstOrCreate(['name' => $name]));
+
+    // Create admin role and attach permissions
+    $role = Role::factory()->create(['name' => 'admin']);
+    $role->permissions()->sync($permissionModels->pluck('id'));
+
+    // Attach role to the user
+    $this->auth->roles()->sync([$role->id]);
+
+    // Authenticate the user
     $this->actingAs($this->auth, 'sanctum');
+
+    // Disable throttling for tests
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 

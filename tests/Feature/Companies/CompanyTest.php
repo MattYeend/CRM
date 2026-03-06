@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\Company;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -8,17 +10,36 @@ use Illuminate\Routing\Middleware\ThrottleRequests;
 
 uses(RefreshDatabase::class);
 
-/**
- * Disable throttle middleware (your routes use throttle:api).
- */
 beforeEach(function () {
+    $this->auth = User::factory()->create();
+
+    $permissions = [
+        'companies.view.all',
+        'companies.create',
+        'companies.update.any',
+        'companies.delete.any',
+        'companies.restore.any',
+    ];
+
+    // Create permissions in DB
+    $permissionModels = collect($permissions)
+        ->map(fn($name) => Permission::firstOrCreate(['name' => $name]));
+
+    // Create admin role and attach permissions
+    $role = Role::factory()->create(['name' => 'admin']);
+    $role->permissions()->sync($permissionModels->pluck('id'));
+
+    // Attach role to the user
+    $this->auth->roles()->sync([$role->id]);
+
+    // Authenticate the user
+    $this->actingAs($this->auth, 'sanctum');
+
+    // Disable throttling for tests
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
 test('index returns paginated companies and respects per_page query', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     // Create more companies than default per-page
     Company::factory()->count(15)->create();
 
@@ -30,9 +51,6 @@ test('index returns paginated companies and respects per_page query', function (
 });
 
 test('index filters companies by q query parameter (search by name)', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     Company::factory()->create(['name' => 'Alpha Industries']);
     Company::factory()->create(['name' => 'Beta Solutions']);
     Company::factory()->create(['name' => 'Gamma Labs']);
@@ -48,9 +66,6 @@ test('index filters companies by q query parameter (search by name)', function (
 });
 
 test('show returns the company with relationships loaded', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     // Create a company. We don't need to create related models here —
     // the controller loads relationships; empty arrays are fine.
     $company = Company::factory()->create();
@@ -82,9 +97,6 @@ test('show returns the company with relationships loaded', function () {
 });
 
 test('store creates a company with valid payload and returns 201', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     $payload = [
         'name' => 'NewCo Ltd',
         'industry' => 'Software',
@@ -107,9 +119,6 @@ test('store creates a company with valid payload and returns 201', function () {
 });
 
 test('store returns 422 when required fields are missing', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     // Missing 'name'
     $payload = [
         'industry' => 'Software',
@@ -122,9 +131,6 @@ test('store returns 422 when required fields are missing', function () {
 });
 
 test('update modifies allowed fields and returns the updated company', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     $company = Company::factory()->create([
         'name' => 'Old Name Ltd',
         'website' => 'https://old.example',
@@ -148,9 +154,6 @@ test('update modifies allowed fields and returns the updated company', function 
 });
 
 test('destroy soft deletes the company and returns 204', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     $company = Company::factory()->create();
 
     $response = $this->deleteJson(route('companies.destroy', $company));
@@ -162,9 +165,6 @@ test('destroy soft deletes the company and returns 204', function () {
 });
 
 test('restore brings back a soft-deleted company', function () {
-    $auth = User::factory()->create();
-    $this->actingAs($auth, 'sanctum');
-
     $company = Company::factory()->create();
     $company->delete();
 

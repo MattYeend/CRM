@@ -162,6 +162,7 @@ class PermissionRoleSeeder extends Seeder
             'users.assign.roles',
             'users.assign.permissions',
             'users.manage',
+            'users.restore.any',
         ];
 
         foreach ($adminPermissions as $permissionName) {
@@ -287,6 +288,7 @@ class PermissionRoleSeeder extends Seeder
             'users.view.own',
             'users.update.own',
             'users.delete.own',
+            'users.restore.own',
         ];
 
         foreach ($userPermissions as $permissionName) {

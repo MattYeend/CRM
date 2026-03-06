@@ -38,6 +38,8 @@ class RoleController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', Role::class);
+
         $perPage = max(
             1,
             min((int) $request->query('per_page', 10), 100)
@@ -59,6 +61,8 @@ class RoleController extends Controller
      */
     public function show(Role $role): JsonResponse
     {
+        $this->authorize('view', $role);
+
         return response()->json($role->load('permissions', 'users'));
     }
 

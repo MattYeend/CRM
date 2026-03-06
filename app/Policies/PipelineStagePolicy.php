@@ -36,7 +36,7 @@ class PipelineStagePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('pipeline_stages.view.all');
+        return $user->hasPermission('pipelineStages.view.all');
     }
 
     /**
@@ -50,11 +50,11 @@ class PipelineStagePolicy
      */
     public function view(User $user, PipelineStage $pipelineStage): bool
     {
-        if ($user->hasPermission('pipeline_stage.view.all')) {
+        if ($user->hasPermission('pipelineStages.view.all')) {
             return true;
         }
 
-        return $user->hasPermission('pipeline_stage.view.own') &&
+        return $user->hasPermission('pipelineStages.view.own') &&
             $pipelineStage->created_by === $user->id;
     }
 
@@ -67,7 +67,7 @@ class PipelineStagePolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('pipeline_stages.create');
+        return $user->hasPermission('pipelineStages.create');
     }
 
     /**
@@ -81,9 +81,9 @@ class PipelineStagePolicy
      */
     public function update(User $user, PipelineStage $pipelineStage): bool
     {
-        return $user->hasPermission('pipeline_stages.update.any') ||
+        return $user->hasPermission('pipelineStages.update.any') ||
             ($user->hasPermission(
-                'pipeline_stages.update.own'
+                'pipelineStages.update.own'
             ) && $pipelineStage->created_by === $user->id);
     }
 
@@ -98,8 +98,8 @@ class PipelineStagePolicy
      */
     public function delete(User $user, PipelineStage $pipelineStage): bool
     {
-        return $user->hasPermission('pipeline_stage.delete.any') ||
-        ($user->hasPermission('pipeline_stage.delete.own') &&
+        return $user->hasPermission('pipelineStages.delete.any') ||
+        ($user->hasPermission('pipelineStage.delete.own') &&
             $pipelineStage->created_by === $user->id);
     }
 
@@ -112,7 +112,7 @@ class PipelineStagePolicy
      */
     public function manage(User $user): bool
     {
-        return $user->hasPermission('pipeline_stages.manage');
+        return $user->hasPermission('pipelineStages.manage');
     }
 
     /**
@@ -124,6 +124,6 @@ class PipelineStagePolicy
      */
     public function assign(User $user): bool
     {
-        return $user->hasPermission('pipeline_stages.assign');
+        return $user->hasPermission('pipelineStages.assign');
     }
 }

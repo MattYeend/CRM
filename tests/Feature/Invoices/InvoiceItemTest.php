@@ -2,7 +2,9 @@
 
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
+use App\Models\Permission;
 use App\Models\Product;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Middleware\ThrottleRequests;
@@ -10,11 +12,34 @@ use Illuminate\Routing\Middleware\ThrottleRequests;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    // Create an authenticated user for API requests
     $this->auth = User::factory()->create();
+
+    $permissions = [
+        'invoices.view.all',
+        'invoices.create',
+        'invoices.update.any',
+        'invoices.delete.any',
+        'invoiceItems.view.all',
+        'invoiceItems.create',
+        'invoiceItems.update.any',
+        'invoiceItems.delete.any',
+    ];
+
+    // Create permissions in DB
+    $permissionModels = collect($permissions)
+        ->map(fn($name) => Permission::firstOrCreate(['name' => $name]));
+
+    // Create admin role and attach permissions
+    $role = Role::factory()->create(['name' => 'admin']);
+    $role->permissions()->sync($permissionModels->pluck('id'));
+
+    // Attach role to the user
+    $this->auth->roles()->sync([$role->id]);
+
+    // Authenticate the user
     $this->actingAs($this->auth, 'sanctum');
 
-    // Disable throttle middleware for tests
+    // Disable throttling for tests
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
@@ -32,6 +57,12 @@ test('index returns paginated invoice items with relations', function () {
     $response->assertStatus(200);
     $response->assertJsonPath('per_page', 5);
     $this->assertCount(5, $response->json('data'));
+
+    // Ensure relations are loaded
+    foreach ($response->json('data') as $item) {
+        $this->assertArrayHasKey('invoice', $item);
+        $this->assertArrayHasKey('product', $item);
+    }
 });
 
 test('show returns an invoice item with relations loaded', function () {
@@ -47,6 +78,7 @@ test('show returns an invoice item with relations loaded', function () {
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $invoiceItem->id]);
+
     $response->assertJsonStructure([
         'id',
         'invoice_id',
@@ -79,8 +111,9 @@ test('store creates a new invoice item and returns 201', function () {
         'description' => 'Test Item',
         'quantity' => 3,
         'unit_price' => 50,
-        'line_total' => 150, // 3 * 50
+        'line_total' => 150,
     ]);
+
     $this->assertDatabaseHas('invoice_items', ['description' => 'Test Item']);
 });
 
@@ -110,8 +143,9 @@ test('update modifies an existing invoice item', function () {
         'description' => 'Updated Item',
         'quantity' => 4,
         'unit_price' => 30,
-        'line_total' => 120, // 4 * 30
+        'line_total' => 120,
     ]);
+
     $this->assertDatabaseHas('invoice_items', [
         'id' => $invoiceItem->id,
         'description' => 'Updated Item',
@@ -130,6 +164,5 @@ test('destroy deletes an invoice item', function () {
     $response = $this->deleteJson(route('invoice-items.destroy', $invoiceItem));
 
     $response->assertStatus(204);
-
     $this->assertSoftDeleted('invoice_items', ['id' => $invoiceItem->id]);
 });

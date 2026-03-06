@@ -42,6 +42,8 @@ class UserController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', User::class);
+
         $users = $this->queryService->list($request);
 
         return response()->json($users);
@@ -56,6 +58,8 @@ class UserController extends Controller
      */
     public function show(User $user): JsonResponse
     {
+        $this->authorize('view', $user);
+
         return response()->json($this->queryService->show($user));
     }
 
@@ -68,6 +72,8 @@ class UserController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $this->authorize('create', User::class);
+
         $user = $this->managementService->store($request);
 
         $this->logger->userCreated(
@@ -90,6 +96,8 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user): JsonResponse
     {
+        $this->authorize('update', $user);
+
         $user = $this->managementService->update($request, $user);
 
         $this->logger->userUpdated(
@@ -110,6 +118,8 @@ class UserController extends Controller
      */
     public function destroy(User $user): JsonResponse
     {
+        $this->authorize('delete', $user);
+
         $this->logger->userDeleted(
             auth()->user(),
             auth()->id(),
@@ -131,6 +141,8 @@ class UserController extends Controller
     public function restore($id): JsonResponse
     {
         $user = $this->managementService->restore((int) $id);
+
+        $this->authorize('restore', $user);
 
         $this->logger->userRestored(
             auth()->user(),

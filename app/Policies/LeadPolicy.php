@@ -112,7 +112,7 @@ class LeadPolicy
      *
      * @return bool
      */
-    public function restore(User $user, Lead $lead)
+    public function restore(User $user, Lead $lead): bool
     {
         return $user->hasPermission('leads.restore.any') ||
         ($user->hasPermission('leads.restore.own') &&

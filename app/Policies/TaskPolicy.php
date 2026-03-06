@@ -44,11 +44,18 @@ class TaskPolicy
      *
      * @param User $user
      *
+     * @param Task $task
+     *
      * @return bool
      */
-    public function view(User $user): bool
+    public function view(User $user, Task $task): bool
     {
-        return $user->hasPermission('tasks.view');
+        if ($user->hasPermission('tasks.view.all')) {
+            return true;
+        }
+
+        return $user->hasPermission('tasks.view.own') &&
+            $task->created_by === $user->id;
     }
 
     /**
@@ -85,10 +92,14 @@ class TaskPolicy
      *
      * @param User $user
      *
+     * @param Task $task
+     *
      * @return bool
      */
-    public function delete(User $user): bool
+    public function delete(User $user, Task $task): bool
     {
-        return $user->hasPermission('tasks.delete');
+        return $user->hasPermission('tasks.delete.any') ||
+        ($user->hasPermission('tasks.delete.own') &&
+            $task->created_by === $user->id);
     }
 }

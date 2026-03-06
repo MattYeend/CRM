@@ -192,6 +192,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'users.manage', 'label' => 'Manage users'],
             ['name' => 'users.assign.roles', 'label' => 'Assign roles to users'],
             ['name' => 'users.assign.permissions', 'label' => 'Assign permissions to users'],
+            ['name' => 'users.restore.any', 'label' => 'Restore any users'],
+            ['name' => 'users.restore.own', 'label' => 'Restore own users'],
         ];
 
         foreach ($permissions as $permission) {

@@ -47,7 +47,12 @@ class UserPolicy
      */
     public function view(User $user): bool
     {
-        return $user->hasPermission('users.view');
+        if ($user->hasPermission('users.view.all')) {
+            return true;
+        }
+
+        return $user->hasPermission('users.view.own') &&
+            $user->created_by === $user->id;
     }
 
     /**
@@ -86,7 +91,9 @@ class UserPolicy
      */
     public function delete(User $user): bool
     {
-        return $user->hasPermission('users.delete');
+        return $user->hasPermission('users.delete.any') ||
+            ($user->hasPermission('users.delete.own') &&
+                $user->created_by === $user->id);
     }
 
     /**
@@ -123,5 +130,19 @@ class UserPolicy
     public function assignPermissions(User $user): bool
     {
         return $user->hasPermission('users.assign.permissions');
+    }
+
+    /**
+     * Determine whether the user can restore users.
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function restore(User $user): bool
+    {
+        return $user->hasPermission('users.restore.any') ||
+        ($user->hasPermission('users.restore.own') &&
+            $user->created_by === $user->id);
     }
 }

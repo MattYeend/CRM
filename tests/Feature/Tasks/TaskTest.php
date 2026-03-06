@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\Task;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use App\Models\Deal; // example polymorphic target
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -9,9 +11,30 @@ use Illuminate\Routing\Middleware\ThrottleRequests;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    // Authenticate requests and disable throttle middleware applied with 'throttle:api'
     $this->auth = User::factory()->create();
+
+    $permissions = [
+        'tasks.view.all',
+        'tasks.create',
+        'tasks.update.any',
+        'tasks.delete.any',
+    ];
+
+    // Create permissions in DB
+    $permissionModels = collect($permissions)
+        ->map(fn($name) => Permission::firstOrCreate(['name' => $name]));
+
+    // Create admin role and attach permissions
+    $role = Role::factory()->create(['name' => 'admin']);
+    $role->permissions()->sync($permissionModels->pluck('id'));
+
+    // Attach role to the user
+    $this->auth->roles()->sync([$role->id]);
+
+    // Authenticate the user
     $this->actingAs($this->auth, 'sanctum');
+
+    // Disable throttling for tests
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
