@@ -44,11 +44,18 @@ class ProductPolicy
      *
      * @param User $user
      *
+     * @param Product $product
+     *
      * @return bool
      */
-    public function view(User $user): bool
+    public function view(User $user, Product $product): bool
     {
-        return $user->hasPermission('products.view');
+        if ($user->hasPermission('products.view.all')) {
+            return true;
+        }
+
+        return $user->hasPermission('products.view.own') &&
+            $product->created_by === $user->id;
     }
 
     /**
@@ -85,10 +92,14 @@ class ProductPolicy
      *
      * @param User $user
      *
+     * @param Product $product
+     *
      * @return bool
      */
-    public function delete(User $user): bool
+    public function delete(User $user, Product $product): bool
     {
-        return $user->hasPermission('products.delete');
+        return $user->hasPermission('products.delete.any') ||
+        ($user->hasPermission('products.delete.own') &&
+            $product->created_by === $user->id);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -43,11 +44,18 @@ class PermissionPolicy
      *
      * @param User $user
      *
+     * @param Permission $permission
+     *
      * @return bool
      */
-    public function view(User $user): bool
+    public function view(User $user, Permission $permission): bool
     {
-        return $user->hasPermission('permissions.view');
+        if ($user->hasPermission('permissions.view.all')) {
+            return true;
+        }
+
+        return $user->hasPermission('permissions.view.own') &&
+            $permission->created_by === $user->id;
     }
 
     /**
@@ -67,11 +75,16 @@ class PermissionPolicy
      *
      * @param User $user
      *
+     * @param Permission $permission
+     *
      * @return bool
      */
-    public function update(User $user): bool
+    public function update(User $user, Permission $permission): bool
     {
-        return $user->hasPermission('permissions.update.any');
+        return $user->hasPermission('permissions.update.any') ||
+            ($user->hasPermission(
+                'permissions.update.own'
+            ) && $permission->created_by === $user->id);
     }
 
     /**
@@ -79,10 +92,14 @@ class PermissionPolicy
      *
      * @param User $user
      *
+     * @param Permission $permission
+     *
      * @return bool
      */
-    public function delete(User $user): bool
+    public function delete(User $user, Permission $permission): bool
     {
-        return $user->hasPermission('permissions.delete');
+        return $user->hasPermission('permissions.delete.any') ||
+        ($user->hasPermission('permissions.delete.own') &&
+            $permission->created_by === $user->id);
     }
 }

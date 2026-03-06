@@ -37,6 +37,8 @@ class PipelineController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', Pipeline::class);
+
         $perPage = max(
             1,
             min((int) $request->query('per_page', 10), 100)
@@ -56,6 +58,8 @@ class PipelineController extends Controller
      */
     public function show(Pipeline $pipeline): JsonResponse
     {
+        $this->authorize('view', $pipeline);
+
         return response()->json($pipeline->load('stages'));
     }
 
@@ -68,6 +72,8 @@ class PipelineController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $this->authorize('create', Pipeline::class);
+
         $data = $request->validate([
             'name' => 'required|string',
             'description' => 'nullable|string',
@@ -96,6 +102,8 @@ class PipelineController extends Controller
      */
     public function update(Request $request, Pipeline $pipeline): JsonResponse
     {
+        $this->authorize('update', $pipeline);
+
         $data = $request->validate([
             'name' => 'sometimes|required|string',
             'description' => 'nullable|string',
@@ -122,6 +130,8 @@ class PipelineController extends Controller
      */
     public function destroy(Pipeline $pipeline): JsonResponse
     {
+        $this->authorize('delete', $pipeline);
+
         $this->logger->pipelineDeleted(
             request()->user(),
             request()->user()->id,

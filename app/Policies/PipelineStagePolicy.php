@@ -44,11 +44,18 @@ class PipelineStagePolicy
      *
      * @param User $user
      *
+     * @param PipelineStage $pipelineStage
+     *
      * @return bool
      */
-    public function view(User $user): bool
+    public function view(User $user, PipelineStage $pipelineStage): bool
     {
-        return $user->hasPermission('pipeline_stages.view');
+        if ($user->hasPermission('pipeline_stage.view.all')) {
+            return true;
+        }
+
+        return $user->hasPermission('pipeline_stage.view.own') &&
+            $pipelineStage->created_by === $user->id;
     }
 
     /**
@@ -84,13 +91,16 @@ class PipelineStagePolicy
      * Determine whether the user can delete the pipeline stage.
      *
      * @param User $user
+     *
      * @param PipelineStage $pipelineStage
      *
      * @return bool
      */
-    public function delete(User $user): bool
+    public function delete(User $user, PipelineStage $pipelineStage): bool
     {
-        return $user->hasPermission('pipeline_stages.delete');
+        return $user->hasPermission('pipeline_stage.delete.any') ||
+        ($user->hasPermission('pipeline_stage.delete.own') &&
+            $pipelineStage->created_by === $user->id);
     }
 
     /**

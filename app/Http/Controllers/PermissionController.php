@@ -38,6 +38,8 @@ class PermissionController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', Permission::class);
+
         $perPage = max(
             1,
             min((int) $request->query('per_page', 10), 100)
@@ -58,6 +60,8 @@ class PermissionController extends Controller
      */
     public function show(Permission $permission): JsonResponse
     {
+        $this->authorize('view', $permission);
+
         return response()->json($permission->load('roles'));
     }
 
@@ -70,6 +74,8 @@ class PermissionController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $this->authorize('create', Permission::class);
+
         $data = $request->validate([
             'name' => 'required|string|unique:permissions,name',
             'label' => 'nullable|string',
@@ -99,6 +105,8 @@ class PermissionController extends Controller
         Request $request,
         Permission $permission
     ): JsonResponse {
+        $this->authorize('update', $permission);
+
         $data = $request->validate([
             'name' => [
                 'required',
@@ -128,6 +136,8 @@ class PermissionController extends Controller
      */
     public function destroy(Permission $permission): JsonResponse
     {
+        $this->authorize('delete', $permission);
+
         $this->logger->permissionDeleted(
             auth()->user(),
             auth()->user()->id,

@@ -44,11 +44,18 @@ class PipelinePolicy
      *
      * @param User $user
      *
+     * @param Pipeline $pipeline
+     *
      * @return bool
      */
-    public function view(User $user): bool
+    public function view(User $user, Pipeline $pipeline): bool
     {
-        return $user->hasPermission('pipelines.view');
+        if ($user->hasPermission('pipelines.view.all')) {
+            return true;
+        }
+
+        return $user->hasPermission('pipelines.view.own') &&
+            $pipeline->created_by === $user->id;
     }
 
     /**
@@ -85,11 +92,15 @@ class PipelinePolicy
      *
      * @param User $user
      *
+     * @param Pipeline $pipeline
+     *
      * @return bool
      */
-    public function delete(User $user): bool
+    public function delete(User $user, Pipeline $pipeline): bool
     {
-        return $user->hasPermission('pipelines.delete');
+        return $user->hasPermission('pipelines.delete.any') ||
+        ($user->hasPermission('pipelines.delete.own') &&
+            $pipeline->created_by === $user->id);
     }
 
     /**

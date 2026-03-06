@@ -38,6 +38,7 @@ class ProductController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', Product::class);
         $perPage = max(
             1,
             min((int) $request->query('per_page', 10), 100)
@@ -57,6 +58,8 @@ class ProductController extends Controller
      */
     public function show(Product $product): JsonResponse
     {
+        $this->authorize('view', $product);
+
         return response()->json($product);
     }
 
@@ -69,6 +72,8 @@ class ProductController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $this->authorize('create', Product::class);
+
         $data = $request->validate([
             'sku' => 'nullable|string|unique:products,sku',
             'name' => 'required|string',
@@ -101,6 +106,8 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product): JsonResponse
     {
+        $this->authorize('update', $product);
+
         $data = $request->validate([
             'sku' => ['nullable','string',
                 Rule::unique('products', 'sku')->ignore($product->id),
@@ -133,6 +140,8 @@ class ProductController extends Controller
      */
     public function destroy(Product $product): JsonResponse
     {
+        $this->authorize('delete', $product);
+
         $this->logger->productDeleted(
             request()->user(),
             request()->user()->id,
