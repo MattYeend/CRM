@@ -51,7 +51,7 @@ class PermissionSeeder extends Seeder
 
             // Deals
             ['name' => 'deals.view.all', 'label' => 'View deals'],
-            ['name' => 'deals.view', 'label' => 'View deal'].
+            ['name' => 'deals.view', 'label' => 'View deal'],
             ['name' => 'deals.create', 'label' => 'Create deals'],
             ['name' => 'deals.update.own', 'label' => 'Update own deals'],
             ['name' => 'deals.update.any', 'label' => 'Update any deals'],
@@ -139,6 +139,7 @@ class PermissionSeeder extends Seeder
 
             // Roles
             ['name' => 'roles.view.all', 'label' => 'View roles'],
+            ['name' => 'roles.view', 'label' => 'View role'],
 
             // Tasks
             ['name' => 'tasks.view.all', 'label' => 'View tasks'],
