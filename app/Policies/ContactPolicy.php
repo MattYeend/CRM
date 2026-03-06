@@ -36,7 +36,7 @@ class ContactPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('contacts.view');
+        return $user->hasPermission('contacts.view.all');
     }
 
     /**

@@ -36,7 +36,7 @@ class PipelineStagePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('pipeline_stages.view');
+        return $user->hasPermission('pipeline_stages.view.all');
     }
 
     /**

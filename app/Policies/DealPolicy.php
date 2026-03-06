@@ -36,7 +36,7 @@ class DealPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('deals.view');
+        return $user->hasPermission('deals.view.all');
     }
 
     /**

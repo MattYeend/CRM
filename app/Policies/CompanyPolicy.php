@@ -36,7 +36,7 @@ class CompanyPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('companies.view');
+        return $user->hasPermission('companies.view.all');
     }
 
     /**

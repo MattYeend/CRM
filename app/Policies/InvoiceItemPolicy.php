@@ -36,7 +36,7 @@ class InvoiceItemPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('invoiceItems.view');
+        return $user->hasPermission('invoiceItems.view.all');
     }
 
     /**

@@ -36,7 +36,7 @@ class LeadPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('leads.view');
+        return $user->hasPermission('leads.view.all');
     }
 
     /**

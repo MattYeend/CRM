@@ -36,7 +36,7 @@ class AttachmentPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('attachments.view');
+        return $user->hasPermission('attachments.view.all');
     }
 
     /**

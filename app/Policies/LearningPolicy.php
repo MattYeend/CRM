@@ -36,7 +36,7 @@ class LearningPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('learnings.view');
+        return $user->hasPermission('learnings.view.all');
     }
 
     /**

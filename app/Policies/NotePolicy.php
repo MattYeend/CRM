@@ -36,7 +36,7 @@ class NotePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('notes.view');
+        return $user->hasPermission('notes.view.all');
     }
 
     /**

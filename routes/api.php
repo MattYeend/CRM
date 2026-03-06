@@ -45,7 +45,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     )->name('users.roles.detach');
 
     // Roles & permissions (role <-> permission handled in RoleController)
-    Route::apiResource('roles', RoleController::class);
+    Route::apiResource('roles', RoleController::class)->only(['index', 'show']);
     Route::apiResource(
         'permissions',
         PermissionController::class

@@ -36,7 +36,7 @@ class PipelinePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('pipelines.view');
+        return $user->hasPermission('pipelines.view.all');
     }
 
     /**

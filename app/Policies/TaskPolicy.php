@@ -36,7 +36,7 @@ class TaskPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('tasks.view');
+        return $user->hasPermission('tasks.view.all');
     }
 
     /**
