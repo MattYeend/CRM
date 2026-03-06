@@ -38,6 +38,8 @@ class InvoiceController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', Invoice::class);
+
         $perPage = max(
             1,
             min((int) $request->query('per_page', 10), 100)
@@ -57,6 +59,8 @@ class InvoiceController extends Controller
      */
     public function show(Invoice $invoice): JsonResponse
     {
+        $this->authorize('view', $invoice);
+
         return response()->json(
             $invoice->load('company', 'contact', 'items')
         );
@@ -71,6 +75,8 @@ class InvoiceController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $this->authorize('create', Invoice::class);
+
         $data = $this->validateInvoice($request);
 
         $invoice = Invoice::create($data);
@@ -91,6 +97,8 @@ class InvoiceController extends Controller
      */
     public function update(Request $request, Invoice $invoice): JsonResponse
     {
+        $this->authorize('update', $invoice);
+
         $data = $this->validateInvoice($request, $invoice);
 
         $invoice->update($data);
@@ -109,6 +117,8 @@ class InvoiceController extends Controller
      */
     public function destroy(Invoice $invoice): JsonResponse
     {
+        $this->authorize('delete', $invoice);
+
         $this->logger->invoiceDeleted(
             auth()->user(),
             auth()->id(),

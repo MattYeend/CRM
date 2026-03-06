@@ -44,11 +44,20 @@ class DealPolicy
      *
      * @param User $user
      *
+     * @param Deal $deal
+     *
      * @return bool
      */
-    public function view(User $user): bool
+    public function view(User $user, Deal $deal): bool
     {
         return $user->hasPermission('deals.view');
+
+        if ($user->hasPermission('deals.view.all')) {
+            return true;
+        }
+
+        return $user->hasPermission('deals.view.own') &&
+            $deal->created_by === $user->id;
     }
 
     /**
@@ -90,5 +99,21 @@ class DealPolicy
     public function delete(User $user): bool
     {
         return $user->hasPermission('deals.delete');
+    }
+
+    /**
+     * Determine whether the user can restore the deal.
+     *
+     * @param User $user
+     *
+     * @param Deal $deal
+     *
+     * @return bool
+     */
+    public function restore(User $user, Deal $deal): bool
+    {
+        return $user->hasPermission('deals.delete.any') ||
+        ($user->hasPermission('deals.delete.own') &&
+            $deal->created_by === $user->id);
     }
 }

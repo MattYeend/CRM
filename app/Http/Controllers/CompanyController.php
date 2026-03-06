@@ -37,6 +37,8 @@ class CompanyController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', Company::class);
+
         $perPage = max(1, min((int) $request->query('per_page', 10), 100));
         $q = $request->query('q');
 
@@ -61,6 +63,7 @@ class CompanyController extends Controller
      */
     public function show(Company $company): JsonResponse
     {
+        $this->authorize('view', $company);
         return response()->json(
             $company->load(
                 'contacts',
@@ -80,6 +83,8 @@ class CompanyController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $this->authorize('create', Company::class);
+
         $data = $request->validate([
             'name' => 'required|string',
             'industry' => 'nullable|string',
@@ -115,6 +120,8 @@ class CompanyController extends Controller
      */
     public function update(Request $request, Company $company): JsonResponse
     {
+        $this->authorize('update', $company);
+
         $data = $request->validate([
             'name' => 'sometimes|required|string',
             'industry' => 'nullable|string',
@@ -148,6 +155,8 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company): JsonResponse
     {
+        $this->authorize('delete', $company);
+
         $this->logger->companyDeleted(
             request()->user(),
             auth()->id(),
@@ -169,6 +178,8 @@ class CompanyController extends Controller
     public function restore($id): JsonResponse
     {
         $company = Company::withTrashed()->findOrFail($id);
+
+        $this->authorize('restore', $company);
 
         $company->restore();
 

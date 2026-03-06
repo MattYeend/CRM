@@ -38,6 +38,8 @@ class DealController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', Deal::class);
+
         $perPage = max(
             1,
             min((int) $request->query('per_page', 10), 100)
@@ -73,6 +75,8 @@ class DealController extends Controller
      */
     public function show(Deal $deal): JsonResponse
     {
+        $this->authorize('view', $deal);
+
         return response()->json($deal->load([
             'company',
             'contact',
@@ -94,6 +98,8 @@ class DealController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $this->authorize('create', Deal::class);
+
         $data = $request->validate([
             'title' => 'required|string',
             'company_id' => 'nullable|integer|exists:companies,id',
@@ -130,6 +136,8 @@ class DealController extends Controller
      */
     public function update(Request $request, Deal $deal): JsonResponse
     {
+        $this->authorize('update', $deal);
+
         $data = $this->validateUpdateData($request);
 
         DB::transaction(function () use ($deal, $data) {
@@ -153,6 +161,8 @@ class DealController extends Controller
      */
     public function destroy(Deal $deal): JsonResponse
     {
+        $this->authorize('delete', $deal);
+
         $this->logger->dealDeleted(
             auth()->user(),
             auth()->id(),
@@ -174,6 +184,8 @@ class DealController extends Controller
     public function restore($id): JsonResponse
     {
         $deal = Deal::withTrashed()->findOrFail($id);
+
+        $this->authorize('restore', $deal);
 
         $deal->restore();
 

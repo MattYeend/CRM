@@ -44,11 +44,18 @@ class ActivityPolicy
      *
      * @param User $user
      *
+     * @param Activity $activity
+     *
      * @return bool
      */
-    public function view(User $user): bool
+    public function view(User $user, Activity $activity): bool
     {
-        return $user->hasPermission('activities.view');
+        if ($user->hasPermission('activities.view.all')) {
+            return true;
+        }
+
+        return $user->hasPermission('activities.view.own') &&
+            $activity->created_by === $user->id;
     }
 
     /**
@@ -85,10 +92,14 @@ class ActivityPolicy
      *
      * @param User $user
      *
+     * @param Activity $activity
+     *
      * @return bool
      */
-    public function delete(User $user): bool
+    public function delete(User $user, Activity $activity): bool
     {
-        return $user->hasPermission('activities.delete');
+        return $user->hasPermission('activities.delete.any') ||
+        ($user->hasPermission('activities.delete.own') &&
+            $activity->created_by === $user->id);
     }
 }

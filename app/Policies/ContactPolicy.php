@@ -44,11 +44,18 @@ class ContactPolicy
      *
      * @param User $user
      *
+     * @param Contact $contact
+     *
      * @return bool
      */
-    public function view(User $user): bool
+    public function view(User $user, Contact $contact): bool
     {
-        return $user->hasPermission('contacts.view');
+        if ($user->hasPermission('contacts.view.all')) {
+            return true;
+        }
+
+        return $user->hasPermission('contacts.view.own') &&
+            $contact->created_by === $user->id;
     }
 
     /**
@@ -80,15 +87,19 @@ class ContactPolicy
             ) && $contact->created_by === $user->id);
     }
 
-    /*
+    /**
      * Determine whether the user can delete the contact.
      *
      * @param User $user
      *
+     * @param Contact $contact
+     *
      * @return bool
      */
-    public function delete(User $user): bool
+    public function delete(User $user, Contact $contact): bool
     {
-        return $user->hasPermission('contacts.delete');
+        return $user->hasPermission('contacts.delete.any') ||
+            ($user->hasPermission('contacts.delete.own') &&
+                $contact->created_by === $user->id);
     }
 }

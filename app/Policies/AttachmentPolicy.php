@@ -44,11 +44,18 @@ class AttachmentPolicy
      *
      * @param User $user
      *
+     * @param Attachment $attachment
+     *
      * @return bool
      */
-    public function view(User $user): bool
+    public function view(User $user, Attachment $attachment): bool
     {
-        return $user->hasPermission('attachments.view');
+        if ($user->hasPermission('attachments.view.all')) {
+            return true;
+        }
+
+        return $user->hasPermission('attachments.view.own') &&
+            $attachment->created_by === $user->id;
     }
 
     /**
@@ -85,11 +92,15 @@ class AttachmentPolicy
      *
      * @param User $user
      *
+     * @param Attachment $attachment
+     *
      * @return bool
      */
-    public function delete(User $user): bool
+    public function delete(User $user, Attachment $attachment): bool
     {
-        return $user->hasPermission('attachments.delete');
+        return $user->hasPermission('attachments.delete.any') ||
+            ($user->hasPermission('attachments.delete.own') &&
+                $attachment->created_by === $user->id);
     }
 
     /**
@@ -101,6 +112,6 @@ class AttachmentPolicy
      */
     public function upload(User $user): bool
     {
-        return $user->hasPermission('attachments.upload');
+        return $user->hasPermission('attachments.upload.any');
     }
 }

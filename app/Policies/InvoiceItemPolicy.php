@@ -44,11 +44,18 @@ class InvoiceItemPolicy
      *
      * @param User $user
      *
+     * @param InvoiceItem $invoiceItem
+     *
      * @return bool
      */
-    public function view(User $user): bool
+    public function view(User $user, InvoiceItem $invoiceItem): bool
     {
-        return $user->hasPermission('invoiceItems.view');
+        if ($user->hasPermission('invoiceItems.view.all')) {
+            return true;
+        }
+
+        return $user->hasPermission('invoiceItems.view.own') &&
+            $invoiceItem->created_by === $user->id;
     }
 
     /**
@@ -87,8 +94,10 @@ class InvoiceItemPolicy
      *
      * @return bool
      */
-    public function delete(User $user): bool
+    public function delete(User $user, InvoiceItem $invoiceItem): bool
     {
-        return $user->hasPermission('invoiceItems.delete');
+        return $user->hasPermission('invoiceItems.delete.any') ||
+        ($user->hasPermission('invoiceItems.delete.own') &&
+            $invoiceItem->created_by === $user->id);
     }
 }

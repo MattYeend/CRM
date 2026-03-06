@@ -36,6 +36,8 @@ class ActivityController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', Activity::class);
+
         $perPage = max(
             1,
             min((int) $request->query('per_page', 10), 100)
@@ -55,6 +57,8 @@ class ActivityController extends Controller
      */
     public function show(Activity $activity): JsonResponse
     {
+        $this->authorize('view', $activity);
+
         return response()->json($activity->load('user', 'subject'));
     }
 
@@ -67,6 +71,8 @@ class ActivityController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $this->authorize('create', Activity::class);
+
         $data = $request->validate([
             'user_id' => 'nullable|integer|exists:users,id',
             'type' => 'required|string',
@@ -98,11 +104,15 @@ class ActivityController extends Controller
      */
     public function update(Request $request, Activity $activity): JsonResponse
     {
+        $this->authorize('update', $activity);
+
         $data = $request->validate([
             'type' => 'sometimes|required|string',
             'description' => 'nullable|string',
             'meta' => 'nullable|array',
         ]);
+
+        $activity->update($data);
 
         $this->logger->activityUpdated(
             $request->user(),
@@ -110,7 +120,6 @@ class ActivityController extends Controller
             $activity
         );
 
-        $activity->update($data);
         return response()->json($activity);
     }
 
@@ -123,6 +132,8 @@ class ActivityController extends Controller
      */
     public function destroy(Activity $activity): JsonResponse
     {
+        $this->authorize('delete', $activity);
+
         $this->logger->activityDeleted(
             auth()->user(),
             auth()->id(),

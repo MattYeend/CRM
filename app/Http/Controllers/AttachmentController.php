@@ -55,6 +55,8 @@ class AttachmentController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', Attachment::class);
+
         $perPage = max(
             1,
             min((int) $request->query('per_page', 10), 100)
@@ -74,6 +76,8 @@ class AttachmentController extends Controller
      */
     public function show(Attachment $attachment): JsonResponse
     {
+        $this->authorize('view', $attachment);
+
         return response()->json($attachment->load('uploader'));
     }
 
@@ -82,10 +86,12 @@ class AttachmentController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $this->authorize('create', Attachment::class);
+
         $data = $request->validate([
             'file' => 'required|file|max:10000',
-            'attachable_type' => 'nullable|string',
-            'attachable_id' => 'nullable|integer',
+            'attachable_type' => 'nullable|string|required_with:attachable_id',
+            'attachable_id' => 'nullable|integer|required_with:attachable_type',
             'uploaded_by' => 'nullable|integer|exists:users,id',
         ]);
 
@@ -115,6 +121,8 @@ class AttachmentController extends Controller
      */
     public function destroy(Attachment $attachment): JsonResponse
     {
+        $this->authorize('delete', $attachment);
+
         $this->logger->attachmentDeleted(
             request()->user(),
             auth()->id(),

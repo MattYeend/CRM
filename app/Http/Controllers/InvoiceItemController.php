@@ -37,6 +37,8 @@ class InvoiceItemController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', InvoiceItem::class);
+
         $perPage = max(
             1,
             min((int) $request->query('per_page', 10), 100)
@@ -56,6 +58,8 @@ class InvoiceItemController extends Controller
      */
     public function show(InvoiceItem $invoiceItem): JsonResponse
     {
+        $this->authorize('view', $invoiceItem);
+
         return response()->json($invoiceItem->load('invoice', 'product'));
     }
 
@@ -68,6 +72,8 @@ class InvoiceItemController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $this->authorize('create', InvoiceItem::class);
+
         $data = $request->validate([
             'invoice_id' => 'required|integer|exists:invoices,id',
             'product_id' => 'nullable|integer|exists:products,id',
@@ -105,6 +111,8 @@ class InvoiceItemController extends Controller
         Request $request,
         InvoiceItem $invoiceItem
     ): JsonResponse {
+        $this->authorize('update', $invoiceItem);
+
         $data = $request->validate([
             'description' => 'sometimes|required|string',
             'quantity' => 'nullable|integer|min:1',
@@ -137,6 +145,8 @@ class InvoiceItemController extends Controller
      */
     public function destroy(InvoiceItem $invoiceItem): JsonResponse
     {
+        $this->authorize('delete', $invoiceItem);
+
         $this->logger->invoiceItemDeleted(
             auth()->user(),
             auth()->id(),

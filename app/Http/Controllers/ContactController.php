@@ -37,6 +37,8 @@ class ContactController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', Contact::class);
+
         $perPage = max(
             1,
             min((int) $request->query('per_page', 10), 100)
@@ -69,6 +71,8 @@ class ContactController extends Controller
      */
     public function show(Contact $contact): JsonResponse
     {
+        $this->authorize('view', $contact);
+
         return response()->json(
             $contact->load('company', 'deals', 'attachments')
         );
@@ -83,6 +87,8 @@ class ContactController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $this->authorize('create', Contact::class);
+
         $data = $request->validate([
             'company_id' => 'nullable|integer|exists:companies,id',
             'first_name' => 'required|string',
@@ -115,6 +121,8 @@ class ContactController extends Controller
      */
     public function update(Request $request, Contact $contact): JsonResponse
     {
+        $this->authorize('update', $contact);
+
         $data = $request->validate([
             'company_id' => 'nullable|integer|exists:companies,id',
             'first_name' => 'sometimes|required|string',
@@ -143,6 +151,8 @@ class ContactController extends Controller
      */
     public function destroy(Contact $contact): JsonResponse
     {
+        $this->authorize('delete', $contact);
+
         $this->logger->contactDeleted(
             auth()->user(),
             auth()->id(),

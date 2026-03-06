@@ -44,11 +44,18 @@ class InvoicePolicy
      *
      * @param User $user
      *
+     * @param Invoice $invoice
+     *
      * @return bool
      */
-    public function view(User $user): bool
+    public function view(User $user, Invoice $invoice): bool
     {
-        return $user->hasPermission('invoices.view');
+        if ($user->hasPermission('invoices.view.all')) {
+            return true;
+        }
+
+        return $user->hasPermission('invoices.view.own') &&
+            $invoice->created_by === $user->id;
     }
 
     /**
@@ -85,10 +92,14 @@ class InvoicePolicy
      *
      * @param User $user
      *
+     * @param Invoice $invoice
+     *
      * @return bool
      */
-    public function delete(User $user): bool
+    public function delete(User $user, Invoice $invoice): bool
     {
-        return $user->hasPermission('invoices.delete');
+        return $user->hasPermission('invoices.delete.any') ||
+        ($user->hasPermission('invoices.delete.own') &&
+            $invoice->created_by === $user->id);
     }
 }
