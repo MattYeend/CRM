@@ -5,11 +5,12 @@ namespace App\Policies;
 use App\Models\InvoiceItem;
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\HandlesPolicyPermissions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class InvoiceItemPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, HandlesPolicyPermissions;
 
     /**
      * Handle all permissions for super admin role.
@@ -36,7 +37,7 @@ class InvoiceItemPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('invoiceItems.view.all');
+        return $this->has($user, 'invoiceItems.view.all');
     }
 
     /**
@@ -50,12 +51,12 @@ class InvoiceItemPolicy
      */
     public function view(User $user, InvoiceItem $invoiceItem): bool
     {
-        if ($user->hasPermission('invoiceItems.view.all')) {
-            return true;
-        }
-
-        return $user->hasPermission('invoiceItems.view.own') &&
-            $invoiceItem->created_by === $user->id;
+        return $this->anyOrOwn(
+            $user,
+            $invoiceItem,
+            'invoiceItems.view.all',
+            'invoiceItems.view.own'
+        );
     }
 
     /**
@@ -67,7 +68,7 @@ class InvoiceItemPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('invoiceItems.create');
+        return $this->has($user, 'invoiceItems.create');
     }
 
     /**
@@ -81,10 +82,12 @@ class InvoiceItemPolicy
      */
     public function update(User $user, InvoiceItem $invoiceItem): bool
     {
-        return $user->hasPermission('invoiceItems.update.any') ||
-            ($user->hasPermission(
-                'invoiceItems.update.own'
-            ) && $invoiceItem->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $invoiceItem,
+            'invoiceItems.update.any',
+            'invoiceItems.update.own'
+        );
     }
 
     /**
@@ -96,8 +99,11 @@ class InvoiceItemPolicy
      */
     public function delete(User $user, InvoiceItem $invoiceItem): bool
     {
-        return $user->hasPermission('invoiceItems.delete.any') ||
-        ($user->hasPermission('invoiceItems.delete.own') &&
-            $invoiceItem->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $invoiceItem,
+            'invoiceItems.delete.any',
+            'invoiceItems.delete.own'
+        );
     }
 }
