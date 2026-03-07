@@ -5,11 +5,12 @@ namespace App\Policies;
 use App\Models\Lead;
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\HandlesPolicyPermissions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class LeadPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, HandlesPolicyPermissions;
 
     /**
      * Handle all permissions for super admin role.
@@ -36,7 +37,7 @@ class LeadPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('leads.view.all');
+        return $this->has($user, 'leads.view.all');
     }
 
     /**
@@ -50,12 +51,12 @@ class LeadPolicy
      */
     public function view(User $user, Lead $lead): bool
     {
-        if ($user->hasPermission('leads.view.all')) {
-            return true;
-        }
-
-        return $user->hasPermission('leads.view.own') &&
-            $lead->created_by === $user->id;
+        return $this->anyOrOwn(
+            $user,
+            $lead,
+            'leads.view.all',
+            'leads.view.own'
+        );
     }
 
     /**
@@ -67,7 +68,7 @@ class LeadPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('leads.create');
+        return $this->has($user, 'leads.create');
     }
 
     /**
@@ -81,10 +82,12 @@ class LeadPolicy
      */
     public function update(User $user, Lead $lead): bool
     {
-        return $user->hasPermission('leads.update.any') ||
-            ($user->hasPermission(
-                'leads.update.own'
-            ) && $lead->owner_id === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $lead,
+            'leads.update.any',
+            'leads.update.own'
+        );
     }
 
     /**
@@ -98,9 +101,12 @@ class LeadPolicy
      */
     public function delete(User $user, Lead $lead): bool
     {
-        return $user->hasPermission('leads.delete.any') ||
-        ($user->hasPermission('leads.delete.own') &&
-            $lead->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $lead,
+            'leads.delete.any',
+            'leads.delete.own'
+        );
     }
 
     /**
@@ -114,8 +120,11 @@ class LeadPolicy
      */
     public function restore(User $user, Lead $lead): bool
     {
-        return $user->hasPermission('leads.restore.any') ||
-        ($user->hasPermission('leads.restore.own') &&
-            $lead->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $lead,
+            'leads.restore.any',
+            'leads.restore.own'
+        );
     }
 }

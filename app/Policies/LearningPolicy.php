@@ -5,11 +5,12 @@ namespace App\Policies;
 use App\Models\Learning;
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\HandlesPolicyPermissions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class LearningPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, HandlesPolicyPermissions;
 
     /**
      * Handle all permissions for super admin role.
@@ -36,7 +37,7 @@ class LearningPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('learnings.view.all');
+        return $this->has($user, 'learnings.view.all');
     }
 
     /**
@@ -50,12 +51,12 @@ class LearningPolicy
      */
     public function view(User $user, Learning $learning): bool
     {
-        if ($user->hasPermission('learnings.view.all')) {
-            return true;
-        }
-
-        return $user->hasPermission('learnings.view.own') &&
-            $learning->created_by === $user->id;
+        return $this->anyOrOwn(
+            $user,
+            $learning,
+            'learnings.view.all',
+            'learnings.view.own'
+        );
     }
 
     /**
@@ -67,7 +68,7 @@ class LearningPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('learnings.create');
+        return $this->has($user, 'learnings.create');
     }
 
     /**
@@ -81,10 +82,12 @@ class LearningPolicy
      */
     public function update(User $user, Learning $learning): bool
     {
-        return $user->hasPermission('learnings.update.any') ||
-            ($user->hasPermission(
-                'learnings.update.own'
-            ) && $learning->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $learning,
+            'learnings.update.any',
+            'learnings.update.own'
+        );
     }
 
     /**
@@ -98,9 +101,12 @@ class LearningPolicy
      */
     public function delete(User $user, Learning $learning): bool
     {
-        return $user->hasPermission('learnings.delete.any') ||
-        ($user->hasPermission('learnings.delete.own') &&
-            $learning->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $learning,
+            'learnings.delete.any',
+            'learnings.delete.own'
+        );
     }
 
     /**
@@ -112,7 +118,7 @@ class LearningPolicy
      */
     public function manage(User $user): bool
     {
-        return $user->hasPermission('learnings.manage');
+        return $this->has($user, 'learnings.manage');
     }
 
     /**
@@ -124,7 +130,7 @@ class LearningPolicy
      */
     public function assign(User $user): bool
     {
-        return $user->hasPermission('learnings.assign');
+        return $this->has($user, 'learnings.assign');
     }
 
     /**
@@ -136,7 +142,7 @@ class LearningPolicy
      */
     public function access(User $user): bool
     {
-        return $user->hasPermission('learnings.access');
+        return $this->has($user, 'learnings.access');
     }
 
     /**
@@ -150,9 +156,12 @@ class LearningPolicy
      */
     public function complete(User $user, Learning $learning)
     {
-        return $user->hasPermission('learnings.complete.any') ||
-        ($user->hasPermission('learnings.complete.own') &&
-            $learning->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $learning,
+            'learnings.complete.any',
+            'learnings.complete.own'
+        );
     }
 
     /**
@@ -166,8 +175,11 @@ class LearningPolicy
      */
     public function incomplete(User $user, Learning $learning)
     {
-        return $user->hasPermission('companies.incomplete.any') ||
-        ($user->hasPermission('companies.incomplete.own') &&
-            $learning->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $learning,
+            'learnings.incomplete.any',
+            'learnings.incomplete.own'
+        );
     }
 }
