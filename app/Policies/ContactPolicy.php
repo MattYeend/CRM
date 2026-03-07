@@ -5,11 +5,12 @@ namespace App\Policies;
 use App\Models\Contact;
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\HandlesPolicyPermissions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ContactPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, HandlesPolicyPermissions;
 
     /**
      * Handle all permissions for super admin role.
@@ -36,7 +37,7 @@ class ContactPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('contacts.view.all');
+        return $this->has($user, 'contacts.view.all');
     }
 
     /**
@@ -50,12 +51,12 @@ class ContactPolicy
      */
     public function view(User $user, Contact $contact): bool
     {
-        if ($user->hasPermission('contacts.view.all')) {
-            return true;
-        }
-
-        return $user->hasPermission('contacts.view.own') &&
-            $contact->created_by === $user->id;
+        return $this->anyOrOwn(
+            $user,
+            $contact,
+            'contacts.view.all',
+            'contacts.view.own'
+        );
     }
 
     /**
@@ -67,7 +68,7 @@ class ContactPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('contacts.create');
+        return $this->has($user, 'contacts.create');
     }
 
     /**
@@ -81,10 +82,12 @@ class ContactPolicy
      */
     public function update(User $user, Contact $contact): bool
     {
-        return $user->hasPermission('contacts.update.any') ||
-            ($user->hasPermission(
-                'contacts.update.own'
-            ) && $contact->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $contact,
+            'contacts.update.any',
+            'contacts.update.own'
+        );
     }
 
     /**
@@ -98,8 +101,11 @@ class ContactPolicy
      */
     public function delete(User $user, Contact $contact): bool
     {
-        return $user->hasPermission('contacts.delete.any') ||
-            ($user->hasPermission('contacts.delete.own') &&
-                $contact->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $contact,
+            'contacts.delete.any',
+            'contacts.delete.own'
+        );
     }
 }
