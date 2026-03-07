@@ -4,11 +4,12 @@ namespace App\Policies;
 
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\HandlesPolicyPermissions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class RolePolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, HandlesPolicyPermissions;
 
     /**
      * Handle all permissions for super admin role.
@@ -35,7 +36,7 @@ class RolePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('roles.view.all');
+        return $this->has($user, 'roles.view.all');
     }
 
     /**
@@ -49,11 +50,11 @@ class RolePolicy
      */
     public function view(User $user, Role $role): bool
     {
-        if ($user->hasPermission('roles.view.all')) {
-            return true;
-        }
-
-        return $user->hasPermission('roles.view.own') &&
-            $role->created_by === $user->id;
+        return $this->anyOrOwn(
+            $user,
+            $role,
+            'roles.view.all',
+            'roles.view.own'
+        );
     }
 }
