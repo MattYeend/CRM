@@ -5,11 +5,12 @@ namespace App\Policies;
 use App\Models\Invoice;
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\HandlesPolicyPermissions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class InvoicePolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, HandlesPolicyPermissions;
 
     /**
      * Handle all permissions for super admin role.
@@ -36,7 +37,7 @@ class InvoicePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('invoices.view.all');
+        return $this->has($user, 'invoices.view.all');
     }
 
     /**
@@ -50,12 +51,12 @@ class InvoicePolicy
      */
     public function view(User $user, Invoice $invoice): bool
     {
-        if ($user->hasPermission('invoices.view.all')) {
-            return true;
-        }
-
-        return $user->hasPermission('invoices.view.own') &&
-            $invoice->created_by === $user->id;
+        return $this->anyOrOwn(
+            $user,
+            $invoice,
+            'invoices.view.all',
+            'invoices.view.own'
+        );
     }
 
     /**
@@ -67,7 +68,7 @@ class InvoicePolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('invoices.create');
+        return $this->has($user, 'invoices.create');
     }
 
     /**
@@ -81,10 +82,12 @@ class InvoicePolicy
      */
     public function update(User $user, Invoice $invoice): bool
     {
-        return $user->hasPermission('invoices.update.any') ||
-            ($user->hasPermission(
-                'invoices.update.own'
-            ) && $invoice->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $invoice,
+            'invoices.update.any',
+            'invoices.update.own'
+        );
     }
 
     /**
@@ -98,8 +101,11 @@ class InvoicePolicy
      */
     public function delete(User $user, Invoice $invoice): bool
     {
-        return $user->hasPermission('invoices.delete.any') ||
-        ($user->hasPermission('invoices.delete.own') &&
-            $invoice->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $invoice,
+            'invoices.delete.any',
+            'invoices.delete.own'
+        );
     }
 }
