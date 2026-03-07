@@ -5,11 +5,12 @@ namespace App\Policies;
 use App\Models\Pipeline;
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\HandlesPolicyPermissions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PipelinePolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, HandlesPolicyPermissions;
 
     /**
      * Handle all permissions for super admin role.
@@ -36,7 +37,7 @@ class PipelinePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('pipelines.view.all');
+        return $this->has($user, 'pipelines.view.all');
     }
 
     /**
@@ -50,12 +51,12 @@ class PipelinePolicy
      */
     public function view(User $user, Pipeline $pipeline): bool
     {
-        if ($user->hasPermission('pipelines.view.all')) {
-            return true;
-        }
-
-        return $user->hasPermission('pipelines.view.own') &&
-            $pipeline->created_by === $user->id;
+        return $this->anyOrOwn(
+            $user,
+            $pipeline,
+            'pipelines.view.all',
+            'pipelines.view.own'
+        );
     }
 
     /**
@@ -67,7 +68,7 @@ class PipelinePolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('pipelines.create');
+        return $this->has($user, 'pipelines.create');
     }
 
     /**
@@ -81,10 +82,12 @@ class PipelinePolicy
      */
     public function update(User $user, Pipeline $pipeline): bool
     {
-        return $user->hasPermission('pipelines.update.any') ||
-            ($user->hasPermission(
-                'pipelines.update.own'
-            ) && $pipeline->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $pipeline,
+            'pipelines.update.any',
+            'pipelines.update.own'
+        );
     }
 
     /**
@@ -98,9 +101,12 @@ class PipelinePolicy
      */
     public function delete(User $user, Pipeline $pipeline): bool
     {
-        return $user->hasPermission('pipelines.delete.any') ||
-        ($user->hasPermission('pipelines.delete.own') &&
-            $pipeline->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $pipeline,
+            'pipelines.delete.any',
+            'pipelines.delete.own'
+        );
     }
 
     /**
@@ -112,7 +118,7 @@ class PipelinePolicy
      */
     public function manage(User $user): bool
     {
-        return $user->hasPermission('pipelines.manage');
+        return $this->has($user, 'pipelines.manage');
     }
 
     /**
@@ -124,6 +130,6 @@ class PipelinePolicy
      */
     public function assign(User $user): bool
     {
-        return $user->hasPermission('pipelines.assign');
+        return $this->has($user, 'pipelines.assign');
     }
 }
