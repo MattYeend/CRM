@@ -5,11 +5,12 @@ namespace App\Policies;
 use App\Models\Note;
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\HandlesPolicyPermissions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class NotePolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, HandlesPolicyPermissions;
 
     /**
      * Handle all permissions for super admin role.
@@ -36,7 +37,7 @@ class NotePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('notes.view.all');
+        return $this->has($user, 'notes.view.all');
     }
 
     /**
@@ -50,12 +51,12 @@ class NotePolicy
      */
     public function view(User $user, Note $note): bool
     {
-        if ($user->hasPermission('notes.view.all')) {
-            return true;
-        }
-
-        return $user->hasPermission('notes.view.own') &&
-            $note->created_by === $user->id;
+        return $this->anyOrOwn(
+            $user,
+            $note,
+            'notes.view.all',
+            'notes.view.own'
+        );
     }
 
     /**
@@ -67,7 +68,7 @@ class NotePolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('notes.create');
+        return $this->has($user, 'notes.create');
     }
 
     /**
@@ -81,10 +82,12 @@ class NotePolicy
      */
     public function update(User $user, Note $note): bool
     {
-        return $user->hasPermission('notes.update.any') ||
-            ($user->hasPermission(
-                'notes.update.own'
-            ) && $note->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $note,
+            'notes.update.any',
+            'notes.update.own'
+        );
     }
 
     /**
@@ -98,8 +101,11 @@ class NotePolicy
      */
     public function delete(User $user, Note $note): bool
     {
-        return $user->hasPermission('notes.delete.any') ||
-        ($user->hasPermission('notes.delete.own') &&
-            $note->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $note,
+            'notes.delete.any',
+            'notes.delete.own'
+        );
     }
 }
