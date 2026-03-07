@@ -5,11 +5,12 @@ namespace App\Policies;
 use App\Models\Activity;
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\HandlesPolicyPermissions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ActivityPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, HandlesPolicyPermissions;
 
     /**
      * Handle all permissions for super admin role.
@@ -36,7 +37,7 @@ class ActivityPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('activities.view.all');
+        return $this->has($user, 'activities.view.all');
     }
 
     /**
@@ -50,12 +51,12 @@ class ActivityPolicy
      */
     public function view(User $user, Activity $activity): bool
     {
-        if ($user->hasPermission('activities.view.all')) {
-            return true;
-        }
-
-        return $user->hasPermission('activities.view.own') &&
-            $activity->created_by === $user->id;
+        return $this->anyOrOwn(
+            $user,
+            $activity,
+            'activities.view.all',
+            'activities.view.own'
+        );
     }
 
     /**
@@ -67,7 +68,7 @@ class ActivityPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('activities.create');
+        return $this->has($user, 'activities.create');
     }
 
     /**
@@ -81,10 +82,12 @@ class ActivityPolicy
      */
     public function update(User $user, Activity $activity): bool
     {
-        return $user->hasPermission('activities.update.any') ||
-            ($user->hasPermission(
-                'activities.update.own'
-            ) && $activity->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $activity,
+            'activities.update.any',
+            'activities.update.own'
+        );
     }
 
     /**
@@ -98,8 +101,11 @@ class ActivityPolicy
      */
     public function delete(User $user, Activity $activity): bool
     {
-        return $user->hasPermission('activities.delete.any') ||
-        ($user->hasPermission('activities.delete.own') &&
-            $activity->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $activity,
+            'activities.delete.any',
+            'activities.delete.own'
+        );
     }
 }

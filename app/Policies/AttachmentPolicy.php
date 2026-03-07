@@ -5,11 +5,12 @@ namespace App\Policies;
 use App\Models\Attachment;
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\HandlesPolicyPermissions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class AttachmentPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, HandlesPolicyPermissions;
 
     /**
      * Handle all permissions for super admin role.
@@ -36,7 +37,7 @@ class AttachmentPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('attachments.view.all');
+        return $this->has($user, 'attachments.view.all');
     }
 
     /**
@@ -50,12 +51,12 @@ class AttachmentPolicy
      */
     public function view(User $user, Attachment $attachment): bool
     {
-        if ($user->hasPermission('attachments.view.all')) {
-            return true;
-        }
-
-        return $user->hasPermission('attachments.view.own') &&
-            $attachment->created_by === $user->id;
+        return $this->anyOrOwn(
+            $user,
+            $attachment,
+            'attachments.view.all',
+            'attachments.view.own'
+        );
     }
 
     /**
@@ -67,7 +68,7 @@ class AttachmentPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('attachments.create');
+        return $this->has($user, 'attachments.create');
     }
 
     /**
@@ -81,10 +82,12 @@ class AttachmentPolicy
      */
     public function update(User $user, Attachment $attachment): bool
     {
-        return $user->hasPermission('attachments.update.any') ||
-            ($user->hasPermission(
-                'attachments.update.own'
-            ) && $attachment->uploaded_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $attachment,
+            'attachments.update.any',
+            'attachments.update.own'
+        );
     }
 
     /**
@@ -98,9 +101,12 @@ class AttachmentPolicy
      */
     public function delete(User $user, Attachment $attachment): bool
     {
-        return $user->hasPermission('attachments.delete.any') ||
-            ($user->hasPermission('attachments.delete.own') &&
-                $attachment->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $attachment,
+            'attachments.delete.any',
+            'attachments.delete.own'
+        );
     }
 
     /**
@@ -112,6 +118,6 @@ class AttachmentPolicy
      */
     public function upload(User $user): bool
     {
-        return $user->hasPermission('attachments.upload.any');
+        return $this->has($user, 'attachments.upload.any');
     }
 }

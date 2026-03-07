@@ -5,11 +5,12 @@ namespace App\Policies;
 use App\Models\Company;
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\HandlesPolicyPermissions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class CompanyPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, HandlesPolicyPermissions;
 
     /**
      * Handle all permissions for super admin role.
@@ -36,7 +37,7 @@ class CompanyPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('companies.view.all');
+        return $this->has($user, 'companies.view.all');
     }
 
     /**
@@ -50,12 +51,12 @@ class CompanyPolicy
      */
     public function view(User $user, Company $company): bool
     {
-        if ($user->hasPermission('companies.view.all')) {
-            return true;
-        }
-
-        return $user->hasPermission('companies.view.own') &&
-            $company->created_by === $user->id;
+        return $this->anyOrOwn(
+            $user,
+            $company,
+            'companies.view.all',
+            'companies.view.own'
+        );
     }
 
     /**
@@ -67,7 +68,7 @@ class CompanyPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('companies.create');
+        return $this->has($user, 'companies.create');
     }
 
     /**
@@ -81,10 +82,12 @@ class CompanyPolicy
      */
     public function update(User $user, Company $company): bool
     {
-        return $user->hasPermission('companies.update.any') ||
-            ($user->hasPermission(
-                'companies.update.own'
-            ) && $company->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $company,
+            'companies.update.any',
+            'companies.update.own'
+        );
     }
 
     /**
@@ -98,9 +101,12 @@ class CompanyPolicy
      */
     public function delete(User $user, Company $company): bool
     {
-        return $user->hasPermission('companies.delete.any') ||
-        ($user->hasPermission('companies.delete.own') &&
-            $company->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $company,
+            'companies.delete.any',
+            'companies.delete.own'
+        );
     }
 
     /**
@@ -114,8 +120,11 @@ class CompanyPolicy
      */
     public function restore(User $user, Company $company): bool
     {
-        return $user->hasPermission('companies.restore.any') ||
-        ($user->hasPermission('companies.restore.own') &&
-            $company->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $company,
+            'companies.restore.any',
+            'companies.restore.own'
+        );
     }
 }
