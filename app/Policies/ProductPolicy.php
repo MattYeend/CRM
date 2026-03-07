@@ -5,11 +5,12 @@ namespace App\Policies;
 use App\Models\Product;
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\HandlesPolicyPermissions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ProductPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, HandlesPolicyPermissions;
 
     /**
      * Handle all permissions for super admin role.
@@ -36,7 +37,7 @@ class ProductPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('products.view.all');
+        return $this->has($user, 'products.view.all');
     }
 
     /**
@@ -50,12 +51,8 @@ class ProductPolicy
      */
     public function view(User $user, Product $product): bool
     {
-        if ($user->hasPermission('products.view.all')) {
-            return true;
-        }
-
-        return $user->hasPermission('products.view.own') &&
-            $product->created_by === $user->id;
+        return $this->has($user, 'products.view.all')
+            || $this->owns($user, $product, 'products.view.own');
     }
 
     /**
@@ -67,7 +64,7 @@ class ProductPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('products.create');
+        return $this->has($user, 'products.create');
     }
 
     /**
@@ -81,10 +78,8 @@ class ProductPolicy
      */
     public function update(User $user, Product $product): bool
     {
-        return $user->hasPermission('products.update.any') ||
-            ($user->hasPermission(
-                'products.update.own'
-            ) && $product->created_by === $user->id);
+        return $this->has($user, 'products.update.any')
+            || $this->owns($user, $product, 'products.update.own');
     }
 
     /**
@@ -98,8 +93,7 @@ class ProductPolicy
      */
     public function delete(User $user, Product $product): bool
     {
-        return $user->hasPermission('products.delete.any') ||
-        ($user->hasPermission('products.delete.own') &&
-            $product->created_by === $user->id);
+        return $this->has($user, 'product.delete.any')
+            || $this->owns($user, $product, 'product.delete.own');
     }
 }
