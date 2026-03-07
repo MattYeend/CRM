@@ -5,11 +5,12 @@ namespace App\Policies;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\HandlesPolicyPermissions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PermissionPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, HandlesPolicyPermissions;
 
     /**
      * Handle all permissions for super admin role.
@@ -36,7 +37,7 @@ class PermissionPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('permissions.view.all');
+        return $this->has($user, 'permissions.view.all');
     }
 
     /**
@@ -50,12 +51,12 @@ class PermissionPolicy
      */
     public function view(User $user, Permission $permission): bool
     {
-        if ($user->hasPermission('permissions.view.all')) {
-            return true;
-        }
-
-        return $user->hasPermission('permissions.view.own') &&
-            $permission->created_by === $user->id;
+        return $this->anyOrOwn(
+            $user,
+            $permission,
+            'permissions.view.all',
+            'permissions.view.own'
+        );
     }
 
     /**
@@ -67,7 +68,7 @@ class PermissionPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('permissions.create');
+        return $this->has($user, 'permissions.create');
     }
 
     /**
@@ -81,10 +82,12 @@ class PermissionPolicy
      */
     public function update(User $user, Permission $permission): bool
     {
-        return $user->hasPermission('permissions.update.any') ||
-            ($user->hasPermission(
-                'permissions.update.own'
-            ) && $permission->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $permission,
+            'permissions.update.any',
+            'permissions.update.own'
+        );
     }
 
     /**
@@ -98,8 +101,11 @@ class PermissionPolicy
      */
     public function delete(User $user, Permission $permission): bool
     {
-        return $user->hasPermission('permissions.delete.any') ||
-        ($user->hasPermission('permissions.delete.own') &&
-            $permission->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $permission,
+            'permissions.delete.any',
+            'permissions.delete.own'
+        );
     }
 }
