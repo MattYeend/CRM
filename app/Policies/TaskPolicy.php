@@ -5,11 +5,12 @@ namespace App\Policies;
 use App\Models\Role;
 use App\Models\Task;
 use App\Models\User;
+use App\Traits\HandlesPolicyPermissions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class TaskPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, HandlesPolicyPermissions;
 
     /**
      * Handle all permissions for super admin role.
@@ -36,7 +37,7 @@ class TaskPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('tasks.view.all');
+        return $this->has($user, 'tasks.view.all');
     }
 
     /**
@@ -50,12 +51,12 @@ class TaskPolicy
      */
     public function view(User $user, Task $task): bool
     {
-        if ($user->hasPermission('tasks.view.all')) {
-            return true;
-        }
-
-        return $user->hasPermission('tasks.view.own') &&
-            $task->created_by === $user->id;
+        return $this->anyOrOwn(
+            $user,
+            $task,
+            'tasks.view.all',
+            'tasks.view.own'
+        );
     }
 
     /**
@@ -67,7 +68,7 @@ class TaskPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('tasks.create');
+        return $this->has($user, 'tasks.create');
     }
 
     /**
@@ -81,10 +82,12 @@ class TaskPolicy
      */
     public function update(User $user, Task $task): bool
     {
-        return $user->hasPermission('tasks.update.any') ||
-            ($user->hasPermission(
-                'tasks.update.own'
-            ) && $task->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $task,
+            'tasks.update.any',
+            'tasks.update.own'
+        );
     }
 
     /**
@@ -98,8 +101,11 @@ class TaskPolicy
      */
     public function delete(User $user, Task $task): bool
     {
-        return $user->hasPermission('tasks.delete.any') ||
-        ($user->hasPermission('tasks.delete.own') &&
-            $task->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $task,
+            'tasks.delete.any',
+            'tasks.delete.own'
+        );
     }
 }
