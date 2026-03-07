@@ -4,11 +4,12 @@ namespace App\Policies;
 
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\HandlesPolicyPermissions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class UserPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, HandlesPolicyPermissions;
 
     /**
      * Handle all permissions for super admin role.
@@ -35,7 +36,7 @@ class UserPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('users.view.all');
+        return $this->has($user, 'users.view.all');
     }
 
     /**
@@ -43,16 +44,18 @@ class UserPolicy
      *
      * @param User $user
      *
+     * @param User $model
+     *
      * @return bool
      */
-    public function view(User $user): bool
+    public function view(User $user, User $model): bool
     {
-        if ($user->hasPermission('users.view.all')) {
-            return true;
-        }
-
-        return $user->hasPermission('users.view.own') &&
-            $user->created_by === $user->id;
+        return $this->anyOrOwn(
+            $user,
+            $model,
+            'users.view.all',
+            'users.view.own'
+        );
     }
 
     /**
@@ -64,7 +67,7 @@ class UserPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('users.create');
+        return $this->has($user, 'users.create');
     }
 
     /**
@@ -72,14 +75,18 @@ class UserPolicy
      *
      * @param User $user
      *
+     * @param User $model
+     *
      * @return bool
      */
-    public function update(User $user): bool
+    public function update(User $user, User $model): bool
     {
-        return $user->hasPermission('users.update.any') ||
-            ($user->hasPermission(
-                'users.update.own'
-            ) && $user->id === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $model,
+            'users.update.any',
+            'users.update.own'
+        );
     }
 
     /**
@@ -87,13 +94,18 @@ class UserPolicy
      *
      * @param User $user
      *
+     * @param User $model
+     *
      * @return bool
      */
-    public function delete(User $user): bool
+    public function delete(User $user, User $model): bool
     {
-        return $user->hasPermission('users.delete.any') ||
-            ($user->hasPermission('users.delete.own') &&
-                $user->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $model,
+            'users.delete.any',
+            'users.delete.own'
+        );
     }
 
     /**
@@ -105,7 +117,7 @@ class UserPolicy
      */
     public function manage(User $user): bool
     {
-        return $user->hasPermission('users.manage');
+        return $this->has($user, 'users.manage');
     }
 
     /**
@@ -117,7 +129,7 @@ class UserPolicy
      */
     public function assignRoles(User $user): bool
     {
-        return $user->hasPermission('users.assign.roles');
+        return $this->has($user, 'users.assign.roles');
     }
 
     /**
@@ -129,7 +141,7 @@ class UserPolicy
      */
     public function assignPermissions(User $user): bool
     {
-        return $user->hasPermission('users.assign.permissions');
+        return $this->has($user, 'users.assign.permissions');
     }
 
     /**
@@ -137,12 +149,17 @@ class UserPolicy
      *
      * @param User $user
      *
+     * @param User $model
+     *
      * @return bool
      */
-    public function restore(User $user): bool
+    public function restore(User $user, User $model): bool
     {
-        return $user->hasPermission('users.restore.any') ||
-        ($user->hasPermission('users.restore.own') &&
-            $user->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $model,
+            'users.restore.any',
+            'users.restore.own'
+        );
     }
 }

@@ -5,11 +5,12 @@ namespace App\Policies;
 use App\Models\PipelineStage;
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\HandlesPolicyPermissions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PipelineStagePolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, HandlesPolicyPermissions;
 
     /**
      * Handle all permissions for super admin role.
@@ -36,7 +37,7 @@ class PipelineStagePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('pipelineStages.view.all');
+        return $this->has($user, 'pipelineStages.view.all');
     }
 
     /**
@@ -50,12 +51,12 @@ class PipelineStagePolicy
      */
     public function view(User $user, PipelineStage $pipelineStage): bool
     {
-        if ($user->hasPermission('pipelineStages.view.all')) {
-            return true;
-        }
-
-        return $user->hasPermission('pipelineStages.view.own') &&
-            $pipelineStage->created_by === $user->id;
+        return $this->anyOrOwn(
+            $user,
+            $pipelineStage,
+            'pipelineStages.view.all',
+            'pipelineStages.view.own'
+        );
     }
 
     /**
@@ -67,7 +68,7 @@ class PipelineStagePolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('pipelineStages.create');
+        return $this->has($user, 'pipelineStages.create');
     }
 
     /**
@@ -81,10 +82,12 @@ class PipelineStagePolicy
      */
     public function update(User $user, PipelineStage $pipelineStage): bool
     {
-        return $user->hasPermission('pipelineStages.update.any') ||
-            ($user->hasPermission(
-                'pipelineStages.update.own'
-            ) && $pipelineStage->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $pipelineStage,
+            'pipelineStages.update.any',
+            'pipelineStages.update.own'
+        );
     }
 
     /**
@@ -98,9 +101,12 @@ class PipelineStagePolicy
      */
     public function delete(User $user, PipelineStage $pipelineStage): bool
     {
-        return $user->hasPermission('pipelineStages.delete.any') ||
-        ($user->hasPermission('pipelineStage.delete.own') &&
-            $pipelineStage->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $pipelineStage,
+            'pipelineStages.delete.any',
+            'pipelineStages.delete.own'
+        );
     }
 
     /**
@@ -112,7 +118,7 @@ class PipelineStagePolicy
      */
     public function manage(User $user): bool
     {
-        return $user->hasPermission('pipelineStages.manage');
+        return $this->has($user, 'pipelineStages.manage');
     }
 
     /**
@@ -124,6 +130,6 @@ class PipelineStagePolicy
      */
     public function assign(User $user): bool
     {
-        return $user->hasPermission('pipelineStages.assign');
+        return $this->has($user, 'pipelineStages.assign');
     }
 }

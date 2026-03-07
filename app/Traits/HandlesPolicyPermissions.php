@@ -16,4 +16,13 @@ trait HandlesPolicyPermissions
         return $this->has($user, $permission) &&
             $model->created_by === $user->id;
     }
+
+    protected function anyOrOwn(
+        User $user,
+        $model,
+        string $any,
+        string $own
+    ): bool {
+        return $this->has($user, $any) || $this->owns($user, $model, $own);
+    }
 }

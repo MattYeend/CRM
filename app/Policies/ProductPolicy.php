@@ -51,8 +51,12 @@ class ProductPolicy
      */
     public function view(User $user, Product $product): bool
     {
-        return $this->has($user, 'products.view.all')
-            || $this->owns($user, $product, 'products.view.own');
+        return $this->anyOrOwn(
+            $user,
+            $product,
+            'products.view.all',
+            'products.view.own'
+        );
     }
 
     /**
@@ -78,8 +82,12 @@ class ProductPolicy
      */
     public function update(User $user, Product $product): bool
     {
-        return $this->has($user, 'products.update.any')
-            || $this->owns($user, $product, 'products.update.own');
+        return $this->anyOrOwn(
+            $user,
+            $product,
+            'products.update.any',
+            'products.update.own'
+        );
     }
 
     /**
@@ -93,7 +101,11 @@ class ProductPolicy
      */
     public function delete(User $user, Product $product): bool
     {
-        return $this->has($user, 'product.delete.any')
-            || $this->owns($user, $product, 'product.delete.own');
+        return $this->anyOrOwn(
+            $user,
+            $product,
+            'products.delete.any',
+            'products.delete.own'
+        );
     }
 }
