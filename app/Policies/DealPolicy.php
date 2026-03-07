@@ -5,11 +5,12 @@ namespace App\Policies;
 use App\Models\Deal;
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\HandlesPolicyPermissions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class DealPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, HandlesPolicyPermissions;
 
     /**
      * Handle all permissions for super admin role.
@@ -36,7 +37,7 @@ class DealPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('deals.view.all');
+        return $this->has($user, 'deals.view.all');
     }
 
     /**
@@ -50,12 +51,12 @@ class DealPolicy
      */
     public function view(User $user, Deal $deal): bool
     {
-        if ($user->hasPermission('deals.view.all')) {
-            return true;
-        }
-
-        return $user->hasPermission('deals.view.own') &&
-            $deal->created_by === $user->id;
+        return $this->anyOrOwn(
+            $user,
+            $deal,
+            'deals.view.all',
+            'deals.view.own'
+        );
     }
 
     /**
@@ -67,7 +68,7 @@ class DealPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('deals.create');
+        return $this->has($user, 'deals.create');
     }
 
     /**
@@ -81,10 +82,12 @@ class DealPolicy
      */
     public function update(User $user, Deal $deal): bool
     {
-        return $user->hasPermission('deals.update.any') ||
-            ($user->hasPermission(
-                'deals.update.own'
-            ) && $deal->owner_id === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $deal,
+            'deals.update.any',
+            'deals.update.own'
+        );
     }
 
     /**
@@ -98,9 +101,12 @@ class DealPolicy
      */
     public function delete(User $user, Deal $deal): bool
     {
-        return $user->hasPermission('deals.delete.any') ||
-        ($user->hasPermission('deals.delete.own') &&
-            $deal->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $deal,
+            'deals.delete.any',
+            'deals.delete.own'
+        );
     }
 
     /**
@@ -114,8 +120,11 @@ class DealPolicy
      */
     public function restore(User $user, Deal $deal): bool
     {
-        return $user->hasPermission('deals.restore.any') ||
-        ($user->hasPermission('deals.restore.own') &&
-            $deal->created_by === $user->id);
+        return $this->anyOrOwn(
+            $user,
+            $deal,
+            'deals.restore.any',
+            'deals.restore.own'
+        );
     }
 }
