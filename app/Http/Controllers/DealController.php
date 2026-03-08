@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreDealRequest;
+use App\Http\Requests\UpdateDealRequest;
 use App\Models\Deal;
 use App\Services\DealLogService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class DealController extends Controller
 {
@@ -21,6 +22,7 @@ class DealController extends Controller
      * Constructor for the controller
      *
      * @param DealLogService $logger
+     *
      * An instance of the DealLogService used for logging
      * deal-related actions
      */
@@ -34,7 +36,7 @@ class DealController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
@@ -71,7 +73,7 @@ class DealController extends Controller
      *
      * @param Deal $deal
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function show(Deal $deal): JsonResponse
     {
@@ -92,33 +94,21 @@ class DealController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param StoreDealRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreDealRequest $request): JsonResponse
     {
-        $this->authorize('create', Deal::class);
-
-        $data = $request->validate([
-            'title' => 'required|string',
-            'company_id' => 'nullable|integer|exists:companies,id',
-            'contact_id' => 'nullable|integer|exists:contacts,id',
-            'owner_id' => 'nullable|integer|exists:users,id',
-            'pipeline_id' => 'nullable|integer|exists:pipelines,id',
-            'stage_id' => 'nullable|integer|exists:pipeline_stages,id',
-            'value' => 'nullable|numeric',
-            'currency' => 'nullable|string|max:8',
-            'close_date' => 'nullable|date',
-            'status' => 'nullable|in:open,won,lost,archived',
-            'meta' => 'nullable|array',
-        ]);
+        $user = $request->user();
+        $data = $request->validated();
+        $data['created_by'] = $user->id;
 
         $deal = Deal::create($data);
 
         $this->logger->dealCreated(
-            auth()->user(),
-            auth()->id(),
+            $user,
+            $user->id,
             $deal
         );
 
@@ -128,26 +118,23 @@ class DealController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param UpdateDealRequest $request
      *
      * @param Deal $deal
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function update(Request $request, Deal $deal): JsonResponse
-    {
-        $this->authorize('update', $deal);
+    public function update(
+        UpdateDealRequest $request,
+        Deal $deal
+    ): JsonResponse {
+        $user = $request->user();
+        $data = $request->validated();
+        $data['updated_by'] = $user->id;
 
-        $data = $this->validateUpdateData($request);
+        $deal->update($data);
 
-        DB::transaction(function () use ($deal, $data) {
-            $deal->update($data);
-        });
-
-        $this->logUpdate(
-            $request,
-            $deal
-        );
+        $this->logUpdate($request, $deal);
 
         return response()->json($deal->fresh()->load($this->relations()));
     }
@@ -169,6 +156,8 @@ class DealController extends Controller
             $deal
         );
 
+        $deal->deleted_by = auth()->id();
+        $deal->save();
         $deal->delete();
 
         return response()->json(null, 204);
@@ -208,29 +197,6 @@ class DealController extends Controller
         return ['company', 'contact', 'owner', 'pipeline', 'stage'];
     }
 
-    /**
-     * Validate the update data for a deal.
-     *
-     * @param Request $request
-     *
-     * @return array
-     */
-    private function validateUpdateData(Request $request): array
-    {
-        return $request->validate([
-            'title' => 'sometimes|required|string',
-            'company_id' => 'nullable|integer|exists:companies,id',
-            'contact_id' => 'nullable|integer|exists:contacts,id',
-            'owner_id' => 'nullable|integer|exists:users,id',
-            'pipeline_id' => 'nullable|integer|exists:pipelines,id',
-            'stage_id' => 'nullable|integer|exists:pipeline_stages,id',
-            'value' => 'nullable|numeric',
-            'currency' => 'nullable|string|max:8',
-            'close_date' => 'nullable|date',
-            'status' => 'nullable|in:open,won,lost,archived',
-            'meta' => 'nullable|array',
-        ]);
-    }
     /**
      * Log the update of a deal.
      *
