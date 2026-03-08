@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreActivityRequest;
+use App\Http\Requests\UpdateActivityRequest;
 use App\Models\Activity;
 use App\Services\ActivityLogService;
 use Illuminate\Http\JsonResponse;
@@ -65,28 +67,23 @@ class ActivityController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param StoreActivityRequest $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreActivityRequest $request): JsonResponse
     {
-        $this->authorize('create', Activity::class);
+        $user = $request->user();
 
-        $data = $request->validate([
-            'user_id' => 'nullable|integer|exists:users,id',
-            'type' => 'required|string',
-            'subject_type' => 'nullable|string',
-            'subject_id' => 'nullable|integer',
-            'description' => 'nullable|string',
-            'meta' => 'nullable|array',
-        ]);
+        $data = $request->validated();
+
+        $data['created_by'] = $user->id;
 
         $activity = Activity::create($data);
 
         $this->logger->activityCreated(
-            $request->user(),
-            auth()->id(),
+            $user,
+            $user->id,
             $activity
         );
 
@@ -96,21 +93,21 @@ class ActivityController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param UpdateActivityRequest $request
      *
      * @param \App\Models\Activity $activity
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Activity $activity): JsonResponse
-    {
-        $this->authorize('update', $activity);
+    public function update(
+        UpdateActivityRequest $request,
+        Activity $activity
+    ): JsonResponse {
+        $user = $request->user();
 
-        $data = $request->validate([
-            'type' => 'sometimes|required|string',
-            'description' => 'nullable|string',
-            'meta' => 'nullable|array',
-        ]);
+        $data = $request->validated();
+
+        $data['updated_by'] = $user->id;
 
         $activity->update($data);
 
@@ -139,6 +136,9 @@ class ActivityController extends Controller
             auth()->id(),
             $activity
         );
+
+        $activity->deleted_by = auth()->id();
+        $activity->save();
 
         $activity->delete();
 
