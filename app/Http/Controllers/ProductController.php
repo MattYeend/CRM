@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Services\ProductLogService;
 use Illuminate\Http\JsonResponse;
@@ -21,6 +23,7 @@ class ProductController extends Controller
      * Constructor for the controller
      *
      * @param ProductLogService $logger
+     *
      * An instance of the ProductLogService used for logging
      * product-related actions
      */
@@ -32,9 +35,9 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
@@ -52,9 +55,9 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\Product $product
+     * @param Product $product
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function show(Product $product): JsonResponse
     {
@@ -66,30 +69,22 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param StoreProductRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreProductRequest $request): JsonResponse
     {
-        $this->authorize('create', Product::class);
-
-        $data = $request->validate([
-            'sku' => 'nullable|string|unique:products,sku',
-            'name' => 'required|string',
-            'description' => 'nullable|string',
-            'price' => 'nullable|numeric',
-            'currency' => 'nullable|string|max:8',
-            'quantity' => 'nullable|integer',
-            'meta' => 'nullable|array',
-        ]);
+        $user = $request->user();
+        $data = $request->validated();
+        $data['created_by'] = $user->id;
 
         $product = Product::create($data);
 
         $this->logger->productCreated(
             $request->user(),
             $request->user()->id,
-            $product
+            $product,
         );
 
         return response()->json($product, 201);
@@ -98,34 +93,26 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param UpdateProductRequest $request
      *
-     * @param \App\Models\Product $product
+     * @param Product $product
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function update(Request $request, Product $product): JsonResponse
-    {
-        $this->authorize('update', $product);
-
-        $data = $request->validate([
-            'sku' => ['nullable','string',
-                Rule::unique('products', 'sku')->ignore($product->id),
-            ],
-            'name' => 'sometimes|required|string',
-            'description' => 'nullable|string',
-            'price' => 'nullable|numeric',
-            'currency' => 'nullable|string|max:8',
-            'quantity' => 'nullable|integer',
-            'meta' => 'nullable|array',
-        ]);
+    public function update(
+        UpdateProductRequest $request,
+        Product $product
+    ): JsonResponse {
+        $user = $request->user();
+        $data = $request->validated();
+        $data['updated_by'] = $user->id;
 
         $product->update($data);
 
         $this->logger->productUpdated(
-            $request->user(),
-            $request->user()->id,
-            $product
+            $user,
+            $user->id,
+            $product,
         );
 
         return response()->json($product);
@@ -134,19 +121,25 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Product $product
+     * @param Product $product
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy(Product $product): JsonResponse
     {
         $this->authorize('delete', $product);
 
+        $user = auth()->user();
+
         $this->logger->productDeleted(
-            request()->user(),
-            request()->user()->id,
-            $product
+            $user,
+            $user->id,
+            $product,
         );
+
+        $product->update([
+            'deleted_by' => $user->id,
+        ]);
 
         $product->delete();
 
