@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreLearningRequest;
+use App\Http\Requests\UpdateLearningRequest;
 use App\Models\Learning;
 use App\Services\LearningLogService;
 use Illuminate\Http\JsonResponse;
@@ -20,6 +22,7 @@ class LearningController extends Controller
      * Constructor for the controller
      *
      * @param LearningLogService $logger
+     *
      * An instance of the LearningLogService used for logging
      * note-related actions
      */
@@ -31,9 +34,9 @@ class LearningController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
@@ -52,9 +55,9 @@ class LearningController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\Learning $learning
+     * @param Learning $learning
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function show(Learning $learning): JsonResponse
     {
@@ -66,29 +69,22 @@ class LearningController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param StoreLearningRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreLearningRequest $request): JsonResponse
     {
-        $this->authorize('create', Learning::class);
+        $user = $request->user();
+        $data = $request->validated();
+        $data['created_by'] = $user->id;
 
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-        ]);
-
-        $learning = Learning::create([
-            'title' => $validated['title'],
-            'description' => $validated['description'] ?? null,
-            'user_id' => $request->user()->id,
-        ]);
+        $learning = Learning::create($data);
 
         $this->logger->learningCreated(
-            $request->user(),
-            $request->user()->id,
-            $learning,
+            $user,
+            $user->id,
+            $learning
         );
 
         return response()->json($learning, 201);
@@ -97,27 +93,25 @@ class LearningController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param UpdateLearningRequest $request
      *
-     * @param \App\Models\Learning $learning
+     * @param Learning $learning
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function update(Request $request, Learning $learning): JsonResponse
-    {
-        $this->authorize('update', $learning);
+    public function update(
+        UpdateLearningRequest $request,
+        Learning $learning
+    ): JsonResponse {
+        $user = $request->user();
+        $data = $request->validated();
+        $data['updated_by'] = $user->id;
 
-        $validated = $request->validate([
-            'title' => 'sometimes|required|string|max:255',
-            'description' => 'nullable|string',
-            'is_completed' => 'boolean',
-        ]);
-
-        $learning->update($validated);
+        $learning->update($data);
 
         $this->logger->learningUpdated(
-            $request->user(),
-            $request->user()->id,
+            $user,
+            $user->id,
             $learning,
         );
 
@@ -127,9 +121,9 @@ class LearningController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Learning $learning
+     * @param Learning $learning
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy(Learning $learning): JsonResponse
     {
@@ -137,10 +131,12 @@ class LearningController extends Controller
 
         $this->logger->learningDeleted(
             auth()->user(),
-            auth()->user()->id,
+            auth()->id(),
             $learning,
         );
 
+        $learning->deleted_by = auth()->id();
+        $learning->save();
         $learning->delete();
 
         return response()->json(null, 204);
@@ -149,25 +145,27 @@ class LearningController extends Controller
     /**
      * Mark the specified resource as completed.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @param \App\Models\Learning $learning
+     * @param Learning $learning
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function complete(Request $request, Learning $learning): JsonResponse
     {
         $this->authorize('complete', $learning);
 
+        $user = $request->user();
+
         $learning->update([
             'is_completed' => true,
-            'completed_by' => $request->user()->id,
+            'completed_by' => $user->id,
             'completed_at' => now(),
         ]);
 
         $this->logger->learningComplete(
-            $request->user(),
-            $request->user()->id,
+            $user,
+            $user->id,
             $learning,
         );
 
@@ -177,17 +175,19 @@ class LearningController extends Controller
     /**
      * Mark the specified resource as incomplete.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @param \App\Models\Learning $learning
+     * @param Learning $learning
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function incomplete(
         Request $request,
         Learning $learning
     ): JsonResponse {
         $this->authorize('incomplete', $learning);
+
+        $user = $request->user();
 
         $learning->update([
             'is_completed' => false,
@@ -196,8 +196,8 @@ class LearningController extends Controller
         ]);
 
         $this->logger->learningIncomplete(
-            $request->user(),
-            $request->user()->id,
+            $user,
+            $user->id,
             $learning,
         );
 
