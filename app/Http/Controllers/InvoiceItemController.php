@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreInvoiceItemRequest;
+use App\Http\Requests\UpdateInvoiceItemRequest;
 use App\Models\InvoiceItem;
 use App\Services\InvoiceItemLogService;
 use Illuminate\Http\JsonResponse;
@@ -20,6 +22,7 @@ class InvoiceItemController extends Controller
      * Constructor for the controller
      *
      * @param InvoiceItemLogService $logger
+     *
      * An instance of the InvoiceItemLogService used for logging
      * invoice item-related actions
      */
@@ -31,9 +34,9 @@ class InvoiceItemController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
@@ -52,9 +55,9 @@ class InvoiceItemController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\InvoiceItem $invoiceItem
+     * @param InvoiceItem $invoiceItem
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function show(InvoiceItem $invoiceItem): JsonResponse
     {
@@ -66,23 +69,15 @@ class InvoiceItemController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param StoreInvoiceItemRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreInvoiceItemRequest $request): JsonResponse
     {
-        $this->authorize('create', InvoiceItem::class);
-
-        $data = $request->validate([
-            'invoice_id' => 'required|integer|exists:invoices,id',
-            'product_id' => 'nullable|integer|exists:products,id',
-            'description' => 'required|string',
-            'quantity' => 'required|integer|min:1',
-            'unit_price' => 'required|numeric',
-            'line_total' => 'nullable|numeric',
-            'meta' => 'nullable|array',
-        ]);
+        $user = $request->user();
+        $data = $request->validated();
+        $data['created_by'] = $user->id;
 
         $data['line_total'] = $data['line_total']
             ?? $data['quantity'] * $data['unit_price'];
@@ -90,8 +85,8 @@ class InvoiceItemController extends Controller
         $item = InvoiceItem::create($data);
 
         $this->logger->invoiceItemCreated(
-            auth()->user(),
-            auth()->id(),
+            $user,
+            $user->id,
             $item
         );
 
@@ -101,25 +96,19 @@ class InvoiceItemController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @param \App\Models\InvoiceItem $invoiceItem
+     * @param InvoiceItem $invoiceItem
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(
-        Request $request,
+        UpdateInvoiceItemRequest $request,
         InvoiceItem $invoiceItem
     ): JsonResponse {
-        $this->authorize('update', $invoiceItem);
-
-        $data = $request->validate([
-            'description' => 'sometimes|required|string',
-            'quantity' => 'nullable|integer|min:1',
-            'unit_price' => 'nullable|numeric',
-            'line_total' => 'nullable|numeric',
-            'meta' => 'nullable|array',
-        ]);
+        $user = $request->user();
+        $data = $request->validated();
+        $data['updated_by'] = $user->id;
 
         if (isset($data['quantity']) && isset($data['unit_price'])) {
             $data['line_total'] = $data['quantity'] * $data['unit_price'];
@@ -128,8 +117,8 @@ class InvoiceItemController extends Controller
         $invoiceItem->update($data);
 
         $this->logger->invoiceItemUpdated(
-            auth()->user(),
-            auth()->id(),
+            $user,
+            $user->id,
             $invoiceItem
         );
 
@@ -139,9 +128,9 @@ class InvoiceItemController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\InvoiceItem $invoiceItem
+     * @param InvoiceItem $invoiceItem
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy(InvoiceItem $invoiceItem): JsonResponse
     {
@@ -153,6 +142,8 @@ class InvoiceItemController extends Controller
             $invoiceItem
         );
 
+        $invoiceItem->deleted_by = auth()->id();
+        $invoiceItem->save();
         $invoiceItem->delete();
 
         return response()->json(null, 204);

@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Http\Requests;
+
+use App\Models\InvoiceItem;
+use Illuminate\Foundation\Http\FormRequest;
+
+class StoreInvoiceItemRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return $this->user()->can('create', InvoiceItem::class);
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'invoice_id' => 'required|integer|exists:invoices,id',
+            'product_id' => 'nullable|integer|exists:products,id',
+            'description' => 'required|string',
+            'quantity' => 'required|integer|min:1',
+            'unit_price' => 'required|numeric',
+            'line_total' => 'nullable|numeric',
+            'meta' => 'nullable|array',
+        ];
+    }
+}
