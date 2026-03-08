@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreInvoiceRequest;
+use App\Http\Requests\UpdateInvoiceRequest;
 use App\Models\Invoice;
 use App\Services\InvoiceLogService;
 use Illuminate\Http\JsonResponse;
@@ -21,6 +23,7 @@ class InvoiceController extends Controller
      * Constructor for the controller
      *
      * @param InvoiceLogService $logger
+     *
      * An instance of the InvoiceLogService used for logging
      * invoice-related actions
      */
@@ -32,9 +35,9 @@ class InvoiceController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
@@ -53,9 +56,9 @@ class InvoiceController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\Invoice $invoice
+     * @param Invoice $invoice
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function show(Invoice $invoice): JsonResponse
     {
@@ -69,15 +72,15 @@ class InvoiceController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param StoreInvoiceRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreInvoiceRequest $request): JsonResponse
     {
-        $this->authorize('create', Invoice::class);
-
-        $data = $this->validateInvoice($request);
+        $user = $request->user();
+        $data = $request->validated();
+        $data['created_by'] = $user->id;
 
         $invoice = Invoice::create($data);
 
@@ -89,17 +92,19 @@ class InvoiceController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param UpdateInvoiceRequest $request
      *
-     * @param \App\Models\Invoice $invoice
+     * @param Invoice $invoice
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function update(Request $request, Invoice $invoice): JsonResponse
-    {
-        $this->authorize('update', $invoice);
-
-        $data = $this->validateInvoice($request, $invoice);
+    public function update(
+        UpdateInvoiceRequest $request,
+        Invoice $invoice
+    ): JsonResponse {
+        $user = $request->user();
+        $data = $request->validated();
+        $data['updated_by'] = $user->id;
 
         $invoice->update($data);
 
@@ -125,6 +130,8 @@ class InvoiceController extends Controller
             $invoice
         );
 
+        $invoice->deleted_by = auth()->id();
+        $invoice->save();
         $invoice->delete();
 
         return response()->json(null, 204);
