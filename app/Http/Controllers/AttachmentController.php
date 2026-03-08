@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreAttachmentRequest;
+use App\Http\Requests\UpdateAttachmentRequest;
 use App\Models\Attachment;
 use App\Services\AttachmentAttacher;
 use App\Services\AttachmentLogService;
@@ -83,23 +85,58 @@ class AttachmentController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     *
+     * @param StoreAttachmentRequest $request
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreAttachmentRequest $request): JsonResponse
     {
-        $this->authorize('create', Attachment::class);
+        $user = $request->user();
+        $data = $request->validated();
 
-        $data = $request->validate([
-            'file' => 'required|file|max:10000',
-            'attachable_type' => 'nullable|string|required_with:attachable_id',
-            'attachable_id' => 'nullable|integer|required_with:attachable_type',
-            'uploaded_by' => 'nullable|integer|exists:users,id',
-        ]);
+        $data['created_by'] = $user->id;
 
         $file = $request->file('file');
         $attachment = $this->service->storeFile(
             $file,
             $data['uploaded_by'] ?? null
         );
+
+        $this->attacher->attach(
+            $data['attachable_type'] ?? null,
+            $data['attachable_id'] ?? null,
+            $attachment
+        );
+
+        $this->logUpload($request, $attachment);
+
+        return response()->json($attachment->load('uploader'), 201);
+    }
+
+    /**
+     * Update the specified resource.
+     *
+     * @param UpdateAttachmentRequest $request
+     *
+     * @param Attachment $attachment
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(
+        UpdateAttachmentRequest $request,
+        Attachment $attachment
+    ): JsonResponse {
+        $user = $request->user();
+        $data = $request->validated();
+
+        $data['updated_by'] = $user->id;
+
+        $file = $request->file('file');
+
+        if ($file) {
+            $this->service->replaceFile($attachment, $file);
+        }
 
         $this->attacher->attach(
             $data['attachable_type'] ?? null,
@@ -123,15 +160,20 @@ class AttachmentController extends Controller
     {
         $this->authorize('delete', $attachment);
 
+        $user = auth()->user();
+
         $this->logger->attachmentDeleted(
-            request()->user(),
-            auth()->id(),
+            $user,
+            $user->id,
             $attachment
         );
 
         if ($attachment->disk && $attachment->path) {
             Storage::disk($attachment->disk)->delete($attachment->path);
         }
+
+        $attachment['deleted_by'] = $user->id;
+        $attachment->save();
         $attachment->delete();
 
         return response()->json(null, 204);
@@ -140,17 +182,19 @@ class AttachmentController extends Controller
     /**
      * Log the upload of an attachment.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param $request
      *
      * @param \App\Models\Attachment $attachment
      *
      * @return void
      */
-    private function logUpload(Request $request, $attachment): void
+    private function logUpload($request, $attachment): void
     {
+        $user = $request->user();
+
         $this->logger->attachmentUploaded(
-            $request->user(),
-            auth()->id(),
+            $user,
+            $user->id,
             $attachment
         );
     }

@@ -39,7 +39,7 @@ class AttachmentAttacher
      *
      * @param string $type
      *
-     * @param int$id
+     * @param int $id
      *
      * @return mixed|null
      */
