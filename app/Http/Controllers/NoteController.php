@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreNoteRequest;
+use App\Http\Requests\UpdateNoteRequest;
 use App\Models\Note;
 use App\Services\NoteLogService;
 use Illuminate\Http\JsonResponse;
@@ -20,6 +22,7 @@ class NoteController extends Controller
      * Constructor for the controller
      *
      * @param NoteLogService $logger
+     *
      * An instance of the NoteLogService used for logging
      * note-related actions
      */
@@ -31,9 +34,9 @@ class NoteController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
@@ -52,9 +55,9 @@ class NoteController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\Note $note
+     * @param Note $note
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function show(Note $note): JsonResponse
     {
@@ -66,27 +69,21 @@ class NoteController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param StoreNoteRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreNoteRequest $request): JsonResponse
     {
-        $this->authorize('create', Note::class);
-
-        $data = $request->validate([
-            'user_id' => 'nullable|integer|exists:users,id',
-            'notable_type' => 'nullable|string',
-            'notable_id' => 'nullable|integer',
-            'body' => 'required|string',
-            'meta' => 'nullable|array',
-        ]);
+        $user = $request->user();
+        $data = $request->validated();
+        $data['created_by'] = $user->id;
 
         $note = Note::create($data);
 
         $this->logger->noteCreated(
-            $request->user(),
-            $request->user()->id,
+            $user,
+            $user->id,
             $note
         );
 
@@ -101,26 +98,25 @@ class NoteController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param UpdateNoteRequest $request
      *
-     * @param \App\Models\Note $note
+     * @param Note $note
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function update(Request $request, Note $note): JsonResponse
-    {
-        $this->authorize('update', $note);
-
-        $data = $request->validate([
-            'body' => 'sometimes|required|string',
-            'meta' => 'nullable|array',
-        ]);
+    public function update(
+        UpdateNoteRequest $request,
+        Note $note
+    ): JsonResponse {
+        $user = $request->user();
+        $data = $request->validated();
+        $data['updated_by'] = $user->id;
 
         $note->update($data);
 
         $this->logger->noteUpdated(
-            $request->user(),
-            $request->user()->id,
+            $user,
+            $user->id,
             $note
         );
 
@@ -130,9 +126,9 @@ class NoteController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Note $note
+     * @param Note $note
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy(Note $note): JsonResponse
     {
@@ -144,6 +140,8 @@ class NoteController extends Controller
             $note
         );
 
+        $note->deleted_by = auth()->id();
+        $note->save();
         $note->delete();
 
         return response()->json(null, 204);
@@ -152,7 +150,7 @@ class NoteController extends Controller
     /**
      * Attach the note to the appropriate polymorphic model.
      *
-     * @param \App\Models\Note $note
+     * @param Note $note
      *
      * @param array $data
      *
