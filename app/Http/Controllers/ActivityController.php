@@ -132,14 +132,17 @@ class ActivityController extends Controller
     {
         $this->authorize('delete', $activity);
 
+        $user = auth()->user();
+
         $this->logger->activityDeleted(
-            auth()->user(),
-            auth()->id(),
+            $user,
+            $user->id,
             $activity
         );
 
-        $activity->deleted_by = auth()->id();
-        $activity->save();
+        $activity->update([
+            'deleted_by' => $user->id,
+        ]);
 
         $activity->delete();
 

@@ -129,14 +129,18 @@ class LearningController extends Controller
     {
         $this->authorize('delete', $learning);
 
+        $user = auth()->user();
+
         $this->logger->learningDeleted(
-            auth()->user(),
-            auth()->id(),
+            $user,
+            $user->id,
             $learning,
         );
 
-        $learning->deleted_by = auth()->id();
-        $learning->save();
+        $learning->update([
+            'deleted_by' => $user->id,
+        ]);
+
         $learning->delete();
 
         return response()->json(null, 204);

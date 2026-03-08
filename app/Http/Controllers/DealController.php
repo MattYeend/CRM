@@ -150,14 +150,17 @@ class DealController extends Controller
     {
         $this->authorize('delete', $deal);
 
+        $user = auth()->user();
+
         $this->logger->dealDeleted(
-            auth()->user(),
-            auth()->id(),
+            $user,
+            $user->id,
             $deal
         );
 
-        $deal->deleted_by = auth()->id();
-        $deal->save();
+        $deal->update([
+            'deleted_by' => $user->id,
+        ]);
         $deal->delete();
 
         return response()->json(null, 204);

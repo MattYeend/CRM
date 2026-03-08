@@ -172,8 +172,9 @@ class AttachmentController extends Controller
             Storage::disk($attachment->disk)->delete($attachment->path);
         }
 
-        $attachment['deleted_by'] = $user->id;
-        $attachment->save();
+        $attachment->update([
+            'deleted_by' => $user->id,
+        ]);
         $attachment->delete();
 
         return response()->json(null, 204);

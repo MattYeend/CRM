@@ -134,14 +134,18 @@ class NoteController extends Controller
     {
         $this->authorize('delete', $note);
 
+        $user = auth()->user();
+
         $this->logger->noteDeleted(
-            auth()->user(),
-            auth()->id(),
-            $note
+            $user,
+            $user->id,
+            $note,
         );
 
-        $note->deleted_by = auth()->id();
-        $note->save();
+        $note->update([
+            'deleted_by' => $user->id,
+        ]);
+
         $note->delete();
 
         return response()->json(null, 204);

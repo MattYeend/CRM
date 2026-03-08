@@ -141,14 +141,17 @@ class LeadController extends Controller
     {
         $this->authorize('delete', $lead);
 
+        $user = auth()->user();
         $this->logger->leadDeleted(
-            auth()->user(),
-            auth()->id(),
-            $lead
+            $user,
+            $user->id,
+            $lead,
         );
 
-        $lead->deleted_by = auth()->id();
-        $lead->save();
+        $lead->update([
+            'deleted_by' => $user->id,
+        ]);
+
         $lead->delete();
 
         return response()->json(null, 204);

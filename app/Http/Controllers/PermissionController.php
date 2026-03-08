@@ -130,10 +130,12 @@ class PermissionController extends Controller
     {
         $this->authorize('delete', $permission);
 
+        $user = auth()->user();
+
         $this->logger->permissionDeleted(
-            auth()->user(),
-            auth()->id(),
-            $permission
+            $user,
+            $user->id,
+            $permission,
         );
 
         $permission->roles()->detach();

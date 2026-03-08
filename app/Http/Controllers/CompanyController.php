@@ -148,8 +148,9 @@ class CompanyController extends Controller
             $company
         );
 
-        $company['deleted_by'] = $user->id;
-        $company->save();
+        $company->update([
+            'deleted_by' => $user->id,
+        ]);
         $company->delete();
 
         return response()->json(null, 204);

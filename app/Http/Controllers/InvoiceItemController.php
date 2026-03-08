@@ -136,14 +136,17 @@ class InvoiceItemController extends Controller
     {
         $this->authorize('delete', $invoiceItem);
 
+        $user = auth()->user();
+
         $this->logger->invoiceItemDeleted(
-            auth()->user(),
-            auth()->id(),
-            $invoiceItem
+            $user,
+            $user->id,
+            $invoiceItem,
         );
 
-        $invoiceItem->deleted_by = auth()->id();
-        $invoiceItem->save();
+        $invoiceItem->update([
+            'deleted_by' => $user->id,
+        ]);
         $invoiceItem->delete();
 
         return response()->json(null, 204);

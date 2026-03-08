@@ -124,14 +124,17 @@ class InvoiceController extends Controller
     {
         $this->authorize('delete', $invoice);
 
+        $user = auth()->user();
+
         $this->logger->invoiceDeleted(
-            auth()->user(),
-            auth()->id(),
+            $user,
+            $user->id,
             $invoice
         );
 
-        $invoice->deleted_by = auth()->id();
-        $invoice->save();
+        $invoice->update([
+            'deleted_by' => $user->id,
+        ]);
         $invoice->delete();
 
         return response()->json(null, 204);

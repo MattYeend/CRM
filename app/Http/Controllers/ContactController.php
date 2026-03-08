@@ -142,14 +142,17 @@ class ContactController extends Controller
     {
         $this->authorize('delete', $contact);
 
+        $user = auth()->user();
+
         $this->logger->contactDeleted(
-            auth()->user(),
-            auth()->id(),
+            $user,
+            $user->id,
             $contact
         );
 
-        $contact->deleted_by = auth()->id();
-        $contact->save();
+        $contact->update([
+            'deleted_by' => $user->id,
+        ]);
         $contact->delete();
 
         return response()->json(null, 204);

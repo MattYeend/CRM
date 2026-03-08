@@ -131,7 +131,11 @@ class PipelineController extends Controller
 
         $user = auth()->user();
 
-        $this->logger->pipelineDeleted($user, $user->id, $pipeline);
+        $this->logger->pipelineDeleted(
+            $user,
+            $user->id,
+            $pipeline
+        );
 
         $pipeline->update([
             'deleted_by' => $user->id,
