@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePipelineRequest;
+use App\Http\Requests\UpdatePipelineRequest;
 use App\Models\Pipeline;
 use App\Services\PipelineLogService;
 use Illuminate\Http\JsonResponse;
@@ -20,6 +22,7 @@ class PipelineController extends Controller
      * Constructor for the controller
      *
      * @param PipelineLogService $logger
+     *
      * An instance of the PipelineLogService used for logging
      * pipeline-related actions
      */
@@ -33,7 +36,7 @@ class PipelineController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
@@ -54,7 +57,7 @@ class PipelineController extends Controller
      *
      * @param Pipeline $pipeline
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function show(Pipeline $pipeline): JsonResponse
     {
@@ -66,25 +69,21 @@ class PipelineController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param StorePipelineRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(StorePipelineRequest $request): JsonResponse
     {
-        $this->authorize('create', Pipeline::class);
-
-        $data = $request->validate([
-            'name' => 'required|string',
-            'description' => 'nullable|string',
-            'is_default' => 'nullable|boolean',
-        ]);
+        $user = $request->user();
+        $data = $request->validated();
+        $data['created_by'] = $user->id;
 
         $pipeline = Pipeline::create($data);
 
         $this->logger->pipelineCreated(
-            $request->user(),
-            $request->user()->id,
+            $user,
+            $user->id,
             $pipeline
         );
 
@@ -94,27 +93,25 @@ class PipelineController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param UpdatePipelineRequest $request
      *
      * @param Pipeline $pipeline
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function update(Request $request, Pipeline $pipeline): JsonResponse
-    {
-        $this->authorize('update', $pipeline);
-
-        $data = $request->validate([
-            'name' => 'sometimes|required|string',
-            'description' => 'nullable|string',
-            'is_default' => 'nullable|boolean',
-        ]);
+    public function update(
+        UpdatePipelineRequest $request,
+        Pipeline $pipeline
+    ): JsonResponse {
+        $user = $request->user();
+        $data = $request->validated();
+        $data['updated_by'] = $user->id;
 
         $pipeline->update($data);
 
         $this->logger->pipelineUpdated(
-            $request->user(),
-            $request->user()->id,
+            $user,
+            $user->id,
             $pipeline
         );
 
@@ -126,17 +123,19 @@ class PipelineController extends Controller
      *
      * @param Pipeline $pipeline
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy(Pipeline $pipeline): JsonResponse
     {
         $this->authorize('delete', $pipeline);
 
-        $this->logger->pipelineDeleted(
-            request()->user(),
-            request()->user()->id,
-            $pipeline
-        );
+        $user = auth()->user();
+
+        $this->logger->pipelineDeleted($user, $user->id, $pipeline);
+
+        $pipeline->update([
+            'deleted_by' => $user->id,
+        ]);
 
         $pipeline->delete();
 
