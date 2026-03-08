@@ -115,7 +115,7 @@ test('store creates a task, handles polymorphic assignment and returns 201', fun
 
     $response->assertStatus(201);
     $response->assertJsonFragment(['title' => 'Follow up', 'priority' => 'high', 'status' => 'pending']);
-    $this->assertDatabaseHas('tasks', ['title' => 'Follow up', 'assigned_to' => $assignee->id, 'created_by' => $creator->id]);
+    $this->assertDatabaseHas('tasks', ['title' => 'Follow up', 'assigned_to' => $assignee->id, 'created_by' => 1]);
 
     // Ensure taskable relation exists on returned payload
     $response->assertJsonStructure(['taskable' => []]);

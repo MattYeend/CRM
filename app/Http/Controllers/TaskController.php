@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreTaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
 use App\Services\TaskLogService;
 use Illuminate\Http\JsonResponse;
@@ -20,6 +22,7 @@ class TaskController extends Controller
      * Constructor for the controller
      *
      * @param TaskLogService $logger
+     *
      * An instance of the TaskLogService used for logging
      * task-related actions
      */
@@ -30,9 +33,9 @@ class TaskController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
@@ -65,24 +68,23 @@ class TaskController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param StoreTaskRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreTaskRequest $request): JsonResponse
     {
-        $this->authorize('create', Task::class);
+        $user = $request->user();
+        $data = $request->validated();
+        $data['created_by'] = $user->id;
 
-        $data = $this->validateTaskData($request);
         $task = Task::create($data);
 
         $this->logger->taskCreated(
-            auth()->user(),
-            auth()->id(),
+            $user,
+            $user->id,
             $task,
         );
-
-        $this->handlePolymorphicAssignment($task, $data);
 
         return response()->json(
             $task->load('assignee', 'creator', 'taskable'),
@@ -93,31 +95,25 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param UpdateTaskRequest $request
      *
-     * @param \App\Models\Task $task
+     * @param Task $task
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function update(Request $request, Task $task): JsonResponse
-    {
-        $this->authorize('update', $task);
-
-        $data = $request->validate([
-            'title' => 'sometimes|required|string',
-            'description' => 'nullable|string',
-            'assigned_to' => 'nullable|integer|exists:users,id',
-            'created_by' => 'nullable|integer|exists:users,id',
-            'priority' => 'nullable|in:low,medium,high',
-            'status' => 'nullable|in:pending,completed,canceled',
-            'due_at' => 'nullable|date',
-        ]);
+    public function update(
+        UpdateTaskRequest $request,
+        Task $task
+    ): JsonResponse {
+        $user = $request->user();
+        $data = $request->validated();
+        $data['updated_by'] = $user->id;
 
         $task->update($data);
 
         $this->logger->taskUpdated(
-            auth()->user(),
-            auth()->id(),
+            $user,
+            $user->id,
             $task,
         );
 
@@ -131,69 +127,28 @@ class TaskController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Task $task
+     * @param Task $task
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy(Task $task): JsonResponse
     {
         $this->authorize('delete', $task);
 
+        $user = auth()->user();
+
         $this->logger->taskDeleted(
-            auth()->user(),
-            auth()->id(),
+            $user,
+            $user->id,
             $task,
         );
+
+        $task->update([
+            'deleted_by' => $user->id,
+        ]);
 
         $task->delete();
 
         return response()->json(null, 204);
-    }
-
-    /**
-     * Validate task data from the request.
-     *
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return array
-     */
-    private function validateTaskData(Request $request): array
-    {
-        return $request->validate([
-            'title' => 'required|string',
-            'description' => 'nullable|string',
-            'assigned_to' => 'nullable|integer|exists:users,id',
-            'created_by' => 'nullable|integer|exists:users,id',
-            'taskable_type' => 'nullable|string',
-            'taskable_id' => 'nullable|integer',
-            'priority' => 'nullable|in:low,medium,high',
-            'status' => 'nullable|in:pending,completed,canceled',
-            'due_at' => 'nullable|date',
-        ]);
-    }
-
-    /**
-     * Handle polymorphic assignment of the task to another model.
-     *
-     * @param \App\Models\Task $task
-     *
-     * @param array $data
-     *
-     * @return void
-     */
-    private function handlePolymorphicAssignment(Task $task, array $data): void
-    {
-        if (! isset($data['taskable_type'], $data['taskable_id'])) {
-            return;
-        }
-
-        try {
-            $model = app($data['taskable_type'])->find($data['taskable_id']);
-            if ($model) {
-                $model->tasks()->save($task);
-            }
-        } catch (\Throwable $e) {
-            report($e); // use Laravel's error reporting instead of echo
-        }
     }
 }
