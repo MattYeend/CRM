@@ -19,9 +19,9 @@ class AttachmentController extends Controller
      * AttachmentAttacher, ActivityLogService and
      * AttachmentService instances
      *
-     * @var \App\Services\AttachmentAttacher
-     * @var \App\Services\AttachmentLogService
-     * @var \App\Services\AttachmentService
+     * @var AttachmentAttacher
+     * @var AttachmentLogService
+     * @var AttachmentService
      */
     protected AttachmentAttacher $attacher;
     protected AttachmentLogService $logger;
@@ -30,11 +30,11 @@ class AttachmentController extends Controller
     /**
      * Constructor
      *
-     * @param \App\Services\AttachmentAttacher $attacher
+     * @param AttachmentAttacher $attacher
      *
-     * @param \App\Services\AttachmentLogService $logger
+     * @param AttachmentLogService $logger
      *
-     * @param \App\Services\AttachmentService $service
+     * @param AttachmentService $service
      *
      * @return void
      */
@@ -51,9 +51,9 @@ class AttachmentController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
@@ -72,9 +72,9 @@ class AttachmentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\Attachment $attachment
+     * @param Attachment $attachment
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function show(Attachment $attachment): JsonResponse
     {
@@ -88,7 +88,7 @@ class AttachmentController extends Controller
      *
      * @param StoreAttachmentRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function store(StoreAttachmentRequest $request): JsonResponse
     {
@@ -121,7 +121,7 @@ class AttachmentController extends Controller
      *
      * @param Attachment $attachment
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(
         UpdateAttachmentRequest $request,
@@ -152,9 +152,9 @@ class AttachmentController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Attachment $attachment
+     * @param Attachment $attachment
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy(Attachment $attachment): JsonResponse
     {
@@ -184,7 +184,7 @@ class AttachmentController extends Controller
      *
      * @param $request
      *
-     * @param \App\Models\Attachment $attachment
+     * @param Attachment $attachment
      *
      * @return void
      */

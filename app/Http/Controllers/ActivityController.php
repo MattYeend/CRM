@@ -21,6 +21,7 @@ class ActivityController extends Controller
      * Constructor for the controller
      *
      * @param ActivityLogService $logger
+     *
      * An instance of the ActivityLogService used for logging
      * activity-related actions
      */
@@ -32,9 +33,9 @@ class ActivityController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
@@ -53,9 +54,9 @@ class ActivityController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\Activity $activity
+     * @param Activity $activity
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function show(Activity $activity): JsonResponse
     {
@@ -69,7 +70,7 @@ class ActivityController extends Controller
      *
      * @param StoreActivityRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function store(StoreActivityRequest $request): JsonResponse
     {
@@ -95,9 +96,9 @@ class ActivityController extends Controller
      *
      * @param UpdateActivityRequest $request
      *
-     * @param \App\Models\Activity $activity
+     * @param Activity $activity
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(
         UpdateActivityRequest $request,
@@ -123,9 +124,9 @@ class ActivityController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Activity $activity
+     * @param  Activity $activity
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy(Activity $activity): JsonResponse
     {

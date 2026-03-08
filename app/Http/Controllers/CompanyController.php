@@ -22,6 +22,7 @@ class CompanyController extends Controller
      * Constructor for the controller
      *
      * @param CompanyLogService $logger
+     *
      * An instance of the CompanyLogService used for logging
      * company-related actions
      */
@@ -35,7 +36,7 @@ class CompanyController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
@@ -61,7 +62,7 @@ class CompanyController extends Controller
      *
      * @param Company $company
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function show(Company $company): JsonResponse
     {
@@ -81,7 +82,7 @@ class CompanyController extends Controller
      *
      * @param StoreCompanyRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function store(StoreCompanyRequest $request): JsonResponse
     {
@@ -107,7 +108,7 @@ class CompanyController extends Controller
      *
      * @param Company $company
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(
         UpdateCompanyRequest $request,
@@ -133,7 +134,7 @@ class CompanyController extends Controller
      *
      * @param Company $company
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy(Company $company): JsonResponse
     {
@@ -159,7 +160,7 @@ class CompanyController extends Controller
      *
      * @param int $id
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function restore($id): JsonResponse
     {
