@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreContactRequest;
+use App\Http\Requests\UpdateContactRequest;
 use App\Models\Contact;
 use App\Services\ContactLogService;
 use Illuminate\Http\JsonResponse;
@@ -20,6 +22,7 @@ class ContactController extends Controller
      * Constructor for the controller
      *
      * @param ContactLogService $logger
+     *
      * An instance of the ContactLogService used for logging
      * contact-related actions
      */
@@ -33,7 +36,7 @@ class ContactController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
@@ -67,7 +70,7 @@ class ContactController extends Controller
      *
      * @param Contact $contact
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function show(Contact $contact): JsonResponse
     {
@@ -81,29 +84,21 @@ class ContactController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param StoreContactRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreContactRequest $request): JsonResponse
     {
-        $this->authorize('create', Contact::class);
-
-        $data = $request->validate([
-            'company_id' => 'nullable|integer|exists:companies,id',
-            'first_name' => 'required|string',
-            'last_name' => 'nullable|string',
-            'email' => 'nullable|email',
-            'phone' => 'nullable|string',
-            'job_title' => 'nullable|string',
-            'meta' => 'nullable|array',
-        ]);
+        $user = $request->user();
+        $data = $request->validated();
+        $data['created_by'] = $user->id;
 
         $contact = Contact::create($data);
 
         $this->logger->contactCreated(
-            auth()->user(),
-            auth()->id(),
+            $user,
+            $user->id,
             $contact
         );
 
@@ -113,31 +108,25 @@ class ContactController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param UpdateContactRequest $request
      *
      * @param Contact $contact
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function update(Request $request, Contact $contact): JsonResponse
-    {
-        $this->authorize('update', $contact);
-
-        $data = $request->validate([
-            'company_id' => 'nullable|integer|exists:companies,id',
-            'first_name' => 'sometimes|required|string',
-            'last_name' => 'nullable|string',
-            'email' => 'nullable|email',
-            'phone' => 'nullable|string',
-            'job_title' => 'nullable|string',
-            'meta' => 'nullable|array',
-        ]);
+    public function update(
+        UpdateContactRequest $request,
+        Contact $contact
+    ): JsonResponse {
+        $user = $request->user();
+        $data = $request->validated();
+        $data['updated_by'] = $user->id;
 
         $contact->update($data);
 
         $this->logger->contactUpdated(
-            $request->user(),
-            auth()->id(),
+            $user,
+            $user->id,
             $contact
         );
 
@@ -159,6 +148,8 @@ class ContactController extends Controller
             $contact
         );
 
+        $contact->deleted_by = auth()->id();
+        $contact->save();
         $contact->delete();
 
         return response()->json(null, 204);
