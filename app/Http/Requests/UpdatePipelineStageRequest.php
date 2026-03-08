@@ -2,17 +2,18 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Pipeline;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StorePipelineRequest extends FormRequest
+class UpdatePipelineStageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return $this->user()->can('create', Pipeline::class);
+        $pipelineStage = $this->route('pipeline_stage');
+
+        return $this->user()->can('update', $pipelineStage);
     }
 
     /**
@@ -23,9 +24,11 @@ class StorePipelineRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'description' => 'nullable|string',
-            'is_default' => 'nullable|boolean',
+            'pipeline_id' => 'nullable|integer|exists:pipelines,id',
+            'name' => 'sometimes|required|string',
+            'position' => 'nullable|integer',
+            'is_won_stage' => 'nullable|boolean',
+            'is_lost_stage' => 'nullable|boolean',
         ];
     }
 }
