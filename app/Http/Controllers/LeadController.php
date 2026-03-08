@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreLeadRequest;
+use App\Http\Requests\UpdateLeadRequest;
 use App\Models\Lead;
 use App\Services\LeadLogService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class LeadController extends Controller
 {
@@ -21,6 +22,7 @@ class LeadController extends Controller
      * Constructor for the controller
      *
      * @param LeadLogService $logger
+     *
      * An instance of the LeadLogService used for logging
      * lead-related actions
      */
@@ -34,7 +36,7 @@ class LeadController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
@@ -63,7 +65,7 @@ class LeadController extends Controller
      *
      * @param Lead $lead
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function show(Lead $lead): JsonResponse
     {
@@ -77,34 +79,23 @@ class LeadController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param StoreLeadRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreLeadRequest $request): JsonResponse
     {
-        $this->authorize('create', Lead::class);
-
-        $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:20',
-            'source' => 'nullable|string|max:255',
-            'owner_id' => 'nullable|exists:users,id',
-            'assigned_to' => 'nullable|exists:users,id',
-            'meta' => 'nullable|array',
-        ]);
-
+        $user = $request->user();
+        $data = $request->validated();
+        $data['created_by'] = $user->id;
         $data['owner_id'] = $data['owner_id'] ?? auth()->id();
         $data['created_by'] = auth()->id();
 
         $lead = Lead::create($data);
 
         $this->logger->leadCreated(
-            auth()->user(),
-            auth()->id(),
+            $user,
+            $user->id,
             $lead
         );
 
@@ -114,37 +105,27 @@ class LeadController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param UpdateLeadRequest $request
      *
      * @param Lead $lead
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function update(Request $request, Lead $lead): JsonResponse
-    {
-        $this->authorize('update', $lead);
-        $validated = $request->validate([
-            'title' => 'sometimes|required|string|max:255',
-            'first_name' => 'sometimes|required|string|max:255',
-            'last_name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|nullable|email|max:255',
-            'phone' => 'sometimes|nullable|string|max:20',
-            'source' => 'sometimes|nullable|string|max:255',
-            'assigned_to' => 'sometimes|nullable|exists:users,id',
-            'meta' => 'sometimes|nullable|array',
-        ]);
+    public function update(
+        UpdateLeadRequest $request,
+        Lead $lead
+    ): JsonResponse {
+        $user = $request->user();
+        $data = $request->validated();
+        $data['updated_by'] = $user->id;
 
-        DB::transaction(function () use ($lead, $validated) {
-            $lead->update(array_merge($validated, [
-                'updated_by' => auth()->id(),
-            ]));
+        $lead->update($data);
 
-            $this->logger->leadUpdated(
-                auth()->user(),
-                auth()->id(),
-                $lead
-            );
-        });
+        $this->logger->leadUpdated(
+            $user,
+            $user->id,
+            $lead
+        );
 
         return response()->json($lead->fresh()->load($this->relations()));
     }
@@ -166,6 +147,8 @@ class LeadController extends Controller
             $lead
         );
 
+        $lead->deleted_by = auth()->id();
+        $lead->save();
         $lead->delete();
 
         return response()->json(null, 204);
