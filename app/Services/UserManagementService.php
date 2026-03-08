@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -27,15 +29,15 @@ class UserManagementService
     /**
      * Create a new user.
      *
-     * @param Request $request
+     * @param StoreUserRequest $request
      *
      * @return User
      */
-    public function store(Request $request): User
+    public function store(StoreUserRequest $request): User
     {
         $user = $this->creator->create($request);
 
-        $data = $request->all();
+        $data = $request->validated();
         $this->rolesManager->syncIfProvided($user, $data);
 
         return $user->load('roles');
@@ -44,13 +46,13 @@ class UserManagementService
     /**
      * Update an existing user.
      *
-     * @param Request $request
+     * @param UpdateUserRequest $request
      *
      * @param User $user
      *
      * @return User
      */
-    public function update(Request $request, User $user): User
+    public function update(UpdateUserRequest $request, User $user): User
     {
         $user = $this->updater->update($request, $user);
 
