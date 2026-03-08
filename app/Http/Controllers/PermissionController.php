@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePermissionRequest;
+use App\Http\Requests\UpdatePermissionRequest;
 use App\Models\Permission;
 use App\Services\PermissionLogService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class PermissionController extends Controller
 {
@@ -21,6 +22,7 @@ class PermissionController extends Controller
      * Constructor for the controller
      *
      * @param PermissionLogService $logger
+     *
      * An instance of the PermissionLogService used for logging
      * permission-related actions
      */
@@ -34,7 +36,7 @@ class PermissionController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
@@ -56,7 +58,7 @@ class PermissionController extends Controller
      *
      * @param Permission $permission
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function show(Permission $permission): JsonResponse
     {
@@ -68,24 +70,21 @@ class PermissionController extends Controller
     /**
      * Store a newly created permission in storage.
      *
-     * @param Request $request
+     * @param StorePermissionRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(StorePermissionRequest $request): JsonResponse
     {
-        $this->authorize('create', Permission::class);
-
-        $data = $request->validate([
-            'name' => 'required|string|unique:permissions,name',
-            'label' => 'nullable|string',
-        ]);
+        $user = $request->user();
+        $data = $request->validated();
+        $data['created_by'] = $user->id;
 
         $permission = Permission::create($data);
 
         $this->logger->permissionCreated(
-            $request->user(),
-            $request->user()->id,
+            $user,
+            $user->id,
             $permission
         );
 
@@ -95,32 +94,25 @@ class PermissionController extends Controller
     /**
      * Update the specified permission in storage.
      *
-     * @param Request $request
+     * @param UpdatePermissionRequest $request
      *
      * @param Permission $permission
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(
-        Request $request,
+        UpdatePermissionRequest $request,
         Permission $permission
     ): JsonResponse {
-        $this->authorize('update', $permission);
-
-        $data = $request->validate([
-            'name' => [
-                'required',
-                'string',
-                Rule::unique('permissions', 'name')->ignore($permission->id),
-            ],
-            'label' => 'nullable|string',
-        ]);
+        $user = $request->user();
+        $data = $request->validated();
+        $data['updated_by'] = $user->id;
 
         $permission->update($data);
 
         $this->logger->permissionUpdated(
-            $request->user(),
-            $request->user()->id,
+            $user,
+            $user->id,
             $permission
         );
 
@@ -132,7 +124,7 @@ class PermissionController extends Controller
      *
      * @param Permission $permission
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy(Permission $permission): JsonResponse
     {
@@ -140,11 +132,12 @@ class PermissionController extends Controller
 
         $this->logger->permissionDeleted(
             auth()->user(),
-            auth()->user()->id,
+            auth()->id(),
             $permission
         );
 
         $permission->roles()->detach();
+        $permission->save();
         $permission->delete();
 
         return response()->json(null, 204);
