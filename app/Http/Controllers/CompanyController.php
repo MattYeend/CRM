@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCompanyRequest;
+use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\Company;
 use App\Services\CompanyLogService;
 use Illuminate\Http\JsonResponse;
@@ -77,32 +79,21 @@ class CompanyController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param StoreCompanyRequest $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreCompanyRequest $request): JsonResponse
     {
-        $this->authorize('create', Company::class);
-
-        $data = $request->validate([
-            'name' => 'required|string',
-            'industry' => 'nullable|string',
-            'website' => 'nullable|url',
-            'phone' => 'nullable|string',
-            'address' => 'nullable|string',
-            'city' => 'nullable|string',
-            'region' => 'nullable|string',
-            'postal_code' => 'nullable|string',
-            'country' => 'nullable|string',
-            'meta' => 'nullable|array',
-        ]);
+        $user = $request->user();
+        $data = $request->validated();
+        $data['created_by'] = $user->id;
 
         $company = Company::create($data);
 
         $this->logger->companyCreated(
-            $request->user(),
-            auth()->id(),
+            $user,
+            $user->id,
             $company
         );
 
@@ -112,28 +103,19 @@ class CompanyController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param UpdateCompanyRequest $request
      *
      * @param Company $company
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Company $company): JsonResponse
-    {
-        $this->authorize('update', $company);
-
-        $data = $request->validate([
-            'name' => 'sometimes|required|string',
-            'industry' => 'nullable|string',
-            'website' => 'nullable|url',
-            'phone' => 'nullable|string',
-            'address' => 'nullable|string',
-            'city' => 'nullable|string',
-            'region' => 'nullable|string',
-            'postal_code' => 'nullable|string',
-            'country' => 'nullable|string',
-            'meta' => 'nullable|array',
-        ]);
+    public function update(
+        UpdateCompanyRequest $request,
+        Company $company
+    ): JsonResponse {
+        $user = $request->user();
+        $data = $request->validated();
+        $data['updated_by'] = $user->id;
 
         $company->update($data);
 
@@ -157,12 +139,16 @@ class CompanyController extends Controller
     {
         $this->authorize('delete', $company);
 
+        $user = auth()->user();
+
         $this->logger->companyDeleted(
-            request()->user(),
-            auth()->id(),
+            $user,
+            $user->id,
             $company
         );
 
+        $company['deleted_by'] = $user->id;
+        $company->save();
         $company->delete();
 
         return response()->json(null, 204);
