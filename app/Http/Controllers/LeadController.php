@@ -96,7 +96,7 @@ class LeadController extends Controller
         $this->logger->leadCreated(
             $user,
             $user->id,
-            $lead
+            $lead,
         );
 
         return response()->json($lead, 201);
@@ -124,7 +124,7 @@ class LeadController extends Controller
         $this->logger->leadUpdated(
             $user,
             $user->id,
-            $lead
+            $lead,
         );
 
         return response()->json($lead->fresh()->load($this->relations()));

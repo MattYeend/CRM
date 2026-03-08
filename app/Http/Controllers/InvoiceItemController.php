@@ -87,7 +87,7 @@ class InvoiceItemController extends Controller
         $this->logger->invoiceItemCreated(
             $user,
             $user->id,
-            $item
+            $item,
         );
 
         return response()->json($item->load('product'), 201);
@@ -119,7 +119,7 @@ class InvoiceItemController extends Controller
         $this->logger->invoiceItemUpdated(
             $user,
             $user->id,
-            $invoiceItem
+            $invoiceItem,
         );
 
         return response()->json($invoiceItem->fresh()->load('product'));

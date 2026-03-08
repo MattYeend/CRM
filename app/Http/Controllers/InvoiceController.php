@@ -84,7 +84,11 @@ class InvoiceController extends Controller
 
         $invoice = Invoice::create($data);
 
-        $this->logger->invoiceCreated(auth()->user(), auth()->id(), $invoice);
+        $this->logger->invoiceCreated(
+            $user,
+            $user->id,
+            $invoice,
+        );
 
         return response()->json($invoice->load('items'), 201);
     }
@@ -108,7 +112,11 @@ class InvoiceController extends Controller
 
         $invoice->update($data);
 
-        $this->logger->invoiceUpdated(auth()->user(), auth()->id(), $invoice);
+        $this->logger->invoiceUpdated(
+            $user,
+            $user->id,
+            $invoice,
+        );
 
         return response()->json($invoice->fresh()->load('items'));
     }
@@ -129,7 +137,7 @@ class InvoiceController extends Controller
         $this->logger->invoiceDeleted(
             $user,
             $user->id,
-            $invoice
+            $invoice,
         );
 
         $invoice->update([

@@ -84,7 +84,7 @@ class PipelineController extends Controller
         $this->logger->pipelineCreated(
             $user,
             $user->id,
-            $pipeline
+            $pipeline,
         );
 
         return response()->json($pipeline, 201);
@@ -112,7 +112,7 @@ class PipelineController extends Controller
         $this->logger->pipelineUpdated(
             $user,
             $user->id,
-            $pipeline
+            $pipeline,
         );
 
         return response()->json($pipeline);
@@ -134,7 +134,7 @@ class PipelineController extends Controller
         $this->logger->pipelineDeleted(
             $user,
             $user->id,
-            $pipeline
+            $pipeline,
         );
 
         $pipeline->update([

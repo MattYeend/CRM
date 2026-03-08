@@ -99,7 +99,7 @@ class ContactController extends Controller
         $this->logger->contactCreated(
             $user,
             $user->id,
-            $contact
+            $contact,
         );
 
         return response()->json($contact, 201);
@@ -127,7 +127,7 @@ class ContactController extends Controller
         $this->logger->contactUpdated(
             $user,
             $user->id,
-            $contact
+            $contact,
         );
 
         return response()->json($contact);
@@ -147,7 +147,7 @@ class ContactController extends Controller
         $this->logger->contactDeleted(
             $user,
             $user->id,
-            $contact
+            $contact,
         );
 
         $contact->update([

@@ -85,7 +85,7 @@ class ActivityController extends Controller
         $this->logger->activityCreated(
             $user,
             $user->id,
-            $activity
+            $activity,
         );
 
         return response()->json($activity, 201);
@@ -113,9 +113,9 @@ class ActivityController extends Controller
         $activity->update($data);
 
         $this->logger->activityUpdated(
-            $request->user(),
-            auth()->id(),
-            $activity
+            $user,
+            $user->id,
+            $activity,
         );
 
         return response()->json($activity);
@@ -137,7 +137,7 @@ class ActivityController extends Controller
         $this->logger->activityDeleted(
             $user,
             $user->id,
-            $activity
+            $activity,
         );
 
         $activity->update([

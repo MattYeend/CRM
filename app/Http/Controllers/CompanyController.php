@@ -95,7 +95,7 @@ class CompanyController extends Controller
         $this->logger->companyCreated(
             $user,
             $user->id,
-            $company
+            $company,
         );
 
         return response()->json($company, 201);
@@ -121,9 +121,9 @@ class CompanyController extends Controller
         $company->update($data);
 
         $this->logger->companyUpdated(
-            $request->user(),
-            auth()->id(),
-            $company
+            $user,
+            $user->id,
+            $company,
         );
 
         return response()->json($company);
@@ -145,7 +145,7 @@ class CompanyController extends Controller
         $this->logger->companyDeleted(
             $user,
             $user->id,
-            $company
+            $company,
         );
 
         $company->update([

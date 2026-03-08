@@ -109,7 +109,7 @@ class DealController extends Controller
         $this->logger->dealCreated(
             $user,
             $user->id,
-            $deal
+            $deal,
         );
 
         return response()->json($deal->load($this->relations()), 201);
@@ -134,7 +134,11 @@ class DealController extends Controller
 
         $deal->update($data);
 
-        $this->logUpdate($request, $deal);
+        $this->logger->dealUpdated(
+            $user,
+            $user->id,
+            $deal,
+        );
 
         return response()->json($deal->fresh()->load($this->relations()));
     }
@@ -155,7 +159,7 @@ class DealController extends Controller
         $this->logger->dealDeleted(
             $user,
             $user->id,
-            $deal
+            $deal,
         );
 
         $deal->update([
@@ -179,13 +183,15 @@ class DealController extends Controller
 
         $this->authorize('restore', $deal);
 
-        $deal->restore();
+        $user = auth()->user();
 
         $this->logger->dealRestored(
-            auth()->user(),
-            auth()->id(),
-            $deal
+            $user,
+            $user->id,
+            $deal,
         );
+
+        $deal->restore();
 
         return response()->json($deal);
     }
@@ -198,23 +204,5 @@ class DealController extends Controller
     private function relations(): array
     {
         return ['company', 'contact', 'owner', 'pipeline', 'stage'];
-    }
-
-    /**
-     * Log the update of a deal.
-     *
-     * @param \Illuminate\Http\Request $request
-     *
-     * @param \App\Models\Deal $deal
-     *
-     * @return void
-     */
-    private function logUpdate(Request $request, $deal): void
-    {
-        $this->logger->dealUpdated(
-            $request->user(),
-            auth()->id(),
-            $deal
-        );
     }
 }

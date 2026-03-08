@@ -84,7 +84,7 @@ class NoteController extends Controller
         $this->logger->noteCreated(
             $user,
             $user->id,
-            $note
+            $note,
         );
 
         $this->attachNoteToModel($note, $data);
@@ -117,7 +117,7 @@ class NoteController extends Controller
         $this->logger->noteUpdated(
             $user,
             $user->id,
-            $note
+            $note,
         );
 
         return response()->json($note);

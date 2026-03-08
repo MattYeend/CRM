@@ -85,7 +85,7 @@ class PermissionController extends Controller
         $this->logger->permissionCreated(
             $user,
             $user->id,
-            $permission
+            $permission,
         );
 
         return response()->json($permission, 201);
@@ -113,7 +113,7 @@ class PermissionController extends Controller
         $this->logger->permissionUpdated(
             $user,
             $user->id,
-            $permission
+            $permission,
         );
 
         return response()->json($permission);

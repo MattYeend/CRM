@@ -84,7 +84,7 @@ class LearningController extends Controller
         $this->logger->learningCreated(
             $user,
             $user->id,
-            $learning
+            $learning,
         );
 
         return response()->json($learning, 201);

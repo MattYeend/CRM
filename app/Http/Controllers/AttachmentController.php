@@ -109,7 +109,11 @@ class AttachmentController extends Controller
             $attachment
         );
 
-        $this->logUpload($request, $attachment);
+        $this->logger->attachmentUploaded(
+            $user,
+            $user->id,
+            $attachment,
+        );
 
         return response()->json($attachment->load('uploader'), 201);
     }
@@ -144,7 +148,11 @@ class AttachmentController extends Controller
             $attachment
         );
 
-        $this->logUpload($request, $attachment);
+        $this->logger->attachmentUploaded(
+            $user,
+            $user->id,
+            $attachment,
+        );
 
         return response()->json($attachment->load('uploader'), 201);
     }
@@ -165,7 +173,7 @@ class AttachmentController extends Controller
         $this->logger->attachmentDeleted(
             $user,
             $user->id,
-            $attachment
+            $attachment,
         );
 
         if ($attachment->disk && $attachment->path) {
@@ -178,25 +186,5 @@ class AttachmentController extends Controller
         $attachment->delete();
 
         return response()->json(null, 204);
-    }
-
-    /**
-     * Log the upload of an attachment.
-     *
-     * @param $request
-     *
-     * @param Attachment $attachment
-     *
-     * @return void
-     */
-    private function logUpload($request, $attachment): void
-    {
-        $user = $request->user();
-
-        $this->logger->attachmentUploaded(
-            $user,
-            $user->id,
-            $attachment
-        );
     }
 }

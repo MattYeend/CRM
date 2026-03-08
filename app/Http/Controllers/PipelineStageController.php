@@ -83,7 +83,7 @@ class PipelineStageController extends Controller
         $this->logger->pipelineStageCreated(
             $user,
             $user->id,
-            $stage
+            $stage,
         );
 
         return response()->json($stage, 201);
@@ -111,7 +111,7 @@ class PipelineStageController extends Controller
         $this->logger->pipelineStageUpdated(
             $user,
             $user->id,
-            $pipelineStage
+            $pipelineStage,
         );
 
         return response()->json($pipelineStage);
@@ -133,7 +133,7 @@ class PipelineStageController extends Controller
         $this->logger->pipelineStageDeleted(
             $user,
             $user->id,
-            $pipelineStage
+            $pipelineStage,
         );
 
         $pipelineStage->update([
