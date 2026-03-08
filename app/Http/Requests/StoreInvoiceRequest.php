@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Invoice;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreInvoiceRequest extends FormRequest
 {
@@ -47,7 +48,7 @@ class StoreInvoiceRequest extends FormRequest
      */
     private function numberRule(?Invoice $invoice = null): array
     {
-        $uniqueRule = \Illuminate\Validation\Rule::unique('invoices', 'number');
+        $uniqueRule = Rule::unique('invoices', 'number');
 
         if ($invoice) {
             $uniqueRule = $uniqueRule->ignore($invoice->id);
