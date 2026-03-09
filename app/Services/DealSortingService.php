@@ -8,6 +8,25 @@ use Illuminate\Http\Request;
 class DealSortingService
 {
     /**
+     * Constants for allowed sorts
+     */
+    private const ALLOWED_SORTS = [
+        'id',
+        'title',
+        'company_id',
+        'contact_id',
+        'owner_id',
+        'pipeline_id',
+        'stage_id',
+        'value',
+        'currency',
+        'close_date',
+        'status',
+        'created_at',
+        'updated_at',
+    ];
+
+    /**
      * Apply sorting to the query.
      *
      * @param Builder $query
@@ -18,25 +37,9 @@ class DealSortingService
      */
     public function applySorting($query, Request $request): void
     {
-        $allowedSorts = [
-            'id',
-            'title',
-            'company_id',
-            'contact_id',
-            'owner_id',
-            'pipeline_id',
-            'stage_id',
-            'value',
-            'currency',
-            'close_date',
-            'status',
-            'created_at',
-            'updated_at',
-        ];
-
         $sortBy = $request->query('sort_by', 'id');
 
-        if (! in_array($sortBy, $allowedSorts, true)) {
+        if (! in_array($sortBy, self::ALLOWED_SORTS, true)) {
             $sortBy = 'id';
         }
 

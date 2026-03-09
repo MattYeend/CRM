@@ -6,29 +6,49 @@ use App\Http\Requests\StoreLearningRequest;
 use App\Http\Requests\UpdateLearningRequest;
 use App\Models\Learning;
 use App\Services\LearningLogService;
+use App\Services\LearningManagementService;
+use App\Services\LearningQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class LearningController extends Controller
 {
     /**
-     * Declare a protected property to hold the LearningLogService instance
+     * Declare a protected property to hold the LearningLogService,
+     * LearningManagementService and LearningQueryService instance
      *
      * @var LearningLogService
+     * @var LeadManagementService
+     * @var LeadQueryService
      */
     protected LearningLogService $logger;
+    protected LearningManagementService $managementService;
+    protected LearningQueryService $queryService;
 
     /**
      * Constructor for the controller
      *
      * @param LearningLogService $logger
      *
+     * @param LearningManagementService $management
+     *
+     * @param LearningQueryService $query
+     *
      * An instance of the LearningLogService used for logging
-     * note-related actions
+     * learning-related actions
+     * An instance of the LearningManagementService for management
+     * of learning
+     * An instance of the LearningQueryService for the query of
+     * learning-related actions
      */
-    public function __construct(LearningLogService $logger)
-    {
+    public function __construct(
+        LearningLogService $logger,
+        LearningManagementService $managementService,
+        LearningQueryService $queryService,
+    ) {
         $this->logger = $logger;
+        $this->managementService = $managementService;
+        $this->queryService = $queryService;
     }
 
     /**
@@ -42,14 +62,9 @@ class LearningController extends Controller
     {
         $this->authorize('viewAny', Learning::class);
 
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
+        $learning = $this->queryService->list($request);
 
-        return response()->json(
-            Learning::with('users')->paginate($perPage)
-        );
+        return response()->json($learning);
     }
 
     /**
@@ -63,7 +78,9 @@ class LearningController extends Controller
     {
         $this->authorize('view', $learning);
 
-        return response()->json($learning->load('users'));
+        $learning = $this->queryService->show($learning);
+
+        return response()->json($learning);
     }
 
     /**
@@ -75,11 +92,9 @@ class LearningController extends Controller
      */
     public function store(StoreLearningRequest $request): JsonResponse
     {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['created_by'] = $user->id;
+        $learning = $this->managementService->store($request);
 
-        $learning = Learning::create($data);
+        $user = $request->user();
 
         $this->logger->learningCreated(
             $user,
@@ -103,11 +118,9 @@ class LearningController extends Controller
         UpdateLearningRequest $request,
         Learning $learning
     ): JsonResponse {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['updated_by'] = $user->id;
+        $learning = $this->managementService->update($request, $learning);
 
-        $learning->update($data);
+        $user = $request->user();
 
         $this->logger->learningUpdated(
             $user,
@@ -137,11 +150,7 @@ class LearningController extends Controller
             $learning,
         );
 
-        $learning->update([
-            'deleted_by' => $user->id,
-        ]);
-
-        $learning->delete();
+        $learning = $this->managementService->destroy($learning);
 
         return response()->json(null, 204);
     }
@@ -161,17 +170,13 @@ class LearningController extends Controller
 
         $user = $request->user();
 
-        $learning->update([
-            'is_completed' => true,
-            'completed_by' => $user->id,
-            'completed_at' => now(),
-        ]);
-
         $this->logger->learningComplete(
             $user,
             $user->id,
             $learning,
         );
+
+        $learning = $this->managementService->complete($learning);
 
         return response()->json($learning);
     }
@@ -193,17 +198,13 @@ class LearningController extends Controller
 
         $user = $request->user();
 
-        $learning->update([
-            'is_completed' => false,
-            'completed_by' => null,
-            'completed_at' => null,
-        ]);
-
         $this->logger->learningIncomplete(
             $user,
             $user->id,
             $learning,
         );
+
+        $learning = $this->managementService->incomplete($learning);
 
         return response()->json($learning);
     }

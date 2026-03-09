@@ -6,7 +6,7 @@ use App\Http\Requests\StoreLeadRequest;
 use App\Http\Requests\UpdateLeadRequest;
 use App\Models\Lead;
 use App\Services\LeadLogService;
-use App\Services\LeadManagemetnService;
+use App\Services\LeadManagementService;
 use App\Services\LeadQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,14 +15,14 @@ class LeadController extends Controller
 {
     /**
      * Declare a protected property to hold the LeadLogService,
-     *LeadmManagementService and LeadQueryService instance
+     * LeadManagementService and LeadQueryService instance
      *
      * @var LeadLogService
      * @var LeadManagementService
      * @var LeadQueryService
      */
     protected LeadLogService $logger;
-    protected LeadManagemetnService $managementService;
+    protected LeadManagementService $managementService;
     protected LeadQueryService $queryService;
 
     /**
@@ -37,13 +37,13 @@ class LeadController extends Controller
      * An instance of the LeadLogService used for logging
      * lead-related actions
      * An instance of the LeadManagementService for management
-     * of invoice leads
+     * of leads
      * An instance of the LeadQueryService for the query of
      * lead-related actions
      */
     public function __construct(
         LeadLogService $logger,
-        LeadManagemetnService $managementService,
+        LeadManagementService $managementService,
         LeadQueryService $queryService,
     ) {
         $this->logger = $logger;
@@ -136,7 +136,7 @@ class LeadController extends Controller
      *
      * @param Lead $lead
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy(Lead $lead): JsonResponse
     {
@@ -159,7 +159,7 @@ class LeadController extends Controller
      *
      * @param int $id
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function restore(int $id): JsonResponse
     {

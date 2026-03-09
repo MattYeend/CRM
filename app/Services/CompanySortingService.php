@@ -8,6 +8,24 @@ use Illuminate\Http\Request;
 class CompanySortingService
 {
     /**
+     * Constants for allowed sorts
+     */
+    private const ALLOWED_SORTS = [
+        'id',
+        'name',
+        'industry',
+        'website',
+        'phone',
+        'address',
+        'city',
+        'region',
+        'post_code',
+        'country',
+        'created_at',
+        'updated_at',
+    ];
+
+    /**
      * Apply sorting to the query.
      *
      * @param Builder $query
@@ -18,24 +36,9 @@ class CompanySortingService
      */
     public function applySorting($query, Request $request): void
     {
-        $allowedSorts = [
-            'id',
-            'name',
-            'industry',
-            'website',
-            'phone',
-            'address',
-            'city',
-            'region',
-            'post_code',
-            'country',
-            'created_at',
-            'updated_at',
-        ];
-
         $sortBy = $request->query('sort_by', 'id');
 
-        if (! in_array($sortBy, $allowedSorts, true)) {
+        if (! in_array($sortBy, self::ALLOWED_SORTS, true)) {
             $sortBy = 'id';
         }
 

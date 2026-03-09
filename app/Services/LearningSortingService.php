@@ -5,27 +5,8 @@ namespace App\Services;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
-class InvoiceSortingService
+class LearningSortingService
 {
-    /**
-     * Constants for allowed sorts
-     */
-    private const ALLOWED_SORTS = [
-        'id',
-        'number',
-        'company_id',
-        'contact_id',
-        'issue_date',
-        'due_date',
-        'status',
-        'subtotal',
-        'tax',
-        'total',
-        'currency',
-        'created_at',
-        'updated_at',
-    ];
-
     /**
      * Apply sorting to the query.
      *
@@ -37,9 +18,18 @@ class InvoiceSortingService
      */
     public function applySorting($query, Request $request): void
     {
+        $allowedSorts = [
+            'id',
+            'title',
+            'description',
+            'date',
+            'created_at',
+            'updated_at',
+        ];
+
         $sortBy = $request->query('sort_by', 'id');
 
-        if (! in_array($sortBy, self::ALLOWED_SORTS, true)) {
+        if (! in_array($sortBy, $allowedSorts, true)) {
             $sortBy = 'id';
         }
 

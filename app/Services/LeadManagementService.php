@@ -6,7 +6,7 @@ use App\Http\Requests\StoreLeadRequest;
 use App\Http\Requests\UpdateLeadRequest;
 use App\Models\Lead;
 
-class LeadManagemetnService
+class LeadManagementService
 {
     private LeadCreatorService $creator;
     private LeadUpdaterService $updater;

@@ -2,27 +2,24 @@
 
 namespace App\Services;
 
-use App\Models\Lead;
+use App\Models\Learning;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class LeadQueryService
+class LearningQueryService
 {
-    private LeadSeachService $search;
-    private LeadSortingService $sorting;
+    private LearningSortingService $sorting;
     private TrashFilterService $trashFilter;
     public function __construct(
-        LeadSeachService $search,
-        LeadSortingService $sorting,
+        LearningSortingService $sorting,
         TrashFilterService $trashFilter,
     ) {
-        $this->search = $search;
         $this->sorting = $sorting;
         $this->trashFilter = $trashFilter;
     }
 
     /**
-     * Return paginated lead, applying filters/sorting.
+     * Return paginated learning, applying filters/sorting.
      *
      * @param Request $request
      *
@@ -35,12 +32,10 @@ class LeadQueryService
             min((int) $request->query('per_page', 10), 100)
         );
 
-        $query = Lead::with(
-            'owner',
-            'assignedTo',
+        $query = Learning::with(
+            'users',
         );
 
-        $this->search->applySearch($query, $request);
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
@@ -48,17 +43,14 @@ class LeadQueryService
     }
 
     /**
-     * Return a single lead
+     * Return a single learning.
      *
-     * @param Lead $lead
+     * @param Learning $learning
      *
-     * @return Lead
+     * @return Learning
      */
-    public function show(Lead $lead): Lead
+    public function show(Learning $learning): Learning
     {
-        return $lead->load(
-            'owner',
-            'assignedTo',
-        );
+        return $learning->load('users');
     }
 }
