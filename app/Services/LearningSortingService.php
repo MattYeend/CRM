@@ -8,6 +8,18 @@ use Illuminate\Http\Request;
 class LearningSortingService
 {
     /**
+     * Constants for allowed sorts
+     */
+    private const ALLOWED_SORTS = [
+        'id',
+        'title',
+        'description',
+        'date',
+        'created_at',
+        'updated_at',
+    ];
+
+    /**
      * Apply sorting to the query.
      *
      * @param Builder $query
@@ -18,18 +30,9 @@ class LearningSortingService
      */
     public function applySorting($query, Request $request): void
     {
-        $allowedSorts = [
-            'id',
-            'title',
-            'description',
-            'date',
-            'created_at',
-            'updated_at',
-        ];
-
         $sortBy = $request->query('sort_by', 'id');
 
-        if (! in_array($sortBy, $allowedSorts, true)) {
+        if (! in_array($sortBy, self::ALLOWED_SORTS, true)) {
             $sortBy = 'id';
         }
 

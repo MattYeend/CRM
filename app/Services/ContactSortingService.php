@@ -8,6 +8,21 @@ use Illuminate\Http\Request;
 class ContactSortingService
 {
     /**
+     * Constants for allowed sorts
+     */
+    private const ALLOWED_SORTS = [
+        'id',
+        'company_id',
+        'first_name',
+        'last_name',
+        'email',
+        'phone',
+        'job_title',
+        'created_at',
+        'updated_at',
+    ];
+
+    /**
      * Apply sorting to the query.
      *
      * @param Builder $query
@@ -18,21 +33,9 @@ class ContactSortingService
      */
     public function applySorting($query, Request $request): void
     {
-        $allowedSorts = [
-            'id',
-            'company_id',
-            'first_name',
-            'last_name',
-            'email',
-            'phone',
-            'job_title',
-            'created_at',
-            'updated_at',
-        ];
-
         $sortBy = $request->query('sort_by', 'id');
 
-        if (! in_array($sortBy, $allowedSorts, true)) {
+        if (! in_array($sortBy, self::ALLOWED_SORTS, true)) {
             $sortBy = 'id';
         }
 

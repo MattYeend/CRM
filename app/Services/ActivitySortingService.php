@@ -8,6 +8,19 @@ use Illuminate\Http\Request;
 class ActivitySortingService
 {
     /**
+     * Constants for allowed sorts
+     */
+    private const ALLOWED_SORTS = [
+        'id',
+        'user_id',
+        'type',
+        'subject_type',
+        'description',
+        'created_at',
+        'updated_at',
+    ];
+
+    /**
      * Apply sorting to the query.
      *
      * @param Builder $query
@@ -18,19 +31,9 @@ class ActivitySortingService
      */
     public function applySorting($query, Request $request): void
     {
-        $allowedSorts = [
-            'id',
-            'user_id',
-            'type',
-            'subject_type',
-            'description',
-            'created_at',
-            'updated_at',
-        ];
-
         $sortBy = $request->query('sort_by', 'id');
 
-        if (! in_array($sortBy, $allowedSorts, true)) {
+        if (! in_array($sortBy, self::ALLOWED_SORTS, true)) {
             $sortBy = 'id';
         }
 

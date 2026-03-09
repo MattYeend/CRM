@@ -8,6 +8,20 @@ use Illuminate\Http\Request;
 class InvoiceItemSortingService
 {
     /**
+     * Constants for allowed sorts
+     */
+    private const ALLOWED_SORTS = [
+        'id',
+        'invoice_id',
+        'product_id',
+        'description',
+        'quantity',
+        'unit_price',
+        'line_total',
+        'created_at',
+        'updated_at',
+    ];
+    /**
      * Apply sorting to the query.
      *
      * @param Builder $query
@@ -18,21 +32,9 @@ class InvoiceItemSortingService
      */
     public function applySorting($query, Request $request): void
     {
-        $allowedSorts = [
-            'id',
-            'invoice_id',
-            'product_id',
-            'description',
-            'quantity',
-            'unit_price',
-            'line_total',
-            'created_at',
-            'updated_at',
-        ];
-
         $sortBy = $request->query('sort_by', 'id');
 
-        if (! in_array($sortBy, $allowedSorts, true)) {
+        if (! in_array($sortBy, self::ALLOWED_SORTS, true)) {
             $sortBy = 'id';
         }
 

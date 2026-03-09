@@ -8,6 +8,20 @@ use Illuminate\Http\Request;
 class LeadSortingService
 {
     /**
+     * Constant for allowed sorts
+     */
+    private const ALLOWED_SORTS = [
+        'id',
+        'title',
+        'first_name',
+        'last_name',
+        'source',
+        'assigned_to',
+        'created_at',
+        'updated_at',
+    ];
+
+    /**
      * Apply sorting to the query.
      *
      * @param Builder $query
@@ -18,20 +32,9 @@ class LeadSortingService
      */
     public function applySorting($query, Request $request): void
     {
-        $allowedSorts = [
-            'id',
-            'title',
-            'first_name',
-            'last_name',
-            'source',
-            'assigned_to',
-            'created_at',
-            'updated_at',
-        ];
-
         $sortBy = $request->query('sort_by', 'id');
 
-        if (! in_array($sortBy, $allowedSorts, true)) {
+        if (! in_array($sortBy, self::ALLOWED_SORTS, true)) {
             $sortBy = 'id';
         }
 

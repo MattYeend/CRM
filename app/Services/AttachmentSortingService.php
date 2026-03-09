@@ -8,6 +8,21 @@ use Illuminate\Http\Request;
 class AttachmentSortingService
 {
     /**
+     * Constants for allowed sorts
+     */
+    private const ALLOWED_SORTS = [
+        'id',
+        'filename',
+        'disk',
+        'path',
+        'attachable_type',
+        'size',
+        'mime',
+        'created_at',
+        'updated_at',
+    ];
+
+    /**
      * Apply sorting to the query.
      *
      * @param Builder $query
@@ -18,21 +33,9 @@ class AttachmentSortingService
      */
     public function applySorting($query, Request $request): void
     {
-        $allowedSorts = [
-            'id',
-            'filename',
-            'disk',
-            'path',
-            'attachable_type',
-            'size',
-            'mime',
-            'created_at',
-            'updated_at',
-        ];
-
         $sortBy = $request->query('sort_by', 'id');
 
-        if (! in_array($sortBy, $allowedSorts, true)) {
+        if (! in_array($sortBy, self::ALLOWED_SORTS, true)) {
             $sortBy = 'id';
         }
 
