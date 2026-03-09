@@ -23,6 +23,13 @@ class DealSortingService
             'title',
             'company_id',
             'contact_id',
+            'owner_id',
+            'pipeline_id',
+            'stage_id',
+            'value',
+            'currency',
+            'close_date',
+            'status',
             'created_at',
             'updated_at',
         ];

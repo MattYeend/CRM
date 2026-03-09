@@ -20,8 +20,10 @@ class ActivitySortingService
     {
         $allowedSorts = [
             'id',
+            'user_id',
             'type',
             'subject_type',
+            'description',
             'created_at',
             'updated_at',
         ];

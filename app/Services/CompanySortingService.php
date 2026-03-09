@@ -22,6 +22,13 @@ class CompanySortingService
             'id',
             'name',
             'industry',
+            'website',
+            'phone',
+            'address',
+            'city',
+            'region',
+            'post_code',
+            'country',
             'created_at',
             'updated_at',
         ];

@@ -20,9 +20,12 @@ class ContactSortingService
     {
         $allowedSorts = [
             'id',
+            'company_id',
             'first_name',
             'last_name',
             'email',
+            'phone',
+            'job_title',
             'created_at',
             'updated_at',
         ];

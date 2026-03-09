@@ -21,6 +21,11 @@ class AttachmentSortingService
         $allowedSorts = [
             'id',
             'filename',
+            'disk',
+            'path',
+            'attachable_type',
+            'size',
+            'mime',
             'created_at',
             'updated_at',
         ];

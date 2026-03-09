@@ -22,7 +22,10 @@ class InvoiceItemSortingService
             'id',
             'invoice_id',
             'product_id',
+            'description',
             'quantity',
+            'unit_price',
+            'line_total',
             'created_at',
             'updated_at',
         ];
