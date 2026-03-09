@@ -6,29 +6,49 @@ use App\Http\Requests\StoreDealRequest;
 use App\Http\Requests\UpdateDealRequest;
 use App\Models\Deal;
 use App\Services\DealLogService;
+use App\Services\DealManagementService;
+use App\Services\DealQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class DealController extends Controller
 {
     /**
-     * Declare a protected property to hold the ContactLogService instance
+     * Declare a protected property to hold the DealLogService,
+     * DealManagementService and DealQueryService instance
      *
      * @var DealLogService
+     * @var DealManagementService
+     * @var DealQueryService
      */
     protected DealLogService $logger;
+    protected DealManagementService $managementService;
+    protected DealQueryService $queryService;
 
     /**
      * Constructor for the controller
      *
      * @param DealLogService $logger
      *
+     * @param DealManagementService $management
+     *
+     * @param DealQueryService $query
+     *
      * An instance of the DealLogService used for logging
      * deal-related actions
+     * An instance of the DealManagementService for management
+     * of deals
+     * An instance of the DealQueryService for the query of
+     * deal-related actions
      */
-    public function __construct(DealLogService $logger)
-    {
+    public function __construct(
+        DealLogService $logger,
+        DealManagementService $managementService,
+        DealQueryService $queryService,
+    ) {
         $this->logger = $logger;
+        $this->managementService = $managementService;
+        $this->queryService = $queryService;
     }
 
     /**
@@ -42,30 +62,9 @@ class DealController extends Controller
     {
         $this->authorize('viewAny', Deal::class);
 
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
-        $status = $request->query('status');
-        $ownerId = $request->query('owner_id');
+        $deal = $this->queryService->list($request);
 
-        $query = Deal::with([
-            'company',
-            'contact',
-            'owner',
-            'pipeline',
-            'stage',
-        ]);
-
-        if ($status) {
-            $query->where('status', $status);
-        }
-
-        if ($ownerId) {
-            $query->where('owner_id', $ownerId);
-        }
-
-        return response()->json($query->paginate($perPage));
+        return response()->json($deal);
     }
 
     /**
@@ -79,16 +78,9 @@ class DealController extends Controller
     {
         $this->authorize('view', $deal);
 
-        return response()->json($deal->load([
-            'company',
-            'contact',
-            'owner',
-            'pipeline',
-            'stage',
-            'notes',
-            'tasks',
-            'attachments',
-        ]));
+        $deal = $this->queryService->show($deal);
+
+        return response()->json($deal);
     }
 
     /**
@@ -100,19 +92,9 @@ class DealController extends Controller
      */
     public function store(StoreDealRequest $request): JsonResponse
     {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['created_by'] = $user->id;
+        $deal = $this->managementService->store($request);
 
-        $deal = Deal::create($data);
-
-        $this->logger->dealCreated(
-            $user,
-            $user->id,
-            $deal,
-        );
-
-        return response()->json($deal->load($this->relations()), 201);
+        return response()->json($deal, 201);
     }
 
     /**
@@ -128,11 +110,9 @@ class DealController extends Controller
         UpdateDealRequest $request,
         Deal $deal
     ): JsonResponse {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['updated_by'] = $user->id;
+        $deal = $this->managementService->update($request, $deal);
 
-        $deal->update($data);
+        $user = $request->user();
 
         $this->logger->dealUpdated(
             $user,
@@ -140,7 +120,7 @@ class DealController extends Controller
             $deal,
         );
 
-        return response()->json($deal->fresh()->load($this->relations()));
+        return response()->json($deal);
     }
 
     /**
@@ -162,10 +142,7 @@ class DealController extends Controller
             $deal,
         );
 
-        $deal->update([
-            'deleted_by' => $user->id,
-        ]);
-        $deal->delete();
+        $this->managementService->destroy($deal);
 
         return response()->json(null, 204);
     }
@@ -191,18 +168,8 @@ class DealController extends Controller
             $deal,
         );
 
-        $deal->restore();
+        $this->managementService->restore($id);
 
         return response()->json($deal);
-    }
-
-    /**
-     * Default relations to eager load for show/index responses.
-     *
-     * @return array
-     */
-    private function relations(): array
-    {
-        return ['company', 'contact', 'owner', 'pipeline', 'stage'];
     }
 }

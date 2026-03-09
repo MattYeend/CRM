@@ -35,11 +35,11 @@ class ContactController extends Controller
      * @param ContactQueryService $query
      *
      * An instance of the ContactLogService used for logging
-     * company-related actions
+     * contact-related actions
      * An instance of the ContactManagementService for management
-     * of companies
+     * of contacts
      * An instance of the ContactQueryService for the query of
-     * company-related actions
+     * contact-related actions
      */
     public function __construct(
         ContactLogService $logger,
