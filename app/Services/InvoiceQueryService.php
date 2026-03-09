@@ -2,27 +2,24 @@
 
 namespace App\Services;
 
-use App\Models\Deal;
+use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class DealQueryService
+class InvoiceQueryService
 {
-    private DealSearchService $search;
-    private DealSortingService $sorting;
-    private DealTrashFilterService $trashFilter;
+    private InvoiceSortingService $sorting;
+    private InvoiceTrashFilterService $trashFilter;
     public function __construct(
-        DealSearchService $search,
-        DealSortingService $sorting,
-        DealTrashFilterService $trashFilter,
+        InvoiceSortingService $sorting,
+        InvoiceTrashFilterService $trashFilter,
     ) {
-        $this->search = $search;
         $this->sorting = $sorting;
         $this->trashFilter = $trashFilter;
     }
 
     /**
-     * Return paginated deals, applying filters/sorting.
+     * Return paginated companies, applying filters/sorting.
      *
      * @param Request $request
      *
@@ -35,15 +32,12 @@ class DealQueryService
             min((int) $request->query('per_page', 10), 100)
         );
 
-        $query = Deal::with(
+        $query = Invoice::with(
             'company',
             'contact',
-            'owner',
-            'pipeline',
-            'stage',
+            'items',
         );
 
-        $this->search->applySearch($query, $request);
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
@@ -51,23 +45,18 @@ class DealQueryService
     }
 
     /**
-     * Return a single deal.
+     * Return a single invoice.
      *
-     * @param Deal $deal
+     * @param Invoice $invoice
      *
-     * @return Deal
+     * @return Invoice
      */
-    public function show(Deal $deal): Deal
+    public function show(Invoice $invoice): Invoice
     {
-        return $deal->load(
+        return $invoice->load(
             'company',
             'contact',
-            'owner',
-            'pipeline',
-            'stage',
-            'notes',
-            'tasks',
-            'attachments',
+            'items',
         );
     }
 }

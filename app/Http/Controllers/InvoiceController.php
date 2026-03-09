@@ -6,30 +6,49 @@ use App\Http\Requests\StoreInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Models\Invoice;
 use App\Services\InvoiceLogService;
+use App\Services\InvoiceManagementService;
+use App\Services\InvoiceQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class InvoiceController extends Controller
 {
     /**
-     * Declare a protected property to hold the InvoiceLogService instance
+     * Declare a protected property to hold the InvoiceLogService,
+     * InvoiceManagementService and InvoiceQueryService instance
      *
      * @var InvoiceLogService
+     * @var InvoiceManagementService
+     * @var InvoiceQueryService
      */
     protected InvoiceLogService $logger;
+    protected InvoiceManagementService $managementService;
+    protected InvoiceQueryService $queryService;
 
     /**
      * Constructor for the controller
      *
      * @param InvoiceLogService $logger
      *
+     * @param InvoiceManagementService $management
+     *
+     * @param InvoiceQueryService $query
+     *
      * An instance of the InvoiceLogService used for logging
      * invoice-related actions
+     * An instance of the InvoiceManagementService for management
+     * of invoices
+     * An instance of the InvoiceQueryService for the query of
+     * invoice-related actions
      */
-    public function __construct(InvoiceLogService $logger)
-    {
+    public function __construct(
+        InvoiceLogService $logger,
+        InvoiceManagementService $managementService,
+        InvoiceQueryService $queryService,
+    ) {
         $this->logger = $logger;
+        $this->managementService = $managementService;
+        $this->queryService = $queryService;
     }
 
     /**
@@ -43,14 +62,9 @@ class InvoiceController extends Controller
     {
         $this->authorize('viewAny', Invoice::class);
 
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
+        $invoice = $this->queryService->list($request);
 
-        return response()->json(
-            Invoice::with('company', 'contact', 'items')->paginate($perPage)
-        );
+        return response()->json($invoice);
     }
 
     /**
@@ -64,9 +78,9 @@ class InvoiceController extends Controller
     {
         $this->authorize('view', $invoice);
 
-        return response()->json(
-            $invoice->load('company', 'contact', 'items')
-        );
+        $invoice = $this->queryService->show($invoice);
+
+        return response()->json($invoice);
     }
 
     /**
@@ -78,11 +92,9 @@ class InvoiceController extends Controller
      */
     public function store(StoreInvoiceRequest $request): JsonResponse
     {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['created_by'] = $user->id;
+        $invoice = $this->managementService->store($request);
 
-        $invoice = Invoice::create($data);
+        $user = $request->user();
 
         $this->logger->invoiceCreated(
             $user,
@@ -90,7 +102,7 @@ class InvoiceController extends Controller
             $invoice,
         );
 
-        return response()->json($invoice->load('items'), 201);
+        return response()->json($invoice, 201);
     }
 
     /**
@@ -106,11 +118,9 @@ class InvoiceController extends Controller
         UpdateInvoiceRequest $request,
         Invoice $invoice
     ): JsonResponse {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['updated_by'] = $user->id;
+        $invoice = $this->managementService->update($request, $invoice);
 
-        $invoice->update($data);
+        $user = $request->user();
 
         $this->logger->invoiceUpdated(
             $user,
@@ -140,61 +150,8 @@ class InvoiceController extends Controller
             $invoice,
         );
 
-        $invoice->update([
-            'deleted_by' => $user->id,
-        ]);
-        $invoice->delete();
+        $this->managementService->destroy($invoice);
 
         return response()->json(null, 204);
-    }
-
-    /**
-     * Validate invoice payload for store/update.
-     *
-     * When $invoice is provided (update), the 'number' rule becomes
-     * ['sometimes', 'required',
-     * 'string', unique:invoices,number->ignore($invoice->id)]
-     *
-     * @param \Illuminate\Http\Request $request
-     *
-     * @param \App\Models\Invoice|null $invoice
-     *
-     * @return array
-     */
-    private function validateInvoice(
-        Request $request,
-        ?Invoice $invoice = null
-    ): array {
-        return $request->validate([
-            'number' => $this->numberRule($invoice),
-            'company_id' => 'nullable|integer|exists:companies,id',
-            'contact_id' => 'nullable|integer|exists:contacts,id',
-            'created_by' => 'nullable|integer|exists:users,id',
-            'issue_date' => 'nullable|date',
-            'due_date' => 'nullable|date',
-            'status' => 'nullable|in:draft,sent,paid,overdue,cancelled',
-            'subtotal' => 'nullable|numeric',
-            'tax' => 'nullable|numeric',
-            'total' => 'nullable|numeric',
-            'currency' => 'nullable|string|max:8',
-            'meta' => 'nullable|array',
-        ]);
-    }
-
-    /**
-     * Return validation rule for invoice number.
-     *
-     * @param \App\Models\Invoice|null $invoice
-     *
-     * @return array
-     */
-    private function numberRule(?Invoice $invoice = null): array
-    {
-        $uniqueRule = Rule::unique('invoices', 'number');
-        if ($invoice) {
-            $uniqueRule = $uniqueRule->ignore($invoice->id);
-            return ['sometimes', 'required', 'string', $uniqueRule];
-        }
-        return ['required', 'string', $uniqueRule];
     }
 }

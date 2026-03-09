@@ -94,6 +94,14 @@ class DealController extends Controller
     {
         $deal = $this->managementService->store($request);
 
+        $user = $request->user();
+
+        $this->logger->dealCreated(
+            $user,
+            $user->id,
+            $deal
+        );
+
         return response()->json($deal, 201);
     }
 

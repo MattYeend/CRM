@@ -22,7 +22,7 @@ class ContactQueryService
     }
 
     /**
-     * Return paginated companies, applying filters/sorting.
+     * Return paginated contacts, applying filters/sorting.
      *
      * @param Request $request
      *
