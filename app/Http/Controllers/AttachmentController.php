@@ -33,7 +33,7 @@ class AttachmentController extends Controller
     protected AttachmentManagementService $management;
 
     /**
-     * Constructor
+     * Constructor for the controller
      *
      * @param AttachmentAttacherService $attacher
      *
@@ -45,7 +45,12 @@ class AttachmentController extends Controller
      *
      * @param AttachmentManagementService $management
      *
-     * @return void
+     * An instance of the AttachmentLogService used for logging
+     * activitattachmenty-related actions
+     * An instance of the AttachmentManagementService for management
+     * of attachments
+     * An instance of the AttachmentQueryService for the query of
+     * attachment-related actions
      */
     public function __construct(
         AttachmentAttacherService $attacher,

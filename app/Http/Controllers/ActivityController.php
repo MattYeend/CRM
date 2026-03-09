@@ -14,7 +14,8 @@ use Illuminate\Http\Request;
 class ActivityController extends Controller
 {
     /**
-     * Declare a protected property to hold the ActivityLogService instance
+     * Declare a protected property to hold the ActivityLogService,
+     * ActivityManagementService and ActivityQueryService instance
      *
      * @var ActivityLogService
      * @var ActivityManagementService
@@ -29,11 +30,15 @@ class ActivityController extends Controller
      *
      * @param ActivityLogService $logger
      *
+     * @param ActivityManagementService $management
+     *
+     * @param ActivityQueryService $query
+     *
      * An instance of the ActivityLogService used for logging
      * activity-related actions
      * An instance of the ActivityManagementService for management
      * of activities
-     * An instance of the UserQueryService for the query of
+     * An instance of the ActivityQueryService for the query of
      * activity-related actions
      */
     public function __construct(

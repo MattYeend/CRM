@@ -6,29 +6,49 @@ use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\Company;
 use App\Services\CompanyLogService;
+use App\Services\CompanyManagementService;
+use App\Services\CompanyQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
     /**
-     * Declare a protected property to hold the CompanyLogService instance
+     * Declare a protected property to hold the CompanyLogService,
+     * CompanyManagementService and CompanyQueryService instance
      *
      * @var CompanyLogService
+     * @var CompanyManagementService
+     * @var CompanyQueryService
      */
     protected CompanyLogService $logger;
+    protected CompanyManagementService $managementService;
+    protected CompanyQueryService $queryService;
 
     /**
      * Constructor for the controller
      *
      * @param CompanyLogService $logger
      *
+     * @param CompanyManagementService $management
+     *
+     * @param CompanyQueryService $query
+     *
      * An instance of the CompanyLogService used for logging
      * company-related actions
+     * An instance of the CompanyManagementService for management
+     * of companies
+     * An instance of the CompanyQueryService for the query of
+     * company-related actions
      */
-    public function __construct(CompanyLogService $logger)
-    {
+    public function __construct(
+        CompanyLogService $logger,
+        CompanyManagementService $managementService,
+        CompanyQueryService $queryService,
+    ) {
         $this->logger = $logger;
+        $this->managementService = $managementService;
+        $this->queryService = $queryService;
     }
 
     /**
@@ -42,19 +62,9 @@ class CompanyController extends Controller
     {
         $this->authorize('viewAny', Company::class);
 
-        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
-        $q = $request->query('q');
+        $company = $this->queryService->list($request);
 
-        $query = Company::query()
-            ->withCount(['contacts', 'deals', 'invoices']);
-
-        if ($q) {
-            $query->where('name', 'like', "%{$q}%");
-        }
-
-        return response()->json(
-            $query->paginate($perPage)
-        );
+        return response()->json($company);
     }
 
     /**
@@ -67,14 +77,9 @@ class CompanyController extends Controller
     public function show(Company $company): JsonResponse
     {
         $this->authorize('view', $company);
-        return response()->json(
-            $company->load(
-                'contacts',
-                'deals',
-                'invoices',
-                'attachments'
-            )
-        );
+        $company = $this->queryService->show($company);
+
+        return response()->json($company);
     }
 
     /**
@@ -86,11 +91,9 @@ class CompanyController extends Controller
      */
     public function store(StoreCompanyRequest $request): JsonResponse
     {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['created_by'] = $user->id;
+        $company = $this->managementService->store($request);
 
-        $company = Company::create($data);
+        $user = $request->user();
 
         $this->logger->companyCreated(
             $user,
@@ -114,11 +117,9 @@ class CompanyController extends Controller
         UpdateCompanyRequest $request,
         Company $company
     ): JsonResponse {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['updated_by'] = $user->id;
+        $company = $this->managementService->update($request, $company);
 
-        $company->update($data);
+        $user = $request->user();
 
         $this->logger->companyUpdated(
             $user,
@@ -148,10 +149,7 @@ class CompanyController extends Controller
             $company,
         );
 
-        $company->update([
-            'deleted_by' => $user->id,
-        ]);
-        $company->delete();
+        $this->managementService->destroy($company);
 
         return response()->json(null, 204);
     }
@@ -169,7 +167,7 @@ class CompanyController extends Controller
 
         $this->authorize('restore', $company);
 
-        $company->restore();
+        $this->managementService->restore($id);
 
         $this->logger->companyRestored(
             request()->user(),

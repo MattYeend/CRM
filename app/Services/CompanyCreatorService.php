@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Services;
+
+use App\Http\Requests\StoreCompanyRequest;
+use App\Models\Company;
+
+class CompanyCreatorService
+{
+    /**
+     * Create a new company from request data.
+     *
+     * @param StoreCompanyRequest $request
+     *
+     * @return Company
+     */
+    public function create(StoreCompanyRequest $request): Company
+    {
+        $user = $request->user();
+        $data = $request->validated();
+
+        $data['created_by'] = $user->id;
+
+        return Company::create($data);
+    }
+}
