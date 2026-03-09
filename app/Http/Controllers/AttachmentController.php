@@ -5,68 +5,74 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreAttachmentRequest;
 use App\Http\Requests\UpdateAttachmentRequest;
 use App\Models\Attachment;
-use App\Services\AttachmentAttacher;
+use App\Services\AttachmentAttacherService;
 use App\Services\AttachmentLogService;
+use App\Services\AttachmentManagementService;
+use App\Services\AttachmentQueryService;
 use App\Services\AttachmentService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class AttachmentController extends Controller
 {
     /**
      * Declare a protected property to hold the
-     * AttachmentAttacher, ActivityLogService and
-     * AttachmentService instances
+     * AttachmentAttacherService, ActivityLogService,
+     * AttachmentService and AttachmentManagementService
+     * instances
      *
-     * @var AttachmentAttacher
+     * @var AttachmentAttacherService
      * @var AttachmentLogService
      * @var AttachmentService
+     * @var AttachmentQueryService
+     * @var AttachmentManagementService
      */
-    protected AttachmentAttacher $attacher;
+    protected AttachmentAttacherService $attacher;
     protected AttachmentLogService $logger;
     protected AttachmentService $service;
+    protected AttachmentQueryService $query;
+    protected AttachmentManagementService $management;
 
     /**
      * Constructor
      *
-     * @param AttachmentAttacher $attacher
+     * @param AttachmentAttacherService $attacher
      *
      * @param AttachmentLogService $logger
      *
      * @param AttachmentService $service
      *
+     * @param AttachmentQueryService $query
+     *
+     * @param AttachmentManagementService $management
+     *
      * @return void
      */
     public function __construct(
-        AttachmentAttacher $attacher,
+        AttachmentAttacherService $attacher,
         AttachmentLogService $logger,
-        AttachmentService $service
+        AttachmentService $service,
+        AttachmentQueryService $query,
+        AttachmentManagementService $management,
     ) {
         $this->attacher = $attacher;
         $this->logger = $logger;
         $this->service = $service;
+        $this->query = $query;
+        $this->management = $management;
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
-    public function index(Request $request): JsonResponse
+    public function index(): JsonResponse
     {
         $this->authorize('viewAny', Attachment::class);
 
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
+        $attachment = $this->query->list(request());
 
-        return response()->json(
-            Attachment::with('uploader')->paginate($perPage)
-        );
+        return response()->json($attachment);
     }
 
     /**
@@ -80,7 +86,9 @@ class AttachmentController extends Controller
     {
         $this->authorize('view', $attachment);
 
-        return response()->json($attachment->load('uploader'));
+        $attachment = $this->query->show($attachment);
+
+        return response()->json($attachment);
     }
 
     /**
@@ -93,26 +101,24 @@ class AttachmentController extends Controller
     public function store(StoreAttachmentRequest $request): JsonResponse
     {
         $user = $request->user();
-        $data = $request->validated();
 
-        $data['created_by'] = $user->id;
+        $attachment = $this->management->store($request);
 
-        $file = $request->file('file');
         $attachment = $this->service->storeFile(
-            $file,
-            $data['uploaded_by'] ?? null
+            $request->file('file'),
+            $request->user()->id
         );
-
+        $validated = $request->validated();
         $this->attacher->attach(
-            $data['attachable_type'] ?? null,
-            $data['attachable_id'] ?? null,
+            $validated['attachable_type'] ?? null,
+            $validated['attachable_id'] ?? null,
             $attachment
         );
 
         $this->logger->attachmentUploaded(
             $user,
             $user->id,
-            $attachment,
+            $attachment
         );
 
         return response()->json($attachment->load('uploader'), 201);
@@ -132,19 +138,20 @@ class AttachmentController extends Controller
         Attachment $attachment
     ): JsonResponse {
         $user = $request->user();
-        $data = $request->validated();
-
-        $data['updated_by'] = $user->id;
 
         $file = $request->file('file');
 
         if ($file) {
-            $this->service->replaceFile($attachment, $file);
+            $attachment = $this->service->replaceFile(
+                $attachment,
+                $file,
+                $user->id
+            );
         }
 
         $this->attacher->attach(
-            $data['attachable_type'] ?? null,
-            $data['attachable_id'] ?? null,
+            $request->input('attachable_type'),
+            $request->input('attachable_id'),
             $attachment
         );
 
@@ -154,7 +161,7 @@ class AttachmentController extends Controller
             $attachment,
         );
 
-        return response()->json($attachment->load('uploader'), 201);
+        return response()->json($attachment->load('uploader'), 200);
     }
 
     /**
@@ -170,20 +177,13 @@ class AttachmentController extends Controller
 
         $user = auth()->user();
 
+        $this->management->destroy($attachment, $user->is);
+
         $this->logger->attachmentDeleted(
             $user,
             $user->id,
             $attachment,
         );
-
-        if ($attachment->disk && $attachment->path) {
-            Storage::disk($attachment->disk)->delete($attachment->path);
-        }
-
-        $attachment->update([
-            'deleted_by' => $user->id,
-        ]);
-        $attachment->delete();
 
         return response()->json(null, 204);
     }

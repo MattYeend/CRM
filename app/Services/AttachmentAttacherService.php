@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Attachment;
 
-class AttachmentAttacher
+class AttachmentAttacherService
 {
     /**
      * Attach an attachment to a polymorphic model if resolvable.

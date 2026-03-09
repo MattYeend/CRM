@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Activity;
 
-class ActivityDestructor
+class ActivityDestructorService
 {
     /**
      * Soft-delete a activity.

@@ -8,14 +8,14 @@ use App\Models\Activity;
 
 class ActivityManagementService
 {
-    private ActivityCreator $creator;
-    private ActivityUpdater $updater;
-    private ActivityDestructor $destructor;
+    private ActivityCreatorService $creator;
+    private ActivityUpdaterService $updater;
+    private ActivityDestructorService $destructor;
 
     public function __construct(
-        ActivityCreator $creator,
-        ActivityUpdater $updater,
-        ActivityDestructor $destructor
+        ActivityCreatorService $creator,
+        ActivityUpdaterService $updater,
+        ActivityDestructorService $destructor
     ) {
         $this->creator = $creator;
         $this->updater = $updater;

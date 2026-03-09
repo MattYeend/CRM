@@ -9,16 +9,16 @@ use Illuminate\Http\Request;
 
 class UserManagementService
 {
-    private UserCreator $creator;
-    private UserUpdater $updater;
-    private UserRolesManager $rolesManager;
-    private UserDestructor $destructor;
+    private UserCreatorService $creator;
+    private UserUpdaterService $updater;
+    private UserRolesManagerService $rolesManager;
+    private UserDestructorService $destructor;
 
     public function __construct(
-        UserCreator $creator,
-        UserUpdater $updater,
-        UserRolesManager $rolesManager,
-        UserDestructor $destructor,
+        UserCreatorService $creator,
+        UserUpdaterService $updater,
+        UserRolesManagerService $rolesManager,
+        UserDestructorService $destructor,
     ) {
         $this->creator = $creator;
         $this->updater = $updater;

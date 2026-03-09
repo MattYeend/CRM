@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class UserRolesManager
+class UserRolesManagerService
 {
     /**
      * Sync roles if present (used after create/update).

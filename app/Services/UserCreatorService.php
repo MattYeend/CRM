@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-class UserCreator
+class UserCreatorService
 {
     /**
      * Create a new user from request data.

@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 
-class UserDestructor
+class UserDestructorService
 {
     /**
      * Soft-delete a user.

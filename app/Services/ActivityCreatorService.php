@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Http\Requests\StoreActivityRequest;
 use App\Models\Activity;
 
-class ActivityCreator
+class ActivityCreatorService
 {
     /**
      * Create a new activity from request data.

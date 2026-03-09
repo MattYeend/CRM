@@ -3,8 +3,9 @@
 use App\Models\Attachment;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\Task;
 use App\Models\User;
-use App\Services\AttachmentAttacher;
+use App\Services\AttachmentAttacherService;
 use App\Services\AttachmentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -90,16 +91,16 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
     // Fake the storage used by AttachmentService
     Storage::fake('public');
 
-    // Mock the AttachmentAttacher so we can assert attach() is called
-    $attacherMock = Mockery::mock(AttachmentAttacher::class);
+    // Mock the AttachmentAttacherService so we can assert attach() is called
+    $attacherMock = Mockery::mock(AttachmentAttacherService::class);
     $attacherMock->shouldReceive('attach')
         ->once()
         ->withArgs(function ($type, $id, $attachment) {
-            return $type === User::class
-                && $id === $this->auth->id
+            return $type === Task::class
+                && $id === 1
                 && $attachment instanceof Attachment;
         });
-    $this->app->instance(AttachmentAttacher::class, $attacherMock);
+    $this->app->instance(AttachmentAttacherService::class, $attacherMock);
 
     // Prepare an Attachment model the mocked service will return.
     // Make sure attachable_type/id are present to satisfy NOT NULL constraints.
@@ -111,7 +112,7 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
         'size' => 120_000,
         'mime' => 'application/pdf',
         'uploaded_by' => $this->auth->id,
-        'attachable_type' => User::class,
+        'attachable_type' => Task::class,
         'attachable_id' => $this->auth->id,
     ]);
 
@@ -130,8 +131,8 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
 
     $payload = [
         'file' => $file,
-        'attachable_type' => User::class,
-        'attachable_id' => $this->auth->id,
+        'attachable_type' => Task::class,
+        'attachable_id' => 1, 
         'uploaded_by' => $this->auth->id,
     ];
 

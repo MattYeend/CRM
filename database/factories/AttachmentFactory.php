@@ -24,7 +24,9 @@ class AttachmentFactory extends Factory
             'path' => 'attachments/' . fake()->uuid() . '/file.txt',
             'uploaded_by' => User::factory(),
             'size' => fake()->numberBetween(100, 1000000),
-            'mime' => 'text/plain'
+            'mime' => 'text/plain',
+            'attachable_id' => 1,
+            'attachable_type' => 'Document',
         ];
     }
 }

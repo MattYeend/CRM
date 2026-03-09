@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Http\Requests\UpdateActivityRequest;
 use App\Models\Activity;
 
-class ActivityUpdater
+class ActivityUpdaterService
 {
     /**
      * Update the user using request data.

@@ -24,8 +24,8 @@ class StoreAttachmentRequest extends FormRequest
     {
         return [
             'file' => 'required|file|max:10000',
-            'attachable_type' => 'nullable|string|required_with:attachable_id',
-            'attachable_id' => 'nullable|integer|required_with:attachable_type',
+            'attachable_type' => 'required|string',
+            'attachable_id' => 'required|integer',
             'uploaded_by' => 'nullable|integer|exists:users,id',
         ];
     }

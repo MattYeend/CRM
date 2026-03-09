@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('filename');
             $table->string('disk')->default('public');
             $table->string('path');
-            $table->morphs('attachable');
+            $table->nullableMorphs('attachable');
             $table->foreignId('uploaded_by')->nullable()->constrained('users')->nullOnDelete();
             $table->bigInteger('size')->nullable();
             $table->string('mime')->nullable();

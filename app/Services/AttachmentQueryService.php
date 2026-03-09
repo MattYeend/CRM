@@ -2,15 +2,15 @@
 
 namespace App\Services;
 
-use App\Models\Activity;
+use App\Models\Attachment;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class ActivityQueryService
+class AttachmentQueryService
 {
     /**
-     * Return paginated activities, applying filters/sorting.
+     * Return paginated attachment with roles, applying filters/sorting.
      *
      * @param Request $request
      *
@@ -23,7 +23,7 @@ class ActivityQueryService
             min((int) $request->query('per_page', 10), 100)
         );
 
-        $query = Activity::query();
+        $query = Attachment::query();
 
         $this->applyTrashFilters($query, $request);
         $this->applySorting($query, $request);
@@ -32,15 +32,15 @@ class ActivityQueryService
     }
 
     /**
-     * Return a single activity.
+     * Return a single attachment with roles loaded.
      *
-     * @param Activity $activity
+     * @param Attachment $attachment
      *
-     * @return Activity
+     * @return Attachment
      */
-    public function show(Activity $activity): Activity
+    public function show(Attachment $attachment): Attachment
     {
-        return $activity->load(['user', 'subject']);
+        return $attachment->load('uploader');
     }
 
     /**
@@ -78,8 +78,7 @@ class ActivityQueryService
     {
         $allowedSorts = [
             'id',
-            'type',
-            'subject_type',
+            'filename',
             'created_at',
             'updated_at',
         ];
