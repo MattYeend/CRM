@@ -6,29 +6,49 @@ use App\Http\Requests\StoreContactRequest;
 use App\Http\Requests\UpdateContactRequest;
 use App\Models\Contact;
 use App\Services\ContactLogService;
+use App\Services\ContactManagementService;
+use App\Services\ContactQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ContactController extends Controller
 {
     /**
-     * Declare a protected property to hold the ContactLogService instance
+     * Declare a protected property to hold the ContactLogService,
+     * ContactManagementService and ContactQueryService instance
      *
      * @var ContactLogService
+     * @var ContactManagementService
+     * @var ContactQueryService
      */
     protected ContactLogService $logger;
+    protected ContactManagementService $managementService;
+    protected ContactQueryService $queryService;
 
     /**
      * Constructor for the controller
      *
      * @param ContactLogService $logger
      *
+     * @param ContactManagementService $management
+     *
+     * @param ContactQueryService $query
+     *
      * An instance of the ContactLogService used for logging
-     * contact-related actions
+     * company-related actions
+     * An instance of the ContactManagementService for management
+     * of companies
+     * An instance of the ContactQueryService for the query of
+     * company-related actions
      */
-    public function __construct(ContactLogService $logger)
-    {
+    public function __construct(
+        ContactLogService $logger,
+        ContactManagementService $managementService,
+        ContactQueryService $queryService,
+    ) {
         $this->logger = $logger;
+        $this->managementService = $managementService;
+        $this->queryService = $queryService;
     }
 
     /**
@@ -42,27 +62,9 @@ class ContactController extends Controller
     {
         $this->authorize('viewAny', Contact::class);
 
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
-        $q = $request->query('q');
-        $companyId = $request->query('company_id');
+        $contact = $this->queryService->list($request);
 
-        $query = Contact::with('company');
-
-        if ($companyId) {
-            $query->where('company_id', $companyId);
-        }
-        if ($q) {
-            $query->where(function ($subQuery) use ($q) {
-                $subQuery->where('first_name', 'like', '%' . $q . '%')
-                    ->orWhere('last_name', 'like', '%' . $q . '%')
-                    ->orWhere('email', 'like', '%' . $q . '%');
-            });
-        }
-
-        return response()->json($query->paginate($perPage));
+        return response()->json($contact);
     }
 
     /**
@@ -76,9 +78,9 @@ class ContactController extends Controller
     {
         $this->authorize('view', $contact);
 
-        return response()->json(
-            $contact->load('company', 'deals', 'attachments')
-        );
+        $contact = $this->queryService->show($contact);
+
+        return response()->json($contact);
     }
 
     /**
@@ -90,11 +92,9 @@ class ContactController extends Controller
      */
     public function store(StoreContactRequest $request): JsonResponse
     {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['created_by'] = $user->id;
+        $contact = $this->managementService->store($request);
 
-        $contact = Contact::create($data);
+        $user = $request->user();
 
         $this->logger->contactCreated(
             $user,
@@ -118,11 +118,9 @@ class ContactController extends Controller
         UpdateContactRequest $request,
         Contact $contact
     ): JsonResponse {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['updated_by'] = $user->id;
+        $contact = $this->managementService->update($request, $contact);
 
-        $contact->update($data);
+        $user = $request->user();
 
         $this->logger->contactUpdated(
             $user,
@@ -150,10 +148,7 @@ class ContactController extends Controller
             $contact,
         );
 
-        $contact->update([
-            'deleted_by' => $user->id,
-        ]);
-        $contact->delete();
+        $this->managementService->destroy($contact);
 
         return response()->json(null, 204);
     }

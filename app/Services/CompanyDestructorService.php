@@ -23,7 +23,7 @@ class CompanyDestructorService
     }
 
     /**
-     * Restore a trashed activity.
+     * Restore a trashed company.
      *
      * @param int $id
      *

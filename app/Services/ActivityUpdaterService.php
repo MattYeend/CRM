@@ -8,7 +8,7 @@ use App\Models\Activity;
 class ActivityUpdaterService
 {
     /**
-     * Update the user using request data.
+     * Update the activity using request data.
      *
      * @param UpdateActivityRequest $request
      *
