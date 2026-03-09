@@ -2,16 +2,16 @@
 
 namespace App\Services;
 
-use App\Models\Invoice;
+use App\Models\InvoiceItem;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class InvoiceQueryService
+class InvoiceItemQueryService
 {
-    private InvoiceSortingService $sorting;
+    private InvoiceItemSortingService $sorting;
     private TrashFilterService $trashFilter;
     public function __construct(
-        InvoiceSortingService $sorting,
+        InvoiceItemSortingService $sorting,
         TrashFilterService $trashFilter,
     ) {
         $this->sorting = $sorting;
@@ -19,7 +19,7 @@ class InvoiceQueryService
     }
 
     /**
-     * Return paginated invoices, applying filters/sorting.
+     * Return paginated invoice items, applying filters/sorting.
      *
      * @param Request $request
      *
@@ -32,10 +32,9 @@ class InvoiceQueryService
             min((int) $request->query('per_page', 10), 100)
         );
 
-        $query = Invoice::with(
-            'company',
-            'contact',
-            'items',
+        $query = InvoiceItem::with(
+            'invoice',
+            'product',
         );
 
         $this->sorting->applySorting($query, $request);
@@ -45,18 +44,17 @@ class InvoiceQueryService
     }
 
     /**
-     * Return a single invoice.
+     * Return a single invoice item.
      *
-     * @param Invoice $invoice
+     * @param InvoiceItem $invoiceItem
      *
-     * @return Invoice
+     * @return InvoiceItem
      */
-    public function show(Invoice $invoice): Invoice
+    public function show(InvoiceItem $invoiceItem): InvoiceItem
     {
-        return $invoice->load(
-            'company',
-            'contact',
-            'items',
+        return $invoiceItem->load(
+            'invoice',
+            'product',
         );
     }
 }

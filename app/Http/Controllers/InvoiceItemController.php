@@ -6,29 +6,49 @@ use App\Http\Requests\StoreInvoiceItemRequest;
 use App\Http\Requests\UpdateInvoiceItemRequest;
 use App\Models\InvoiceItem;
 use App\Services\InvoiceItemLogService;
+use App\Services\InvoiceItemManagementService;
+use App\Services\InvoiceItemQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class InvoiceItemController extends Controller
 {
     /**
-     * Declare a protected property to hold the InvoiceItemLogService instance
+     * Declare a protected property to hold the InvoiceItemLogService,
+     * InvoiceItemManagementService and InvoiceItemQueryService instance
      *
      * @var InvoiceItemLogService
+     * @var InvoiceManagementService
+     * @var InvoiceQueryService
      */
     protected InvoiceItemLogService $logger;
+    protected InvoiceItemManagementService $managementService;
+    protected InvoiceItemQueryService $queryService;
 
     /**
      * Constructor for the controller
      *
      * @param InvoiceItemLogService $logger
      *
+     * @param InvoiceItemManagementService $management
+     *
+     * @param InvoiceItemQueryService $query
+     *
      * An instance of the InvoiceItemLogService used for logging
      * invoice item-related actions
+     * An instance of the InvoiceItemManagementService for management
+     * of invoice items
+     * An instance of the InvoiceItemQueryService for the query of
+     * invoice items-related actions
      */
-    public function __construct(InvoiceItemLogService $logger)
-    {
+    public function __construct(
+        InvoiceItemLogService $logger,
+        InvoiceItemManagementService $managementService,
+        InvoiceItemQueryService $queryService,
+    ) {
         $this->logger = $logger;
+        $this->managementService = $managementService;
+        $this->queryService = $queryService;
     }
 
     /**
@@ -42,14 +62,9 @@ class InvoiceItemController extends Controller
     {
         $this->authorize('viewAny', InvoiceItem::class);
 
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
+        $invoiceItem = $this->queryService->list($request);
 
-        return response()->json(
-            InvoiceItem::with('invoice', 'product')->paginate($perPage)
-        );
+        return response()->json($invoiceItem);
     }
 
     /**
@@ -63,7 +78,9 @@ class InvoiceItemController extends Controller
     {
         $this->authorize('view', $invoiceItem);
 
-        return response()->json($invoiceItem->load('invoice', 'product'));
+        $invoiceItem = $this->queryService->show($invoiceItem);
+
+        return response()->json($invoiceItem);
     }
 
     /**
@@ -75,22 +92,17 @@ class InvoiceItemController extends Controller
      */
     public function store(StoreInvoiceItemRequest $request): JsonResponse
     {
+        $invoiceItem = $this->managementService->store($request);
+
         $user = $request->user();
-        $data = $request->validated();
-        $data['created_by'] = $user->id;
-
-        $data['line_total'] = $data['line_total']
-            ?? $data['quantity'] * $data['unit_price'];
-
-        $item = InvoiceItem::create($data);
 
         $this->logger->invoiceItemCreated(
             $user,
             $user->id,
-            $item,
+            $invoiceItem,
         );
 
-        return response()->json($item->load('product'), 201);
+        return response()->json($invoiceItem->load('product'), 201);
     }
 
     /**
@@ -106,15 +118,9 @@ class InvoiceItemController extends Controller
         UpdateInvoiceItemRequest $request,
         InvoiceItem $invoiceItem
     ): JsonResponse {
+        $invoiceItem = $this->managementService->update($request, $invoiceItem);
+
         $user = $request->user();
-        $data = $request->validated();
-        $data['updated_by'] = $user->id;
-
-        if (isset($data['quantity']) && isset($data['unit_price'])) {
-            $data['line_total'] = $data['quantity'] * $data['unit_price'];
-        }
-
-        $invoiceItem->update($data);
 
         $this->logger->invoiceItemUpdated(
             $user,
@@ -122,7 +128,7 @@ class InvoiceItemController extends Controller
             $invoiceItem,
         );
 
-        return response()->json($invoiceItem->fresh()->load('product'));
+        return response()->json($invoiceItem);
     }
 
     /**
@@ -144,10 +150,7 @@ class InvoiceItemController extends Controller
             $invoiceItem,
         );
 
-        $invoiceItem->update([
-            'deleted_by' => $user->id,
-        ]);
-        $invoiceItem->delete();
+        $invoiceItem = $this->managementService->destroy($invoiceItem);
 
         return response()->json(null, 204);
     }
