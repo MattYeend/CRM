@@ -18,7 +18,7 @@ class UserManagementService
         UserCreator $creator,
         UserUpdater $updater,
         UserRolesManager $rolesManager,
-        UserDestructor $destructor
+        UserDestructor $destructor,
     ) {
         $this->creator = $creator;
         $this->updater = $updater;

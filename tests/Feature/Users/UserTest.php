@@ -8,6 +8,7 @@ use App\Services\UserManagementService;
 use App\Services\UserQueryService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 
 uses(RefreshDatabase::class);
@@ -45,20 +46,22 @@ beforeEach(function () {
 });
 
 test('index calls query service and returns list', function () {
+    $users = collect([
+        ['id' => 10, 'name' => 'Alice', 'email' => 'alice@example.test']
+    ]);
+
+    $paginator = new LengthAwarePaginator(
+        $users,
+        $users->count(),
+        10,
+        1
+    );
+
     $queryServiceMock = Mockery::mock(UserQueryService::class);
-
-    // Return an arbitrary structure the controller will json-encode
-    $fakeList = [
-        'data' => [
-            ['id' => 10, 'name' => 'Alice', 'email' => 'alice@example.test']
-        ],
-        'per_page' => 10,
-    ];
-
     $queryServiceMock->shouldReceive('list')
         ->once()
         ->with(Mockery::type(Request::class))
-        ->andReturn($fakeList);
+        ->andReturn($paginator);
 
     $this->app->instance(UserQueryService::class, $queryServiceMock);
 
@@ -74,15 +77,8 @@ test('show calls query service and returns single user', function () {
     $queryServiceMock = Mockery::mock(UserQueryService::class);
     $queryServiceMock->shouldReceive('show')
         ->once()
-        ->with(Mockery::on(function ($arg) use ($user) {
-            return $arg instanceof User && $arg->id === $user->id;
-        }))
-        ->andReturn([
-            'id' => $user->id,
-            'name' => 'Bob',
-            'email' => 'bob@example.test',
-            'roles' => [],
-        ]);
+        ->with(Mockery::on(fn($arg) => $arg instanceof User && $arg->id === $user->id))
+        ->andReturn($user->load('roles'));
 
     $this->app->instance(UserQueryService::class, $queryServiceMock);
 

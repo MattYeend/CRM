@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Services;
+
+use App\Http\Requests\StoreActivityRequest;
+use App\Models\Activity;
+
+class ActivityCreator
+{
+    /**
+     * Create a new activity from request data.
+     *
+     * @param StoreActivityRequest $request
+     *
+     * @return Activity
+     */
+    public function create(StoreActivityRequest $request): Activity
+    {
+        $user = $request->user();
+        $data = $request->validated();
+
+        $data['created_by'] = $user->id;
+
+        return Activity::create($data);
+    }
+}

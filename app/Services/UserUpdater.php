@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
 
 class UserUpdater
 {
@@ -22,7 +21,7 @@ class UserUpdater
      */
     public function update(Request $request, User $user): User
     {
-        $data = $request->validate($this->updateValidationRules($user));
+        $data = $request->validated();
 
         $this->preparePasswordForSave($data);
         $this->handleAvatarForUpdate($request, $user, $data);
@@ -32,31 +31,6 @@ class UserUpdater
         });
 
         return $user->fresh();
-    }
-
-    /**
-     * Get validation rules for updating a user.
-     *
-     * @param User $user
-     *
-     * @return array
-     */
-    private function updateValidationRules(User $user): array
-    {
-        return [
-            'name' => 'sometimes|required|string|max:255',
-            'email' => [
-                'sometimes',
-                'required',
-                'email',
-                Rule::unique('users', 'email')->ignore($user->id),
-            ],
-            'password' => 'sometimes|nullable|string|min:6',
-            'phone' => 'nullable|string|max:50',
-            'avatar' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp|max:5120',
-            'roles' => 'nullable|array',
-            'roles.*' => 'integer|exists:roles,id',
-        ];
     }
 
     /**

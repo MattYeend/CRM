@@ -18,17 +18,31 @@ class UserController extends Controller
      * UserQueryService, and UserManagementService instances
      *
      * @var UserLogService
-     * @var UserQueryService
      * @var UserManagementService
+     * @var UserQueryService
      */
     private UserLogService $logger;
     private UserManagementService $managementService;
     private UserQueryService $queryService;
 
+    /**
+     * Constructor for the controller
+     *
+     * @param UserLogService $logger
+     * @param UserManagementService $managementService
+     * @param UserQueryService $queryService
+     *
+     * An instance of the UserLogService used for logging
+     * user-related actions
+     * An instance of the UserManagementService for management
+     * of users
+     * An instance of the UserQueryService for the query of
+     * user-related actions
+     */
     public function __construct(
         UserLogService $logger,
         UserManagementService $managementService,
-        UserQueryService $queryService
+        UserQueryService $queryService,
     ) {
         $this->logger = $logger;
         $this->managementService = $managementService;
@@ -62,7 +76,9 @@ class UserController extends Controller
     {
         $this->authorize('view', $user);
 
-        return response()->json($this->queryService->show($user));
+        $user = $this->queryService->show($user);
+
+        return response()->json($user);
     }
 
     /**
@@ -97,6 +113,7 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, User $user): JsonResponse
     {
         $user = $this->managementService->update($request, $user);
+
         $auth = auth()->user();
 
         $this->logger->userUpdated(

@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
-use App\Models\User;
+use App\Models\Activity;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class UserQueryService
+class ActivityQueryService
 {
     /**
      * Return paginated users with roles, applying filters/sorting.
@@ -23,7 +23,7 @@ class UserQueryService
             min((int) $request->query('per_page', 10), 100)
         );
 
-        $query = User::with('roles');
+        $query = Activity::query();
 
         $this->applyTrashFilters($query, $request);
         $this->applySorting($query, $request);
@@ -32,15 +32,15 @@ class UserQueryService
     }
 
     /**
-     * Return a single user with roles loaded.
+     * Return a single activity.
      *
-     * @param User $user
+     * @param Activity $activity
      *
-     * @return User
+     * @return Activity
      */
-    public function show(User $user): User
+    public function show(Activity $activity): Activity
     {
-        return $user->load('roles');
+        return $activity->load(['user', 'subject']);
     }
 
     /**
@@ -78,8 +78,8 @@ class UserQueryService
     {
         $allowedSorts = [
             'id',
-            'name',
-            'email',
+            'type',
+            'subject_type',
             'created_at',
             'updated_at',
         ];

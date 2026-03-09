@@ -16,6 +16,10 @@ class UserDestructor
      */
     public function destroy(User $user): void
     {
+        $user->update([
+            'deleted_by' => $user->id,
+        ]);
+
         $user->delete();
     }
 

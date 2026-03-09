@@ -6,6 +6,8 @@ use App\Http\Requests\StoreActivityRequest;
 use App\Http\Requests\UpdateActivityRequest;
 use App\Models\Activity;
 use App\Services\ActivityLogService;
+use App\Services\ActivityManagementService;
+use App\Services\ActivityQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -15,8 +17,13 @@ class ActivityController extends Controller
      * Declare a protected property to hold the ActivityLogService instance
      *
      * @var ActivityLogService
+     * @var ActivityManagementService
+     * @var ActivityQueryService
      */
     protected ActivityLogService $logger;
+    protected ActivityManagementService $managementService;
+    protected ActivityQueryService $queryService;
+
     /**
      * Constructor for the controller
      *
@@ -24,10 +31,19 @@ class ActivityController extends Controller
      *
      * An instance of the ActivityLogService used for logging
      * activity-related actions
+     * An instance of the ActivityManagementService for management
+     * of activities
+     * An instance of the UserQueryService for the query of
+     * activity-related actions
      */
-    public function __construct(ActivityLogService $logger)
-    {
+    public function __construct(
+        ActivityLogService $logger,
+        ActivityManagementService $managementService,
+        ActivityQueryService $queryService,
+    ) {
         $this->logger = $logger;
+        $this->managementService = $managementService;
+        $this->queryService = $queryService;
     }
 
     /**
@@ -41,14 +57,9 @@ class ActivityController extends Controller
     {
         $this->authorize('viewAny', Activity::class);
 
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
+        $activities = $this->queryService->list($request);
 
-        return response()->json(
-            Activity::with('user', 'subject')->paginate($perPage)
-        );
+        return response()->json($activities);
     }
 
     /**
@@ -62,7 +73,9 @@ class ActivityController extends Controller
     {
         $this->authorize('view', $activity);
 
-        return response()->json($activity->load('user', 'subject'));
+        $activity = $this->queryService->show($activity);
+
+        return response()->json($activity);
     }
 
     /**
@@ -74,13 +87,8 @@ class ActivityController extends Controller
      */
     public function store(StoreActivityRequest $request): JsonResponse
     {
+        $activity = $this->managementService->store($request);
         $user = $request->user();
-
-        $data = $request->validated();
-
-        $data['created_by'] = $user->id;
-
-        $activity = Activity::create($data);
 
         $this->logger->activityCreated(
             $user,
@@ -104,13 +112,9 @@ class ActivityController extends Controller
         UpdateActivityRequest $request,
         Activity $activity
     ): JsonResponse {
+        $activity = $this->managementService->update($request, $activity);
+
         $user = $request->user();
-
-        $data = $request->validated();
-
-        $data['updated_by'] = $user->id;
-
-        $activity->update($data);
 
         $this->logger->activityUpdated(
             $user,
@@ -140,11 +144,7 @@ class ActivityController extends Controller
             $activity,
         );
 
-        $activity->update([
-            'deleted_by' => $user->id,
-        ]);
-
-        $activity->delete();
+        $this->managementService->destroy($activity);
 
         return response()->json(null, 204);
     }
