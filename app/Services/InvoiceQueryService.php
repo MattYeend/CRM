@@ -9,10 +9,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class InvoiceQueryService
 {
     private InvoiceSortingService $sorting;
-    private InvoiceTrashFilterService $trashFilter;
+    private TrashFilterService $trashFilter;
     public function __construct(
         InvoiceSortingService $sorting,
-        InvoiceTrashFilterService $trashFilter,
+        TrashFilterService $trashFilter,
     ) {
         $this->sorting = $sorting;
         $this->trashFilter = $trashFilter;

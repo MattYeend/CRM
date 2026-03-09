@@ -9,10 +9,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class AttachmentQueryService
 {
     private AttachmentSortingService $sorting;
-    private AttachmentTrashFilterService $trashFilter;
+    private TrashFilterService $trashFilter;
     public function __construct(
         AttachmentSortingService $sorting,
-        AttachmentTrashFilterService $trashFilter,
+        TrashFilterService $trashFilter,
     ) {
         $this->sorting = $sorting;
         $this->trashFilter = $trashFilter;

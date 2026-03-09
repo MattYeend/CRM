@@ -5,7 +5,7 @@ namespace App\Services;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
-class ActivityTrashFilterService
+class TrashFilterService
 {
     /**
      * Apply trash filters to the query.

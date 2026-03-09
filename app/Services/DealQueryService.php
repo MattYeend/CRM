@@ -10,11 +10,11 @@ class DealQueryService
 {
     private DealSearchService $search;
     private DealSortingService $sorting;
-    private DealTrashFilterService $trashFilter;
+    private TrashFilterService $trashFilter;
     public function __construct(
         DealSearchService $search,
         DealSortingService $sorting,
-        DealTrashFilterService $trashFilter,
+        TrashFilterService $trashFilter,
     ) {
         $this->search = $search;
         $this->sorting = $sorting;

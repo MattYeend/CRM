@@ -10,11 +10,11 @@ class ContactQueryService
 {
     private ContactSearchService $search;
     private ContactSortingService $sorting;
-    private ContactTrashFilterService $trashFilter;
+    private TrashFilterService $trashFilter;
     public function __construct(
         ContactSearchService $search,
         ContactSortingService $sorting,
-        ContactTrashFilterService $trashFilter,
+        TrashFilterService $trashFilter,
     ) {
         $this->search = $search;
         $this->sorting = $sorting;

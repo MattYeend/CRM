@@ -10,11 +10,11 @@ class CompanyQueryService
 {
     private CompanySearchService $search;
     private CompanySortingService $sorting;
-    private CompanyTrashFilterService $trashFilter;
+    private TrashFilterService $trashFilter;
     public function __construct(
         CompanySearchService $search,
         CompanySortingService $sorting,
-        CompanyTrashFilterService $trashFilter,
+        TrashFilterService $trashFilter,
     ) {
         $this->search = $search;
         $this->sorting = $sorting;

@@ -9,10 +9,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class ActivityQueryService
 {
     private ActivitySortingService $sorting;
-    private ActivityTrashFilterService $trashFilter;
+    private TrashFilterService $trashFilter;
     public function __construct(
         ActivitySortingService $sorting,
-        ActivityTrashFilterService $trashFilter,
+        TrashFilterService $trashFilter,
     ) {
         $this->sorting = $sorting;
         $this->trashFilter = $trashFilter;
