@@ -6,29 +6,49 @@ use App\Http\Requests\StoreLeadRequest;
 use App\Http\Requests\UpdateLeadRequest;
 use App\Models\Lead;
 use App\Services\LeadLogService;
+use App\Services\LeadManagemetnService;
+use App\Services\LeadQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class LeadController extends Controller
 {
     /**
-     * Declare a protected property to hold the LeadLogService instance
+     * Declare a protected property to hold the LeadLogService,
+     *LeadmManagementService and LeadQueryService instance
      *
      * @var LeadLogService
+     * @var LeadManagementService
+     * @var LeadQueryService
      */
     protected LeadLogService $logger;
+    protected LeadManagemetnService $managementService;
+    protected LeadQueryService $queryService;
 
     /**
      * Constructor for the controller
      *
      * @param LeadLogService $logger
      *
+     * @param LeadManagementService $management
+     *
+     * @param LeadQueryService $query
+     *
      * An instance of the LeadLogService used for logging
      * lead-related actions
+     * An instance of the LeadManagementService for management
+     * of invoice leads
+     * An instance of the LeadQueryService for the query of
+     * lead-related actions
      */
-    public function __construct(LeadLogService $logger)
-    {
+    public function __construct(
+        LeadLogService $logger,
+        LeadManagemetnService $managementService,
+        LeadQueryService $queryService,
+    ) {
         $this->logger = $logger;
+        $this->managementService = $managementService;
+        $this->queryService = $queryService;
     }
 
     /**
@@ -42,22 +62,9 @@ class LeadController extends Controller
     {
         $this->authorize('viewAny', Lead::class);
 
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
-        $ownerId = $request->query('owner_id');
+        $lead = $this->queryService->list($request);
 
-        $query = Lead::with([
-            'owner',
-            'assignedTo',
-        ]);
-
-        if ($ownerId) {
-            $query->where('owner_id', $ownerId);
-        }
-
-        return response()->json($query->paginate($perPage));
+        return response()->json($lead);
     }
 
     /**
@@ -71,9 +78,9 @@ class LeadController extends Controller
     {
         $this->authorize('view', $lead);
 
-        return response()->json(
-            Lead::with($this->relations())->findOrFail($lead->id)
-        );
+        $lead = $this->queryService->show($lead);
+
+        return response()->json($lead);
     }
 
     /**
@@ -85,13 +92,9 @@ class LeadController extends Controller
      */
     public function store(StoreLeadRequest $request): JsonResponse
     {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['created_by'] = $user->id;
-        $data['owner_id'] = $data['owner_id'] ?? auth()->id();
-        $data['created_by'] = auth()->id();
+        $lead = $this->managementService->store($request);
 
-        $lead = Lead::create($data);
+        $user = $request->user();
 
         $this->logger->leadCreated(
             $user,
@@ -115,11 +118,9 @@ class LeadController extends Controller
         UpdateLeadRequest $request,
         Lead $lead
     ): JsonResponse {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['updated_by'] = $user->id;
+        $lead = $this->managementService->update($request, $lead);
 
-        $lead->update($data);
+        $user = $request->user();
 
         $this->logger->leadUpdated(
             $user,
@@ -127,7 +128,7 @@ class LeadController extends Controller
             $lead,
         );
 
-        return response()->json($lead->fresh()->load($this->relations()));
+        return response()->json($lead);
     }
 
     /**
@@ -148,11 +149,7 @@ class LeadController extends Controller
             $lead,
         );
 
-        $lead->update([
-            'deleted_by' => $user->id,
-        ]);
-
-        $lead->delete();
+        $lead = $this->managementService->destroy($lead);
 
         return response()->json(null, 204);
     }
@@ -169,7 +166,7 @@ class LeadController extends Controller
         $lead = Lead::withTrashed()->findOrFail($id);
         $this->authorize('restore', $lead);
 
-        $lead->restore();
+        $lead = $this->managementService->restore($id);
 
         $this->logger->leadRestored(
             auth()->user(),
@@ -177,19 +174,6 @@ class LeadController extends Controller
             $lead
         );
 
-        return response()->json($lead->fresh()->load($this->relations()));
-    }
-
-    /**
-     * Get the relationships to load with the Lead model.
-     *
-     * @return array
-     */
-    private function relations(): array
-    {
-        return [
-            'owner',
-            'assignedTo',
-        ];
+        return response()->json($lead);
     }
 }

@@ -8,7 +8,7 @@ use App\Models\InvoiceItem;
 class InvoiceItemCreatorService
 {
     /**
-     * Create a new invoice from request data.
+     * Create a new invoice item from request data.
      *
      * @param StoreInvoiceItemRequest $request
      *

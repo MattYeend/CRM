@@ -51,7 +51,7 @@ class InvoiceItemManagementService
     }
 
     /**
-     * Delete a invoice (soft delete).
+     * Delete a invoice item (soft delete).
      *
      * @param InvoiceItem $invoiceItem
      *
