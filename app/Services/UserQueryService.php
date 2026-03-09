@@ -3,12 +3,21 @@
 namespace App\Services;
 
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class UserQueryService
 {
+    private UserSortingService $sorting;
+    private UserTrashFilterService $trashFilter;
+    public function __construct(
+        UserSortingService $sorting,
+        UserTrashFilterService $trashFilter,
+    ) {
+        $this->sorting = $sorting;
+        $this->trashFilter = $trashFilter;
+    }
+
     /**
      * Return paginated users with roles, applying filters/sorting.
      *
@@ -25,8 +34,8 @@ class UserQueryService
 
         $query = User::with('roles');
 
-        $this->applyTrashFilters($query, $request);
-        $this->applySorting($query, $request);
+        $this->trashFilter->applyTrashFilters($query, $request);
+        $this->sorting->applySorting($query, $request);
 
         return $query->paginate($perPage)->appends($request->query());
     }
@@ -41,59 +50,5 @@ class UserQueryService
     public function show(User $user): User
     {
         return $user->load('roles');
-    }
-
-    /**
-     * Apply trash filters to the query.
-     *
-     * @param Builder $query
-     *
-     * @param Request $request
-     *
-     * @return void
-     */
-    private function applyTrashFilters($query, Request $request): void
-    {
-        if ($request->boolean('only_trashed')) {
-            $query->onlyTrashed();
-
-            return;
-        }
-
-        if ($request->boolean('with_trashed')) {
-            $query->withTrashed();
-        }
-    }
-
-    /**
-     * Apply sorting to the query.
-     *
-     * @param Builder $query
-     *
-     * @param Request $request
-     *
-     * @return void
-     */
-    private function applySorting($query, Request $request): void
-    {
-        $allowedSorts = [
-            'id',
-            'name',
-            'email',
-            'created_at',
-            'updated_at',
-        ];
-
-        $sortBy = $request->query('sort_by', 'id');
-
-        if (! in_array($sortBy, $allowedSorts, true)) {
-            $sortBy = 'id';
-        }
-
-        $sortDir = $request->query('sort_dir', 'desc') === 'asc'
-            ? 'asc'
-            : 'desc';
-
-        $query->orderBy($sortBy, $sortDir);
     }
 }

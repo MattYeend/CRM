@@ -20,6 +20,7 @@ class CompanyQueryService
         $this->sorting = $sorting;
         $this->trashFilter = $trashFilter;
     }
+
     /**
      * Return paginated companies, applying filters/sorting.
      *

@@ -3,12 +3,21 @@
 namespace App\Services;
 
 use App\Models\Activity;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class ActivityQueryService
 {
+    private ActivitySortingService $sorting;
+    private ActivityTrashFilterService $trashFilter;
+    public function __construct(
+        ActivitySortingService $sorting,
+        ActivityTrashFilterService $trashFilter,
+    ) {
+        $this->sorting = $sorting;
+        $this->trashFilter = $trashFilter;
+    }
+
     /**
      * Return paginated activities, applying filters/sorting.
      *
@@ -25,8 +34,8 @@ class ActivityQueryService
 
         $query = Activity::query();
 
-        $this->applyTrashFilters($query, $request);
-        $this->applySorting($query, $request);
+        $this->sorting->applySorting($query, $request);
+        $this->trashFilter->applyTrashFilters($query, $request);
 
         return $query->paginate($perPage)->appends($request->query());
     }
@@ -41,59 +50,5 @@ class ActivityQueryService
     public function show(Activity $activity): Activity
     {
         return $activity->load(['user', 'subject']);
-    }
-
-    /**
-     * Apply trash filters to the query.
-     *
-     * @param Builder $query
-     *
-     * @param Request $request
-     *
-     * @return void
-     */
-    private function applyTrashFilters($query, Request $request): void
-    {
-        if ($request->boolean('only_trashed')) {
-            $query->onlyTrashed();
-
-            return;
-        }
-
-        if ($request->boolean('with_trashed')) {
-            $query->withTrashed();
-        }
-    }
-
-    /**
-     * Apply sorting to the query.
-     *
-     * @param Builder $query
-     *
-     * @param Request $request
-     *
-     * @return void
-     */
-    private function applySorting($query, Request $request): void
-    {
-        $allowedSorts = [
-            'id',
-            'type',
-            'subject_type',
-            'created_at',
-            'updated_at',
-        ];
-
-        $sortBy = $request->query('sort_by', 'id');
-
-        if (! in_array($sortBy, $allowedSorts, true)) {
-            $sortBy = 'id';
-        }
-
-        $sortDir = $request->query('sort_dir', 'desc') === 'asc'
-            ? 'asc'
-            : 'desc';
-
-        $query->orderBy($sortBy, $sortDir);
     }
 }
