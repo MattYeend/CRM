@@ -16,6 +16,7 @@ class NoteCreatorService
         'deal' => Deal::class,
         'company' => Company::class,
     ];
+
     /**
      * Create a new note from request data.
      *
