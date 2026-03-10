@@ -6,30 +6,51 @@ use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
 use App\Services\TaskLogService;
+use App\Services\TaskManagementService;
+use App\Services\TaskQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
     /**
-     * Declare a protected property to hold the TaskLogService instance
+     * Declare a protected property to hold the TaskLogService,
+     * TaskManagementService and TaskQueryService instance
      *
      * @var TaskLogService
+     * @var TaskManagementService
+     * @var TaskQueryService
      */
     protected TaskLogService $logger;
+    protected TaskManagementService $management;
+    protected TaskQueryService $query;
 
     /**
      * Constructor for the controller
      *
      * @param TaskLogService $logger
      *
+     * @param TaskManagementService $management
+     *
+     * @param TaskQueryService $query
+     *
      * An instance of the TaskLogService used for logging
      * task-related actions
+     * An instance of the TaskManagementService for management
+     * of tasks
+     * An instance of the TaskQueryService for the query of
+     * task-related actions
      */
-    public function __construct(TaskLogService $logger)
-    {
+    public function __construct(
+        TaskLogService $logger,
+        TaskManagementService $management,
+        TaskQueryService $query,
+    ) {
         $this->logger = $logger;
+        $this->management = $management;
+        $this->query = $query;
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -41,14 +62,9 @@ class TaskController extends Controller
     {
         $this->authorize('viewAny', Task::class);
 
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
+        $task = $this->query->list($request);
 
-        return response()->json(
-            Task::with('assignee', 'creator', 'taskable')->paginate($perPage)
-        );
+        return response()->json($task);
     }
 
     /**
@@ -62,6 +78,8 @@ class TaskController extends Controller
     {
         $this->authorize('view', $task);
 
+        $task = $this->query->show($task);
+
         return response()->json($task->load('assignee', 'creator', 'taskable'));
     }
 
@@ -74,11 +92,9 @@ class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request): JsonResponse
     {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['created_by'] = $user->id;
+        $task = $this->management->store($request);
 
-        $task = Task::create($data);
+        $user = $request->user();
 
         $this->logger->taskCreated(
             $user,
@@ -105,11 +121,9 @@ class TaskController extends Controller
         UpdateTaskRequest $request,
         Task $task
     ): JsonResponse {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['updated_by'] = $user->id;
+        $task = $this->management->update($request, $task);
 
-        $task->update($data);
+        $user = $request->user();
 
         $this->logger->taskUpdated(
             $user,
@@ -143,11 +157,7 @@ class TaskController extends Controller
             $task,
         );
 
-        $task->update([
-            'deleted_by' => $user->id,
-        ]);
-
-        $task->delete();
+        $task = $this->management->destroy($task);
 
         return response()->json(null, 204);
     }

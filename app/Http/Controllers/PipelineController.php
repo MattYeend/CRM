@@ -19,7 +19,7 @@ class PipelineController extends Controller
      *
      * @var PipelineLogService
      * @var PipelineManagementService
-     * @var PipelineQueryServic
+     * @var PipelineQueryService
      */
     protected PipelineLogService $logger;
     protected PipelineManagementService $management;
