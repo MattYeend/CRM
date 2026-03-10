@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Attachment;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreAttachmentRequest extends FormRequest
 {
@@ -22,11 +23,37 @@ class StoreAttachmentRequest extends FormRequest
      */
     public function rules(): array
     {
+        return array_merge(
+            $this->baseRules(),
+            $this->taskableRules(),
+        );
+    }
+
+    /**
+     * Base rules
+     *
+     * @return array
+     */
+    private function baseRules(): array
+    {
         return [
             'file' => 'required|file|max:10000',
-            'attachable_type' => 'required|string',
-            'attachable_id' => 'required|integer',
-            'uploaded_by' => 'nullable|integer|exists:users,id',
+        ];
+    }
+
+    /**
+     * Taskable rules
+     *
+     * @return array
+     */
+    private function taskableRules(): array
+    {
+        return [
+            'attachable_type' => [
+                'required',
+                Rule::in(['deal', 'contact', 'company', 'task', 'user']),
+            ],
+            'attachable_id' => ['required', 'integer'],
         ];
     }
 }

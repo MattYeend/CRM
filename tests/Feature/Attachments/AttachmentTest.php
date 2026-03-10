@@ -47,8 +47,7 @@ test('index returns paginated attachments and respects per_page query', function
     $uploader = User::factory()->create();
     Attachment::factory()->count(12)->create([
         'uploaded_by' => $uploader->id,
-        // satisfy DB NOT NULL constraint on attachable columns
-        'attachable_type' => User::class,
+        'attachable_type' => 'user',
         'attachable_id' => $uploader->id,
     ]);
 
@@ -66,7 +65,7 @@ test('show returns the attachment with uploader relationship loaded', function (
     // create a valid attachment record — include attachable_type/id
     $attachment = Attachment::factory()->create([
         'uploaded_by' => $uploader->id,
-        'attachable_type' => User::class,
+        'attachable_type' => 'user',
         'attachable_id' => $uploader->id,
     ]);
 
@@ -96,7 +95,7 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
     $attacherMock->shouldReceive('attach')
         ->once()
         ->withArgs(function ($type, $id, $attachment) {
-            return $type === Task::class
+            return $type === 'task'
                 && $id === 1
                 && $attachment instanceof Attachment;
         });
@@ -112,7 +111,7 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
         'size' => 120_000,
         'mime' => 'application/pdf',
         'uploaded_by' => $this->auth->id,
-        'attachable_type' => Task::class,
+        'attachable_type' => 'task',
         'attachable_id' => $this->auth->id,
     ]);
 
@@ -131,7 +130,7 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
 
     $payload = [
         'file' => $file,
-        'attachable_type' => Task::class,
+        'attachable_type' => 'task',
         'attachable_id' => 1, 
         'uploaded_by' => $this->auth->id,
     ];
@@ -166,7 +165,7 @@ test('destroy deletes file from disk (if present) and deletes the model', functi
     $attachment = Attachment::factory()->create([
         'disk' => 'public',
         'path' => $path,
-        'attachable_type' => User::class,
+        'attachable_type' => 'user',
         'attachable_id' => $this->auth->id,
         'uploaded_by' => $this->auth->id,
     ]);

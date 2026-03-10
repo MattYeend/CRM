@@ -23,11 +23,15 @@ class UpdateAttachmentRequest extends FormRequest
      */
     public function rules(): array
     {
+        return array_merge(
+            $this->baseRules(),
+        );
+    }
+
+    private function baseRules(): array
+    {
         return [
             'file' => 'nullable|file|max:10000',
-            'attachable_type' => 'nullable|string|required_with:attachable_id',
-            'attachable_id' => 'nullable|integer|required_with:attachable_type',
-            'uploaded_by' => 'nullable|integer|exists:users,id',
         ];
     }
 }
