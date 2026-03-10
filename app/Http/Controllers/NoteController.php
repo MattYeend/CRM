@@ -6,29 +6,49 @@ use App\Http\Requests\StoreNoteRequest;
 use App\Http\Requests\UpdateNoteRequest;
 use App\Models\Note;
 use App\Services\NoteLogService;
+use App\Services\NoteManagementService;
+use App\Services\NoteQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class NoteController extends Controller
 {
     /**
-     * Declare a protected property to hold the NoteLogService instance
+     * Declare a protected property to hold the NoteLogService,
+     * NoteManagementService and NoteQueryService instance
      *
      * @var NoteLogService
+     * @var NoteManagementService
+     * @var NoteQueryServic
      */
     protected NoteLogService $logger;
+    protected NoteManagementService $managementService;
+    protected NoteQueryService $queryService;
 
     /**
      * Constructor for the controller
      *
      * @param NoteLogService $logger
      *
+     * @param NoteManagementService $management
+     *
+     * @param NoteQueryService $query
+     *
      * An instance of the NoteLogService used for logging
      * note-related actions
+     * An instance of the NoteManagementService for management
+     * of note
+     * An instance of the NoteQueryService for the query of
+     * note-related actions
      */
-    public function __construct(NoteLogService $logger)
-    {
+    public function __construct(
+        NoteLogService $logger,
+        NoteManagementService $managementService,
+        NoteQueryService $queryService,
+    ) {
         $this->logger = $logger;
+        $this->managementService = $managementService;
+        $this->queryService = $queryService;
     }
 
     /**
@@ -42,14 +62,9 @@ class NoteController extends Controller
     {
         $this->authorize('viewAny', Note::class);
 
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
+        $note = $this->queryService->list($request);
 
-        return response()->json(
-            Note::with('user', 'notable')->paginate($perPage)
-        );
+        return response()->json($note);
     }
 
     /**
@@ -63,7 +78,9 @@ class NoteController extends Controller
     {
         $this->authorize('view', $note);
 
-        return response()->json($note->load('user', 'notable'));
+        $note = $this->queryService->show($note);
+
+        return response()->json($note);
     }
 
     /**
@@ -75,11 +92,9 @@ class NoteController extends Controller
      */
     public function store(StoreNoteRequest $request): JsonResponse
     {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['created_by'] = $user->id;
+        $note = $this->managementService->store($request);
 
-        $note = Note::create($data);
+        $user = $request->user();
 
         $this->logger->noteCreated(
             $user,
@@ -87,12 +102,7 @@ class NoteController extends Controller
             $note,
         );
 
-        $this->attachNoteToModel($note, $data);
-
-        return response()->json(
-            $note->load('user', 'notable'),
-            201
-        );
+        return response()->json($note, 201);
     }
 
     /**
@@ -108,11 +118,9 @@ class NoteController extends Controller
         UpdateNoteRequest $request,
         Note $note
     ): JsonResponse {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['updated_by'] = $user->id;
+        $note = $this->managementService->update($request, $note);
 
-        $note->update($data);
+        $user = $request->user();
 
         $this->logger->noteUpdated(
             $user,
@@ -142,37 +150,8 @@ class NoteController extends Controller
             $note,
         );
 
-        $note->update([
-            'deleted_by' => $user->id,
-        ]);
-
-        $note->delete();
+        $note = $this->managementService->destroy($note);
 
         return response()->json(null, 204);
-    }
-
-    /**
-     * Attach the note to the appropriate polymorphic model.
-     *
-     * @param Note $note
-     *
-     * @param array $data
-     *
-     * @return void
-     */
-    protected function attachNoteToModel(Note $note, array $data): void
-    {
-        if (! isset($data['notable_type'], $data['notable_id'])) {
-            return;
-        }
-
-        try {
-            $model = app($data['notable_type'])->find($data['notable_id']);
-            if ($model) {
-                $model->notes()->save($note);
-            }
-        } catch (\Throwable $e) {
-            report($e);
-        }
     }
 }

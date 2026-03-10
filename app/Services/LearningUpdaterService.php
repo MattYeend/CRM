@@ -8,7 +8,7 @@ use App\Models\Learning;
 class LearningUpdaterService
 {
     /**
-     * Update the lead using request data.
+     * Update the learning using request data.
      *
      * @param UpdateLearningRequest $request
      *
