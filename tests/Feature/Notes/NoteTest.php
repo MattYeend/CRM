@@ -43,7 +43,7 @@ test('index returns paginated notes with relations', function () {
     $notable = Deal::factory()->create();
     Note::factory()->count(12)->create([
         'user_id' => $this->auth->id,
-        'notable_type' => Deal::class,
+        'notable_type' => 'deal',
         'notable_id' => $notable->id,
     ]);
 
@@ -58,7 +58,7 @@ test('show returns a note with user and notable loaded', function () {
     $notable = Deal::factory()->create();
     $note = Note::factory()->create([
         'user_id' => $this->auth->id,
-        'notable_type' => Deal::class,
+        'notable_type' => 'deal',
         'notable_id' => $notable->id,
     ]);
 
@@ -72,7 +72,7 @@ test('show returns a note with user and notable loaded', function () {
         'body',
         'meta',
         'user' => [],
-        'notable' => [], // fixed spelling
+        'notable' => [],
     ]);
 });
 
@@ -81,7 +81,7 @@ test('store creates a new note and returns 201', function () {
 
     $payload = [
         'user_id' => $this->auth->id,
-        'notable_type' => Deal::class,
+        'notable_type' => 'deal',
         'notable_id' => $notable->id,
         'body' => 'This is a test note',
         'meta' => ['priority' => 'high'],
@@ -98,7 +98,7 @@ test('update modifies an existing note', function () {
     $notable = Deal::factory()->create();
     $note = Note::factory()->create([
         'user_id' => $this->auth->id,
-        'notable_type' => Deal::class,
+        'notable_type' => 'deal',
         'notable_id' => $notable->id,
         'body' => 'Old note',
     ]);
@@ -119,7 +119,7 @@ test('destroy deletes a note', function () {
     $notable = Deal::factory()->create();
     $note = Note::factory()->create([
         'user_id' => $this->auth->id,
-        'notable_type' => Deal::class,
+        'notable_type' => 'deal',
         'notable_id' => $notable->id,
     ]);
 

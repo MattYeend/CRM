@@ -74,6 +74,7 @@ class StoreTaskRequest extends FormRequest
                 Rule::in(['pending', 'completed', 'canceled']),
             ],
             'due_at' => 'nullable|date',
+            'meta' => 'nullable|array',
         ];
     }
 }

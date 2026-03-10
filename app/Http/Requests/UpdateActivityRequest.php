@@ -23,11 +23,33 @@ class UpdateActivityRequest extends FormRequest
      */
     public function rules(): array
     {
+        return array_merge(
+            $this->baseRules(),
+            $this->metaRules()
+        );
+    }
+
+    /**
+     * Base rules
+     *
+     * @return array
+     */
+    private function baseRules(): array
+    {
         return [
-            'user_id' => 'nullable|integer|exists:users,id',
-            'type' => 'required|string',
-            'subject_type' => 'nullable|string',
-            'subject_id' => 'nullable|integer',
+            'type' => 'sometimes|string',
+            'user_id' => ['nullable','integer','exists:users,id'],
+        ];
+    }
+
+    /**
+     * Meta rules
+     *
+     * @return array
+     */
+    private function metaRules(): array
+    {
+        return [
             'description' => 'nullable|string',
             'meta' => 'nullable|array',
         ];

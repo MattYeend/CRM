@@ -23,8 +23,32 @@ class UpdateNoteRequest extends FormRequest
      */
     public function rules(): array
     {
+        return array_merge(
+            $this->baseRules(),
+            $this->metaRules(),
+        );
+    }
+
+    /**
+     * Base rules
+     *
+     * @return array
+     */
+    public function baseRules(): array
+    {
         return [
             'body' => 'sometimes|required|string',
+        ];
+    }
+
+    /**
+     * Meta rules
+     *
+     * @return array
+     */
+    public function metaRules(): array
+    {
+        return [
             'meta' => 'nullable|array',
         ];
     }

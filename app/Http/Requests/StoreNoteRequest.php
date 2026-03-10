@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Note;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreNoteRequest extends FormRequest
 {
@@ -22,11 +23,50 @@ class StoreNoteRequest extends FormRequest
      */
     public function rules(): array
     {
+        return array_merge(
+            $this->baseRules(),
+            $this->noteRules(),
+            $this->metaRules(),
+        );
+    }
+
+    /**
+     * Base rules
+     *
+     * @return array
+     */
+    private function baseRules(): array
+    {
         return [
             'user_id' => 'nullable|integer|exists:users,id',
-            'notable_type' => 'nullable|string',
-            'notable_id' => 'nullable|integer',
             'body' => 'required|string',
+        ];
+    }
+
+    /**
+     * Attachmetn rules
+     *
+     * @return array
+     */
+    private function noteRules(): array
+    {
+        return [
+            'notable_type' => [
+                'required',
+                Rule::in(['deal', 'contact', 'company', 'task', 'user']),
+            ],
+            'notable_id' => ['required', 'integer'],
+        ];
+    }
+
+    /**
+     * Meta rules
+     *
+     * @return array
+     */
+    private function metaRules(): array
+    {
+        return [
             'meta' => 'nullable|array',
         ];
     }

@@ -39,7 +39,7 @@ test('index returns paginated activities and respects per_page query', function 
 
     Activity::factory()->count(15)->create([
         'user_id' => $this->auth->id,
-        'subject_type' => User::class,
+        'subject_type' => 'user',
         'subject_id' => $subject->id,
     ]);
 
@@ -56,7 +56,7 @@ test('show returns the activity with user and subject relationships loaded', fun
 
     $activity = Activity::factory()->create([
         'user_id' => $user->id,
-        'subject_type' => User::class,
+        'subject_type' => 'user',
         'subject_id' => $subject->id,
         'type' => 'sample-type',
         'description' => 'Sample description',
@@ -81,7 +81,7 @@ test('store creates an activity with valid payload and returns 201', function ()
     $payload = [
         'user_id' => $user->id,
         'type' => 'created-thing',
-        'subject_type' => User::class,
+        'subject_type' => 'user',
         'subject_id' => $user->id,
         'description' => 'Created an example thing',
         'meta' => ['ip' => '127.0.0.1'],
@@ -113,7 +113,7 @@ test('update modifies allowed fields and returns the updated activity', function
 
     $activity = Activity::factory()->create([
         'user_id' => $this->auth->id,
-        'subject_type' => User::class,
+        'subject_type' => 'user',
         'subject_id' => $subject->id,
         'type' => 'old-type',
         'description' => 'old description',
@@ -143,7 +143,7 @@ test('destroy deletes the activity and returns 204', function () {
 
     $activity = Activity::factory()->create([
         'user_id' => $this->auth->id,
-        'subject_type' => User::class,
+        'subject_type' => 'user',
         'subject_id' => $subject->id,
     ]);
 

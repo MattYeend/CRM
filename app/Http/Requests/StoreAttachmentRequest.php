@@ -25,7 +25,7 @@ class StoreAttachmentRequest extends FormRequest
     {
         return array_merge(
             $this->baseRules(),
-            $this->taskableRules(),
+            $this->attchmentRules(),
         );
     }
 
@@ -42,11 +42,11 @@ class StoreAttachmentRequest extends FormRequest
     }
 
     /**
-     * Taskable rules
+     * Attachmetn rules
      *
      * @return array
      */
-    private function taskableRules(): array
+    private function attchmentRules(): array
     {
         return [
             'attachable_type' => [

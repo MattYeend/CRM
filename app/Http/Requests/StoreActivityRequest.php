@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Activity;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreActivityRequest extends FormRequest
 {
@@ -22,11 +23,50 @@ class StoreActivityRequest extends FormRequest
      */
     public function rules(): array
     {
+        return array_merge(
+            $this->baseRules(),
+            $this->subjectRules(),
+            $this->metaRules(),
+        );
+    }
+
+    /**
+     * Base rules
+     *
+     * @return array
+     */
+    private function baseRules(): array
+    {
         return [
-            'user_id' => 'nullable|integer|exists:users,id',
             'type' => 'required|string',
-            'subject_type' => 'nullable|string',
-            'subject_id' => 'nullable|integer',
+            'user_id' => ['nullable','integer','exists:users,id'],
+        ];
+    }
+
+    /**
+     * Subject rules
+     *
+     * @return array
+     */
+    private function subjectRules(): array
+    {
+        return [
+            'subject_type' => [
+                'nullable',
+                Rule::in(['deal','contact','company', 'task', 'user']),
+            ],
+            'subject_id' => ['nullable','integer','required_with:subject_type'],
+        ];
+    }
+
+    /**
+     * Meta rules
+     *
+     * @return array
+     */
+    private function metaRules(): array
+    {
+        return [
             'description' => 'nullable|string',
             'meta' => 'nullable|array',
         ];
