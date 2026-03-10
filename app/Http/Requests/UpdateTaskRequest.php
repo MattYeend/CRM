@@ -24,6 +24,19 @@ class UpdateTaskRequest extends FormRequest
      */
     public function rules(): array
     {
+        return array_merge(
+            $this->baseRules(),
+            $this->metaRules(),
+        );
+    }
+
+    /**
+     * Base rules
+     *
+     * @return array
+     */
+    private function baseRules(): array
+    {
         return [
             'title' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
@@ -32,6 +45,17 @@ class UpdateTaskRequest extends FormRequest
                 'integer',
                 'exists:users,id',
             ],
+        ];
+    }
+
+    /**
+     * Meta rules
+     *
+     * @return array
+     */
+    private function metaRules(): array
+    {
+        return [
             'priority' => [
                 'nullable',
                 Rule::in(['low', 'medium', 'high']),
