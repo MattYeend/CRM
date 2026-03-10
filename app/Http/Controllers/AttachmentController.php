@@ -182,13 +182,13 @@ class AttachmentController extends Controller
 
         $user = auth()->user();
 
-        $this->management->destroy($attachment, $user->is);
-
         $this->logger->attachmentDeleted(
             $user,
             $user->id,
             $attachment,
         );
+
+        $this->management->destroy($attachment, $user->id);
 
         return response()->json(null, 204);
     }

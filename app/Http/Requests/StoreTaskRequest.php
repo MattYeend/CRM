@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Task;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreTaskRequest extends FormRequest
 {
@@ -22,16 +23,56 @@ class StoreTaskRequest extends FormRequest
      */
     public function rules(): array
     {
+        return array_merge(
+            $this->baseRules(),
+            $this->taskableRules(),
+            $this->metaRules(),
+        );
+    }
+
+    /**
+     * Base rules
+     *
+     * @return array
+     */
+    private function baseRules(): array
+    {
         return [
-            'title' => 'required|string',
+            'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'assigned_to' => 'nullable|integer|exists:users,id',
-            'created_by' => 'nullable|integer|exists:users,id',
-            'taskable_type' => 'nullable
-                |in:App\Models\Contact,App\Models\Deal,App\Models\Company',
-            'taskable_id' => 'nullable|integer',
-            'priority' => 'nullable|in:low,medium,high',
-            'status' => 'nullable|in:pending,completed,canceled',
+            'assigned_to' => ['nullable', 'integer', 'exists:users,id'],
+        ];
+    }
+
+    /**
+     * Taskable rules
+     *
+     * @return array
+     */
+    private function taskableRules(): array
+    {
+        return [
+            'taskable_type' => [
+                'required',
+                Rule::in(['deal', 'contact', 'company']),
+            ],
+            'taskable_id' => ['required', 'integer'],
+        ];
+    }
+
+    /**
+     * Meta rules
+     *
+     * @return array
+     */
+    private function metaRules(): array
+    {
+        return [
+            'priority' => ['nullable', Rule::in(['low', 'medium', 'high'])],
+            'status' => [
+                'nullable',
+                Rule::in(['pending', 'completed', 'canceled']),
+            ],
             'due_at' => 'nullable|date',
         ];
     }

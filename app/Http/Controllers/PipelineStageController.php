@@ -136,7 +136,7 @@ class PipelineStageController extends Controller
      *
      * @param PipelineStage $pipelineStage
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy(PipelineStage $pipelineStage): JsonResponse
     {
@@ -150,7 +150,7 @@ class PipelineStageController extends Controller
             $pipelineStage,
         );
 
-        $pipelineStage = $this->management->destroy($pipelineStage);
+        $this->management->destroy($pipelineStage);
 
         return response()->json(null, 204);
     }

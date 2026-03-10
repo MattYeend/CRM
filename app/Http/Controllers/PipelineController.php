@@ -150,7 +150,7 @@ class PipelineController extends Controller
             $pipeline,
         );
 
-        $pipeline = $this->management->destroy($pipeline);
+        $this->management->destroy($pipeline);
 
         return response()->json(null, 204);
     }

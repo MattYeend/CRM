@@ -46,7 +46,7 @@ test('index returns paginated tasks with relations', function () {
     Task::factory()->count(12)->create([
         'assigned_to' => $assignee->id,
         'created_by' => $creator->id,
-        'taskable_type' => Deal::class,
+        'taskable_type' => 'deal',
         'taskable_id' => $taskable->id,
     ]);
 
@@ -71,7 +71,7 @@ test('show returns a task with assignee, creator and taskable loaded', function 
     $task = Task::factory()->create([
         'assigned_to' => $assignee->id,
         'created_by' => $creator->id,
-        'taskable_type' => Deal::class,
+        'taskable_type' => 'deal',
         'taskable_id' => $taskable->id,
     ]);
 
@@ -104,7 +104,7 @@ test('store creates a task, handles polymorphic assignment and returns 201', fun
         'description' => 'Call the client to confirm details',
         'assigned_to' => $assignee->id,
         'created_by' => $creator->id,
-        'taskable_type' => Deal::class,
+        'taskable_type' => 'deal',
         'taskable_id' => $taskable->id,
         'priority' => 'high',
         'status' => 'pending',
@@ -130,7 +130,7 @@ test('update modifies an existing task and returns updated resource', function (
         'title' => 'Old title',
         'assigned_to' => $assignee->id,
         'created_by' => $creator->id,
-        'taskable_type' => Deal::class,
+        'taskable_type' => 'deal',
         'taskable_id' => $taskable->id,
         'priority' => 'low',
         'status' => 'pending',
@@ -153,7 +153,7 @@ test('destroy deletes the task', function () {
     $taskable = Deal::factory()->create();
 
     $task = Task::factory()->create([
-        'taskable_type' => Deal::class,
+        'taskable_type' => 'deal',
         'taskable_id' => $taskable->id,
     ]);
 

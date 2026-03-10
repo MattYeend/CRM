@@ -157,7 +157,7 @@ class TaskController extends Controller
             $task,
         );
 
-        $task = $this->management->destroy($task);
+        $this->management->destroy($task);
 
         return response()->json(null, 204);
     }

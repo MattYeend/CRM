@@ -148,7 +148,7 @@ class ProductController extends Controller
             $product,
         );
 
-        $product = $this->management->destroy($product);
+        $this->management->destroy($product);
 
         return response()->json(null, 204);
     }

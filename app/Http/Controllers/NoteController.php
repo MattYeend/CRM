@@ -150,7 +150,7 @@ class NoteController extends Controller
             $note,
         );
 
-        $note = $this->management->destroy($note);
+        $this->management->destroy($note);
 
         return response()->json(null, 204);
     }

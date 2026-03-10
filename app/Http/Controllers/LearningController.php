@@ -150,7 +150,7 @@ class LearningController extends Controller
             $learning,
         );
 
-        $learning = $this->management->destroy($learning);
+        $this->management->destroy($learning);
 
         return response()->json(null, 204);
     }

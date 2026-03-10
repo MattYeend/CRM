@@ -150,7 +150,7 @@ class InvoiceItemController extends Controller
             $invoiceItem,
         );
 
-        $invoiceItem = $this->management->destroy($invoiceItem);
+        $this->management->destroy($invoiceItem);
 
         return response()->json(null, 204);
     }

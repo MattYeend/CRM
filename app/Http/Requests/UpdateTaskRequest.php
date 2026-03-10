@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateTaskRequest extends FormRequest
 {
@@ -24,15 +25,21 @@ class UpdateTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string',
+            'title' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
-            'assigned_to' => 'nullable|integer|exists:users,id',
-            'created_by' => 'nullable|integer|exists:users,id',
-            'taskable_type' => 'nullable
-                |in:App\Models\Contact,App\Models\Deal,App\Models\Company',
-            'taskable_id' => 'nullable|integer',
-            'priority' => 'nullable|in:low,medium,high',
-            'status' => 'nullable|in:pending,completed,canceled',
+            'assigned_to' => [
+                'nullable',
+                'integer',
+                'exists:users,id',
+            ],
+            'priority' => [
+                'nullable',
+                Rule::in(['low', 'medium', 'high']),
+            ],
+            'status' => [
+                'nullable',
+                Rule::in(['pending', 'completed', 'canceled']),
+            ],
             'due_at' => 'nullable|date',
         ];
     }

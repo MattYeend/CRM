@@ -149,7 +149,7 @@ class LeadController extends Controller
             $lead,
         );
 
-        $lead = $this->management->destroy($lead);
+        $this->management->destroy($lead);
 
         return response()->json(null, 204);
     }

@@ -150,7 +150,7 @@ class PermissionController extends Controller
             $permission,
         );
 
-        $permission = $this->management->destroy($permission);
+        $this->management->destroy($permission);
 
         return response()->json(null, 204);
     }
