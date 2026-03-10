@@ -22,8 +22,8 @@ class ProductController extends Controller
      * @var ProductQueryServic
      */
     protected ProductLogService $logger;
-    protected ProductManagementService $managementService;
-    protected ProductQueryService $queryService;
+    protected ProductManagementService $management;
+    protected ProductQueryService $query;
 
     /**
      * Constructor for the controller
@@ -43,12 +43,12 @@ class ProductController extends Controller
      */
     public function __construct(
         ProductLogService $logger,
-        ProductManagementService $managementService,
-        ProductQueryService $queryService,
+        ProductManagementService $management,
+        ProductQueryService $query,
     ) {
         $this->logger = $logger;
-        $this->managementService = $managementService;
-        $this->queryService = $queryService;
+        $this->management = $management;
+        $this->query = $query;
     }
 
     /**
@@ -60,7 +60,7 @@ class ProductController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $product = $this->queryService->list($request);
+        $product = $this->query->list($request);
 
         return response()->json($product);
     }
@@ -76,7 +76,7 @@ class ProductController extends Controller
     {
         $this->authorize('view', $product);
 
-        $product = $this->queryService->show($product);
+        $product = $this->query->show($product);
 
         return response()->json($product);
     }
@@ -90,7 +90,7 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request): JsonResponse
     {
-        $product = $this->managementService->store($request);
+        $product = $this->management->store($request);
 
         $user = $request->user();
 
@@ -116,7 +116,7 @@ class ProductController extends Controller
         UpdateProductRequest $request,
         Product $product
     ): JsonResponse {
-        $product = $this->managementService->update($request, $product);
+        $product = $this->management->update($request, $product);
 
         $user = $request->user();
 
@@ -148,7 +148,7 @@ class ProductController extends Controller
             $product,
         );
 
-        $product = $this->managementService->destroy($product);
+        $product = $this->management->destroy($product);
 
         return response()->json(null, 204);
     }

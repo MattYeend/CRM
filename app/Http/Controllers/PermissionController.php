@@ -22,8 +22,8 @@ class PermissionController extends Controller
      * @var PermissionQueryServic
      */
     protected PermissionLogService $logger;
-    protected PermissionManagementService $managementService;
-    protected PermissionQueryService $queryService;
+    protected PermissionManagementService $management;
+    protected PermissionQueryService $query;
 
     /**
      * Constructor for the controller
@@ -43,12 +43,12 @@ class PermissionController extends Controller
      */
     public function __construct(
         PermissionLogService $logger,
-        PermissionManagementService $managementService,
-        PermissionQueryService $queryService,
+        PermissionManagementService $management,
+        PermissionQueryService $query,
     ) {
         $this->logger = $logger;
-        $this->managementService = $managementService;
-        $this->queryService = $queryService;
+        $this->management = $management;
+        $this->query = $query;
     }
 
     /**
@@ -62,7 +62,7 @@ class PermissionController extends Controller
     {
         $this->authorize('viewAny', Permission::class);
 
-        $permission = $this->queryService->list($request);
+        $permission = $this->query->list($request);
 
         return response()->json($permission);
     }
@@ -78,7 +78,7 @@ class PermissionController extends Controller
     {
         $this->authorize('view', $permission);
 
-        $permission = $this->queryService->show($permission);
+        $permission = $this->query->show($permission);
 
         return response()->json($permission);
     }
@@ -92,7 +92,7 @@ class PermissionController extends Controller
      */
     public function store(StorePermissionRequest $request): JsonResponse
     {
-        $permission = $this->managementService->store($request);
+        $permission = $this->management->store($request);
 
         $user = $request->user();
 
@@ -118,7 +118,7 @@ class PermissionController extends Controller
         UpdatePermissionRequest $request,
         Permission $permission
     ): JsonResponse {
-        $permission = $this->managementService->update($request, $permission);
+        $permission = $this->management->update($request, $permission);
 
         $user = $request->user();
 
@@ -150,7 +150,7 @@ class PermissionController extends Controller
             $permission,
         );
 
-        $permission = $this->managementService->destroy($permission);
+        $permission = $this->management->destroy($permission);
 
         return response()->json(null, 204);
     }

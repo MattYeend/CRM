@@ -22,8 +22,8 @@ class LearningController extends Controller
      * @var LeadQueryService
      */
     protected LearningLogService $logger;
-    protected LearningManagementService $managementService;
-    protected LearningQueryService $queryService;
+    protected LearningManagementService $management;
+    protected LearningQueryService $query;
 
     /**
      * Constructor for the controller
@@ -43,12 +43,12 @@ class LearningController extends Controller
      */
     public function __construct(
         LearningLogService $logger,
-        LearningManagementService $managementService,
-        LearningQueryService $queryService,
+        LearningManagementService $management,
+        LearningQueryService $query,
     ) {
         $this->logger = $logger;
-        $this->managementService = $managementService;
-        $this->queryService = $queryService;
+        $this->management = $management;
+        $this->query = $query;
     }
 
     /**
@@ -62,7 +62,7 @@ class LearningController extends Controller
     {
         $this->authorize('viewAny', Learning::class);
 
-        $learning = $this->queryService->list($request);
+        $learning = $this->query->list($request);
 
         return response()->json($learning);
     }
@@ -78,7 +78,7 @@ class LearningController extends Controller
     {
         $this->authorize('view', $learning);
 
-        $learning = $this->queryService->show($learning);
+        $learning = $this->query->show($learning);
 
         return response()->json($learning);
     }
@@ -92,7 +92,7 @@ class LearningController extends Controller
      */
     public function store(StoreLearningRequest $request): JsonResponse
     {
-        $learning = $this->managementService->store($request);
+        $learning = $this->management->store($request);
 
         $user = $request->user();
 
@@ -118,7 +118,7 @@ class LearningController extends Controller
         UpdateLearningRequest $request,
         Learning $learning
     ): JsonResponse {
-        $learning = $this->managementService->update($request, $learning);
+        $learning = $this->management->update($request, $learning);
 
         $user = $request->user();
 
@@ -150,7 +150,7 @@ class LearningController extends Controller
             $learning,
         );
 
-        $learning = $this->managementService->destroy($learning);
+        $learning = $this->management->destroy($learning);
 
         return response()->json(null, 204);
     }
@@ -176,7 +176,7 @@ class LearningController extends Controller
             $learning,
         );
 
-        $learning = $this->managementService->complete($learning);
+        $learning = $this->management->complete($learning);
 
         return response()->json($learning);
     }
@@ -204,7 +204,7 @@ class LearningController extends Controller
             $learning,
         );
 
-        $learning = $this->managementService->incomplete($learning);
+        $learning = $this->management->incomplete($learning);
 
         return response()->json($learning);
     }

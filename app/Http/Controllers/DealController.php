@@ -22,8 +22,8 @@ class DealController extends Controller
      * @var DealQueryService
      */
     protected DealLogService $logger;
-    protected DealManagementService $managementService;
-    protected DealQueryService $queryService;
+    protected DealManagementService $management;
+    protected DealQueryService $query;
 
     /**
      * Constructor for the controller
@@ -43,12 +43,12 @@ class DealController extends Controller
      */
     public function __construct(
         DealLogService $logger,
-        DealManagementService $managementService,
-        DealQueryService $queryService,
+        DealManagementService $management,
+        DealQueryService $query,
     ) {
         $this->logger = $logger;
-        $this->managementService = $managementService;
-        $this->queryService = $queryService;
+        $this->management = $management;
+        $this->query = $query;
     }
 
     /**
@@ -62,7 +62,7 @@ class DealController extends Controller
     {
         $this->authorize('viewAny', Deal::class);
 
-        $deal = $this->queryService->list($request);
+        $deal = $this->query->list($request);
 
         return response()->json($deal);
     }
@@ -78,7 +78,7 @@ class DealController extends Controller
     {
         $this->authorize('view', $deal);
 
-        $deal = $this->queryService->show($deal);
+        $deal = $this->query->show($deal);
 
         return response()->json($deal);
     }
@@ -92,7 +92,7 @@ class DealController extends Controller
      */
     public function store(StoreDealRequest $request): JsonResponse
     {
-        $deal = $this->managementService->store($request);
+        $deal = $this->management->store($request);
 
         $user = $request->user();
 
@@ -118,7 +118,7 @@ class DealController extends Controller
         UpdateDealRequest $request,
         Deal $deal
     ): JsonResponse {
-        $deal = $this->managementService->update($request, $deal);
+        $deal = $this->management->update($request, $deal);
 
         $user = $request->user();
 
@@ -150,7 +150,7 @@ class DealController extends Controller
             $deal,
         );
 
-        $this->managementService->destroy($deal);
+        $this->management->destroy($deal);
 
         return response()->json(null, 204);
     }
@@ -176,7 +176,7 @@ class DealController extends Controller
             $deal,
         );
 
-        $this->managementService->restore($id);
+        $this->management->restore($id);
 
         return response()->json($deal);
     }

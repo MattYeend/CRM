@@ -22,15 +22,15 @@ class UserController extends Controller
      * @var UserQueryService
      */
     private UserLogService $logger;
-    private UserManagementService $managementService;
-    private UserQueryService $queryService;
+    private UserManagementService $management;
+    private UserQueryService $query;
 
     /**
      * Constructor for the controller
      *
      * @param UserLogService $logger
-     * @param UserManagementService $managementService
-     * @param UserQueryService $queryService
+     * @param UserManagementService $management
+     * @param UserQueryService $query
      *
      * An instance of the UserLogService used for logging
      * user-related actions
@@ -41,12 +41,12 @@ class UserController extends Controller
      */
     public function __construct(
         UserLogService $logger,
-        UserManagementService $managementService,
-        UserQueryService $queryService,
+        UserManagementService $management,
+        UserQueryService $query,
     ) {
         $this->logger = $logger;
-        $this->managementService = $managementService;
-        $this->queryService = $queryService;
+        $this->management = $management;
+        $this->query = $query;
     }
 
     /**
@@ -60,7 +60,7 @@ class UserController extends Controller
     {
         $this->authorize('viewAny', User::class);
 
-        $users = $this->queryService->list($request);
+        $users = $this->query->list($request);
 
         return response()->json($users);
     }
@@ -76,7 +76,7 @@ class UserController extends Controller
     {
         $this->authorize('view', $user);
 
-        $user = $this->queryService->show($user);
+        $user = $this->query->show($user);
 
         return response()->json($user);
     }
@@ -90,7 +90,7 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request): JsonResponse
     {
-        $user = $this->managementService->store($request);
+        $user = $this->management->store($request);
         $auth = auth()->user();
         $this->logger->userCreated(
             $auth,
@@ -112,7 +112,7 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user): JsonResponse
     {
-        $user = $this->managementService->update($request, $user);
+        $user = $this->management->update($request, $user);
 
         $auth = auth()->user();
 
@@ -143,7 +143,7 @@ class UserController extends Controller
             $user,
         );
 
-        $this->managementService->destroy($user);
+        $this->management->destroy($user);
 
         return response()->json(null, 204);
     }
@@ -157,7 +157,7 @@ class UserController extends Controller
      */
     public function restore($id): JsonResponse
     {
-        $user = $this->managementService->restore((int) $id);
+        $user = $this->management->restore((int) $id);
 
         $this->authorize('restore', $user);
         $auth = auth()->user();
@@ -190,7 +190,7 @@ class UserController extends Controller
             $user,
         );
 
-        $this->managementService->forceDelete((int) $id);
+        $this->management->forceDelete((int) $id);
 
         return response()->json(null, 204);
     }
@@ -206,7 +206,7 @@ class UserController extends Controller
      */
     public function attachRoles(Request $request, User $user): JsonResponse
     {
-        $user = $this->managementService->attachRoles($request, $user);
+        $user = $this->management->attachRoles($request, $user);
 
         return response()->json($user);
     }
@@ -222,7 +222,7 @@ class UserController extends Controller
      */
     public function detachRoles(Request $request, User $user): JsonResponse
     {
-        $user = $this->managementService->detachRoles($request, $user);
+        $user = $this->management->detachRoles($request, $user);
 
         return response()->json($user);
     }

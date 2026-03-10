@@ -22,8 +22,8 @@ class ActivityController extends Controller
      * @var ActivityQueryService
      */
     protected ActivityLogService $logger;
-    protected ActivityManagementService $managementService;
-    protected ActivityQueryService $queryService;
+    protected ActivityManagementService $management;
+    protected ActivityQueryService $query;
 
     /**
      * Constructor for the controller
@@ -43,12 +43,12 @@ class ActivityController extends Controller
      */
     public function __construct(
         ActivityLogService $logger,
-        ActivityManagementService $managementService,
-        ActivityQueryService $queryService,
+        ActivityManagementService $management,
+        ActivityQueryService $query,
     ) {
         $this->logger = $logger;
-        $this->managementService = $managementService;
-        $this->queryService = $queryService;
+        $this->management = $management;
+        $this->query = $query;
     }
 
     /**
@@ -62,7 +62,7 @@ class ActivityController extends Controller
     {
         $this->authorize('viewAny', Activity::class);
 
-        $activities = $this->queryService->list($request);
+        $activities = $this->query->list($request);
 
         return response()->json($activities);
     }
@@ -78,7 +78,7 @@ class ActivityController extends Controller
     {
         $this->authorize('view', $activity);
 
-        $activity = $this->queryService->show($activity);
+        $activity = $this->query->show($activity);
 
         return response()->json($activity);
     }
@@ -92,7 +92,7 @@ class ActivityController extends Controller
      */
     public function store(StoreActivityRequest $request): JsonResponse
     {
-        $activity = $this->managementService->store($request);
+        $activity = $this->management->store($request);
         $user = $request->user();
 
         $this->logger->activityCreated(
@@ -117,7 +117,7 @@ class ActivityController extends Controller
         UpdateActivityRequest $request,
         Activity $activity
     ): JsonResponse {
-        $activity = $this->managementService->update($request, $activity);
+        $activity = $this->management->update($request, $activity);
 
         $user = $request->user();
 
@@ -149,7 +149,7 @@ class ActivityController extends Controller
             $activity,
         );
 
-        $this->managementService->destroy($activity);
+        $this->management->destroy($activity);
 
         return response()->json(null, 204);
     }

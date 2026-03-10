@@ -22,8 +22,8 @@ class ContactController extends Controller
      * @var ContactQueryService
      */
     protected ContactLogService $logger;
-    protected ContactManagementService $managementService;
-    protected ContactQueryService $queryService;
+    protected ContactManagementService $management;
+    protected ContactQueryService $query;
 
     /**
      * Constructor for the controller
@@ -43,12 +43,12 @@ class ContactController extends Controller
      */
     public function __construct(
         ContactLogService $logger,
-        ContactManagementService $managementService,
-        ContactQueryService $queryService,
+        ContactManagementService $management,
+        ContactQueryService $query,
     ) {
         $this->logger = $logger;
-        $this->managementService = $managementService;
-        $this->queryService = $queryService;
+        $this->management = $management;
+        $this->query = $query;
     }
 
     /**
@@ -62,7 +62,7 @@ class ContactController extends Controller
     {
         $this->authorize('viewAny', Contact::class);
 
-        $contact = $this->queryService->list($request);
+        $contact = $this->query->list($request);
 
         return response()->json($contact);
     }
@@ -78,7 +78,7 @@ class ContactController extends Controller
     {
         $this->authorize('view', $contact);
 
-        $contact = $this->queryService->show($contact);
+        $contact = $this->query->show($contact);
 
         return response()->json($contact);
     }
@@ -92,7 +92,7 @@ class ContactController extends Controller
      */
     public function store(StoreContactRequest $request): JsonResponse
     {
-        $contact = $this->managementService->store($request);
+        $contact = $this->management->store($request);
 
         $user = $request->user();
 
@@ -118,7 +118,7 @@ class ContactController extends Controller
         UpdateContactRequest $request,
         Contact $contact
     ): JsonResponse {
-        $contact = $this->managementService->update($request, $contact);
+        $contact = $this->management->update($request, $contact);
 
         $user = $request->user();
 
@@ -148,7 +148,7 @@ class ContactController extends Controller
             $contact,
         );
 
-        $this->managementService->destroy($contact);
+        $this->management->destroy($contact);
 
         return response()->json(null, 204);
     }

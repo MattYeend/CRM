@@ -22,8 +22,8 @@ class PipelineStageController extends Controller
      * @var PipelineStageQueryService
      */
     protected PipelineStageLogService $logger;
-    protected PipelineStageManagementService $managementService;
-    protected PipelineStageQueryService $queryService;
+    protected PipelineStageManagementService $management;
+    protected PipelineStageQueryService $query;
 
     /**
      * Constructor for the controller
@@ -43,12 +43,12 @@ class PipelineStageController extends Controller
      */
     public function __construct(
         PipelineStageLogService $logger,
-        PipelineStageManagementService $managementService,
-        PipelineStageQueryService $queryService,
+        PipelineStageManagementService $management,
+        PipelineStageQueryService $query,
     ) {
         $this->logger = $logger;
-        $this->managementService = $managementService;
-        $this->queryService = $queryService;
+        $this->management = $management;
+        $this->query = $query;
     }
 
     /**
@@ -62,7 +62,7 @@ class PipelineStageController extends Controller
     {
         $this->authorize('viewAny', PipelineStage::class);
 
-        $pipelineStage = $this->queryService->list($request);
+        $pipelineStage = $this->query->list($request);
 
         return response()->json($pipelineStage);
     }
@@ -78,7 +78,7 @@ class PipelineStageController extends Controller
     {
         $this->authorize('view', $pipelineStage);
 
-        $pipelineStage = $this->queryService->show($pipelineStage);
+        $pipelineStage = $this->query->show($pipelineStage);
 
         return response()->json($pipelineStage);
     }
@@ -92,7 +92,7 @@ class PipelineStageController extends Controller
      */
     public function store(StorePipelineStageRequest $request): JsonResponse
     {
-        $pipelineStage = $this->managementService->store($request);
+        $pipelineStage = $this->management->store($request);
 
         $user = $request->user();
         $this->logger->pipelineStageCreated(
@@ -118,7 +118,7 @@ class PipelineStageController extends Controller
         PipelineStage $pipelineStage
     ): JsonResponse {
         $pipelineStage =
-            $this->managementService->update($request, $pipelineStage);
+            $this->management->update($request, $pipelineStage);
 
         $user = $request->user();
 
@@ -150,7 +150,7 @@ class PipelineStageController extends Controller
             $pipelineStage,
         );
 
-        $pipelineStage = $this->managementService->destroy($pipelineStage);
+        $pipelineStage = $this->management->destroy($pipelineStage);
 
         return response()->json(null, 204);
     }

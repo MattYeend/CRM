@@ -22,8 +22,8 @@ class NoteController extends Controller
      * @var NoteQueryServic
      */
     protected NoteLogService $logger;
-    protected NoteManagementService $managementService;
-    protected NoteQueryService $queryService;
+    protected NoteManagementService $management;
+    protected NoteQueryService $query;
 
     /**
      * Constructor for the controller
@@ -43,12 +43,12 @@ class NoteController extends Controller
      */
     public function __construct(
         NoteLogService $logger,
-        NoteManagementService $managementService,
-        NoteQueryService $queryService,
+        NoteManagementService $management,
+        NoteQueryService $query,
     ) {
         $this->logger = $logger;
-        $this->managementService = $managementService;
-        $this->queryService = $queryService;
+        $this->management = $management;
+        $this->query = $query;
     }
 
     /**
@@ -62,7 +62,7 @@ class NoteController extends Controller
     {
         $this->authorize('viewAny', Note::class);
 
-        $note = $this->queryService->list($request);
+        $note = $this->query->list($request);
 
         return response()->json($note);
     }
@@ -78,7 +78,7 @@ class NoteController extends Controller
     {
         $this->authorize('view', $note);
 
-        $note = $this->queryService->show($note);
+        $note = $this->query->show($note);
 
         return response()->json($note);
     }
@@ -92,7 +92,7 @@ class NoteController extends Controller
      */
     public function store(StoreNoteRequest $request): JsonResponse
     {
-        $note = $this->managementService->store($request);
+        $note = $this->management->store($request);
 
         $user = $request->user();
 
@@ -118,7 +118,7 @@ class NoteController extends Controller
         UpdateNoteRequest $request,
         Note $note
     ): JsonResponse {
-        $note = $this->managementService->update($request, $note);
+        $note = $this->management->update($request, $note);
 
         $user = $request->user();
 
@@ -150,7 +150,7 @@ class NoteController extends Controller
             $note,
         );
 
-        $note = $this->managementService->destroy($note);
+        $note = $this->management->destroy($note);
 
         return response()->json(null, 204);
     }

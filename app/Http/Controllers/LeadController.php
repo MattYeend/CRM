@@ -22,8 +22,8 @@ class LeadController extends Controller
      * @var LeadQueryService
      */
     protected LeadLogService $logger;
-    protected LeadManagementService $managementService;
-    protected LeadQueryService $queryService;
+    protected LeadManagementService $management;
+    protected LeadQueryService $query;
 
     /**
      * Constructor for the controller
@@ -43,12 +43,12 @@ class LeadController extends Controller
      */
     public function __construct(
         LeadLogService $logger,
-        LeadManagementService $managementService,
-        LeadQueryService $queryService,
+        LeadManagementService $management,
+        LeadQueryService $query,
     ) {
         $this->logger = $logger;
-        $this->managementService = $managementService;
-        $this->queryService = $queryService;
+        $this->management = $management;
+        $this->query = $query;
     }
 
     /**
@@ -62,7 +62,7 @@ class LeadController extends Controller
     {
         $this->authorize('viewAny', Lead::class);
 
-        $lead = $this->queryService->list($request);
+        $lead = $this->query->list($request);
 
         return response()->json($lead);
     }
@@ -78,7 +78,7 @@ class LeadController extends Controller
     {
         $this->authorize('view', $lead);
 
-        $lead = $this->queryService->show($lead);
+        $lead = $this->query->show($lead);
 
         return response()->json($lead);
     }
@@ -92,7 +92,7 @@ class LeadController extends Controller
      */
     public function store(StoreLeadRequest $request): JsonResponse
     {
-        $lead = $this->managementService->store($request);
+        $lead = $this->management->store($request);
 
         $user = $request->user();
 
@@ -118,7 +118,7 @@ class LeadController extends Controller
         UpdateLeadRequest $request,
         Lead $lead
     ): JsonResponse {
-        $lead = $this->managementService->update($request, $lead);
+        $lead = $this->management->update($request, $lead);
 
         $user = $request->user();
 
@@ -149,7 +149,7 @@ class LeadController extends Controller
             $lead,
         );
 
-        $lead = $this->managementService->destroy($lead);
+        $lead = $this->management->destroy($lead);
 
         return response()->json(null, 204);
     }
@@ -166,7 +166,7 @@ class LeadController extends Controller
         $lead = Lead::withTrashed()->findOrFail($id);
         $this->authorize('restore', $lead);
 
-        $lead = $this->managementService->restore($id);
+        $lead = $this->management->restore($id);
 
         $this->logger->leadRestored(
             auth()->user(),

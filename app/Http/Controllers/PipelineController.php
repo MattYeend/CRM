@@ -22,8 +22,8 @@ class PipelineController extends Controller
      * @var PipelineQueryServic
      */
     protected PipelineLogService $logger;
-    protected PipelineManagementService $managementService;
-    protected PipelineQueryService $queryService;
+    protected PipelineManagementService $management;
+    protected PipelineQueryService $query;
 
     /**
      * Constructor for the controller
@@ -43,12 +43,12 @@ class PipelineController extends Controller
      */
     public function __construct(
         PipelineLogService $logger,
-        PipelineManagementService $managementService,
-        PipelineQueryService $queryService,
+        PipelineManagementService $management,
+        PipelineQueryService $query,
     ) {
         $this->logger = $logger;
-        $this->managementService = $managementService;
-        $this->queryService = $queryService;
+        $this->management = $management;
+        $this->query = $query;
     }
 
     /**
@@ -62,7 +62,7 @@ class PipelineController extends Controller
     {
         $this->authorize('viewAny', Pipeline::class);
 
-        $pipeline = $this->queryService->list($request);
+        $pipeline = $this->query->list($request);
 
         return response()->json($pipeline);
     }
@@ -78,7 +78,7 @@ class PipelineController extends Controller
     {
         $this->authorize('view', $pipeline);
 
-        $pipeline = $this->queryService->show($pipeline);
+        $pipeline = $this->query->show($pipeline);
 
         return response()->json($pipeline);
     }
@@ -92,7 +92,7 @@ class PipelineController extends Controller
      */
     public function store(StorePipelineRequest $request): JsonResponse
     {
-        $pipeline = $this->managementService->store($request);
+        $pipeline = $this->management->store($request);
 
         $user = $request->user();
 
@@ -118,7 +118,7 @@ class PipelineController extends Controller
         UpdatePipelineRequest $request,
         Pipeline $pipeline
     ): JsonResponse {
-        $pipeline = $this->managementService->update($request, $pipeline);
+        $pipeline = $this->management->update($request, $pipeline);
 
         $user = $request->user();
 
@@ -150,7 +150,7 @@ class PipelineController extends Controller
             $pipeline,
         );
 
-        $pipeline = $this->managementService->destroy($pipeline);
+        $pipeline = $this->management->destroy($pipeline);
 
         return response()->json(null, 204);
     }

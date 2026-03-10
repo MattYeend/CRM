@@ -22,8 +22,8 @@ class InvoiceController extends Controller
      * @var InvoiceQueryService
      */
     protected InvoiceLogService $logger;
-    protected InvoiceManagementService $managementService;
-    protected InvoiceQueryService $queryService;
+    protected InvoiceManagementService $management;
+    protected InvoiceQueryService $query;
 
     /**
      * Constructor for the controller
@@ -43,12 +43,12 @@ class InvoiceController extends Controller
      */
     public function __construct(
         InvoiceLogService $logger,
-        InvoiceManagementService $managementService,
-        InvoiceQueryService $queryService,
+        InvoiceManagementService $management,
+        InvoiceQueryService $query,
     ) {
         $this->logger = $logger;
-        $this->managementService = $managementService;
-        $this->queryService = $queryService;
+        $this->management = $management;
+        $this->query = $query;
     }
 
     /**
@@ -62,7 +62,7 @@ class InvoiceController extends Controller
     {
         $this->authorize('viewAny', Invoice::class);
 
-        $invoice = $this->queryService->list($request);
+        $invoice = $this->query->list($request);
 
         return response()->json($invoice);
     }
@@ -78,7 +78,7 @@ class InvoiceController extends Controller
     {
         $this->authorize('view', $invoice);
 
-        $invoice = $this->queryService->show($invoice);
+        $invoice = $this->query->show($invoice);
 
         return response()->json($invoice);
     }
@@ -92,7 +92,7 @@ class InvoiceController extends Controller
      */
     public function store(StoreInvoiceRequest $request): JsonResponse
     {
-        $invoice = $this->managementService->store($request);
+        $invoice = $this->management->store($request);
 
         $user = $request->user();
 
@@ -118,7 +118,7 @@ class InvoiceController extends Controller
         UpdateInvoiceRequest $request,
         Invoice $invoice
     ): JsonResponse {
-        $invoice = $this->managementService->update($request, $invoice);
+        $invoice = $this->management->update($request, $invoice);
 
         $user = $request->user();
 
@@ -150,7 +150,7 @@ class InvoiceController extends Controller
             $invoice,
         );
 
-        $this->managementService->destroy($invoice);
+        $this->management->destroy($invoice);
 
         return response()->json(null, 204);
     }

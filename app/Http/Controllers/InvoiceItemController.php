@@ -22,8 +22,8 @@ class InvoiceItemController extends Controller
      * @var InvoiceQueryService
      */
     protected InvoiceItemLogService $logger;
-    protected InvoiceItemManagementService $managementService;
-    protected InvoiceItemQueryService $queryService;
+    protected InvoiceItemManagementService $management;
+    protected InvoiceItemQueryService $query;
 
     /**
      * Constructor for the controller
@@ -43,12 +43,12 @@ class InvoiceItemController extends Controller
      */
     public function __construct(
         InvoiceItemLogService $logger,
-        InvoiceItemManagementService $managementService,
-        InvoiceItemQueryService $queryService,
+        InvoiceItemManagementService $management,
+        InvoiceItemQueryService $query,
     ) {
         $this->logger = $logger;
-        $this->managementService = $managementService;
-        $this->queryService = $queryService;
+        $this->management = $management;
+        $this->query = $query;
     }
 
     /**
@@ -62,7 +62,7 @@ class InvoiceItemController extends Controller
     {
         $this->authorize('viewAny', InvoiceItem::class);
 
-        $invoiceItem = $this->queryService->list($request);
+        $invoiceItem = $this->query->list($request);
 
         return response()->json($invoiceItem);
     }
@@ -78,7 +78,7 @@ class InvoiceItemController extends Controller
     {
         $this->authorize('view', $invoiceItem);
 
-        $invoiceItem = $this->queryService->show($invoiceItem);
+        $invoiceItem = $this->query->show($invoiceItem);
 
         return response()->json($invoiceItem);
     }
@@ -92,7 +92,7 @@ class InvoiceItemController extends Controller
      */
     public function store(StoreInvoiceItemRequest $request): JsonResponse
     {
-        $invoiceItem = $this->managementService->store($request);
+        $invoiceItem = $this->management->store($request);
 
         $user = $request->user();
 
@@ -118,7 +118,7 @@ class InvoiceItemController extends Controller
         UpdateInvoiceItemRequest $request,
         InvoiceItem $invoiceItem
     ): JsonResponse {
-        $invoiceItem = $this->managementService->update($request, $invoiceItem);
+        $invoiceItem = $this->management->update($request, $invoiceItem);
 
         $user = $request->user();
 
@@ -150,7 +150,7 @@ class InvoiceItemController extends Controller
             $invoiceItem,
         );
 
-        $invoiceItem = $this->managementService->destroy($invoiceItem);
+        $invoiceItem = $this->management->destroy($invoiceItem);
 
         return response()->json(null, 204);
     }

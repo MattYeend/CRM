@@ -22,8 +22,8 @@ class CompanyController extends Controller
      * @var CompanyQueryService
      */
     protected CompanyLogService $logger;
-    protected CompanyManagementService $managementService;
-    protected CompanyQueryService $queryService;
+    protected CompanyManagementService $management;
+    protected CompanyQueryService $query;
 
     /**
      * Constructor for the controller
@@ -43,12 +43,12 @@ class CompanyController extends Controller
      */
     public function __construct(
         CompanyLogService $logger,
-        CompanyManagementService $managementService,
-        CompanyQueryService $queryService,
+        CompanyManagementService $management,
+        CompanyQueryService $query,
     ) {
         $this->logger = $logger;
-        $this->managementService = $managementService;
-        $this->queryService = $queryService;
+        $this->management = $management;
+        $this->query = $query;
     }
 
     /**
@@ -62,7 +62,7 @@ class CompanyController extends Controller
     {
         $this->authorize('viewAny', Company::class);
 
-        $company = $this->queryService->list($request);
+        $company = $this->query->list($request);
 
         return response()->json($company);
     }
@@ -78,7 +78,7 @@ class CompanyController extends Controller
     {
         $this->authorize('view', $company);
 
-        $company = $this->queryService->show($company);
+        $company = $this->query->show($company);
 
         return response()->json($company);
     }
@@ -92,7 +92,7 @@ class CompanyController extends Controller
      */
     public function store(StoreCompanyRequest $request): JsonResponse
     {
-        $company = $this->managementService->store($request);
+        $company = $this->management->store($request);
 
         $user = $request->user();
 
@@ -118,7 +118,7 @@ class CompanyController extends Controller
         UpdateCompanyRequest $request,
         Company $company
     ): JsonResponse {
-        $company = $this->managementService->update($request, $company);
+        $company = $this->management->update($request, $company);
 
         $user = $request->user();
 
@@ -150,7 +150,7 @@ class CompanyController extends Controller
             $company,
         );
 
-        $this->managementService->destroy($company);
+        $this->management->destroy($company);
 
         return response()->json(null, 204);
     }
@@ -168,7 +168,7 @@ class CompanyController extends Controller
 
         $this->authorize('restore', $company);
 
-        $this->managementService->restore($id);
+        $this->management->restore($id);
 
         $this->logger->companyRestored(
             request()->user(),
