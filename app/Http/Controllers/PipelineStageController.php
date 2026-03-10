@@ -6,29 +6,49 @@ use App\Http\Requests\StorePipelineStageRequest;
 use App\Http\Requests\UpdatePipelineStageRequest;
 use App\Models\PipelineStage;
 use App\Services\PipelineStageLogService;
+use App\Services\PipelineStageManagementService;
+use App\Services\PipelineStageQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PipelineStageController extends Controller
 {
     /**
-     * Declare a protected property to hold the PipelineStageLogService instance
+     * Declare a protected property to hold the PipelineStageLogService,
+     * PipelineStageManagementService and PipelineStageQueryService instance
      *
      * @var PipelineStageLogService
+     * @var PipelineStageManagementService
+     * @var PipelineStageQueryServic
      */
     protected PipelineStageLogService $logger;
+    protected PipelineStageManagementService $managementService;
+    protected PipelineStageQueryService $queryService;
 
     /**
      * Constructor for the controller
      *
      * @param PipelineStageLogService $logger
      *
+     * @param PipelineStageManagementService $management
+     *
+     * @param PipelineStageQueryService $query
+     *
      * An instance of the PipelineStageLogService used for logging
      * pipeline stage-related actions
+     * An instance of the PipelineStageManagementService for management
+     * of pipeline stages
+     * An instance of the PipelineStageQueryService for the query of
+     * pipeline stage-related actions
      */
-    public function __construct(PipelineStageLogService $logger)
-    {
+    public function __construct(
+        PipelineStageLogService $logger,
+        PipelineStageManagementService $managementService,
+        PipelineStageQueryService $queryService,
+    ) {
         $this->logger = $logger;
+        $this->managementService = $managementService;
+        $this->queryService = $queryService;
     }
 
     /**
@@ -42,14 +62,9 @@ class PipelineStageController extends Controller
     {
         $this->authorize('viewAny', PipelineStage::class);
 
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
+        $pipelineStage = $this->queryService->list($request);
 
-        return response()->json(
-            PipelineStage::with('pipeline')->paginate($perPage)
-        );
+        return response()->json($pipelineStage);
     }
 
     /**
@@ -62,7 +77,10 @@ class PipelineStageController extends Controller
     public function show(PipelineStage $pipelineStage): JsonResponse
     {
         $this->authorize('view', $pipelineStage);
-        return response()->json($pipelineStage->load('pipeline'));
+
+        $pipelineStage = $this->queryService->show($pipelineStage);
+
+        return response()->json($pipelineStage);
     }
 
     /**
@@ -74,19 +92,16 @@ class PipelineStageController extends Controller
      */
     public function store(StorePipelineStageRequest $request): JsonResponse
     {
+        $pipelineStage = $this->managementService->store($request);
+
         $user = $request->user();
-        $data = $request->validated();
-        $data['created_by'] = $user->id;
-
-        $stage = PipelineStage::create($data);
-
         $this->logger->pipelineStageCreated(
             $user,
             $user->id,
-            $stage,
+            $pipelineStage,
         );
 
-        return response()->json($stage, 201);
+        return response()->json($pipelineStage, 201);
     }
 
     /**
@@ -102,11 +117,10 @@ class PipelineStageController extends Controller
         UpdatePipelineStageRequest $request,
         PipelineStage $pipelineStage
     ): JsonResponse {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['updated_by'] = $user->id;
+        $pipelineStage =
+            $this->managementService->update($request, $pipelineStage);
 
-        $pipelineStage->update($data);
+        $user = $request->user();
 
         $this->logger->pipelineStageUpdated(
             $user,
@@ -136,11 +150,7 @@ class PipelineStageController extends Controller
             $pipelineStage,
         );
 
-        $pipelineStage->update([
-            'deleted_by' => $user->id,
-        ]);
-
-        $pipelineStage->delete();
+        $pipelineStage = $this->managementService->destroy($pipelineStage);
 
         return response()->json(null, 204);
     }
