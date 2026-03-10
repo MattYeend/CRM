@@ -39,7 +39,7 @@ class ProductController extends Controller
      * An instance of the ProductManagementService for management
      * of products
      * An instance of the ProductQueryService for the query of
-     * products-related actions
+     * product-related actions
      */
     public function __construct(
         ProductLogService $logger,

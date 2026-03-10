@@ -4,29 +4,49 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Services\RoleLogService;
+use App\Services\RoleManagementService;
+use App\Services\RoleQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class RoleController extends Controller
 {
     /**
-     * Declare a protected property to hold the RoleLogService instance
+     * Declare a protected property to hold the RoleLogService,
+     * RoleManagementService and RoleQueryService instance
      *
      * @var RoleLogService
+     * @var RoleManagementService
+     * @var RoleQueryService
      */
     protected RoleLogService $logger;
+    protected RoleManagementService $management;
+    protected RoleQueryService $query;
 
     /**
      * Constructor for the controller
      *
      * @param RoleLogService $logger
+     *
+     * @param RoleManagementService $management
+     *
+     * @param RoleQueryService $query
+     *
      * An instance of the RoleLogService used for logging
      * role-related actions
+     * An instance of the RoleManagementService for management
+     * of role
+     * An instance of the RoleQueryService for the query of
+     * role-related actions
      */
-    public function __construct(RoleLogService $logger)
-    {
+    public function __construct(
+        RoleLogService $logger,
+        RoleManagementService $management,
+        RoleQueryService $query,
+    ) {
         $this->logger = $logger;
+        $this->management = $management;
+        $this->query = $query;
     }
 
     /**
@@ -34,22 +54,15 @@ class RoleController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
         $this->authorize('viewAny', Role::class);
 
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
+        $role = $this->query->list($request);
 
-        return response()->json(
-            Role::withCount('users')
-                ->with('permissions')
-                ->paginate($perPage)
-        );
+        return response()->json($role);
     }
 
     /**
@@ -57,37 +70,15 @@ class RoleController extends Controller
      *
      * @param Role $role
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function show(Role $role): JsonResponse
     {
         $this->authorize('view', $role);
 
-        return response()->json($role->load('permissions', 'users'));
-    }
+        $role = $this->query->show($role);
 
-    /**
-     * Validate role data for update.
-     *
-     * @param Request $request
-     *
-     * @param Role $role
-     *
-     * @return array The validated data.
-     */
-    protected function validateRoleData(Request $request, Role $role): array
-    {
-        return $request->validate([
-            'name' => [
-                'sometimes',
-                'required',
-                'string',
-                Rule::unique('roles', 'name')->ignore($role->id),
-            ],
-            'label' => 'nullable|string',
-            'permissions' => 'array',
-            'permissions.*' => 'integer|exists:permissions,id',
-        ]);
+        return response()->json($role);
     }
 
     /**
@@ -99,10 +90,8 @@ class RoleController extends Controller
      *
      * @return void
      */
-    protected function syncPermissions(Role $role, array $data): void
+    public function syncPermissions(Role $role, array $data): void
     {
-        if (isset($data['permissions'])) {
-            $role->permissions()->sync($data['permissions']);
-        }
+        $this->management->syncPermissions($role, $data);
     }
 }
