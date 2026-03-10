@@ -2,16 +2,16 @@
 
 namespace App\Services;
 
-use App\Models\Permission;
+use App\Models\Pipeline;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class PermissionQueryService
+class PipelineQueryService
 {
-    private PermissionSortingService $sorting;
+    private PipelineSortingService $sorting;
     private TrashFilterService $trashFilter;
     public function __construct(
-        PermissionSortingService $sorting,
+        PipelineSortingService $sorting,
         TrashFilterService $trashFilter,
     ) {
         $this->sorting = $sorting;
@@ -19,7 +19,7 @@ class PermissionQueryService
     }
 
     /**
-     * Return paginated permission, applying filters/sorting.
+     * Return paginated pipeline, applying filters/sorting.
      *
      * @param Request $request
      *
@@ -32,7 +32,7 @@ class PermissionQueryService
             min((int) $request->query('per_page', 10), 100)
         );
 
-        $query = Permission::with('roles');
+        $query = Pipeline::with('stages');
 
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
@@ -41,14 +41,14 @@ class PermissionQueryService
     }
 
     /**
-     * Return a single permission.
+     * Return a single pipeline.
      *
-     * @param Permission $permission
+     * @param Pipeline $pipeline
      *
-     * @return Permission
+     * @return Pipeline
      */
-    public function show(Permission $permission): Permission
+    public function show(Pipeline $pipeline): Pipeline
     {
-        return $permission->load('roles');
+        return $pipeline->load('stages');
     }
 }

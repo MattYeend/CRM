@@ -6,29 +6,49 @@ use App\Http\Requests\StorePipelineRequest;
 use App\Http\Requests\UpdatePipelineRequest;
 use App\Models\Pipeline;
 use App\Services\PipelineLogService;
+use App\Services\PipelineManagementService;
+use App\Services\PipelineQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PipelineController extends Controller
 {
     /**
-     * Declare a protected property to hold the PipelineLogService instance
+     * Declare a protected property to hold the PipelineLogService,
+     * PipelineManagementService and PipelineQueryService instance
      *
      * @var PipelineLogService
+     * @var PipelineManagementService
+     * @var PipelineQueryServic
      */
     protected PipelineLogService $logger;
+    protected PipelineManagementService $managementService;
+    protected PipelineQueryService $queryService;
 
     /**
      * Constructor for the controller
      *
      * @param PipelineLogService $logger
      *
+     * @param PipelineManagementService $management
+     *
+     * @param PipelineQueryService $query
+     *
      * An instance of the PipelineLogService used for logging
      * pipeline-related actions
+     * An instance of the PipelineManagementService for management
+     * of pipelines
+     * An instance of the PipelineQueryService for the query of
+     * pipeline-related actions
      */
-    public function __construct(PipelineLogService $logger)
-    {
+    public function __construct(
+        PipelineLogService $logger,
+        PipelineManagementService $managementService,
+        PipelineQueryService $queryService,
+    ) {
         $this->logger = $logger;
+        $this->managementService = $managementService;
+        $this->queryService = $queryService;
     }
 
     /**
@@ -42,14 +62,9 @@ class PipelineController extends Controller
     {
         $this->authorize('viewAny', Pipeline::class);
 
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
+        $pipeline = $this->queryService->list($request);
 
-        return response()->json(
-            Pipeline::with('stages')->paginate($perPage)
-        );
+        return response()->json($pipeline);
     }
 
     /**
@@ -63,7 +78,9 @@ class PipelineController extends Controller
     {
         $this->authorize('view', $pipeline);
 
-        return response()->json($pipeline->load('stages'));
+        $pipeline = $this->queryService->show($pipeline);
+
+        return response()->json($pipeline);
     }
 
     /**
@@ -75,11 +92,9 @@ class PipelineController extends Controller
      */
     public function store(StorePipelineRequest $request): JsonResponse
     {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['created_by'] = $user->id;
+        $pipeline = $this->managementService->store($request);
 
-        $pipeline = Pipeline::create($data);
+        $user = $request->user();
 
         $this->logger->pipelineCreated(
             $user,
@@ -103,11 +118,9 @@ class PipelineController extends Controller
         UpdatePipelineRequest $request,
         Pipeline $pipeline
     ): JsonResponse {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['updated_by'] = $user->id;
+        $pipeline = $this->managementService->update($request, $pipeline);
 
-        $pipeline->update($data);
+        $user = $request->user();
 
         $this->logger->pipelineUpdated(
             $user,
@@ -137,11 +150,7 @@ class PipelineController extends Controller
             $pipeline,
         );
 
-        $pipeline->update([
-            'deleted_by' => $user->id,
-        ]);
-
-        $pipeline->delete();
+        $pipeline = $this->managementService->destroy($pipeline);
 
         return response()->json(null, 204);
     }

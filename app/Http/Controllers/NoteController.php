@@ -37,7 +37,7 @@ class NoteController extends Controller
      * An instance of the NoteLogService used for logging
      * note-related actions
      * An instance of the NoteManagementService for management
-     * of note
+     * of notes
      * An instance of the NoteQueryService for the query of
      * note-related actions
      */

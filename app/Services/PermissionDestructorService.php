@@ -18,6 +18,7 @@ class PermissionDestructorService
         $permission->update([
             'deleted_by' => auth()->id(),
         ]);
+        $permission->roles()->detach();
 
         $permission->delete();
     }

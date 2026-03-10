@@ -6,29 +6,49 @@ use App\Http\Requests\StorePermissionRequest;
 use App\Http\Requests\UpdatePermissionRequest;
 use App\Models\Permission;
 use App\Services\PermissionLogService;
+use App\Services\PermissionManagementService;
+use App\Services\PermissionQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PermissionController extends Controller
 {
     /**
-     * Declare a protected property to hold the PermissionLogService instance
+     * Declare a protected property to hold the PermissionLogService,
+     * PermissionManagementService and PermissionQueryService instance
      *
      * @var PermissionLogService
+     * @var PermissionManagementService
+     * @var PermissionQueryServic
      */
     protected PermissionLogService $logger;
+    protected PermissionManagementService $managementService;
+    protected PermissionQueryService $queryService;
 
     /**
      * Constructor for the controller
      *
      * @param PermissionLogService $logger
      *
+     * @param PermissionManagementService $management
+     *
+     * @param PermissionQueryService $query
+     *
      * An instance of the PermissionLogService used for logging
      * permission-related actions
+     * An instance of the PermissionManagementService for management
+     * of permissions
+     * An instance of the PermissionQueryService for the query of
+     * permission-related actions
      */
-    public function __construct(PermissionLogService $logger)
-    {
+    public function __construct(
+        PermissionLogService $logger,
+        PermissionManagementService $managementService,
+        PermissionQueryService $queryService,
+    ) {
         $this->logger = $logger;
+        $this->managementService = $managementService;
+        $this->queryService = $queryService;
     }
 
     /**
@@ -42,15 +62,9 @@ class PermissionController extends Controller
     {
         $this->authorize('viewAny', Permission::class);
 
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
+        $permission = $this->queryService->list($request);
 
-        return response()->json(
-            Permission::with('roles')
-                ->paginate($perPage)
-        );
+        return response()->json($permission);
     }
 
     /**
@@ -64,7 +78,9 @@ class PermissionController extends Controller
     {
         $this->authorize('view', $permission);
 
-        return response()->json($permission->load('roles'));
+        $permission = $this->queryService->show($permission);
+
+        return response()->json($permission);
     }
 
     /**
@@ -76,11 +92,9 @@ class PermissionController extends Controller
      */
     public function store(StorePermissionRequest $request): JsonResponse
     {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['created_by'] = $user->id;
+        $permission = $this->managementService->store($request);
 
-        $permission = Permission::create($data);
+        $user = $request->user();
 
         $this->logger->permissionCreated(
             $user,
@@ -104,11 +118,9 @@ class PermissionController extends Controller
         UpdatePermissionRequest $request,
         Permission $permission
     ): JsonResponse {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['updated_by'] = $user->id;
+        $permission = $this->managementService->update($request, $permission);
 
-        $permission->update($data);
+        $user = $request->user();
 
         $this->logger->permissionUpdated(
             $user,
@@ -138,9 +150,7 @@ class PermissionController extends Controller
             $permission,
         );
 
-        $permission->roles()->detach();
-        $permission->save();
-        $permission->delete();
+        $permission = $this->managementService->destroy($permission);
 
         return response()->json(null, 204);
     }
