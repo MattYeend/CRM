@@ -49,7 +49,7 @@ class Contact extends Model
     /**
      * Get the company that owns the contact.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function company(): BelongsTo
     {
@@ -59,7 +59,7 @@ class Contact extends Model
     /**
      * Get the deals for the contact.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function deals(): HasMany
     {
@@ -67,19 +67,9 @@ class Contact extends Model
     }
 
     /**
-     * Get the notes for the contact.
+     * Get all of the contact attachments.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
-     */
-    public function notes(): MorphMany
-    {
-        return $this->morphMany(Note::class, 'notable');
-    }
-
-    /**
-     * Get the attachments for the contact.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     * @return MorphMany
      */
     public function attachments(): MorphMany
     {
@@ -87,9 +77,39 @@ class Contact extends Model
     }
 
     /**
+     * Get all of the contact activities.
+     *
+     * @return MorphMany
+     */
+    public function activities(): MorphMany
+    {
+        return $this->morphMany(Activity::class, 'subject');
+    }
+
+    /**
+     * Get all of the contact tasks.
+     *
+     * @return MorphMany
+     */
+    public function tasks(): MorphMany
+    {
+        return $this->morphMany(Task::class, 'taskable');
+    }
+
+    /**
+     * Get all of the contact notes.
+     *
+     * @return MorphMany
+     */
+    public function notes(): MorphMany
+    {
+        return $this->morphMany(Note::class, 'notable');
+    }
+
+    /**
      * Get the user that created the contact.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function creator(): BelongsTo
     {
@@ -99,7 +119,7 @@ class Contact extends Model
     /**
      * Get the user that updated the contact.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function updater(): BelongsTo
     {
@@ -109,7 +129,7 @@ class Contact extends Model
     /**
      * Get the user that deleted the contact.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function deleter(): BelongsTo
     {

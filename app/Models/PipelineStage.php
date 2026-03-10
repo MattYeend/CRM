@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PipelineStage extends Model
@@ -48,7 +49,7 @@ class PipelineStage extends Model
     /**
      * Get the pipeline that owns the stage.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function pipeline(): BelongsTo
     {
@@ -58,7 +59,7 @@ class PipelineStage extends Model
     /**
      * Get the deals for the stage.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function deals(): HasMany
     {
@@ -68,9 +69,9 @@ class PipelineStage extends Model
     /**
      * Scope a query to only include won stages.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param Builder $query
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function scopeWon($query): Builder
     {
@@ -80,9 +81,9 @@ class PipelineStage extends Model
     /**
      * Scope a query to only include lost stages.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param Builder $query
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function scopeLost($query): Builder
     {
@@ -92,9 +93,9 @@ class PipelineStage extends Model
     /**
      * Scope a query to only include open stages.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param Builder $query
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function scopeOpen($query): Builder
     {
@@ -105,7 +106,7 @@ class PipelineStage extends Model
     /**
      * Get the user that created the stage.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function creator(): BelongsTo
     {
@@ -115,7 +116,7 @@ class PipelineStage extends Model
     /**
      * Get the user that updated the stage.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function updater(): BelongsTo
     {
@@ -125,10 +126,50 @@ class PipelineStage extends Model
     /**
      * Get the user that deleted the stage.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function deleter(): BelongsTo
     {
         return $this->belongsTo(User::class, 'deleted_by');
+    }
+
+    /**
+     * Get all of the pipeline stages attachments.
+     *
+     * @return MorphMany
+     */
+    public function attachments(): MorphMany
+    {
+        return $this->morphMany(Attachment::class, 'attachable');
+    }
+
+    /**
+     * Get all of the pipeline stages activities.
+     *
+     * @return MorphMany
+     */
+    public function activities(): MorphMany
+    {
+        return $this->morphMany(Activity::class, 'subject');
+    }
+
+    /**
+     * Get all of the pipeline stages tasks.
+     *
+     * @return MorphMany
+     */
+    public function tasks(): MorphMany
+    {
+        return $this->morphMany(Task::class, 'taskable');
+    }
+
+    /**
+     * Get all of the pipeline stages notes.
+     *
+     * @return MorphMany
+     */
+    public function notes(): MorphMany
+    {
+        return $this->morphMany(Note::class, 'notable');
     }
 }

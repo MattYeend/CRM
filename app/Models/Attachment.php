@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
@@ -47,7 +48,7 @@ class Attachment extends Model
     /**
      * Get the parent attachable model (contact, deal, etc.).
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     * @return MorphTo
      */
     public function attachable(): MorphTo
     {
@@ -57,7 +58,7 @@ class Attachment extends Model
     /**
      * Get the user who uploaded the attachment.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function uploader(): BelongsTo
     {
@@ -113,7 +114,7 @@ class Attachment extends Model
     /**
      * Get the user that created the attachment.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function creator(): BelongsTo
     {
@@ -123,7 +124,7 @@ class Attachment extends Model
     /**
      * Get the user that updated the attachment.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function updater(): BelongsTo
     {
@@ -133,11 +134,41 @@ class Attachment extends Model
     /**
      * Get the user that deleted the attachment.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function deleter(): BelongsTo
     {
         return $this->belongsTo(User::class, 'deleted_by');
+    }
+
+    /**
+     * Get all of the attactment activities.
+     *
+     * @return MorphMany
+     */
+    public function activities(): MorphMany
+    {
+        return $this->morphMany(Activity::class, 'subject');
+    }
+
+    /**
+     * Get all of the attactment tasks.
+     *
+     * @return MorphMany
+     */
+    public function tasks(): MorphMany
+    {
+        return $this->morphMany(Task::class, 'taskable');
+    }
+
+    /**
+     * Get all of the attachment notes.
+     *
+     * @return MorphMany
+     */
+    public function notes(): MorphMany
+    {
+        return $this->morphMany(Note::class, 'notable');
     }
 
     /**

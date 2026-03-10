@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -52,7 +53,7 @@ class Task extends Model
     /**
      * Get the parent taskable model (deal, contact, company, etc.).
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     * @return MorphTo
      */
     public function taskable(): MorphTo
     {
@@ -62,7 +63,7 @@ class Task extends Model
     /**
      * Get the user assigned to the task.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function assignee(): BelongsTo
     {
@@ -72,7 +73,7 @@ class Task extends Model
     /**
      * Get the user who created the task.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function creator(): BelongsTo
     {
@@ -82,7 +83,7 @@ class Task extends Model
     /**
      * Get the user who last updated the task.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function updater(): BelongsTo
     {
@@ -92,7 +93,7 @@ class Task extends Model
     /**
      * Get the user who deleted the task.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function deleter(): BelongsTo
     {
@@ -100,13 +101,53 @@ class Task extends Model
     }
 
     /**
+     * Get all of the tasks attachments.
+     *
+     * @return MorphMany
+     */
+    public function attachments(): MorphMany
+    {
+        return $this->morphMany(Attachment::class, 'attachable');
+    }
+
+    /**
+     * Get all of the tasks activities.
+     *
+     * @return MorphMany
+     */
+    public function activities(): MorphMany
+    {
+        return $this->morphMany(Activity::class, 'subject');
+    }
+
+    /**
+     * Get all of the tasks tasks.
+     *
+     * @return MorphMany
+     */
+    public function tasks(): MorphMany
+    {
+        return $this->morphMany(Task::class, 'taskable');
+    }
+
+    /**
+     * Get all of the tasks notes.
+     *
+     * @return MorphMany
+     */
+    public function notes(): MorphMany
+    {
+        return $this->morphMany(Note::class, 'notable');
+    }
+
+    /**
      * Scope a query to only include tasks of a given status.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param Builder $query
      *
      * @param string $status
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function scopeStatus($query, string $status): Builder
     {
@@ -116,11 +157,11 @@ class Task extends Model
     /**
      * Scope a query to only include tasks of a given priority.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param Builder $query
      *
      * @param string $priority
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function scopePriority($query, string $priority): Builder
     {
@@ -130,11 +171,11 @@ class Task extends Model
     /**
      * Scope a query to only include tasks due before a given date.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param Builder $query
      *
      * @param \DateTime|string $date
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function scopeDueBefore($query, $date): Builder
     {
@@ -144,11 +185,11 @@ class Task extends Model
     /**
      * Scope a query to only include tasks due after a given date.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param Builder $query
      *
      * @param \DateTime|string $date
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function scopeDueAfter($query, $date): Builder
     {
@@ -158,11 +199,11 @@ class Task extends Model
     /**
      * Scope a query to only include tasks assigned to a given user.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param Builder $query
      *
      * @param int $userId
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function scopeAssignedTo($query, int $userId): Builder
     {

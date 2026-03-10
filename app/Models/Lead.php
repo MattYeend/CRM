@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Lead extends Model
@@ -50,7 +51,7 @@ class Lead extends Model
     /**
      * The owner of the lead.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function owner(): BelongsTo
     {
@@ -60,7 +61,7 @@ class Lead extends Model
     /**
      * The user assigned to the lead.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function assignedTo(): BelongsTo
     {
@@ -70,7 +71,7 @@ class Lead extends Model
     /**
      * Convert the lead to a contact.
      *
-     * @return \App\Models\Contact
+     * @return Contact
      */
     public function convertToContact(): Contact
     {
@@ -94,7 +95,7 @@ class Lead extends Model
     /**
      * Convert the lead to a deal.
      *
-     * @return \App\Models\Deal
+     * @return Deal
      */
     public function convertToDeal(): Deal
     {
@@ -118,7 +119,7 @@ class Lead extends Model
     /**
      * Get the user that created the lead.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function creator(): BelongsTo
     {
@@ -128,7 +129,7 @@ class Lead extends Model
     /**
      * Get the user that updated the lead.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function updater(): BelongsTo
     {
@@ -138,10 +139,50 @@ class Lead extends Model
     /**
      * Get the user that deleted the lead.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function deleter(): BelongsTo
     {
         return $this->belongsTo(User::class, 'deleted_by');
+    }
+
+    /**
+     * Get all of the lead attachments.
+     *
+     * @return MorphMany
+     */
+    public function attachments(): MorphMany
+    {
+        return $this->morphMany(Attachment::class, 'attachable');
+    }
+
+    /**
+     * Get all of the lead activities.
+     *
+     * @return MorphMany
+     */
+    public function activities(): MorphMany
+    {
+        return $this->morphMany(Activity::class, 'subject');
+    }
+
+    /**
+     * Get all of the lead tasks.
+     *
+     * @return MorphMany
+     */
+    public function tasks(): MorphMany
+    {
+        return $this->morphMany(Task::class, 'taskable');
+    }
+
+    /**
+     * Get all of the lead notes.
+     *
+     * @return MorphMany
+     */
+    public function notes(): MorphMany
+    {
+        return $this->morphMany(Note::class, 'notable');
     }
 }

@@ -8,6 +8,7 @@ use Illuminate\Console\View\Components\Task;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -53,7 +54,7 @@ class User extends Authenticatable
     /**
      * The roles that belong to the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function roles(): BelongsToMany
     {
@@ -77,7 +78,7 @@ class User extends Authenticatable
     /**
      * The permissions that belong to the user through roles.
      *
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public function permissions(): Collection
     {
@@ -141,7 +142,7 @@ class User extends Authenticatable
     /**
      * The deals owned by the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function deals(): HasMany
     {
@@ -151,7 +152,7 @@ class User extends Authenticatable
     /**
      * The tasks assigned to the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function tasks(): HasMany
     {
@@ -161,7 +162,7 @@ class User extends Authenticatable
     /**
      * The notes created by the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function notes(): HasMany
     {
@@ -171,13 +172,53 @@ class User extends Authenticatable
     /**
      * The learnings belonging to the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function learnings(): BelongsToMany
     {
         return $this->belongsToMany(Learning::class)
             ->withPivot(['is_completed', 'completed_by', 'completed_at'])
             ->withTimestamps();
+    }
+
+    /**
+     * Get all of the user attachments.
+     *
+     * @return MorphMany
+     */
+    public function attachments(): MorphMany
+    {
+        return $this->morphMany(Attachment::class, 'attachable');
+    }
+
+    /**
+     * Get all of the user activities.
+     *
+     * @return MorphMany
+     */
+    public function activities(): MorphMany
+    {
+        return $this->morphMany(Activity::class, 'subject');
+    }
+
+    /**
+     * Get all of the user tasks.
+     *
+     * @return MorphMany
+     */
+    public function tasking(): MorphMany
+    {
+        return $this->morphMany(Task::class, 'taskable');
+    }
+
+    /**
+     * Get all of the user notes.
+     *
+     * @return MorphMany
+     */
+    public function note(): MorphMany
+    {
+        return $this->morphMany(Note::class, 'notable');
     }
 
     /**

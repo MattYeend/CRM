@@ -52,7 +52,7 @@ class Company extends Model
     /**
      * Get the contacts for the company.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function contacts(): HasMany
     {
@@ -61,7 +61,7 @@ class Company extends Model
 
     /** Get the deals for the company.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function deals(): HasMany
     {
@@ -71,7 +71,7 @@ class Company extends Model
     /**
      * Get the invoices for the company.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function invoices(): HasMany
     {
@@ -79,9 +79,9 @@ class Company extends Model
     }
 
     /**
-     * Get all of the company's attachments.
+     * Get all of the companies attachments.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     * @return MorphMany
      */
     public function attachments(): MorphMany
     {
@@ -89,9 +89,9 @@ class Company extends Model
     }
 
     /**
-     * Get all of the company's activities.
+     * Get all of the companies activities.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     * @return MorphMany
      */
     public function activities(): MorphMany
     {
@@ -99,9 +99,29 @@ class Company extends Model
     }
 
     /**
+     * Get all of the companies tasks.
+     *
+     * @return MorphMany
+     */
+    public function tasks(): MorphMany
+    {
+        return $this->morphMany(Task::class, 'taskable');
+    }
+
+    /**
+     * Get all of the companies notes.
+     *
+     * @return MorphMany
+     */
+    public function notes(): MorphMany
+    {
+        return $this->morphMany(Note::class, 'notable');
+    }
+
+    /**
      * Get the user that created the company.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function creator(): BelongsTo
     {
@@ -111,7 +131,7 @@ class Company extends Model
     /**
      * Get the user that updated the company.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function updater(): BelongsTo
     {
@@ -121,7 +141,7 @@ class Company extends Model
     /**
      * Get the user that deleted the company.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function deleter(): BelongsTo
     {

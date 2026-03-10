@@ -53,7 +53,7 @@ class Deal extends Model
     /**
      * Get the company that owns the deal.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function company(): BelongsTo
     {
@@ -63,7 +63,7 @@ class Deal extends Model
     /**
      * Get the contact that owns the deal.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function contact(): BelongsTo
     {
@@ -73,7 +73,7 @@ class Deal extends Model
     /**
      * Get the owner (user) that owns the deal.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function owner(): BelongsTo
     {
@@ -83,7 +83,7 @@ class Deal extends Model
     /**
      * Get the pipeline that owns the deal.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function pipeline(): BelongsTo
     {
@@ -93,7 +93,7 @@ class Deal extends Model
     /**
      * Get the stage that owns the deal.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function stage(): BelongsTo
     {
@@ -103,7 +103,7 @@ class Deal extends Model
     /**
      * Get the tasks for the deal.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     * @return MorphMany
      */
     public function tasks(): MorphMany
     {
@@ -113,7 +113,7 @@ class Deal extends Model
     /**
      * Get the notes for the deal.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     * @return MorphMany
      */
     public function notes(): MorphMany
     {
@@ -123,7 +123,7 @@ class Deal extends Model
     /**
      * Get the attachments for the deal.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     * @return MorphMany
      */
     public function attachments(): MorphMany
     {
@@ -131,9 +131,19 @@ class Deal extends Model
     }
 
     /**
+     * Get the activities for the deal.
+     *
+     * @return MorphMany
+     */
+    public function activities(): MorphMany
+    {
+        return $this->morphMany(Activity::class, 'subject');
+    }
+
+    /**
      * Get the user that created the deal.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function creator(): BelongsTo
     {
@@ -143,7 +153,7 @@ class Deal extends Model
     /**
      * Get the user that updated the deal.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function updater(): BelongsTo
     {
@@ -153,7 +163,7 @@ class Deal extends Model
     /**
      * Get the user that deleted the deal.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function deleter(): BelongsTo
     {
