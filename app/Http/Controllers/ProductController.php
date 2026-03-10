@@ -6,29 +6,49 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Services\ProductLogService;
+use App\Services\ProductManagementService;
+use App\Services\ProductQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
     /**
-     * Declare a protected property to hold the ProductLogService instance
+     * Declare a protected property to hold the ProductLogService,
+     * ProductManagementService and ProductQueryService instance
      *
      * @var ProductLogService
+     * @var ProductManagementService
+     * @var ProductQueryServic
      */
     protected ProductLogService $logger;
+    protected ProductManagementService $managementService;
+    protected ProductQueryService $queryService;
 
     /**
      * Constructor for the controller
      *
      * @param ProductLogService $logger
      *
+     * @param ProductManagementService $management
+     *
+     * @param ProductQueryService $query
+     *
      * An instance of the ProductLogService used for logging
      * product-related actions
+     * An instance of the ProductManagementService for management
+     * of products
+     * An instance of the ProductQueryService for the query of
+     * products-related actions
      */
-    public function __construct(ProductLogService $logger)
-    {
+    public function __construct(
+        ProductLogService $logger,
+        ProductManagementService $managementService,
+        ProductQueryService $queryService,
+    ) {
         $this->logger = $logger;
+        $this->managementService = $managementService;
+        $this->queryService = $queryService;
     }
 
     /**
@@ -40,15 +60,9 @@ class ProductController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $this->authorize('viewAny', Product::class);
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
+        $product = $this->queryService->list($request);
 
-        return response()->json(
-            Product::paginate($perPage)
-        );
+        return response()->json($product);
     }
 
     /**
@@ -62,6 +76,8 @@ class ProductController extends Controller
     {
         $this->authorize('view', $product);
 
+        $product = $this->queryService->show($product);
+
         return response()->json($product);
     }
 
@@ -74,15 +90,13 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request): JsonResponse
     {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['created_by'] = $user->id;
+        $product = $this->managementService->store($request);
 
-        $product = Product::create($data);
+        $user = $request->user();
 
         $this->logger->productCreated(
-            $request->user(),
-            $request->user()->id,
+            $user,
+            $user->id,
             $product,
         );
 
@@ -102,11 +116,9 @@ class ProductController extends Controller
         UpdateProductRequest $request,
         Product $product
     ): JsonResponse {
-        $user = $request->user();
-        $data = $request->validated();
-        $data['updated_by'] = $user->id;
+        $product = $this->managementService->update($request, $product);
 
-        $product->update($data);
+        $user = $request->user();
 
         $this->logger->productUpdated(
             $user,
@@ -136,11 +148,7 @@ class ProductController extends Controller
             $product,
         );
 
-        $product->update([
-            'deleted_by' => $user->id,
-        ]);
-
-        $product->delete();
+        $product = $this->managementService->destroy($product);
 
         return response()->json(null, 204);
     }

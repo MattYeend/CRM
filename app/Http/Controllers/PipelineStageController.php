@@ -19,7 +19,7 @@ class PipelineStageController extends Controller
      *
      * @var PipelineStageLogService
      * @var PipelineStageManagementService
-     * @var PipelineStageQueryServic
+     * @var PipelineStageQueryService
      */
     protected PipelineStageLogService $logger;
     protected PipelineStageManagementService $managementService;
