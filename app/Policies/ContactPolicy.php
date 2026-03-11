@@ -108,4 +108,23 @@ class ContactPolicy
             'contacts.delete.own'
         );
     }
+
+    /**
+     * Determine whether the user can restore the contact.
+     *
+     * @param User $user
+     *
+     * @param Contact $contact
+     *
+     * @return bool
+     */
+    public function restore(User $user, Contact $contact): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $contact,
+            'contacts.restore.any',
+            'contacts.restore.own'
+        );
+    }
 }

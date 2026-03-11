@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Contacts;
 
 use App\Models\Contact;
 use Illuminate\Http\Request;
@@ -10,11 +10,11 @@ class ContactQueryService
 {
     private ContactSearchService $search;
     private ContactSortingService $sorting;
-    private TrashFilterService $trashFilter;
+    private ContactTrashFilterService $trashFilter;
     public function __construct(
         ContactSearchService $search,
         ContactSortingService $sorting,
-        TrashFilterService $trashFilter,
+        ContactTrashFilterService $trashFilter,
     ) {
         $this->search = $search;
         $this->sorting = $sorting;

@@ -163,17 +163,17 @@ class ActivityController extends Controller
      */
     public function restore($id): JsonResponse
     {
-        $user = $this->management->restore((int) $id);
+        $activity = $this->management->restore((int) $id);
 
-        $this->authorize('restore', $user);
-        $auth = auth()->user();
+        $this->authorize('restore', $activity);
+        $user = auth()->user();
 
         $this->logger->activityRestored(
-            $auth,
-            $auth->id,
             $user,
+            $user->id,
+            $activity,
         );
 
-        return response()->json($user);
+        return response()->json($activity);
     }
 }

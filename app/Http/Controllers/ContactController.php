@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreContactRequest;
 use App\Http\Requests\UpdateContactRequest;
 use App\Models\Contact;
-use App\Services\ContactLogService;
-use App\Services\ContactManagementService;
-use App\Services\ContactQueryService;
+use App\Services\Contacts\ContactLogService;
+use App\Services\Contacts\ContactManagementService;
+use App\Services\Contacts\ContactQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -151,5 +151,31 @@ class ContactController extends Controller
         $this->management->destroy($contact);
 
         return response()->json(null, 204);
+    }
+
+    /**
+     * Restore the specified resource from soft deletion.
+     *
+     * @param int $id
+     *
+     * @return JsonResponse
+     */
+    public function restore($id): JsonResponse
+    {
+        $contact = Contact::withTrashed()->findOrFail($id);
+
+        $this->authorize('restore', $contact);
+
+        $this->management->restore((int) $id);
+
+        $user = auth()->user();
+
+        $this->logger->contactRestored(
+            $user,
+            $user->id,
+            $contact
+        );
+
+        return response()->json($contact);
     }
 }

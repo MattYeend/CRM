@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Contacts;
 
 use App\Models\Contact;
 use App\Models\Log;

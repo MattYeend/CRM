@@ -168,11 +168,13 @@ class CompanyController extends Controller
 
         $this->authorize('restore', $company);
 
-        $this->management->restore($id);
+        $this->management->restore((int) $id);
+
+        $user = auth()->user();
 
         $this->logger->companyRestored(
-            request()->user(),
-            auth()->id(),
+            $user,
+            $user->id,
             $company
         );
 

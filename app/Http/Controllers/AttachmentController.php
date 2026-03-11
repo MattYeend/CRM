@@ -202,17 +202,18 @@ class AttachmentController extends Controller
      */
     public function restore($id): JsonResponse
     {
-        $user = $this->management->restore((int) $id);
+        $attachment = $this->management->restore((int) $id);
 
-        $this->authorize('restore', $user);
-        $auth = auth()->user();
+        $this->authorize('restore', $attachment);
+
+        $user = auth()->user();
 
         $this->logger->attachmentRestored(
-            $auth,
-            $auth->id,
             $user,
+            $user->id,
+            $attachment,
         );
 
-        return response()->json($user);
+        return response()->json($attachment);
     }
 }
