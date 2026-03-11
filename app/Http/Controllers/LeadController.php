@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreLeadRequest;
 use App\Http\Requests\UpdateLeadRequest;
 use App\Models\Lead;
-use App\Services\LeadLogService;
-use App\Services\LeadManagementService;
-use App\Services\LeadQueryService;
+use App\Services\Leads\LeadLogService;
+use App\Services\Leads\LeadManagementService;
+use App\Services\Leads\LeadQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -163,14 +163,15 @@ class LeadController extends Controller
      */
     public function restore(int $id): JsonResponse
     {
-        $lead = Lead::withTrashed()->findOrFail($id);
+        $lead = $this->management->restore((int) $id);
+
         $this->authorize('restore', $lead);
 
-        $lead = $this->management->restore($id);
+        $user = auth()->user();
 
         $this->logger->leadRestored(
-            auth()->user(),
-            auth()->id(),
+            $user,
+            $user->id,
             $lead
         );
 

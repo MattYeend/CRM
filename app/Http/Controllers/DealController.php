@@ -164,7 +164,7 @@ class DealController extends Controller
      */
     public function restore($id): JsonResponse
     {
-        $deal = Deal::withTrashed()->findOrFail($id);
+        $deal = $this->management->restore((int) $id);
 
         $this->authorize('restore', $deal);
 
@@ -175,8 +175,6 @@ class DealController extends Controller
             $user->id,
             $deal,
         );
-
-        $this->management->restore((int) $id);
 
         return response()->json($deal);
     }

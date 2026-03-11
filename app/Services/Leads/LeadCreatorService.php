@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Leads;
 
 use App\Http\Requests\StoreLeadRequest;
 use App\Models\Lead;

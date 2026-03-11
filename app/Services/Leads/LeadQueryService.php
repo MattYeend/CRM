@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Leads;
 
 use App\Models\Lead;
 use Illuminate\Http\Request;
@@ -10,11 +10,11 @@ class LeadQueryService
 {
     private LeadSeachService $search;
     private LeadSortingService $sorting;
-    private TrashFilterService $trashFilter;
+    private LeadTrashFilterService $trashFilter;
     public function __construct(
         LeadSeachService $search,
         LeadSortingService $sorting,
-        TrashFilterService $trashFilter,
+        LeadTrashFilterService $trashFilter,
     ) {
         $this->search = $search;
         $this->sorting = $sorting;
