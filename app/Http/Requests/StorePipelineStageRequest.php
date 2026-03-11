@@ -22,9 +22,33 @@ class StorePipelineStageRequest extends FormRequest
      */
     public function rules(): array
     {
+        return array_merge(
+            $this->baseRules(),
+            $this->metaRules(),
+        );
+    }
+
+    /**
+     * Base rules
+     *
+     * @return array
+     */
+    private function baseRules(): array
+    {
         return [
             'pipeline_id' => 'required|integer|exists:pipelines,id',
-            'name' => 'required|string',
+            'name' => 'sometimes|required|string',
+        ];
+    }
+
+    /**
+     * Meta rules
+     *
+     * @return array
+     */
+    private function metaRules(): array
+    {
+        return [
             'position' => 'nullable|integer',
             'is_won_stage' => 'nullable|boolean',
             'is_lost_stage' => 'nullable|boolean',

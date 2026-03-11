@@ -23,8 +23,32 @@ class UpdatePipelineRequest extends FormRequest
      */
     public function rules(): array
     {
+        return array_merge(
+            $this->baseRules(),
+            $this->metaRules(),
+        );
+    }
+
+    /**
+     * Base rules
+     *
+     * @return array
+     */
+    private function baseRules(): array
+    {
         return [
-            'name' => 'sometimes|required|string',
+            'name' => 'sometimes|string|max:255',
+        ];
+    }
+
+    /**
+     * Meta rules
+     *
+     * @return array
+     */
+    private function metaRules(): array
+    {
+        return [
             'description' => 'nullable|string',
             'is_default' => 'nullable|boolean',
         ];

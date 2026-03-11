@@ -23,9 +23,33 @@ class UpdatePipelineStageRequest extends FormRequest
      */
     public function rules(): array
     {
+        return array_merge(
+            $this->baseRules(),
+            $this->metaRules(),
+        );
+    }
+
+    /**
+     * Base rules
+     *
+     * @return array
+     */
+    private function baseRules(): array
+    {
         return [
             'pipeline_id' => 'nullable|integer|exists:pipelines,id',
             'name' => 'sometimes|required|string',
+        ];
+    }
+
+    /**
+     * Meta rules
+     *
+     * @return array
+     */
+    private function metaRules(): array
+    {
+        return [
             'position' => 'nullable|integer',
             'is_won_stage' => 'nullable|boolean',
             'is_lost_stage' => 'nullable|boolean',
