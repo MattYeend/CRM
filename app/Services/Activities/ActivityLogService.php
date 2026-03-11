@@ -29,13 +29,7 @@ class ActivityLogService
         int $userId,
         Activity $activity
     ): array {
-        $data = [
-            'id' => $user->id,
-            'name' => $user->name,
-            'type' => $activity->type,
-            'scheduled_at' => $activity->scheduled_at,
-            'subject_id' => $activity->subject_id,
-            'description' => $activity->description,
+        $data = $this->baseActivityData($activity) + [
             'created_by' => $user->name,
             'created_at' => now(),
         ];
@@ -65,13 +59,7 @@ class ActivityLogService
         int $userId,
         Activity $activity
     ): array {
-        $data = [
-            'id' => $user->id,
-            'name' => $user->name,
-            'type' => $activity->type,
-            'scheduled_at' => $activity->scheduled_at,
-            'subject_id' => $activity->subject_id,
-            'description' => $activity->description,
+        $data = $this->baseActivityData($activity) + [
             'updated_by' => $user->name,
             'updated_at' => now(),
         ];
@@ -101,13 +89,7 @@ class ActivityLogService
         int $userId,
         Activity $activity
     ): array {
-        $data = [
-            'id' => $user->id,
-            'name' => $user->name,
-            'type' => $activity->type,
-            'scheduled_at' => $activity->scheduled_at,
-            'subject_id' => $activity->subject_id,
-            'description' => $activity->description,
+        $data = $this->baseActivityData($activity) + [
             'deleted_by' => $user->name,
             'deleted_at' => now(),
         ];
@@ -137,13 +119,7 @@ class ActivityLogService
         int $userId,
         Activity $activity
     ): array {
-        $data = [
-            'id' => $user->id,
-            'name' => $user->name,
-            'type' => $activity->type,
-            'scheduled_at' => $activity->scheduled_at,
-            'subject_id' => $activity->subject_id,
-            'description' => $activity->description,
+        $data = $this->baseActivityData($activity) + [
             'restored_by' => $user->name,
             'restored_at' => now(),
         ];
@@ -173,13 +149,7 @@ class ActivityLogService
         int $userId,
         Activity $activity
     ): array {
-        $data = [
-            'id' => $user->id,
-            'name' => $user->name,
-            'type' => $activity->type,
-            'scheduled_at' => $activity->scheduled_at,
-            'subject_id' => $activity->subject_id,
-            'description' => $activity->description,
+        $data = $this->baseActivityData($activity) + [
             'completed_by' => $user->name,
             'completed_at' => now(),
         ];
@@ -209,15 +179,9 @@ class ActivityLogService
         int $userId,
         Activity $activity
     ): array {
-        $data = [
-            'id' => $user->id,
-            'name' => $user->name,
-            'type' => $activity->type,
-            'scheduled_at' => $activity->scheduled_at,
-            'subject_id' => $activity->subject_id,
-            'description' => $activity->description,
-            'reopened_by' => $user->name,
-            'reopened_at' => now(),
+        $data = $this->baseActivityData($activity) + [
+            'restored_at' => now(),
+            'restored_by' => $user->name,
         ];
 
         Log::log(
@@ -227,5 +191,23 @@ class ActivityLogService
         );
 
         return $data;
+    }
+
+    /**
+     * Construct base data array for a Activity.
+     *
+     * @param Activity $activity The activity being logged.
+     *
+     * @return array The base data for logging.
+     */
+    protected function baseActivityData(Activity $activity): array
+    {
+        return [
+            'id' => $activity->id,
+            'type' => $activity->type,
+            'scheduled_at' => $activity->scheduled_at,
+            'subject_id' => $activity->subject_id,
+            'description' => $activity->description,
+        ];
     }
 }
