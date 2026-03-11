@@ -56,7 +56,11 @@ class StoreTaskRequest extends FormRequest
                 'required',
                 Rule::in(['deal', 'contact', 'company', 'task', 'user']),
             ],
-            'taskable_id' => ['required', 'integer'],
+            'taskable_id' => [
+                'required',
+                'integer',
+                'required_with:taskable_type',
+            ],
         ];
     }
 

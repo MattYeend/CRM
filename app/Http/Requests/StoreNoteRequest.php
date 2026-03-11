@@ -55,7 +55,11 @@ class StoreNoteRequest extends FormRequest
                 'required',
                 Rule::in(['deal', 'contact', 'company', 'task', 'user']),
             ],
-            'notable_id' => ['required', 'integer'],
+            'notable_id' => [
+                'required',
+                'integer',
+                'required_with:notable_type',
+            ],
         ];
     }
 

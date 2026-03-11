@@ -37,7 +37,11 @@ class StoreInvoiceRequest extends FormRequest
     private function baseRules(): array
     {
         return [
-            'number' => $this->numberRule(),
+            'number' => [
+                'sometimes',
+                'string',
+                Rule::unique('invoices', 'number'),
+            ],
             'company_id' => 'nullable|integer|exists:companies,id',
             'contact_id' => 'nullable|integer|exists:contacts,id',
             'issue_date' => 'nullable|date',
@@ -60,24 +64,5 @@ class StoreInvoiceRequest extends FormRequest
         return [
             'meta' => 'nullable|array',
         ];
-    }
-
-    /**
-     * Create number rule
-     *
-     * @param Invoice $invoice
-     *
-     * @return array
-     */
-    private function numberRule(?Invoice $invoice = null): array
-    {
-        $uniqueRule = Rule::unique('invoices', 'number');
-
-        if ($invoice) {
-            $uniqueRule = $uniqueRule->ignore($invoice->id);
-            return ['sometimes', 'required', 'string', $uniqueRule];
-        }
-
-        return ['required', 'string', $uniqueRule];
     }
 }

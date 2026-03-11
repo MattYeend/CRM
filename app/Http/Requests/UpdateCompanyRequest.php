@@ -37,7 +37,7 @@ class UpdateCompanyRequest extends FormRequest
     private function baseRules(): array
     {
         return [
-            'name' => 'sometimes|required|string|max:255',
+            'name' => 'sometimes|string|max:255',
             'industry' => 'nullable|string|max:100',
             'website' => 'nullable|url|max:255',
             'phone' => 'nullable|string|max:30',

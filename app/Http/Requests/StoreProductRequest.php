@@ -37,10 +37,13 @@ class StoreProductRequest extends FormRequest
     private function baseRules(): array
     {
         return [
-            'sku' => ['nullable','string',
+            'sku' => [
+                'nullable',
+                'string',
+                'max:50',
                 Rule::unique('products', 'sku'),
             ],
-            'name' => 'required|string',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'nullable|numeric',
             'currency' => 'nullable|string|max:8',

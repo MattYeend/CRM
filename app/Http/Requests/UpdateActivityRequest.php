@@ -38,7 +38,11 @@ class UpdateActivityRequest extends FormRequest
     {
         return [
             'type' => 'sometimes|string',
-            'user_id' => ['nullable','integer','exists:users,id'],
+            'user_id' => [
+                'nullable',
+                'integer',
+                'exists:users,id',
+            ],
         ];
     }
 

@@ -37,7 +37,7 @@ class UpdateLearningRequest extends FormRequest
     private function baseRules(): array
     {
         return [
-            'title' => 'required|string|max:255',
+            'title' => 'sometimes|string|max:255',
         ];
     }
 

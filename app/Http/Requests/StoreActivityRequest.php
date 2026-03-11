@@ -39,7 +39,7 @@ class StoreActivityRequest extends FormRequest
     {
         return [
             'type' => 'required|string',
-            'user_id' => ['nullable','integer','exists:users,id'],
+            'user_id' => ['nullable', 'integer', 'exists:users,id'],
         ];
     }
 
@@ -55,7 +55,11 @@ class StoreActivityRequest extends FormRequest
                 'nullable',
                 Rule::in(['deal','contact','company', 'task', 'user']),
             ],
-            'subject_id' => ['nullable','integer','required_with:subject_type'],
+            'subject_id' => [
+                'nullable',
+                'integer',
+                'required_with:subject_type',
+            ],
         ];
     }
 

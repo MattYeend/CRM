@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Invoice;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -41,7 +40,11 @@ class UpdateInvoiceRequest extends FormRequest
         $invoice = $this->route('invoice');
 
         return [
-            'number' => $this->numberRule($invoice),
+            'number' => [
+                'sometimes',
+                'string',
+                Rule::unique('invoices', 'number')->ignore($invoice->id),
+            ],
             'company_id' => 'nullable|integer|exists:companies,id',
             'contact_id' => 'nullable|integer|exists:contacts,id',
             'issue_date' => 'nullable|date',
@@ -64,24 +67,5 @@ class UpdateInvoiceRequest extends FormRequest
         return [
             'meta' => 'nullable|array',
         ];
-    }
-
-    /**
-     * Create number rule
-     *
-     * @param Invoice $invoice
-     *
-     * @return array
-     */
-    private function numberRule(?Invoice $invoice = null): array
-    {
-        $uniqueRule = Rule::unique('invoices', 'number');
-
-        if ($invoice) {
-            $uniqueRule = $uniqueRule->ignore($invoice->id);
-            return ['sometimes', 'required', 'string', $uniqueRule];
-        }
-
-        return ['required', 'string', $uniqueRule];
     }
 }

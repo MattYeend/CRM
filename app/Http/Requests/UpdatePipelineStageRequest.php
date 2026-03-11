@@ -38,7 +38,7 @@ class UpdatePipelineStageRequest extends FormRequest
     {
         return [
             'pipeline_id' => 'nullable|integer|exists:pipelines,id',
-            'name' => 'sometimes|required|string',
+            'name' => 'sometimes|string',
         ];
     }
 

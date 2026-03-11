@@ -40,10 +40,13 @@ class UpdateProductRequest extends FormRequest
         $product = $this->route('product');
 
         return [
-            'sku' => ['nullable','string',
+            'sku' => [
+                'nullable',
+                'string',
+                'max:50',
                 Rule::unique('products', 'sku')->ignore($product->id),
             ],
-            'name' => 'sometimes|string',
+            'name' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
             'price' => 'nullable|numeric',
             'currency' => 'nullable|string|max:8',
