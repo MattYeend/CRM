@@ -87,22 +87,16 @@ test('show returns the attachment with uploader relationship loaded', function (
 });
 
 test('store saves uploaded file, creates attachment and calls attacher', function () {
-    // Fake the storage used by AttachmentService
     Storage::fake('public');
 
-    // Mock the AttachmentAttacherService so we can assert attach() is called
     $attacherMock = Mockery::mock(AttachmentAttacherService::class);
+
     $attacherMock->shouldReceive('attach')
         ->once()
-        ->withArgs(function ($type, $id, $attachment) {
-            return $type === 'task'
-                && $id === 1
-                && $attachment instanceof Attachment;
-        });
+        ->with('task', 1, Mockery::type(Attachment::class));
+    
     $this->app->instance(AttachmentAttacherService::class, $attacherMock);
 
-    // Prepare an Attachment model the mocked service will return.
-    // Make sure attachable_type/id are present to satisfy NOT NULL constraints.
     $fakePath = 'attachments/document.pdf';
     $returnedAttachment = Attachment::factory()->create([
         'filename' => 'document.pdf',
