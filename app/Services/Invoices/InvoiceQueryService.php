@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Invoices;
 
 use App\Models\Invoice;
 use Illuminate\Http\Request;
@@ -9,10 +9,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class InvoiceQueryService
 {
     private InvoiceSortingService $sorting;
-    private TrashFilterService $trashFilter;
+    private InvoiceTrashFilterService $trashFilter;
     public function __construct(
         InvoiceSortingService $sorting,
-        TrashFilterService $trashFilter,
+        InvoiceTrashFilterService $trashFilter,
     ) {
         $this->sorting = $sorting;
         $this->trashFilter = $trashFilter;

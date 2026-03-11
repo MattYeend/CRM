@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Invoices;
 
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Models\Invoice;

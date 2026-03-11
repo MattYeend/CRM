@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Models\Invoice;
-use App\Services\InvoiceLogService;
-use App\Services\InvoiceManagementService;
-use App\Services\InvoiceQueryService;
+use App\Services\Invoices\InvoiceLogService;
+use App\Services\Invoices\InvoiceManagementService;
+use App\Services\Invoices\InvoiceQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -153,5 +153,31 @@ class InvoiceController extends Controller
         $this->management->destroy($invoice);
 
         return response()->json(null, 204);
+    }
+
+    /**
+     * Restore the specified resource from storage.
+     *
+     * @param int $id
+     *
+     * @return JsonResponse
+     */
+    public function restore($id): JsonResponse
+    {
+        $invoice = Invoice::withTrashed()->findOrFail($id);
+
+        $this->authorize('restore', $invoice);
+
+        $user = auth()->user();
+
+        $this->logger->invoiceRestored(
+            $user,
+            $user->id,
+            $invoice,
+        );
+
+        $this->management->restore((int) $id);
+
+        return response()->json($invoice);
     }
 }

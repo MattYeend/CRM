@@ -108,4 +108,23 @@ class InvoicePolicy
             'invoices.delete.own'
         );
     }
+
+    /**
+     * Determine whether the user can delete the invoice.
+     *
+     * @param User $user
+     *
+     * @param Invoice $invoice
+     *
+     * @return bool
+     */
+    public function restore(User $user, Invoice $invoice): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $invoice,
+            'invoices.restore.any',
+            'invoices.restore.own'
+        );
+    }
 }
