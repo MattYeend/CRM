@@ -27,6 +27,8 @@ return new class extends Migration
             $table->unsignedBigInteger('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->unsignedBigInteger('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->unsignedBigInteger('deleted_by')->nullable()->costrained('users')->nullOnDelete();
+            $table->foreignId('restored_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->timestamp('restored_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->index(['owner_id','status']);

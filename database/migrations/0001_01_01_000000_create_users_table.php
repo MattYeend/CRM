@@ -20,10 +20,10 @@ return new class extends Migration
             $table->rememberToken();
             $table->string('phone')->nullable();
             $table->string('avatar')->nullable();
-            $table->foreignId('created_by')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('updated_by')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('deleted_by')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('restored_by')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('restored_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('restored_at')->nullable();
             $table->timestamps();
             $table->softDeletes();

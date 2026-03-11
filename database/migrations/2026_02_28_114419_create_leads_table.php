@@ -23,11 +23,13 @@ return new class extends Migration
             $table->foreignId('assigned_to')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('assigned_at')->nullable();
             $table->json('meta')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('restored_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->timestamp('restored_at')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
             $table->index(['owner_id', 'assigned_to']);
         });
     }

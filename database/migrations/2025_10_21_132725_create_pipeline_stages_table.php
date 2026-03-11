@@ -18,9 +18,11 @@ return new class extends Migration
             $table->integer('position')->default(0);
             $table->boolean('is_won_stage')->default(false);
             $table->boolean('is_lost_stage')->default(false);
-            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('cascade');
-            $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');
-            $table->foreignId('deleted_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('restored_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->timestamp('restored_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
