@@ -15,8 +15,11 @@ class ActivityDestructorService
      */
     public function destroy(Activity $activity): void
     {
+        $userId = auth()->id();
+
         $activity->update([
-            'deleted_by' => auth()->id(),
+            'deleted_by' => $userId,
+            'deleted_at' => now(),
         ]);
 
         $activity->delete();
@@ -31,9 +34,15 @@ class ActivityDestructorService
      */
     public function restore(int $id): Activity
     {
+        $userId = auth()->id();
+
         $activity = Activity::withTrashed()->findOrFail($id);
 
         if ($activity->trashed()) {
+            $activity->update([
+                'restored_by' => $userId,
+                'restored_at' => now(),
+            ]);
             $activity->restore();
         }
 

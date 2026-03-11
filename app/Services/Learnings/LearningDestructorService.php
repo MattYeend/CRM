@@ -15,8 +15,11 @@ class LearningDestructorService
      */
     public function destroy(Learning $learning): void
     {
+        $userId = auth()->id();
+
         $learning->update([
-            'deleted_by' => auth()->id(),
+            'deleted_by' => $userId,
+            'deleted_at' => now(),
         ]);
 
         $learning->delete();
@@ -31,9 +34,15 @@ class LearningDestructorService
      */
     public function restore(int $id): Learning
     {
+        $userId = auth()->id();
+
         $learning = Learning::withTrashed()->findOrFail($id);
 
         if ($learning->trashed()) {
+            $learning->update([
+                'restored_by' => $userId,
+                'restored_at' => now(),
+            ]);
             $learning->restore();
         }
 

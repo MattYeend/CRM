@@ -15,8 +15,11 @@ class InvoiceItemDestructorService
      */
     public function destroy(InvoiceItem $invoiceItem): void
     {
+        $userId = auth()->id();
+
         $invoiceItem->update([
-            'deleted_by' => auth()->id(),
+            'deleted_by' => $userId,
+            'deleted_at' => now(),
         ]);
 
         $invoiceItem->delete();
@@ -31,9 +34,15 @@ class InvoiceItemDestructorService
      */
     public function restore(int $id): InvoiceItem
     {
+        $userId = auth()->id();
+
         $invoiceItem = InvoiceItem::withTrashed()->findOrFail($id);
 
         if ($invoiceItem->trashed()) {
+            $invoiceItem->update([
+                'restored_by' => $userId,
+                'restored_at' => now(),
+            ]);
             $invoiceItem->restore();
         }
 

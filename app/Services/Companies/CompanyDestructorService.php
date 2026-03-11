@@ -15,8 +15,11 @@ class CompanyDestructorService
      */
     public function destroy(Company $company): void
     {
+        $userId = auth()->id();
+
         $company->update([
-            'deleted_by' => auth()->id(),
+            'deleted_by' => $userId,
+            'deleted_at' => now(),
         ]);
 
         $company->delete();
@@ -31,9 +34,15 @@ class CompanyDestructorService
      */
     public function restore(int $id): Company
     {
+        $userId = auth()->id();
+
         $company = Company::withTrashed()->findOrFail($id);
 
         if ($company->trashed()) {
+            $company->update([
+                'restored_by' => $userId,
+                'restored_at' => now(),
+            ]);
             $company->restore();
         }
 

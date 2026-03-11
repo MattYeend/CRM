@@ -15,8 +15,11 @@ class PermissionDestructorService
      */
     public function destroy(Permission $permission): void
     {
+        $userId = auth()->id();
+
         $permission->update([
-            'deleted_by' => auth()->id(),
+            'deleted_by' => $userId,
+            'deleted_at' => now(),
         ]);
         $permission->roles()->detach();
 
@@ -32,9 +35,15 @@ class PermissionDestructorService
      */
     public function restore(int $id): Permission
     {
+        $userId = auth()->id();
+
         $permission = Permission::withTrashed()->findOrFail($id);
 
         if ($permission->trashed()) {
+            $permission->update([
+                'restored_by' => $userId,
+                'restored_at' => now(),
+            ]);
             $permission->restore();
         }
 

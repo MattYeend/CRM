@@ -20,6 +20,7 @@ class InvoiceItemCreatorService
         $data = $request->validated();
 
         $data['created_by'] = $user->id;
+        $data['created_at'] = now();
 
         if (isset($data['quantity']) && isset($data['unit_price'])) {
             $data['line_total'] = $data['quantity'] * $data['unit_price'];

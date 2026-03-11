@@ -15,8 +15,11 @@ class ContactDestructorService
      */
     public function destroy(Contact $contact): void
     {
+        $userId = auth()->id();
+
         $contact->update([
-            'deleted_by' => auth()->id(),
+            'deleted_by' => $userId,
+            'deleted_at' => now(),
         ]);
 
         $contact->delete();
@@ -31,9 +34,15 @@ class ContactDestructorService
      */
     public function restore(int $id): Contact
     {
+        $userId = auth()->id();
+
         $contact = Contact::withTrashed()->findOrFail($id);
 
         if ($contact->trashed()) {
+            $contact->update([
+                'restored_by' => $userId,
+                'restored_at' => now(),
+            ]);
             $contact->restore();
         }
 

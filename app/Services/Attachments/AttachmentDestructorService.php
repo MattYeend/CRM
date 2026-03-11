@@ -15,8 +15,11 @@ class AttachmentDestructorService
      */
     public function destroy(Attachment $attachment): void
     {
+        $userId = auth()->id();
+
         $attachment->update([
-            'deleted_by' => auth()->id(),
+            'deleted_by' => $userId,
+            'deleted_at' => now(),
         ]);
 
         $attachment->delete();
@@ -31,9 +34,15 @@ class AttachmentDestructorService
      */
     public function restore(int $id): Attachment
     {
+        $userId = auth()->id();
+
         $attachment = Attachment::withTrashed()->findOrFail($id);
 
         if ($attachment->trashed()) {
+            $attachment->update([
+                'restored_by' => $userId,
+                'restored_at' => now(),
+            ]);
             $attachment->restore();
         }
 

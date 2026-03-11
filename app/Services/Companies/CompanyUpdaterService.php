@@ -20,9 +20,12 @@ class CompanyUpdaterService
         UpdateCompanyRequest $request,
         Company $company
     ): Company {
+        $user = $request->user();
+
         $data = $request->validated();
 
-        $data['updated_by'] = $request->user()->id;
+        $data['updated_by'] = $user->id;
+        $data['updated_at'] = now();
 
         $company->update($data);
 

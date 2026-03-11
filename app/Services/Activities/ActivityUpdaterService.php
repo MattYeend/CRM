@@ -20,9 +20,12 @@ class ActivityUpdaterService
         UpdateActivityRequest $request,
         Activity $activity
     ): Activity {
+        $user = $request->user();
+
         $data = $request->validated();
 
-        $data['updated_by'] = $request->user()->id;
+        $data['updated_by'] = $user->id;
+        $data['updated_at'] = now();
 
         $activity->update($data);
 

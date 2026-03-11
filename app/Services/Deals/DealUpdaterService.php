@@ -20,9 +20,12 @@ class DealUpdaterService
         UpdateDealRequest $request,
         Deal $deal
     ): Deal {
+        $user = $request->user();
+
         $data = $request->validated();
 
-        $data['updated_by'] = $request->user()->id;
+        $data['updated_by'] = $user->id;
+        $data['updated_at'] = now();
 
         $deal->update($data);
 

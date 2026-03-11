@@ -20,9 +20,11 @@ class LeadUpdaterService
         UpdateLeadRequest $request,
         Lead $lead
     ): Lead {
+        $user = $request->user();
+
         $data = $request->validated();
 
-        $data['updated_by'] = $request->user()->id;
+        $data['updated_by'] = $user->id;
 
         $lead->update($data);
 

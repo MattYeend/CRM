@@ -20,9 +20,11 @@ class LearningUpdaterService
         UpdateLearningRequest $request,
         Learning $learning
     ): Learning {
+        $user = $request->user();
+
         $data = $request->validated();
 
-        $data['updated_by'] = $request->user()->id;
+        $data['updated_by'] = $user->id;
 
         $learning->update($data);
 

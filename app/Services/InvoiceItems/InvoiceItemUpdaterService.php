@@ -20,9 +20,12 @@ class InvoiceItemUpdaterService
         UpdateInvoiceItemRequest $request,
         InvoiceItem $invoiceItem
     ): InvoiceItem {
+        $user = $request->user();
+
         $data = $request->validated();
 
-        $data['updated_by'] = $request->user()->id;
+        $data['updated_by'] = $user->id;
+        $data['updated_at'] = now();
 
         if (isset($data['quantity']) && isset($data['unit_price'])) {
             $data['line_total'] = $data['quantity'] * $data['unit_price'];

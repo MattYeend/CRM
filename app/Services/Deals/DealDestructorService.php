@@ -15,8 +15,11 @@ class DealDestructorService
      */
     public function destroy(Deal $deal): void
     {
+        $userId = auth()->id();
+
         $deal->update([
-            'deleted_by' => auth()->id(),
+            'deleted_by' => $userId,
+            'deleted_at' => now(),
         ]);
 
         $deal->delete();
@@ -31,9 +34,15 @@ class DealDestructorService
      */
     public function restore(int $id): Deal
     {
+        $userId = auth()->id();
+
         $deal = Deal::withTrashed()->findOrFail($id);
 
         if ($deal->trashed()) {
+            $deal->update([
+                'restored_by' => $userId,
+                'restored_at' => now(),
+            ]);
             $deal->restore();
         }
 

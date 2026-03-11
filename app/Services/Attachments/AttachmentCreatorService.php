@@ -14,13 +14,17 @@ class AttachmentCreatorService
      */
     public function create(StoreAttachmentRequest $request): Attachment
     {
+        $user = $request->user();
+
         $file = $request->file('file');
         $path = $file->store('attachments');
 
         $data = $request->validated();
         $data['filename'] = $file->getClientOriginalName();
-        $data['uploaded_by'] = $request->user()->id;
+        $data['uploaded_by'] = $user->id;
         $data['path'] = $path;
+        $data['created_by'] = $user->id;
+        $data['created_at'] = now();
 
         return Attachment::create($data);
     }

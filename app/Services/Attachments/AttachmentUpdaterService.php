@@ -18,9 +18,12 @@ class AttachmentUpdaterService
      */
     public function update(Request $request, Attachment $attachment): Attachment
     {
+        $user = $request->user();
+
         $data = $request->validated();
 
-        $data['updated_by'] = $request->user()->id;
+        $data['updated_by'] = $user->id;
+        $data['updated_at'] = now();
 
         $attachment->update($data);
 

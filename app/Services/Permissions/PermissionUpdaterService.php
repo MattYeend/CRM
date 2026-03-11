@@ -20,9 +20,11 @@ class PermissionUpdaterService
         UpdatePermissionRequest $request,
         Permission $permission
     ): Permission {
+        $user = $request->user();
+
         $data = $request->validated();
 
-        $data['updated_by'] = $request->user()->id;
+        $data['updated_by'] = $user->id;
 
         $permission->update($data);
 

@@ -20,9 +20,11 @@ class InvoiceUpdaterService
         UpdateInvoiceRequest $request,
         Invoice $invoice
     ): Invoice {
+        $user = $request->user();
+
         $data = $request->validated();
 
-        $data['updated_by'] = $request->user()->id;
+        $data['updated_by'] = $user->id;
 
         $invoice->update($data);
 
