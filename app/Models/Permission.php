@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
@@ -19,6 +20,26 @@ class Permission extends Model
     protected $fillable = [
         'name',
         'label',
+        'created_by',
+        'updated_by',
+        'deleted_by',
+        'restored_by',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'restored_at',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+        'restored_at' => 'datetime',
     ];
 
     /**
@@ -107,5 +128,45 @@ class Permission extends Model
         $rolesCount = $this->roles()->whereIn('name', $roleNames)->count();
 
         return $rolesCount === count($roleNames);
+    }
+
+    /**
+     * Get the user that created the permission.
+     *
+     * @return BelongsTo
+     */
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Get the user that last updated the permission.
+     *
+     * @return BelongsTo
+     */
+    public function updater(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    /**
+     * Get the user that deleted the permission.
+     *
+     * @return BelongsTo
+     */
+    public function deleter(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
+    }
+
+    /**
+     * Get the user that restored the permission.
+     *
+     * @return BelongsTo
+     */
+    public function restorer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'restored_by');
     }
 }
