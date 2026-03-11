@@ -110,6 +110,25 @@ class AttachmentPolicy
     }
 
     /**
+     * Determine whether the user can restore the attachment.
+     *
+     * @param User $user
+     *
+     * @param Attachment $attachment
+     *
+     * @return bool
+     */
+    public function restore(User $user, Attachment $attachment): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $attachment,
+            'attachments.restore.any',
+            'attachments.restore.own'
+        );
+    }
+
+    /**
      * Determine whether the user can upload attachments.
      *
      * @param User $user

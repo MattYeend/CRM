@@ -24,6 +24,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'activities.update.own', 'label' => 'Update own activities'],
             ['name' => 'activities.delete.any', 'label' => 'Delete any activities'],
             ['name' => 'activities.delete.own', 'label' => 'Delete own activities'],
+            ['name' => 'activities.restore.any', 'label' => 'Restore any activities'],
+            ['name' => 'activities.restore.own', 'label' => 'Restore own activities'],
 
             // Attachments
             ['name' => 'attachments.view.all', 'label' => 'View attachments'],
@@ -35,6 +37,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'attachments.upload.own', 'label' => 'Upload own attachments'],
             ['name' => 'attachments.delete.any', 'label' => 'Delete any attachments'],
             ['name' => 'attachments.delete.own', 'label' => 'Delete own attachments'],
+            ['name' => 'attachments.restore.any', 'label' => 'Restore any attachments'],
+            ['name' => 'attachments.restore.own', 'label' => 'Restore own attachments'],
 
             // Companies
             ['name' => 'companies.view.all', 'label' => 'View companies'],
@@ -55,6 +59,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'contacts.update.own', 'label' => 'Update own contacts'],
             ['name' => 'contacts.delete.any', 'label' => 'Delete any contacts'],
             ['name' => 'contacts.delete.own', 'label' => 'Delete own contacts'],
+            ['name' => 'contacts.restore.any', 'label' => 'Restore any contacts'],
+            ['name' => 'contacts.restore.own', 'label' => 'Restore own contacts'],
 
             // Deals
             ['name' => 'deals.view.all', 'label' => 'View deals'],
@@ -75,6 +81,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'invoices.update.own', 'label' => 'Update own invoices'],
             ['name' => 'invoices.delete.any', 'label' => 'Delete any invoices'],
             ['name' => 'invoices.delete.own', 'label' => 'Delete own invoices'],
+            ['name' => 'invoices.restore.any', 'label' => 'Restore any invoices'],
+            ['name' => 'invoices.restore.own', 'label' => 'Restore own invoices'],
 
             // Invoice Items
             ['name' => 'invoiceItems.view.all', 'label' => 'View invoice items'],
@@ -84,6 +92,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'invoiceItems.update.own', 'label' => 'Update own invoice items'],
             ['name' => 'invoiceItems.delete.any', 'label' => 'Delete any invoice items'],
             ['name' => 'invoiceItems.delete.own', 'label' => 'Delete own invoice items'],
+            ['name' => 'invoiceItems.restore.any', 'label' => 'Restore any invoices items'],
+            ['name' => 'invoiceItems.restore.own', 'label' => 'Restore own invoices items'],
 
             // Leads 
             ['name' => 'leads.view.all', 'label' => 'View leads'],
@@ -110,6 +120,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'learning.complete.own', 'label' => 'Can complete own learning materials'],
             ['name' => 'learning.incomplete.any', 'label' => 'Can incomplete any learning materials'],
             ['name' => 'learning.incomplete.own', 'label' => 'Can incomplete own learning materials'],
+            ['name' => 'learning.restore.any', 'label' => 'Restore any learning materials'],
+            ['name' => 'learning.restore.own', 'label' => 'Restore own learning materials'],
 
             // Notes
             ['name' => 'notes.view.all', 'label' => 'View notes'],
@@ -119,6 +131,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'notes.update.own', 'label' => 'Update own notes'],
             ['name' => 'notes.delete.any', 'label' => 'Delete any notes'],
             ['name' => 'notes.delete.own', 'label' => 'Delete own notes'],
+            ['name' => 'notes.restore.any', 'label' => 'Restore any notes'],
+            ['name' => 'notes.restore.own', 'label' => 'Restore own notes'],
 
             // Permissions
             ['name' => 'permissions.view.all', 'label' => 'View permissions'],
@@ -128,6 +142,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'permissions.update.own', 'label' => 'Update own permissions'],
             ['name' => 'permissions.delete.any', 'label' => 'Delete any permissions'],
             ['name' => 'permissions.delete.own', 'label' => 'Detele own permissions'],
+            ['name' => 'permissions.restore.any', 'label' => 'Restore any permissions'],
+            ['name' => 'permissions.restore.own', 'label' => 'Restore own permissions'],
 
             // Pipelines
             ['name' => 'pipelines.view.all', 'label' => 'View pipelines'],
@@ -139,6 +155,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'pipelines.delete.own', 'label' => 'Delete own pipelines'],
             ['name' => 'pipelines.manage', 'label' => 'Manage pipelines'],
             ['name' => 'pipelines.assign', 'label' => 'Assign pipelines to entities'],
+            ['name' => 'pipelines.restore.any', 'label' => 'Restore any pipelines'],
+            ['name' => 'pipelines.restore.own', 'label' => 'Restore own pipelines'],
 
             // Pipeline Stages
             ['name' => 'pipelineStages.view.all', 'label' => 'View pipeline stages'],
@@ -150,6 +168,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'pipelineStages.delete.own', 'label' => 'Detele own pipeline stages'],
             ['name' => 'pipelineStages.manage', 'label' => 'Manage pipeline stages'],
             ['name' => 'pipelineStages.assign', 'label' => 'Assign pipeline stages to pipelines'],
+            ['name' => 'pipelineStages.restore.any', 'label' => 'Restore any pipeline stages'],
+            ['name' => 'pipelineStages.restore.own', 'label' => 'Restore own pipeline stages'],
 
             // Products
             ['name' => 'products.view.all', 'label' => 'View products'],
@@ -159,6 +179,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'products.update.own', 'label' => 'Update own products'],
             ['name' => 'products.delete.any', 'label' => 'Delete any products'],
             ['name' => 'products.delete.own', 'label' => 'Delete own products'],
+            ['name' => 'products.restore.any', 'label' => 'Restore any products'],
+            ['name' => 'products.restore.own', 'label' => 'Restore own products'],
 
             // Reports & exports
             ['name' => 'reports.view', 'label' => 'View reports'],
@@ -176,6 +198,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'tasks.update.own', 'label' => 'Update own tasks'],
             ['name' => 'tasks.delete.any', 'label' => 'Delete any tasks'],
             ['name' => 'tasks.delete.own', 'label' => 'Delete own tasks'],
+            ['name' => 'tasks.restore.any', 'label' => 'Restore any tasks'],
+            ['name' => 'tasks.restore.own', 'label' => 'Restore own tasks'],
 
             // Settings
             ['name' => 'settings.view', 'label' => 'View settings'],

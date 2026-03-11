@@ -43,6 +43,7 @@ class PermissionRoleSeeder extends Seeder
             'activities.create',
             'activities.update.any',
             'activities.delete.any',
+            'activities.restore.any',
 
             'attachments.view.all',
             'attachments.view.own',
@@ -50,6 +51,7 @@ class PermissionRoleSeeder extends Seeder
             'attachments.update.any',
             'attachments.upload.any',
             'attachments.delete.any',
+            'attachments.restore.any',
 
             'companies.view.all',
             'companies.view.own',
@@ -57,12 +59,14 @@ class PermissionRoleSeeder extends Seeder
             'companies.update.any',
             'companies.delete.any',
             'companies.restore.any',
+            'companies.restore.any',
 
             'contacts.view.all',
             'contacts.view.own',
             'contacts.create',
             'contacts.update.any',
             'contacts.delete.any',
+            'contacts.restore.any',
 
             'deals.view.all',
             'deals.view.own',
@@ -70,18 +74,21 @@ class PermissionRoleSeeder extends Seeder
             'deals.update.any',
             'deals.delete.any',
             'deals.restore.any',
+            'deals.restore.any',
 
             'invoices.view.all',
             'invoices.view.own',
             'invoices.create',
             'invoices.update.any',
             'invoices.delete.any',
+            'invoices.restore.any',
 
             'invoiceItems.view.all',
             'invoiceItems.view.own',
             'invoiceItems.create',
             'invoiceItems.update.any',
             'invoiceItems.delete.any',
+            'invoiceItems.restore.any',
 
             'leads.view.all',
             'leads.view.own',
@@ -99,24 +106,21 @@ class PermissionRoleSeeder extends Seeder
             'learning.access',
             'learning.complete.any',
             'learning.incomplete.any',
+            'learning.restore.any',
 
             'notes.view.all',
             'notes.view.own',
             'notes.create',
             'notes.update.any',
             'notes.delete.any',
-
-            'tasks.view.all',
-            'tasks.view.own',
-            'tasks.create',
-            'tasks.update.any',
-            'tasks.delete.any',
+            'notes.restore.any',
 
             'permissions.view.all',
             'permissions.view.own',
             'permissions.create',
             'permissions.update.any',
             'permissions.delete.any',
+            'permissions.restore.any',
     
             'pipelines.view.all',
             'pipelines.view.own',
@@ -125,6 +129,7 @@ class PermissionRoleSeeder extends Seeder
             'pipelines.delete.any',
             'pipelines.manage',
             'pipelines.assign',
+            'pipelines.restore.any',
 
             'pipelineStages.view.all',
             'pipelineStages.view.own',
@@ -133,18 +138,21 @@ class PermissionRoleSeeder extends Seeder
             'pipelineStages.delete.any',
             'pipelineStages.assign',
             'pipelineStages.manage',
+            'pipelineStages.restore.any',
 
             'products.view.all',
             'products.view.own',
             'products.create',
             'products.update.any',
             'products.delete.any',
+            'products.restore.any',
 
             'tasks.view.all',
             'tasks.view.own',
             'tasks.create',
             'tasks.update.any',
             'tasks.delete.any',
+            'tasks.restore.any',
 
             'reports.view',
             'data.export',
@@ -186,6 +194,7 @@ class PermissionRoleSeeder extends Seeder
             'activities.create',
             'activities.update.own',
             'activities.delete.own',
+            'activities.restore.own',
 
             'attachments.upload.own',
             'attachments.view.all',
@@ -193,6 +202,7 @@ class PermissionRoleSeeder extends Seeder
             'attachments.create',
             'attachments.update.own',
             'attachments.delete.own',
+            'attachments.restore.own',
 
             'companies.view.all',
             'companies.view.own',
@@ -200,12 +210,14 @@ class PermissionRoleSeeder extends Seeder
             'companies.update.own',
             'companies.delete.own',
             'companies.restore.own',
+            'companies.restore.own',
 
             'contacts.view.all',
             'contacts.view.own',
             'contacts.create',
             'contacts.update.own',
             'contacts.delete.own',
+            'contacts.restore.own',
 
             'deals.view.all',
             'deals.view.own',
@@ -219,12 +231,14 @@ class PermissionRoleSeeder extends Seeder
             'invoices.create',
             'invoices.update.own',
             'invoices.delete.own',
+            'invoices.restore.own',
 
             'invoiceItems.view.all',
             'invoiceItems.view.own',
             'invoiceItems.create',
             'invoiceItems.update.own',
             'invoiceItems.delete.own',
+            'invoiceItems.restore.own',
 
             'leads.view.all',
             'leads.view.own',
@@ -241,18 +255,14 @@ class PermissionRoleSeeder extends Seeder
             'learning.delete.own',
             'learning.complete.own',
             'learning.incomplete.own',
+            'learning.restore.own',
 
             'notes.view.all',
             'notes.view.own',
             'notes.create',
             'notes.update.own',
             'notes.delete.own',
-
-            'tasks.view.all',
-            'tasks.view.own',
-            'tasks.create',
-            'tasks.update.own',
-            'tasks.delete.own',
+            'notes.restore.own',
 
             'permissions.view.own',
     
@@ -261,6 +271,7 @@ class PermissionRoleSeeder extends Seeder
             'pipelines.create',
             'pipelines.update.own',
             'pipelines.delete.own',
+            'pipelines.restore.own',
 
             'pipelineStages.view.all',
             'pipelineStages.view.own',
@@ -268,18 +279,21 @@ class PermissionRoleSeeder extends Seeder
             'pipelineStages.update.own',
             'pipelineStages.assign',
             'pipelineStages.delete.own',
-
-            'tasks.view.all',
-            'tasks.view.own',
-            'tasks.create',
-            'tasks.update.own',
-            'tasks.delete.own',
+            'pipelineStages.restore.own',
 
             'products.view.all',
             'products.view.own',
             'products.create',
             'products.update.own',
             'products.delete.own',
+            'products.restore.own',
+
+            'tasks.view.all',
+            'tasks.view.own',
+            'tasks.create',
+            'tasks.update.own',
+            'tasks.delete.own',
+            'tasks.restore.own',
 
             'reports.view',
             'roles.view.own',

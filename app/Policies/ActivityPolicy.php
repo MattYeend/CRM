@@ -108,4 +108,23 @@ class ActivityPolicy
             'activities.delete.own'
         );
     }
+
+    /**
+     * Determine whether the user can restore the activity.
+     *
+     * @param User $user
+     *
+     * @param Activity $activity
+     *
+     * @return bool
+     */
+    public function restore(User $user, Activity $activity): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $activity,
+            'activities.restore.any',
+            'activities.restore.own'
+        );
+    }
 }
