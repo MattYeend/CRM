@@ -25,13 +25,25 @@ class UpdateInvoiceRequest extends FormRequest
      */
     public function rules(): array
     {
+        return array_merge(
+            $this->baseRules(),
+            $this->metaRules(),
+        );
+    }
+
+    /**
+     * Base rules
+     *
+     * @return array
+     */
+    private function baseRules(): array
+    {
         $invoice = $this->route('invoice');
 
         return [
             'number' => $this->numberRule($invoice),
             'company_id' => 'nullable|integer|exists:companies,id',
             'contact_id' => 'nullable|integer|exists:contacts,id',
-            'created_by' => 'nullable|integer|exists:users,id',
             'issue_date' => 'nullable|date',
             'due_date' => 'nullable|date',
             'status' => 'nullable|in:draft,sent,paid,overdue,cancelled',
@@ -39,6 +51,17 @@ class UpdateInvoiceRequest extends FormRequest
             'tax' => 'nullable|numeric',
             'total' => 'nullable|numeric',
             'currency' => 'nullable|string|max:8',
+        ];
+    }
+
+    /**
+     * Meta rules
+     *
+     * @return array
+     */
+    private function metaRules(): array
+    {
+        return [
             'meta' => 'nullable|array',
         ];
     }

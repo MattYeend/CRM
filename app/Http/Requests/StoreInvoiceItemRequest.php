@@ -22,12 +22,36 @@ class StoreInvoiceItemRequest extends FormRequest
      */
     public function rules(): array
     {
+        return array_merge(
+            $this->baseRules(),
+            $this->metaRules(),
+        );
+    }
+
+    /**
+     * Base rules
+     *
+     * @return array
+     */
+    private function baseRules(): array
+    {
         return [
             'invoice_id' => 'required|integer|exists:invoices,id',
             'product_id' => 'nullable|integer|exists:products,id',
-            'description' => 'required|string',
+            'description' => 'required|string|max:255',
             'quantity' => 'required|integer|min:1',
             'unit_price' => 'required|numeric',
+        ];
+    }
+
+    /**
+     * Meta rules
+     *
+     * @return array
+     */
+    private function metaRules(): array
+    {
+        return [
             'line_total' => 'nullable|numeric',
             'meta' => 'nullable|array',
         ];

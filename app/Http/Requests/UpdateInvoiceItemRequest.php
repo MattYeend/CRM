@@ -23,10 +23,29 @@ class UpdateInvoiceItemRequest extends FormRequest
      */
     public function rules(): array
     {
+        return array_merge(
+            $this->baseRules(),
+            $this->metaRules(),
+        );
+    }
+
+    /**
+     * Base rules
+     *
+     * @return array
+     */
+    private function baseRules(): array
+    {
         return [
-            'description' => 'sometimes|required|string',
+            'description' => 'sometimes|required|string|max:255',
             'quantity' => 'nullable|integer|min:1',
             'unit_price' => 'nullable|numeric',
+        ];
+    }
+
+    private function metaRules(): array
+    {
+        return [
             'line_total' => 'nullable|numeric',
             'meta' => 'nullable|array',
         ];
