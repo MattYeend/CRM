@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePipelineStageRequest;
 use App\Http\Requests\UpdatePipelineStageRequest;
 use App\Models\PipelineStage;
-use App\Services\PipelineStageLogService;
-use App\Services\PipelineStageManagementService;
-use App\Services\PipelineStageQueryService;
+use App\Services\PipelineStages\PipelineStageLogService;
+use App\Services\PipelineStages\PipelineStageManagementService;
+use App\Services\PipelineStages\PipelineStageQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -153,5 +153,29 @@ class PipelineStageController extends Controller
         $this->management->destroy($pipelineStage);
 
         return response()->json(null, 204);
+    }
+
+    /**
+     * Restore the specified resource from storage.
+     *
+     * @param int $id
+     *
+     * @return JsonResponse
+     */
+    public function restore(int $id): JsonResponse
+    {
+        $pipelineStage = $this->management->restore((int) $id);
+
+        $this->authorize('restore', $pipelineStage);
+
+        $user = auth()->user();
+
+        $this->logger->pipelineRestored(
+            $user,
+            $user->id,
+            $pipelineStage
+        );
+
+        return response()->json($pipelineStage);
     }
 }

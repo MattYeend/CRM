@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\PipelineStages;
 
 use App\Http\Requests\StorePipelineStageRequest;
 use App\Models\PipelineStage;
@@ -20,6 +20,7 @@ class PipelineStageCreatorService
         $data = $request->validated();
 
         $data['created_by'] = $user->id;
+        $data['created_at'] = now();
 
         return PipelineStage::create($data);
     }

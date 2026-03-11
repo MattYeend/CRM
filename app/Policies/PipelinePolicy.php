@@ -110,6 +110,25 @@ class PipelinePolicy
     }
 
     /**
+     * Determine whether the user can restore the pipeline.
+     *
+     * @param User $user
+     *
+     * @param Pipeline $pipeline
+     *
+     * @return bool
+     */
+    public function restore(User $user, Pipeline $pipeline): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $pipeline,
+            'pipelines.restore.any',
+            'pipelines.restore.own'
+        );
+    }
+
+    /**
      * Determine whether the user can manage pipelines.
      *
      * @param User $user

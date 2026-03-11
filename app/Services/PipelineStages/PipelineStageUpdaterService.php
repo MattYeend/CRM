@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\PipelineStages;
 
 use App\Http\Requests\UpdatePipelineStageRequest;
 use App\Models\PipelineStage;
@@ -20,9 +20,12 @@ class PipelineStageUpdaterService
         UpdatePipelineStageRequest $request,
         PipelineStage $pipelineStage
     ): PipelineStage {
+        $user = $request->user();
+
         $data = $request->validated();
 
-        $data['updated_by'] = $request->user()->id;
+        $data['updated_by'] = $user->id;
+        $data['updated_at'] = now();
 
         $pipelineStage->update($data);
 

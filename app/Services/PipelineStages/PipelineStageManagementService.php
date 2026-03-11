@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\PipelineStages;
 
 use App\Http\Requests\StorePipelineStageRequest;
 use App\Http\Requests\UpdatePipelineStageRequest;

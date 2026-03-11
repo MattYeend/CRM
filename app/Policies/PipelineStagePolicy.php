@@ -110,6 +110,25 @@ class PipelineStagePolicy
     }
 
     /**
+     * Determine whether the user can restore the pipeline stage.
+     *
+     * @param User $user
+     *
+     * @param PipelineStage $pipelineStage
+     *
+     * @return bool
+     */
+    public function restore(User $user, PipelineStage $pipelineStage): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $pipelineStage,
+            'pipelineStages.restore.any',
+            'pipelineStages.restore.own'
+        );
+    }
+
+    /**
      * Determine whether the user can manage pipeline stages.
      *
      * @param User $user

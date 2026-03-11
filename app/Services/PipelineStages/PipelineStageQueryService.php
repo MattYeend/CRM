@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\PipelineStages;
 
 use App\Models\PipelineStage;
 use Illuminate\Http\Request;
@@ -9,10 +9,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class PipelineStageQueryService
 {
     private PipelineStageSortingService $sorting;
-    private TrashFilterService $trashFilter;
+    private PipelineStageTrashFilterService $trashFilter;
     public function __construct(
         PipelineStageSortingService $sorting,
-        TrashFilterService $trashFilter,
+        PipelineStageTrashFilterService $trashFilter,
     ) {
         $this->sorting = $sorting;
         $this->trashFilter = $trashFilter;

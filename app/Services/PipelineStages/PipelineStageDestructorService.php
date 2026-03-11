@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\PipelineStages;
 
 use App\Models\PipelineStage;
 
@@ -15,8 +15,11 @@ class PipelineStageDestructorService
      */
     public function destroy(PipelineStage $pipelineStage): void
     {
+        $userId = auth()->id();
+
         $pipelineStage->update([
-            'deleted_by' => auth()->id(),
+            'deleted_by' => $userId,
+            'deleted_at' => now(),
         ]);
 
         $pipelineStage->delete();
@@ -31,9 +34,16 @@ class PipelineStageDestructorService
      */
     public function restore(int $id): PipelineStage
     {
+        $userId = auth()->id();
+
         $pipelineStage = PipelineStage::withTrashed()->findOrFail($id);
 
         if ($pipelineStage->trashed()) {
+            $pipelineStage->update([
+                'restored_by' => $userId,
+                'restored_at' => now(),
+            ]);
+
             $pipelineStage->restore();
         }
 

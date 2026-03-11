@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Pipelines;
 
 use App\Http\Requests\UpdatePipelineRequest;
 use App\Models\Pipeline;
@@ -20,9 +20,11 @@ class PipelineUpdaterService
         UpdatePipelineRequest $request,
         Pipeline $pipeline
     ): Pipeline {
+        $user = $request->user();
         $data = $request->validated();
 
-        $data['updated_by'] = $request->user()->id;
+        $data['updated_by'] = $user->id;
+        $data['updated_at'] = now();
 
         $pipeline->update($data);
 
