@@ -22,16 +22,40 @@ class StoreCompanyRequest extends FormRequest
      */
     public function rules(): array
     {
+        return array_merge(
+            $this->baseRules(),
+            $this->metaRules(),
+        );
+    }
+
+    /**
+     * Base rules
+     *
+     * @return array
+     */
+    private function baseRules(): array
+    {
         return [
-            'name' => 'required|string',
-            'industry' => 'nullable|string',
-            'website' => 'nullable|url',
-            'phone' => 'nullable|string',
-            'address' => 'nullable|string',
-            'city' => 'nullable|string',
-            'region' => 'nullable|string',
-            'postal_code' => 'nullable|string',
-            'country' => 'nullable|string',
+            'name' => 'required|string|max:255',
+            'industry' => 'nullable|string|max:100',
+            'website' => 'nullable|url|max:255',
+            'phone' => 'nullable|string|max:30',
+            'address' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:100',
+            'region' => 'nullable|string|max:100',
+            'postal_code' => 'nullable|string|max:20',
+            'country' => 'nullable|string|max:100',
+        ];
+    }
+
+    /**
+     * Meta rules
+     *
+     * @return array
+     */
+    private function metaRules(): array
+    {
+        return [
             'meta' => 'nullable|array',
         ];
     }

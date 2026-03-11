@@ -26,6 +26,7 @@ class StoreAttachmentRequest extends FormRequest
         return array_merge(
             $this->baseRules(),
             $this->attchmentRules(),
+            $this->metaRules(),
         );
     }
 
@@ -54,6 +55,18 @@ class StoreAttachmentRequest extends FormRequest
                 Rule::in(['deal', 'contact', 'company', 'task', 'user']),
             ],
             'attachable_id' => ['required', 'integer'],
+        ];
+    }
+
+    /**
+     * Meta rules
+     *
+     * @return array
+     */
+    private function metaRules(): array
+    {
+        return [
+            'meta' => 'nullable|array',
         ];
     }
 }

@@ -25,13 +25,31 @@ class UpdateAttachmentRequest extends FormRequest
     {
         return array_merge(
             $this->baseRules(),
+            $this->metaRules(),
         );
     }
 
+    /**
+     * Base rules
+     *
+     * @return array
+     */
     private function baseRules(): array
     {
         return [
             'file' => 'nullable|file|max:10000',
+        ];
+    }
+
+    /**
+     * Meta rules
+     *
+     * @return array
+     */
+    private function metaRules(): array
+    {
+        return [
+            'meta' => 'nullable|array',
         ];
     }
 }
