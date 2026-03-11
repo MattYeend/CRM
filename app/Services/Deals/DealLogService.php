@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Deals;
 
 use App\Models\Deal;
 use App\Models\Log;

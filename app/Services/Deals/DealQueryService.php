@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Deals;
 
 use App\Models\Deal;
 use Illuminate\Http\Request;
@@ -10,11 +10,11 @@ class DealQueryService
 {
     private DealSearchService $search;
     private DealSortingService $sorting;
-    private TrashFilterService $trashFilter;
+    private DealTrashFilterService $trashFilter;
     public function __construct(
         DealSearchService $search,
         DealSortingService $sorting,
-        TrashFilterService $trashFilter,
+        DealTrashFilterService $trashFilter,
     ) {
         $this->search = $search;
         $this->sorting = $sorting;

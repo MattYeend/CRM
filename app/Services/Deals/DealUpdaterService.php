@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Deals;
 
 use App\Http\Requests\UpdateDealRequest;
 use App\Models\Deal;

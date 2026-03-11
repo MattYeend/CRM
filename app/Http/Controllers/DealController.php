@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreDealRequest;
 use App\Http\Requests\UpdateDealRequest;
 use App\Models\Deal;
-use App\Services\DealLogService;
-use App\Services\DealManagementService;
-use App\Services\DealQueryService;
+use App\Services\Deals\DealLogService;
+use App\Services\Deals\DealManagementService;
+use App\Services\Deals\DealQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -176,7 +176,7 @@ class DealController extends Controller
             $deal,
         );
 
-        $this->management->restore($id);
+        $this->management->restore((int) $id);
 
         return response()->json($deal);
     }
