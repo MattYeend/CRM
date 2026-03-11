@@ -23,10 +23,35 @@ class UpdateLearningRequest extends FormRequest
      */
     public function rules(): array
     {
+        return array_merge(
+            $this->baseRules(),
+            $this->metaRules(),
+        );
+    }
+
+    /**
+     * Base rules
+     *
+     * @return array
+     */
+    private function baseRules(): array
+    {
         return [
-            'title' => 'sometimes|required|string|max:255',
+            'title' => 'required|string|max:255',
+        ];
+    }
+
+    /**
+     * Meta rules
+     *
+     * @return array
+     */
+    private function metaRules(): array
+    {
+        return [
             'description' => 'nullable|string',
             'is_completed' => 'boolean',
+            'meta' => 'nullable|array',
         ];
     }
 }
