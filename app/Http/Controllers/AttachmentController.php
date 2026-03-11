@@ -192,4 +192,27 @@ class AttachmentController extends Controller
 
         return response()->json(null, 204);
     }
+
+    /**
+     * Restore the specified user from soft deletion.
+     *
+     * @param int $id
+     *
+     * @return JsonResponse
+     */
+    public function restore($id): JsonResponse
+    {
+        $user = $this->management->restore((int) $id);
+
+        $this->authorize('restore', $user);
+        $auth = auth()->user();
+
+        $this->logger->attachmentRestored(
+            $auth,
+            $auth->id,
+            $user,
+        );
+
+        return response()->json($user);
+    }
 }

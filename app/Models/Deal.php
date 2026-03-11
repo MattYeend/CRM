@@ -50,7 +50,7 @@ class Deal extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
-        'restored_at' => 'datetime'
+        'restored_at' => 'datetime',
     ];
 
     /**

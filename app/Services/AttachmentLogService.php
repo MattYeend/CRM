@@ -74,6 +74,36 @@ class AttachmentLogService
     }
 
     /**
+     * Log the attachment of a file being restored.
+     *
+     * @param User $user The user being logged.
+     *
+     * @param int $userId The ID of the user who performed the action.
+     *
+     * @param Attachment $attachment The attachment that was restored.
+     *
+     * @return Log The created log entry.
+     */
+    public function attachmentRestored(
+        User $user,
+        int $userId,
+        Attachment $attachment
+    ): array {
+        $data = $this->baseAttachmentData($attachment) + [
+            'deleted_at' => now(),
+            'deleted_by' => $user->name,
+        ];
+
+        Log::log(
+            Log::ACTION_ATTACHMENT_RESTORED,
+            $data,
+            $userId,
+        );
+
+        return $data;
+    }
+
+    /**
      * Log the attachment of a file being downloaded.
      *
      * @param User $user The user being logged.

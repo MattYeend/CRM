@@ -36,7 +36,8 @@ class ActivityLogService
             'scheduled_at' => $activity->scheduled_at,
             'subject_id' => $activity->subject_id,
             'description' => $activity->description,
-            'created_at' => $activity->created_at,
+            'created_by' => $user->name,
+            'created_at' => now(),
         ];
 
         Log::log(
@@ -71,7 +72,8 @@ class ActivityLogService
             'scheduled_at' => $activity->scheduled_at,
             'subject_id' => $activity->subject_id,
             'description' => $activity->description,
-            'updated_at' => $activity->updated_at,
+            'updated_by' => $user->name,
+            'updated_at' => now(),
         ];
 
         Log::log(
@@ -106,11 +108,48 @@ class ActivityLogService
             'scheduled_at' => $activity->scheduled_at,
             'subject_id' => $activity->subject_id,
             'description' => $activity->description,
+            'deleted_by' => $user->name,
             'deleted_at' => now(),
         ];
 
         Log::log(
             Log::ACTION_ACTIVITY_DELETED,
+            $data,
+            $userId,
+        );
+
+        return $data;
+    }
+
+    /**
+     * Log activity when an activity is restored.
+     *
+     * @param User $user The user being logged.
+     *
+     * @param int $userId The ID of the user who performed the action.
+     *
+     * @param Activity $activity The activity that was restored.
+     *
+     * @return array The data logged for the activity.
+     */
+    public function activityRestored(
+        User $user,
+        int $userId,
+        Activity $activity
+    ): array {
+        $data = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'type' => $activity->type,
+            'scheduled_at' => $activity->scheduled_at,
+            'subject_id' => $activity->subject_id,
+            'description' => $activity->description,
+            'restored_by' => $user->name,
+            'restored_at' => now(),
+        ];
+
+        Log::log(
+            Log::ACTION_ACTIVIED_RESTORED,
             $data,
             $userId,
         );
@@ -141,6 +180,7 @@ class ActivityLogService
             'scheduled_at' => $activity->scheduled_at,
             'subject_id' => $activity->subject_id,
             'description' => $activity->description,
+            'completed_by' => $user->name,
             'completed_at' => now(),
         ];
 
@@ -176,6 +216,7 @@ class ActivityLogService
             'scheduled_at' => $activity->scheduled_at,
             'subject_id' => $activity->subject_id,
             'description' => $activity->description,
+            'reopened_by' => $user->name,
             'reopened_at' => now(),
         ];
 
