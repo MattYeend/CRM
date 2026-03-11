@@ -41,7 +41,6 @@ class StoreContactRequest extends FormRequest
             'last_name' => 'nullable|string|max:100',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:30',
-            'job_title' => 'nullable|string|max:150',
         ];
     }
 
@@ -53,6 +52,7 @@ class StoreContactRequest extends FormRequest
     private function metaRules(): array
     {
         return [
+            'job_title' => 'nullable|string|max:150',
             'meta' => 'nullable|array',
         ];
     }

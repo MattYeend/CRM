@@ -22,6 +22,19 @@ class StoreLeadRequest extends FormRequest
      */
     public function rules(): array
     {
+        return array_merge(
+            $this->baseRules(),
+            $this->metaRules(),
+        );
+    }
+
+    /**
+     * Base rules
+     *
+     * @return array
+     */
+    private function baseRules(): array
+    {
         return [
             'title' => 'required|string|max:255',
             'first_name' => 'required|string|max:255',
@@ -29,6 +42,17 @@ class StoreLeadRequest extends FormRequest
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
             'source' => 'nullable|string|max:255',
+        ];
+    }
+
+    /**
+     * Meta rules
+     *
+     * @return array
+     */
+    private function metaRules(): array
+    {
+        return [
             'owner_id' => 'nullable|exists:users,id',
             'assigned_to' => 'nullable|exists:users,id',
             'meta' => 'nullable|array',
