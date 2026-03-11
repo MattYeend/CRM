@@ -46,10 +46,11 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
     // Roles & permissions (role <-> permission handled in RoleController)
     Route::apiResource('roles', RoleController::class)->only(['index', 'show']);
-    Route::apiResource(
-        'permissions',
-        PermissionController::class
-    )->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::apiResource('permissions', PermissionController::class);
+    Route::post(
+        'permissions/{id/restore',
+        [PermissionController::class, 'restore']
+    )->name('permissions.restore');
 
     // Companies & Contacts
     Route::apiResource('companies', CompanyController::class);
@@ -59,6 +60,10 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     )->name('companies.restore');
 
     Route::apiResource('contacts', ContactController::class);
+    Route::post(
+        'contacts/{id}/restore',
+        [ContactController::class, 'restore']
+    )->name('contacts.restore');
 
     // Learnings
     Route::apiResource('learnings', LearningController::class);
@@ -70,10 +75,22 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         'learnings/{learning}/incomplete',
         [LearningController::class, 'incomplete']
     )->name('learnings.incomplete');
+    Route::post(
+        'learnings/{id}/restore',
+        [LearningController::class, 'restore']
+    )->name('learnings.restore');
 
     // Pipelines & stages
     Route::apiResource('pipelines', PipelineController::class);
+    Route::post(
+        'pipelines/{id}/restore',
+        [PipelineController::class, 'restore']
+    )->name('pipelines.restore');
     Route::apiResource('pipeline-stages', PipelineStageController::class);
+    Route::post(
+        'pipeline-stages/{id}/restore',
+        [PipelineStageController::class, 'restore']
+    )->name('pipelineStages.restore');
 
     // Deals
     Route::apiResource('deals', DealController::class);
@@ -88,18 +105,43 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
     // Tasks, Notes, Activities
     Route::apiResource('tasks', TaskController::class);
+    Route::post(
+        'tasks/{id}/restore',
+        [TaskController::class, 'restore']
+    )->name('tasks.restore');
     Route::apiResource('notes', NoteController::class);
+    Route::post(
+        'notes/{id}/restore',
+        [NoteController::class, 'restore']
+    )->name('notes.restore');
     Route::apiResource('activities', ActivityController::class);
+    Route::post(
+        'activities/{id}/restore',
+        [ActivityController::class, 'restore']
+    )->name('activities.restore');
 
     // Products, Invoices, Invoice Items
     Route::apiResource('products', ProductController::class);
+    Route::post(
+        'products/{id}/restore',
+        [ProductController::class, 'restore']
+    )->name('products.restore');
     Route::apiResource('invoices', InvoiceController::class);
+    Route::post(
+        'invoices/{id}/restore',
+        [InvoiceController::class, 'restore']
+    )->name('invoices.restore');
     Route::apiResource('invoice-items', InvoiceItemController::class);
+    Route::post(
+        'invoice-items/{id}/restore',
+        [InvoiceItemController::class, 'restore']
+    )->name('invoice-items.restore');
 
-    Route::apiResource(
-        'attachments',
-        AttachmentController::class
-    )->except(['update']);
+    Route::apiResource('attachments', AttachmentController::class);
+    Route::post(
+        'attachments/{id}/restore',
+        [AttachmentController::class, 'restore']
+    )->name('attachments.restore');
 
     // Role permission sync (if you want a dedicated endpoint)
     Route::post(
