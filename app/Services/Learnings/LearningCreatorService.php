@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Learnings;
 
 use App\Http\Requests\StoreLearningRequest;
 use App\Models\Learning;

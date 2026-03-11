@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreLearningRequest;
 use App\Http\Requests\UpdateLearningRequest;
 use App\Models\Learning;
-use App\Services\LearningLogService;
-use App\Services\LearningManagementService;
-use App\Services\LearningQueryService;
+use App\Services\Learnings\LearningLogService;
+use App\Services\Learnings\LearningManagementService;
+use App\Services\Learnings\LearningQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -205,6 +205,30 @@ class LearningController extends Controller
         );
 
         $learning = $this->management->incomplete($learning);
+
+        return response()->json($learning);
+    }
+
+    /**
+     * Restore the specified resource from storage.
+     *
+     * @param int $id
+     *
+     * @return JsonResponse
+     */
+    public function restore(int $id): JsonResponse
+    {
+        $learning = $this->management->restore((int) $id);
+
+        $this->authorize('restore', $learning);
+
+        $user = auth()->user();
+
+        $this->logger->learningRestored(
+            $user,
+            $user->id,
+            $learning
+        );
 
         return response()->json($learning);
     }

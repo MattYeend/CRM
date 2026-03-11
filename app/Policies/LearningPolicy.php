@@ -182,4 +182,23 @@ class LearningPolicy
             'learnings.incomplete.own'
         );
     }
+
+    /**
+     * Determine wheter the user can restore the learnings.
+     *
+     * @param User $user
+     *
+     * @param Learning $learning
+     *
+     * @return bool
+     */
+    public function restore(User $user, Learning $learning): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $learning,
+            'learnings.restore.any',
+            'learnings.restore.own'
+        );
+    }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Learnings;
 
 use App\Models\Learning;
 use Illuminate\Http\Request;
@@ -9,10 +9,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class LearningQueryService
 {
     private LearningSortingService $sorting;
-    private TrashFilterService $trashFilter;
+    private LearningTrashFilterService $trashFilter;
     public function __construct(
         LearningSortingService $sorting,
-        TrashFilterService $trashFilter,
+        LearningTrashFilterService $trashFilter,
     ) {
         $this->sorting = $sorting;
         $this->trashFilter = $trashFilter;

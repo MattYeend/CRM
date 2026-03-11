@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Learnings;
 
 use App\Models\Learning;
 use App\Models\Log;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Learnings;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
