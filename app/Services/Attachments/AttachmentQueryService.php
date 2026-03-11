@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Attachments;
 
 use App\Models\Attachment;
 use Illuminate\Http\Request;
@@ -9,10 +9,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class AttachmentQueryService
 {
     private AttachmentSortingService $sorting;
-    private TrashFilterService $trashFilter;
+    private AttachmentTrashFilterService $trashFilter;
     public function __construct(
         AttachmentSortingService $sorting,
-        TrashFilterService $trashFilter,
+        AttachmentTrashFilterService $trashFilter,
     ) {
         $this->sorting = $sorting;
         $this->trashFilter = $trashFilter;

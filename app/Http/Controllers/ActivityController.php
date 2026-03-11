@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreActivityRequest;
 use App\Http\Requests\UpdateActivityRequest;
 use App\Models\Activity;
-use App\Services\ActivityLogService;
-use App\Services\ActivityManagementService;
-use App\Services\ActivityQueryService;
+use App\Services\Activities\ActivityLogService;
+use App\Services\Activities\ActivityManagementService;
+use App\Services\Activities\ActivityQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Activities;
 
 use App\Http\Requests\StoreActivityRequest;
 use App\Models\Activity;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Activities;
 
 use App\Models\Activity;
 use Illuminate\Http\Request;
@@ -9,10 +9,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class ActivityQueryService
 {
     private ActivitySortingService $sorting;
-    private TrashFilterService $trashFilter;
+    private ActivityTrashFilterService $trashFilter;
     public function __construct(
         ActivitySortingService $sorting,
-        TrashFilterService $trashFilter,
+        ActivityTrashFilterService $trashFilter,
     ) {
         $this->sorting = $sorting;
         $this->trashFilter = $trashFilter;

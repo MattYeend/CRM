@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Attachments;
 
 use App\Models\Attachment;
 use App\Models\Log;

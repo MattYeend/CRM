@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreAttachmentRequest;
 use App\Http\Requests\UpdateAttachmentRequest;
 use App\Models\Attachment;
-use App\Services\AttachmentAttacherService;
-use App\Services\AttachmentLogService;
-use App\Services\AttachmentManagementService;
-use App\Services\AttachmentQueryService;
-use App\Services\AttachmentService;
+use App\Services\Attachments\AttachmentAttacherService;
+use App\Services\Attachments\AttachmentLogService;
+use App\Services\Attachments\AttachmentManagementService;
+use App\Services\Attachments\AttachmentQueryService;
+use App\Services\Attachments\AttachmentService;
 use Illuminate\Http\JsonResponse;
 
 class AttachmentController extends Controller
