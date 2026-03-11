@@ -15,8 +15,10 @@ class NoteDestructorService
      */
     public function destroy(Note $note): void
     {
+        $userId = auth()->id();
+
         $note->update([
-            'deleted_by' => auth()->id(),
+            'deleted_by' => $userId,
             'deleted_at' => now(),
         ]);
 
@@ -32,11 +34,13 @@ class NoteDestructorService
      */
     public function restore(int $id): Note
     {
+        $userId = auth()->id();
+
         $note = Note::withTrashed()->findOrFail($id);
 
         if ($note->trashed()) {
             $note->update([
-                'restored_by' => auth()->id(),
+                'restored_by' => $userId,
                 'restored_at' => now(),
             ]);
             $note->restore();
