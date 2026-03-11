@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Companies;
 
 use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\Company;

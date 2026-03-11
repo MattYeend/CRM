@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\Company;
-use App\Services\CompanyLogService;
-use App\Services\CompanyManagementService;
-use App\Services\CompanyQueryService;
+use App\Services\Companies\CompanyLogService;
+use App\Services\Companies\CompanyManagementService;
+use App\Services\Companies\CompanyQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
