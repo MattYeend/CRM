@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreignId('restored_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('restored_at')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

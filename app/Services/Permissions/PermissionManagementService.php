@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Permissions;
 
 use App\Http\Requests\StorePermissionRequest;
 use App\Http\Requests\UpdatePermissionRequest;

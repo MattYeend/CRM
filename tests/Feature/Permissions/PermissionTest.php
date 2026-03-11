@@ -108,6 +108,11 @@ test('destroy deletes a permission and detaches roles', function () {
     $response = $this->deleteJson(route('permissions.destroy', $permission));
 
     $response->assertStatus(204);
-    $this->assertDatabaseMissing('permissions', ['id' => $permission->id]);
-    $this->assertDatabaseMissing('permission_role', ['permission_id' => $permission->id]);
+    $this->assertSoftDeleted('permissions', [
+        'id' => $permission->id
+    ]);
+
+    $this->assertDatabaseMissing('permission_role', [
+        'permission_id' => $permission->id
+    ]);
 });

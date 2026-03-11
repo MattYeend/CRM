@@ -108,4 +108,23 @@ class PermissionPolicy
             'permissions.delete.own'
         );
     }
+
+    /**
+     * Determine wheter the user can restore the permissions.
+     *
+     * @param User $user
+     *
+     * @param Permission $permission
+     *
+     * @return bool
+     */
+    public function restore(User $user, Permission $permission): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $permission,
+            'permissions.restore.any',
+            'permissions.restore.own'
+        );
+    }
 }

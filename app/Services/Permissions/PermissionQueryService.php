@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Permissions;
 
 use App\Models\Permission;
 use Illuminate\Http\Request;
@@ -9,10 +9,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class PermissionQueryService
 {
     private PermissionSortingService $sorting;
-    private TrashFilterService $trashFilter;
+    private PermissionTrashFilterService $trashFilter;
     public function __construct(
         PermissionSortingService $sorting,
-        TrashFilterService $trashFilter,
+        PermissionTrashFilterService $trashFilter,
     ) {
         $this->sorting = $sorting;
         $this->trashFilter = $trashFilter;
