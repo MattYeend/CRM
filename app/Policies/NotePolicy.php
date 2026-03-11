@@ -108,4 +108,23 @@ class NotePolicy
             'notes.delete.own'
         );
     }
+
+    /**
+     * Determine wheter the user can restore the notes.
+     *
+     * @param User $user
+     *
+     * @param Note $note
+     *
+     * @return bool
+     */
+    public function restore(User $user, Note $note): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $note,
+            'notes.restore.any',
+            'notes.restore.own'
+        );
+    }
 }

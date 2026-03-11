@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Notes;
 
 use App\Models\Note;
 use Illuminate\Http\Request;
@@ -9,10 +9,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class NoteQueryService
 {
     private NoteSortingService $sorting;
-    private TrashFilterService $trashFilter;
+    private NoteTrashFilterService $trashFilter;
     public function __construct(
         NoteSortingService $sorting,
-        TrashFilterService $trashFilter,
+        NoteTrashFilterService $trashFilter,
     ) {
         $this->sorting = $sorting;
         $this->trashFilter = $trashFilter;

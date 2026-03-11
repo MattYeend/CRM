@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreNoteRequest;
 use App\Http\Requests\UpdateNoteRequest;
 use App\Models\Note;
-use App\Services\NoteLogService;
-use App\Services\NoteManagementService;
-use App\Services\NoteQueryService;
+use App\Services\Notes\NoteLogService;
+use App\Services\Notes\NoteManagementService;
+use App\Services\Notes\NoteQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -153,5 +153,29 @@ class NoteController extends Controller
         $this->management->destroy($note);
 
         return response()->json(null, 204);
+    }
+
+    /**
+     * Restore the specified resource from storage.
+     *
+     * @param int $id
+     *
+     * @return JsonResponse
+     */
+    public function restore(int $id): JsonResponse
+    {
+        $note = $this->management->restore((int) $id);
+
+        $this->authorize('restore', $note);
+
+        $user = auth()->user();
+
+        $this->logger->noteRestored(
+            $user,
+            $user->id,
+            $note
+        );
+
+        return response()->json($note);
     }
 }
