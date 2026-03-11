@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Product;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreProductRequest extends FormRequest
 {
@@ -22,13 +23,39 @@ class StoreProductRequest extends FormRequest
      */
     public function rules(): array
     {
+        return array_merge(
+            $this->baseRules(),
+            $this->metaRules(),
+        );
+    }
+
+    /**
+     * Base rules
+     *
+     * @return array
+     */
+    private function baseRules(): array
+    {
         return [
-            'sku' => 'nullable|string|unique:products,sku',
+            'sku' => ['nullable','string',
+                Rule::unique('products', 'sku'),
+            ],
             'name' => 'required|string',
             'description' => 'nullable|string',
             'price' => 'nullable|numeric',
             'currency' => 'nullable|string|max:8',
             'quantity' => 'nullable|integer',
+        ];
+    }
+
+    /**
+     * Meta rules
+     *
+     * @return array
+     */
+    private function metaRules(): array
+    {
+        return [
             'meta' => 'nullable|array',
         ];
     }
