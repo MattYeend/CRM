@@ -106,4 +106,23 @@ class InvoiceItemPolicy
             'invoiceItems.delete.own'
         );
     }
+
+    /**
+     * Determine whether the user can restore the invoice item.
+     *
+     * @param User $user
+     *
+     * @param InvoiceItem $invoiceItem
+     *
+     * @return bool
+     */
+    public function restore(User $user, InvoiceItem $invoiceItem): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $invoiceItem,
+            'invoiceItems.restore.any',
+            'invoiceItems.restore.own'
+        );
+    }
 }

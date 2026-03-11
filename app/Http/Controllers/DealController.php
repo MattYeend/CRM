@@ -160,7 +160,7 @@ class DealController extends Controller
      *
      * @param int $id
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function restore($id): JsonResponse
     {
