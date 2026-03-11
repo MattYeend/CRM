@@ -23,8 +23,21 @@ class UpdateDealRequest extends FormRequest
      */
     public function rules(): array
     {
+        return array_merge(
+            $this->baseRules(),
+            $this->metaRules(),
+        );
+    }
+
+    /**
+     * Base rules
+     *
+     * @return array
+     */
+    private function baseRules(): array
+    {
         return [
-            'title' => 'sometimes|required|string',
+            'title' => 'sometimes|string|max:255',
             'company_id' => 'nullable|integer|exists:companies,id',
             'contact_id' => 'nullable|integer|exists:contacts,id',
             'owner_id' => 'nullable|integer|exists:users,id',
@@ -34,6 +47,17 @@ class UpdateDealRequest extends FormRequest
             'currency' => 'nullable|string|max:8',
             'close_date' => 'nullable|date',
             'status' => 'nullable|in:open,won,lost,archived',
+        ];
+    }
+
+    /**
+     * Meta rules
+     *
+     * @return array
+     */
+    private function metaRules(): array
+    {
+        return [
             'meta' => 'nullable|array',
         ];
     }
