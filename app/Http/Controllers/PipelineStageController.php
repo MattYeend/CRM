@@ -170,7 +170,7 @@ class PipelineStageController extends Controller
 
         $user = auth()->user();
 
-        $this->logger->pipelineRestored(
+        $this->logger->pipelineStageRestored(
             $user,
             $user->id,
             $pipelineStage
