@@ -24,6 +24,19 @@ class UpdatePermissionRequest extends FormRequest
      */
     public function rules(): array
     {
+        return array_merge(
+            $this->baseRules(),
+            $this->metaRules(),
+        );
+    }
+
+    /**
+     * Base rules
+     *
+     * @return array
+     */
+    private function baseRules(): array
+    {
         $permission = $this->route('permission');
 
         return [
@@ -32,6 +45,17 @@ class UpdatePermissionRequest extends FormRequest
                 'string',
                 Rule::unique('permissions', 'name')->ignore($permission->id),
             ],
+        ];
+    }
+
+    /**
+     * Meta rules
+     *
+     * @return array
+     */
+    private function metaRules(): array
+    {
+        return [
             'label' => 'nullable|string',
         ];
     }

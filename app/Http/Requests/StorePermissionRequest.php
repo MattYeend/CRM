@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Permission;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StorePermissionRequest extends FormRequest
 {
@@ -22,8 +23,36 @@ class StorePermissionRequest extends FormRequest
      */
     public function rules(): array
     {
+        return array_merge(
+            $this->baseRules(),
+            $this->metaRules(),
+        );
+    }
+
+    /**
+     * Base rules
+     *
+     * @return array
+     */
+    private function baseRules(): array
+    {
         return [
-            'name' => 'required|string|unique:permissions,name',
+            'name' => [
+                'required',
+                'string',
+                Rule::unique('permissions', 'name'),
+            ],
+        ];
+    }
+
+    /**
+     * Meta rules
+     *
+     * @return array
+     */
+    private function metaRules(): array
+    {
+        return [
             'label' => 'nullable|string',
         ];
     }
