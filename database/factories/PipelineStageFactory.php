@@ -20,14 +20,11 @@ class PipelineStageFactory extends Factory
     public function definition(): array
     {
         return [
-            'pipeline_id' => PipelineStage::factory(),
+            'pipeline_id' => Pipeline::factory(),
             'name' => $this->faker->word(),
             'position' => 0,
             'is_won_stage' => false,
             'is_lost_stage' => false,
-            'created_by' => User::factory(),
-            'updated_by' => null,
-            'deleted_by' => null,
         ];
     }
 

@@ -164,9 +164,9 @@ class InvoiceController extends Controller
      */
     public function restore($id): JsonResponse
     {
-        $invoice = $this->management->restore((int) $id);
-
+        $invoice = Invoice::withTrashed()->findOrFail($id);
         $this->authorize('restore', $invoice);
+        $this->management->restore((int) $id);
 
         $user = auth()->user();
 

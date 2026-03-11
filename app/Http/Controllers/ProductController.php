@@ -162,9 +162,9 @@ class ProductController extends Controller
      */
     public function restore(int $id): JsonResponse
     {
-        $product = $this->management->restore((int) $id);
-
+        $product = Product::withTrashed()->findOrFail($id);
         $this->authorize('restore', $product);
+        $this->management->restore((int) $id);
 
         $user = auth()->user();
 

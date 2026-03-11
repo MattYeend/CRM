@@ -21,13 +21,10 @@ class TaskFactory extends Factory
         return [
             'title' => $this->faker->sentence(4),
             'description' => $this->faker->optional()->paragraph(),
-            'assigned_to' => null,
-            'created_by' => null,
             'priority' => 'medium',
             'status' => 'pending',
             'due_at' => $this->faker->optional()->dateTimeBetween('now', '+30 days'),
             'assigned_to' => User::factory(),
-            'created_by' => User::factory(),
         ];
     }
 }

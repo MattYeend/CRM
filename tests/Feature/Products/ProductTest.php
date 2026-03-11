@@ -17,6 +17,7 @@ beforeEach(function () {
         'products.create',
         'products.update.any',
         'products.delete.any',
+        'products.restore.any',
     ];
 
     // Create permissions in DB
@@ -126,4 +127,30 @@ test('destroy deletes the product', function () {
     $response->assertStatus(204);
 
     $this->assertSoftDeleted('products', ['id' => $product->id]);
+});
+
+test('restore deleted product', function () {
+    $product = Product::factory()->create(['created_by' => $this->auth->id]);
+
+    // Soft delete the model
+    $product->delete();
+
+    // Ensure it is soft deleted
+    $this->assertSoftDeleted('products', ['id' => $product->id]);
+
+    // Call restore route
+    $response = $this->postJson(route('products.restore', $product->id));
+
+    $response->assertStatus(200);
+
+    // Assert JSON response includes restored model
+    $response->assertJsonFragment([
+        'id' => $product->id,
+    ]);
+
+    // Assert database no longer has deleted_at
+    $this->assertDatabaseHas('products', [
+        'id' => $product->id,
+        'deleted_at' => null,
+    ]);
 });

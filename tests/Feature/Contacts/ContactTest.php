@@ -18,6 +18,7 @@ beforeEach(function () {
         'contacts.create',
         'contacts.update.any',
         'contacts.delete.any',
+        'contacts.restore.any',
     ];
 
     // Create permissions in DB
@@ -175,4 +176,16 @@ test('destroy soft deletes the contact and returns 204', function () {
 
     // Use assertSoftDeleted when model uses SoftDeletes
     $this->assertSoftDeleted('contacts', ['id' => $contact->id]);
+});
+
+test('restre deleted company', function () {
+    $contact = Contact::factory()->create();
+    $contact->delete();
+
+    $this->assertSoftDeleted('contacts', ['id' => $contact->id]);
+
+    $response = $this->postJson(route('contacts.restore', $contact->id));
+
+    $response->assertStatus(200);
+    $this->assertNotSoftDeleted('contacts', ['id' => $contact->id]);
 });

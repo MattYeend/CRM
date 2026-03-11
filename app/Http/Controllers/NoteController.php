@@ -164,9 +164,9 @@ class NoteController extends Controller
      */
     public function restore(int $id): JsonResponse
     {
-        $note = $this->management->restore((int) $id);
-
+        $note = Note::withTrashed()->findOrFail($id);
         $this->authorize('restore', $note);
+        $this->management->restore((int) $id);
 
         $user = auth()->user();
 

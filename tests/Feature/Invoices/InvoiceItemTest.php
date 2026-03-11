@@ -19,10 +19,12 @@ beforeEach(function () {
         'invoices.create',
         'invoices.update.any',
         'invoices.delete.any',
+        'invoice.restore.any',
         'invoiceItems.view.all',
         'invoiceItems.create',
         'invoiceItems.update.any',
         'invoiceItems.delete.any',
+        'invoiceItems.restore.any',
     ];
 
     // Create permissions in DB
@@ -165,4 +167,28 @@ test('destroy deletes an invoice item', function () {
 
     $response->assertStatus(204);
     $this->assertSoftDeleted('invoice_items', ['id' => $invoiceItem->id]);
+});
+
+test('restore deleted invoice item', function () {
+    $invoice = Invoice::factory()->create();
+    $product = Product::factory()->create();
+
+    $invoiceItem = InvoiceItem::factory()->create([
+        'invoice_id' => $invoice->id,
+        'product_id' => $product->id,
+    ]);
+
+    $invoiceItem->delete();
+
+    $this->assertSoftDeleted('invoice_items', [
+        'id' => $invoiceItem->id,
+    ]);
+
+    $response = $this->postJson(route('invoice-items.restore', $invoiceItem->id));
+
+    $response->assertStatus(200);
+
+    $this->assertNotSoftDeleted('invoice_items', [
+        'id' => $invoiceItem->id,
+    ]);
 });

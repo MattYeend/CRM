@@ -19,10 +19,12 @@ beforeEach(function () {
         'invoices.create',
         'invoices.update.any',
         'invoices.delete.any',
+        'invoices.restore.any',
         'invoiceItems.view.all',
         'invoiceItems.create',
         'invoiceItems.update.any',
         'invoiceItems.delete.any',
+        'invoiceItems.restore.any',
     ];
 
     // Create permissions in DB
@@ -121,3 +123,21 @@ test('destroy deletes an invoice', function () {
     // If soft deletes are used
     $this->assertSoftDeleted('invoices', ['id' => $invoice->id]);
 });
+
+test('restore deleted invoice', function () {
+    $invoice = Invoice::factory()->create();
+    $invoice->delete();
+
+    // Ensure it's soft deleted first
+    $this->assertSoftDeleted('invoices', ['id' => $invoice->id]);
+
+    $response = $this->postJson(route('invoices.restore', $invoice->id));
+
+    $response->assertStatus(200);
+    $response->assertJsonFragment(['id' => $invoice->id]);
+
+    // Now it should not be soft deleted
+    $this->assertDatabaseHas('invoices', [
+        'id' => $invoice->id,
+        'deleted_at' => null,
+    ]);});

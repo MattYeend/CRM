@@ -18,6 +18,7 @@ beforeEach(function () {
         'activities.create',
         'activities.update.any',
         'activities.delete.any',
+        'activities.restore.any',
     ];
     
     // Create permission records
@@ -151,7 +152,33 @@ test('destroy deletes the activity and returns 204', function () {
 
     $response->assertStatus(204);
 
-    $this->assertDatabaseMissing('activities', [
+    $this->assertSoftDeleted('activities', [
         'id' => $activity->id,
+    ]);
+});
+
+test('restore deleted activity', function () {
+    $subject = User::factory()->create();
+
+    $activity = Activity::factory()->create([
+        'user_id' => $this->auth->id,
+        'subject_type' => 'user',
+        'subject_id' => $subject->id,
+    ]);
+
+    // Soft delete
+    $activity->delete();
+
+    $this->assertSoftDeleted('activities', [
+        'id' => $activity->id,
+    ]);
+
+    $response = $this->postJson(route('activities.restore', $activity->id));
+
+    $response->assertStatus(200);
+
+    $this->assertDatabaseHas('activities', [
+        'id' => $activity->id,
+        'deleted_at' => null,
     ]);
 });

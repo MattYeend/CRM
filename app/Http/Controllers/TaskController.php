@@ -171,9 +171,9 @@ class TaskController extends Controller
      */
     public function restore(int $id): JsonResponse
     {
-        $task = $this->management->restore((int) $id);
-
+        $task = Task::withTrashed()->findOrFail($id);
         $this->authorize('restore', $task);
+        $this->management->restore((int) $id);
 
         $user = auth()->user();
 

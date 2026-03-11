@@ -17,6 +17,7 @@ beforeEach(function () {
         'learnings.create',
         'learnings.update.any',
         'learnings.delete.any',
+        'learnings.restore.any',
     ];
 
     // Create permissions in DB
@@ -162,4 +163,22 @@ test('user can delete a learning', function () {
 
     // Assert soft deleted
     $this->assertSoftDeleted('learnings', ['id' => $learning->id]);
+});
+
+test('restore deleted learning', function () {
+    $learning = Learning::factory()->create(['created_by' => $this->auth->id]);
+    $learning->delete();
+
+    // Ensure it's soft deleted first
+    $this->assertSoftDeleted('learnings', ['id' => $learning->id]);
+
+    $response = $this->postJson(route('learnings.restore', $learning->id));
+
+    $response->assertStatus(200);
+    $response->assertJsonFragment(['id' => $learning->id]);
+
+    $this->assertDatabaseHas('learnings', [
+        'id' => $learning->id,
+        'deleted_at' => null,
+    ]);
 });

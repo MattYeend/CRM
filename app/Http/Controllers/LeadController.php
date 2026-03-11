@@ -163,9 +163,9 @@ class LeadController extends Controller
      */
     public function restore(int $id): JsonResponse
     {
-        $lead = $this->management->restore((int) $id);
-
+        $lead = Lead::withTrashed()->findOrFail($id);
         $this->authorize('restore', $lead);
+        $this->management->restore((int) $id);
 
         $user = auth()->user();
 

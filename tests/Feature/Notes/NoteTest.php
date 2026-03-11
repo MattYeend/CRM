@@ -19,6 +19,7 @@ beforeEach(function () {
         'notes.create',
         'notes.update.any',
         'notes.delete.any',
+        'notes.restore.any',
     ];
 
     // Create permissions in DB
@@ -127,4 +128,28 @@ test('destroy deletes a note', function () {
 
     $response->assertStatus(204);
     $this->assertSoftDeleted('notes', ['id' => $note->id]);
+});
+
+test('restore deleted note', function () {
+    $notable = Deal::factory()->create();
+    $note = Note::factory()->create([
+        'user_id' => $this->auth->id,
+        'notable_type' => 'deal',
+        'notable_id' => $notable->id,
+    ]);
+
+    $note->delete();
+
+    // Ensure it's soft deleted first
+    $this->assertSoftDeleted('notes', ['id' => $note->id]);
+
+    $response = $this->postJson(route('notes.restore', $note->id));
+
+    $response->assertStatus(200);
+    $response->assertJsonFragment(['id' => $note->id]);
+
+    $this->assertDatabaseHas('notes', [
+        'id' => $note->id,
+        'deleted_at' => null,
+    ]);
 });

@@ -167,19 +167,19 @@ test('destroy calls management service and returns 204', function () {
 });
 
 test('restore calls management service and returns restored user', function () {
-    $managementMock = Mockery::mock(UserManagementService::class);
-
-    // Return an actual User model (made, not persisted)
-    $restored = User::factory()->make([
+    $user = User::factory()->create([
         'id' => 77,
         'name' => 'Restored',
         'email' => 'restored@example.test',
     ]);
+    $user->delete();
+
+    $managementMock = Mockery::mock(UserManagementService::class);
 
     $managementMock->shouldReceive('restore')
         ->once()
-        ->with(Mockery::type('int'))
-        ->andReturn($restored);
+        ->with(77)
+        ->andReturn($user);
 
     $this->app->instance(UserManagementService::class, $managementMock);
 

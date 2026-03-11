@@ -16,6 +16,7 @@ beforeEach(function () {
         'permissions.create',
         'permissions.update.any',
         'permissions.delete.any',
+        'permissions.restore.any',
     ];
 
     // Create permissions in DB
@@ -114,5 +115,26 @@ test('destroy deletes a permission and detaches roles', function () {
 
     $this->assertDatabaseMissing('permission_role', [
         'permission_id' => $permission->id
+    ]);
+});
+
+test('restore deleted permission', function () {
+    $permission = Permission::factory()->create([
+        'name' => 'Test Name',
+    ]);
+
+    $permission->delete();
+
+    // Ensure it's soft deleted first
+    $this->assertSoftDeleted('permissions', ['id' => $permission->id]);
+
+    $response = $this->postJson(route('permissions.restore', $permission->id));
+
+    $response->assertStatus(200);
+    $response->assertJsonFragment(['id' => $permission->id]);
+
+    $this->assertDatabaseHas('permissions', [
+        'id' => $permission->id,
+        'deleted_at' => null,
     ]);
 });

@@ -164,9 +164,9 @@ class PipelineStageController extends Controller
      */
     public function restore(int $id): JsonResponse
     {
-        $pipelineStage = $this->management->restore((int) $id);
-
+        $pipelineStage = PipelineStage::withTrashed()->findOrFail($id);
         $this->authorize('restore', $pipelineStage);
+        $this->management->restore((int) $id);
 
         $user = auth()->user();
 

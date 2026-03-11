@@ -163,9 +163,10 @@ class ActivityController extends Controller
      */
     public function restore($id): JsonResponse
     {
-        $activity = $this->management->restore((int) $id);
-
+        $activity = Activity::withTrashed()->findOrFail($id);
         $this->authorize('restore', $activity);
+        $this->management->restore((int) $id);
+
         $user = auth()->user();
 
         $this->logger->activityRestored(

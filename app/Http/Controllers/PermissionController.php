@@ -164,9 +164,9 @@ class PermissionController extends Controller
      */
     public function restore(int $id): JsonResponse
     {
-        $permission = $this->management->restore((int) $id);
-
+        $permission = Permission::withTrashed()->findOrFail($id);
         $this->authorize('restore', $permission);
+        $this->management->restore((int) $id);
 
         $user = auth()->user();
 

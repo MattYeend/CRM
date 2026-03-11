@@ -18,6 +18,7 @@ beforeEach(function () {
         'tasks.create',
         'tasks.update.any',
         'tasks.delete.any',
+        'tasks.restore.any',
     ];
 
     // Create permissions in DB
@@ -162,4 +163,35 @@ test('destroy deletes the task', function () {
     $response->assertStatus(204);
 
     $this->assertSoftDeleted('tasks', ['id' => $task->id]);
+});
+
+test('restore deleted tasks', function () {
+    $assignee = User::factory()->create();
+    $creator = $this->auth;
+    $taskable = Deal::factory()->create();
+
+    $task = Task::factory()->create([
+        'created_by' => $creator->id,
+        'assigned_to' => $assignee->id,
+        'taskable_type' => Deal::class,
+        'taskable_id' => $taskable->id,
+    ]);
+
+    $task->delete();
+
+    $this->assertSoftDeleted('tasks', ['id' => $task->id]);
+
+    $response = $this->postJson(route('tasks.restore', $task->id));
+
+    $response->assertStatus(200);
+
+    $response->assertJsonFragment([
+        'id' => $task->id,
+    ]);
+
+    $this->assertDatabaseHas('tasks', [
+        'id' => $task->id,
+        'deleted_at' => null,
+    ]);
+
 });

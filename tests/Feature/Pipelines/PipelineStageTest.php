@@ -18,10 +18,12 @@ beforeEach(function () {
         'pipelines.create',
         'pipelines.update.any',
         'pipelines.delete.any',
+        'pipelines.restore.any',
         'pipelineStages.view.all',
         'pipelineStages.create',
         'pipelineStages.update.any',
         'pipelineStages.delete.any',
+        'pipelineStages.restore.any',
     ];
 
     // Create permissions in DB
@@ -128,4 +130,23 @@ test('destroy deletes the pipeline stage', function () {
     $response->assertStatus(204);
 
     $this->assertSoftDeleted('pipeline_stages', ['id' => $stage->id]);
+});
+
+test('restore deleted pipeline stage', function () {
+    $pipelineStage = PipelineStage::factory()->create(['created_by' => $this->auth->id]);
+
+    $pipelineStage->delete();
+
+    $this->assertSoftDeleted('pipeline_stages', ['id' => $pipelineStage->id]);
+
+    $response = $this->postJson(route('pipelineStages.restore', $pipelineStage->id));
+
+    $response->assertStatus(200);
+
+    $response->assertJsonFragment(['id' => $pipelineStage->id]);
+
+    $this->assertDatabaseHas('pipeline_stages', [
+        'id' => $pipelineStage->id,
+        'deleted_at' => null,
+    ]);
 });

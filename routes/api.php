@@ -48,7 +48,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::apiResource('roles', RoleController::class)->only(['index', 'show']);
     Route::apiResource('permissions', PermissionController::class);
     Route::post(
-        'permissions/{id/restore',
+        'permissions/{id}/restore',
         [PermissionController::class, 'restore']
     )->name('permissions.restore');
 

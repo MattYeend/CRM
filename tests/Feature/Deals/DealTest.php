@@ -140,15 +140,10 @@ test('destroy deletes the deal', function () {
 });
 
 test('restore recovers a soft-deleted deal', function () {
-    if (!in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses(Deal::class))) {
-        $this->markTestSkipped('Deal model does not use SoftDeletes.');
-    }
-
     $deal = Deal::factory()->create();
     $deal->delete();
 
-    $response = $this->actingAs($this->auth, 'sanctum')
-                     ->postJson(route('deals.restore', $deal->id));
+    $response = $this->postJson(route('deals.restore', $deal->id));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $deal->id]);

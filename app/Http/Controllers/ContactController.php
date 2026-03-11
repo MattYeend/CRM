@@ -162,9 +162,9 @@ class ContactController extends Controller
      */
     public function restore($id): JsonResponse
     {
-        $contact = $this->management->restore((int) $id);
-
+        $contact = Contact::withTrashed()->findOrFail($id);
         $this->authorize('restore', $contact);
+        $this->management->restore((int) $id);
 
         $user = auth()->user();
 

@@ -159,10 +159,6 @@ test('destroy soft deletes the lead', function () {
 });
 
 test('restore recovers a soft deleted lead', function () {
-    if (!in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses(Lead::class))) {
-        $this->markTestSkipped('Lead model does not use SoftDeletes.');
-    }
-
     $lead = Lead::factory()->create();
     $lead->delete();
 

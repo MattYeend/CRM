@@ -21,6 +21,7 @@ beforeEach(function () {
         'attachments.create',
         'attachments.update.any',
         'attachments.delete.any',
+        'attachments.restore.any',
     ];
 
     // Create permissions in DB
@@ -173,4 +174,33 @@ test('destroy deletes file from disk (if present) and deletes the model', functi
     // file should be gone and model deleted
     Storage::disk('public')->assertMissing($attachment->path);
     $this->assertSoftDeleted('attachments', ['id' => $attachment->id]);
+});
+
+test('restore deleted attachment', function () {
+    Storage::fake('public');
+
+    $path = 'attachments/file.txt';
+    Storage::disk('public')->put($path, 'hello');
+
+    $attachment = Attachment::factory()->create([
+        'disk' => 'public',
+        'path' => $path,
+        'attachable_type' => 'user',
+        'attachable_id' => $this->auth->id,
+        'uploaded_by' => $this->auth->id,
+    ]);
+
+    $attachment->delete();
+
+    $this->assertSoftDeleted('attachments', [
+        'id' => $attachment->id,
+    ]);
+
+    $response = $this->postJson(route('attachments.restore', $attachment->id));
+
+    $response->assertStatus(200);
+
+    $this->assertNotSoftDeleted('attachments', [
+        'id' => $attachment->id,
+    ]);
 });

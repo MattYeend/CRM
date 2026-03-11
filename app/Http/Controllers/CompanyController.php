@@ -164,9 +164,9 @@ class CompanyController extends Controller
      */
     public function restore($id): JsonResponse
     {
-        $company = $this->management->restore((int) $id);
-
+        $company = Company::withTrashed()->findOrFail($id);
         $this->authorize('restore', $company);
+        $this->management->restore((int) $id);
 
         $user = auth()->user();
 

@@ -218,9 +218,9 @@ class LearningController extends Controller
      */
     public function restore(int $id): JsonResponse
     {
-        $learning = $this->management->restore((int) $id);
-
+        $learning = Learning::withTrashed()->findOrFail($id);
         $this->authorize('restore', $learning);
+        $this->management->restore((int) $id);
 
         $user = auth()->user();
 
