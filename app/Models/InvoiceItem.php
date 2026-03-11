@@ -28,9 +28,11 @@ class InvoiceItem extends Model
         'created_by',
         'updated_by',
         'deleted_by',
+        'restored_by',
         'created_at',
         'updated_at',
         'deleted_at',
+        'restored_at',
     ];
 
     /**
@@ -43,6 +45,7 @@ class InvoiceItem extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
+        'restored_at' => 'datetime',
     ];
 
     /**
@@ -103,6 +106,16 @@ class InvoiceItem extends Model
     public function deleter(): BelongsTo
     {
         return $this->belongsTo(User::class, 'deleted_by');
+    }
+
+    /**
+     * Get the user that restored the invoice item.
+     *
+     * @return BelongsTo
+     */
+    public function restorer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'restored_by');
     }
 
     /**

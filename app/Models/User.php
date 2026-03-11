@@ -37,6 +37,14 @@ class User extends Authenticatable
         'password',
         'phone',
         'avatar',
+        'created_by',
+        'updated_by',
+        'deleted_by',
+        'updated_by',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'restored_at',
     ];
 
     /**
@@ -233,6 +241,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+            'deleted_at' => 'datetime',
+            'restored_at' => 'datetime',
         ];
     }
 }

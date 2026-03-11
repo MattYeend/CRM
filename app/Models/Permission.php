@@ -16,7 +16,10 @@ class Permission extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['name', 'label'];
+    protected $fillable = [
+        'name',
+        'label',
+    ];
 
     /**
      * The roles that belong to the permission.
