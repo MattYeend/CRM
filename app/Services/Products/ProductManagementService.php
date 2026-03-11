@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Products;
 
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;

@@ -108,4 +108,23 @@ class ProductPolicy
             'products.delete.own'
         );
     }
+
+    /**
+     * Determine whether the user can restore the product.
+     *
+     * @param User $user
+     *
+     * @param Product $product
+     *
+     * @return bool
+     */
+    public function restore(User $user, Product $product): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $product,
+            'products.restore.any',
+            'products.restore.own'
+        );
+    }
 }

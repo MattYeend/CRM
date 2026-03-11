@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Products;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -9,10 +9,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class ProductQueryService
 {
     private ProductSortingService $sorting;
-    private TrashFilterService $trashFilter;
+    private ProductTrashFilterService $trashFilter;
     public function __construct(
         ProductSortingService $sorting,
-        TrashFilterService $trashFilter,
+        ProductTrashFilterService $trashFilter,
     ) {
         $this->sorting = $sorting;
         $this->trashFilter = $trashFilter;

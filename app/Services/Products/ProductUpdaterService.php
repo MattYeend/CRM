@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Products;
 
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
@@ -20,9 +20,12 @@ class ProductUpdaterService
         UpdateProductRequest $request,
         Product $product
     ): Product {
+        $user = $request->user();
+
         $data = $request->validated();
 
-        $data['updated_by'] = $request->user()->id;
+        $data['updated_by'] = $user->id;
+        $data['updated_at'] = now();
 
         $product->update($data);
 

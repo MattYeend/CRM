@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
-use App\Services\ProductLogService;
-use App\Services\ProductManagementService;
-use App\Services\ProductQueryService;
+use App\Services\Products\ProductLogService;
+use App\Services\Products\ProductManagementService;
+use App\Services\Products\ProductQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -151,5 +151,29 @@ class ProductController extends Controller
         $this->management->destroy($product);
 
         return response()->json(null, 204);
+    }
+
+    /**
+     * Restore the specified resource from storage.
+     *
+     * @param int $id
+     *
+     * @return JsonResponse
+     */
+    public function restore(int $id): JsonResponse
+    {
+        $product = $this->management->restore((int) $id);
+
+        $this->authorize('restore', $product);
+
+        $user = auth()->user();
+
+        $this->logger->productRestored(
+            $user,
+            $user->id,
+            $product
+        );
+
+        return response()->json($product);
     }
 }
