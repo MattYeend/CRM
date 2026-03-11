@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Tasks;
 
 use App\Http\Requests\StoreTaskRequest;
 use App\Models\Task;
@@ -20,6 +20,7 @@ class TaskCreatorService
         $data = $request->validated();
 
         $data['created_by'] = $user->id;
+        $data['created_at'] = now();
 
         return Task::create($data);
     }

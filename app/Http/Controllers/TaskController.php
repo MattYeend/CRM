@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
-use App\Services\TaskLogService;
-use App\Services\TaskManagementService;
-use App\Services\TaskQueryService;
+use App\Services\Tasks\TaskLogService;
+use App\Services\Tasks\TaskManagementService;
+use App\Services\Tasks\TaskQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -160,5 +160,29 @@ class TaskController extends Controller
         $this->management->destroy($task);
 
         return response()->json(null, 204);
+    }
+
+    /**
+     * Restore the specified resource from storage.
+     *
+     * @param int $id
+     *
+     * @return JsonResponse
+     */
+    public function restore(int $id): JsonResponse
+    {
+        $task = $this->management->restore((int) $id);
+
+        $this->authorize('restore', $task);
+
+        $user = auth()->user();
+
+        $this->logger->taskRestored(
+            $user,
+            $user->id,
+            $task
+        );
+
+        return response()->json($task);
     }
 }

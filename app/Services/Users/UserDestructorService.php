@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Users;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
@@ -16,8 +16,11 @@ class UserDestructorService
      */
     public function destroy(User $user): void
     {
+        $authId = auth()->id();
+
         $user->update([
-            'deleted_by' => $user->id,
+            'deleted_by' => $authId,
+            'deleted_at' => now(),
         ]);
 
         $user->delete();
@@ -32,9 +35,15 @@ class UserDestructorService
      */
     public function restore(int $id): User
     {
+        $authId = auth()->id();
+
         $user = User::withTrashed()->findOrFail($id);
 
         if ($user->trashed()) {
+            $user->update([
+                'restored_by' => $authId,
+                'restored_at' => now(),
+            ]);
             $user->restore();
         }
 

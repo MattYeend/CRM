@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
-use App\Services\UserLogService;
-use App\Services\UserManagementService;
-use App\Services\UserQueryService;
+use App\Services\Users\UserLogService;
+use App\Services\Users\UserManagementService;
+use App\Services\Users\UserQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

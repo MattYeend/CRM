@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Roles;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
-class TrashFilterService
+class RoleTrashFilterService
 {
     /**
      * Apply trash filters to the query.

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Tasks;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -9,10 +9,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class TaskQueryService
 {
     private TaskSortingService $sorting;
-    private TrashFilterService $trashFilter;
+    private TaskTrashFilterService $trashFilter;
     public function __construct(
         TaskSortingService $sorting,
-        TrashFilterService $trashFilter,
+        TaskTrashFilterService $trashFilter,
     ) {
         $this->sorting = $sorting;
         $this->trashFilter = $trashFilter;

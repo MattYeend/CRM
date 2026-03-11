@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
-use App\Services\RoleLogService;
-use App\Services\RoleManagementService;
-use App\Services\RoleQueryService;
+use App\Services\Roles\RoleLogService;
+use App\Services\Roles\RoleManagementService;
+use App\Services\Roles\RoleQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

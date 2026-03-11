@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Users;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;

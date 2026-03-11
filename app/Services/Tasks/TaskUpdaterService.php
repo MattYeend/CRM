@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Tasks;
 
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
@@ -20,9 +20,12 @@ class TaskUpdaterService
         UpdateTaskRequest $request,
         Task $task
     ): Task {
+        $user = $request->user();
+
         $data = $request->validated();
 
-        $data['updated_by'] = $request->user()->id;
+        $data['updated_by'] = $user->id;
+        $data['updated_at'] = now();
 
         $task->update($data);
 

@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Users;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -26,9 +25,10 @@ class UserUpdaterService
         $this->preparePasswordForSave($data);
         $this->handleAvatarForUpdate($request, $user, $data);
 
-        DB::transaction(function () use ($user, $data) {
-            $user->update($data);
-        });
+        $data['updated_by'] = $user->id;
+        $data['updated_at'] = now();
+
+        $user->update($data);
 
         return $user->fresh();
     }

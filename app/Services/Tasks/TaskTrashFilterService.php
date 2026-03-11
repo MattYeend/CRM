@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Tasks;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
-class UserTrashFilterService
+class TaskTrashFilterService
 {
     /**
      * Apply trash filters to the query.

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Roles;
 
 use App\Models\Role;
 use Illuminate\Http\Request;
@@ -9,10 +9,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class RoleQueryService
 {
     private RoleSortingService $sorting;
-    private TrashFilterService $trashFilter;
+    private RoleTrashFilterService $trashFilter;
     public function __construct(
         RoleSortingService $sorting,
-        TrashFilterService $trashFilter,
+        RoleTrashFilterService $trashFilter,
     ) {
         $this->sorting = $sorting;
         $this->trashFilter = $trashFilter;

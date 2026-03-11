@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Users;
 
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -15,6 +15,7 @@ class UserCreatorService
      */
     public function create(Request $request): User
     {
+        $user = $request->user();
         $data = $request->validated();
 
         if ($request->hasFile('avatar')) {
@@ -23,6 +24,8 @@ class UserCreatorService
         }
 
         $data['password'] = Hash::make($data['password']);
+        $data['created_by'] = $user->id;
+        $data['created_at'] = now();
 
         return User::create($data);
     }

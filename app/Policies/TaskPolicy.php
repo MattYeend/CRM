@@ -108,4 +108,23 @@ class TaskPolicy
             'tasks.delete.own'
         );
     }
+
+    /**
+     * Determine whether the user can restore the task.
+     *
+     * @param User $user
+     *
+     * @param Task $task
+     *
+     * @return bool
+     */
+    public function restore(User $user, Task $task): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $task,
+            'tasks.restore.any',
+            'tasks.restore.own'
+        );
+    }
 }

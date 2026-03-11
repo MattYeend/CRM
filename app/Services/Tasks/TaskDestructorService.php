@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Tasks;
 
 use App\Models\Task;
 
@@ -15,8 +15,11 @@ class TaskDestructorService
      */
     public function destroy(Task $task): void
     {
+        $userId = auth()->id();
+
         $task->update([
-            'deleted_by' => auth()->id(),
+            'deleted_by' => $userId,
+            'deleted_at' => now(),
         ]);
 
         $task->delete();
@@ -31,9 +34,15 @@ class TaskDestructorService
      */
     public function restore(int $id): Task
     {
+        $userId = auth()->id();
+
         $task = Task::withTrashed()->findOrFail($id);
 
         if ($task->trashed()) {
+            $task->update([
+                'updated_by' => $userId,
+                'updated_at' => now(),
+            ]);
             $task->restore();
         }
 
