@@ -4,7 +4,7 @@ use App\Models\Task;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
-use App\Models\Deal; // example polymorphic target
+use App\Models\Deal;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 

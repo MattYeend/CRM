@@ -18,16 +18,13 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'sku' => strtoupper($this->faker->unique()->bothify('??###')),
-            'name' => $this->faker->word(),
-            'description' => $this->faker->optional()->sentence(),
-            'price' => $this->faker->randomFloat(2, 1, 1000),
+            'sku' => strtoupper(fake()->unique()->bothify('??###')),
+            'name' => fake()->word(),
+            'description' => fake()->optional()->sentence(),
+            'price' => fake()->randomFloat(2, 1, 1000),
             'currency' => 'USD',
-            'quantity' => $this->faker->numberBetween(0, 100),
+            'quantity' => fake()->numberBetween(0, 100),
             'meta' => [],
-            'created_by' => User::factory(),
-            'updated_by' => null,
-            'deleted_by' => null,
         ];
     }
 }

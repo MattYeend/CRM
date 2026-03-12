@@ -19,8 +19,8 @@ class ProductDealFactory extends Factory
      */
     public function definition(): array
     {
-        $quantity = $this->faker->numberBetween(1, 10);
-        $unitPrice = $this->faker->randomFloat(2, 10, 1000);
+        $quantity = fake()->numberBetween(1, 10);
+        $unitPrice = fake()->randomFloat(2, 10, 1000);
 
         return [
             'product_id' => Product::factory(),
@@ -28,11 +28,8 @@ class ProductDealFactory extends Factory
             'quantity' => $quantity,
             'unit_price' => $unitPrice,
             'total_price' => $unitPrice * $quantity,
-            'currency' => $this->faker->randomElement(['USD', 'GBP', 'EUR']),
+            'currency' => fake()->randomElement(['USD', 'GBP', 'EUR']),
             'meta' => [],
-            'created_by' => User::factory(),
-            'updated_by' => null,
-            'deleted_by' => null,
         ];
     }
 }

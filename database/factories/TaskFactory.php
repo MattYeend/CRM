@@ -19,11 +19,11 @@ class TaskFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->sentence(4),
-            'description' => $this->faker->optional()->paragraph(),
+            'title' => fake()->sentence(4),
+            'description' => fake()->optional()->paragraph(),
             'priority' => 'medium',
             'status' => 'pending',
-            'due_at' => $this->faker->optional()->dateTimeBetween('now', '+30 days'),
+            'due_at' => fake()->optional()->dateTimeBetween('now', '+30 days'),
             'assigned_to' => User::factory(),
         ];
     }

@@ -18,12 +18,9 @@ class PipelineFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->words(2, true),
-            'description' => $this->faker->optional()->sentence(),
+            'name' => fake()->words(2, true),
+            'description' => fake()->optional()->sentence(),
             'is_default' => false,
-            'created_by' => User::factory(),
-            'updated_by' => null,
-            'deleted_by' => null,
         ];
     }
 }

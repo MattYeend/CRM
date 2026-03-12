@@ -15,6 +15,7 @@ use App\Http\Controllers\PipelineController;
 use App\Http\Controllers\PipelineStageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductDealController;
+use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
@@ -26,7 +27,11 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
-    // Users + role pivot helpers
+    /**
+     * ----------------------------------------------------------
+     * -------------- Users, Roles, & Permissions ---------------
+     * ----------------------------------------------------------
+     */
     Route::apiResource('users', UserController::class);
     Route::post(
         'users/{id}/restore',
@@ -37,7 +42,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         [UserController::class, 'forceDelete']
     )->name('users.forceDelete');
     Route::post(
-        'users/{user}/roles',
+        'users/{users/user}/roles',
         [UserController::class, 'attachRoles']
     )->name('users.roles.attach');
     Route::delete(
@@ -45,20 +50,32 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         [UserController::class, 'detachRoles']
     )->name('users.roles.detach');
 
-    // Roles & permissions (role <-> permission handled in RoleController)
     Route::apiResource('roles', RoleController::class)->only(['index', 'show']);
+    Route::post(
+        'roles/{role}/permissions',
+        [RoleController::class, 'syncPermissions']
+    )->name('roles.permissions.sync');
+
     Route::apiResource('permissions', PermissionController::class);
     Route::post(
         'permissions/{id}/restore',
         [PermissionController::class, 'restore']
     )->name('permissions.restore');
 
-    // Companies & Contacts
+    /**
+     * ----------------------------------------------------------
+     * ------------------ Compnies & Contacts -------------------
+     * ----------------------------------------------------------
+     */
     Route::apiResource('companies', CompanyController::class);
     Route::post(
         'companies/{id}/restore',
         [CompanyController::class, 'restore']
     )->name('companies.restore');
+    Route::delete(
+        'companies/{id}/force',
+        [CompanyController::class, 'forceDelete']
+    )->name('companies.forceDelete');
 
     Route::apiResource('contacts', ContactController::class);
     Route::post(
@@ -66,7 +83,11 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         [ContactController::class, 'restore']
     )->name('contacts.restore');
 
-    // Learnings
+    /**
+     * ----------------------------------------------------------
+     * ----------------------- Learnings ------------------------
+     * ----------------------------------------------------------
+     */
     Route::apiResource('learnings', LearningController::class);
     Route::post(
         'learnings/{learning}/complete',
@@ -81,19 +102,28 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         [LearningController::class, 'restore']
     )->name('learnings.restore');
 
-    // Pipelines & stages
+    /**
+     * -----------------------------------------------------------
+     * ------------------- Pipelines & Stages --------------------
+     * -----------------------------------------------------------
+     */
     Route::apiResource('pipelines', PipelineController::class);
     Route::post(
         'pipelines/{id}/restore',
         [PipelineController::class, 'restore']
     )->name('pipelines.restore');
+
     Route::apiResource('pipeline-stages', PipelineStageController::class);
     Route::post(
         'pipeline-stages/{id}/restore',
         [PipelineStageController::class, 'restore']
     )->name('pipelineStages.restore');
 
-    // Deals
+    /**
+     * ---------------------------------------------------------
+     * ------------------------- Deals -------------------------
+     * ---------------------------------------------------------
+     */
     Route::apiResource('deals', DealController::class);
     Route::post(
         'deals/{id}/restore',
@@ -104,29 +134,40 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         [DealController::class, 'forceDelete']
     )->name('deals.forceDelete');
 
-    // Tasks, Notes, Activities
+    /**
+     * ----------------------------------------------------------
+     * --------------- Tasks, Notes, & Activities ---------------
+     * ----------------------------------------------------------
+     */
     Route::apiResource('tasks', TaskController::class);
     Route::post(
         'tasks/{id}/restore',
         [TaskController::class, 'restore']
     )->name('tasks.restore');
+
     Route::apiResource('notes', NoteController::class);
     Route::post(
         'notes/{id}/restore',
         [NoteController::class, 'restore']
     )->name('notes.restore');
+
     Route::apiResource('activities', ActivityController::class);
     Route::post(
         'activities/{id}/restore',
         [ActivityController::class, 'restore']
     )->name('activities.restore');
 
-    // Products, Invoices, Invoice Items
+    /**
+     * ---------------------------------------------------------
+     * ------------------ Products & Invoices ------------------
+     * ---------------------------------------------------------
+     */
     Route::apiResource('products', ProductController::class);
     Route::post(
         'products/{id}/restore',
         [ProductController::class, 'restore']
     )->name('products.restore');
+
     Route::apiResource('product-deals', ProductDealController::class);
     Route::post(
         'product-deals/{id}/restore',
@@ -138,30 +179,40 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         'invoices/{id}/restore',
         [InvoiceController::class, 'restore']
     )->name('invoices.restore');
+
     Route::apiResource('invoice-items', InvoiceItemController::class);
     Route::post(
         'invoice-items/{id}/restore',
         [InvoiceItemController::class, 'restore']
     )->name('invoice-items.restore');
 
+    /**
+     * --------------------------------------------------------
+     * ------------------------ Quotes ------------------------
+     * --------------------------------------------------------
+     */
+    Route::apiResource('quotes', QuoteController::class);
+    Route::post(
+        'quotes/{id}/restore',
+        [QuoteController::class, 'restore']
+    )->name('quotes.restore');
+
+    /**
+     * ---------------------------------------------------------
+     * ---------------------- Attachments ----------------------
+     * ---------------------------------------------------------
+     */
     Route::apiResource('attachments', AttachmentController::class);
     Route::post(
         'attachments/{id}/restore',
         [AttachmentController::class, 'restore']
     )->name('attachments.restore');
 
-    // Role permission sync (if you want a dedicated endpoint)
-    Route::post(
-        'roles/{role}/permissions',
-        [RoleController::class, 'syncPermissions']
-    )->name('roles.permissions.sync');
-
-    // Force delete/restore endpoints for other soft-deletable resources
-    Route::delete(
-        'companies/{id}/force',
-        [CompanyController::class, 'forceDelete']
-    )->name('companies.forceDelete');
-
+    /**
+     * ---------------------------------------------------------
+     * ------------------------- Leads -------------------------
+     * ---------------------------------------------------------
+     */
     Route::apiResource('leads', LeadController::class);
     Route::post(
         'leads/{id}/restore',

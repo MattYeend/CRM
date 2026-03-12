@@ -24,7 +24,6 @@ class InvoiceFactory extends Factory
             'number' => strtoupper(fake()->unique()->bothify('INV-####')),
             'company_id' => Company::factory(),
             'contact_id' => Contact::factory(),
-            'created_by' => User::factory(),
             'issue_date' => now()->subDays(rand(0, 30)),
             'due_date' => now()->addDays(rand(7, 30)),
             'status' => 'draft',

@@ -21,7 +21,7 @@ class PipelineStageFactory extends Factory
     {
         return [
             'pipeline_id' => Pipeline::factory(),
-            'name' => $this->faker->word(),
+            'name' => fake()->word(),
             'position' => 0,
             'is_won_stage' => false,
             'is_lost_stage' => false,

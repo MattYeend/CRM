@@ -1,25 +1,25 @@
 <?php
 
-namespace App\Services\Products;
+namespace App\Services\Quotes;
 
-use App\Models\Product;
+use App\Models\Quote;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class ProductQueryService
+class QuoteQueryService
 {
-    private ProductSortingService $sorting;
-    private ProductTrashFilterService $trashFilter;
+    private QuoteSortingService $sorting;
+    private QuoteTrashFilterService $trashFilter;
     public function __construct(
-        ProductSortingService $sorting,
-        ProductTrashFilterService $trashFilter,
+        QuoteSortingService $sorting,
+        QuoteTrashFilterService $trashFilter,
     ) {
         $this->sorting = $sorting;
         $this->trashFilter = $trashFilter;
     }
 
     /**
-     * Return paginated product, applying filters/sorting.
+     * Return paginated task, applying filters/sorting.
      *
      * @param Request $request
      *
@@ -32,7 +32,7 @@ class ProductQueryService
             min((int) $request->query('per_page', 10), 100)
         );
 
-        $query = Product::with('productDeals');
+        $query = Quote::with('creator', 'updater', 'deal');
 
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
@@ -41,14 +41,14 @@ class ProductQueryService
     }
 
     /**
-     * Return a single product.
+     * Return a single quote.
      *
-     * @param Product $product
+     * @param Quote $quote
      *
-     * @return Product
+     * @return Quote
      */
-    public function show(Product $product): Product
+    public function show(Quote $quote): Quote
     {
-        return $product->load('productDeals');
+        return $quote->load('creator', 'updater', 'deal');
     }
 }

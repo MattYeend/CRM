@@ -1,0 +1,196 @@
+<?php
+
+use App\Models\Quote;
+use App\Models\Deal;
+use App\Models\Permission;
+use App\Models\Role;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Routing\Middleware\ThrottleRequests;
+
+uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    $this->auth = User::factory()->create();
+
+    $permissions = [
+        'quotes.view.all',
+        'quotes.create',
+        'quotes.update.any',
+        'quotes.delete.any',
+        'quotes.restore.any',
+    ];
+
+    $permissionModels = collect($permissions)
+        ->map(fn ($name) => Permission::firstOrCreate(['name' => $name]));
+
+    $role = Role::factory()->create(['name' => 'admin']);
+    $role->permissions()->sync($permissionModels->pluck('id'));
+
+    $this->auth->roles()->sync([$role->id]);
+
+    $this->actingAs($this->auth, 'sanctum');
+
+    $this->withoutMiddleware(ThrottleRequests::class);
+});
+
+test('index returns paginated quotes with relations', function () {
+
+    $deal = Deal::factory()->create();
+
+    Quote::factory()->count(12)->create([
+        'deal_id' => $deal->id,
+        'created_by' => $this->auth->id,
+    ]);
+
+    $response = $this->getJson(route('quotes.index', ['per_page' => 5]));
+
+    $response->assertStatus(200);
+    $response->assertJsonPath('per_page', 5);
+
+    $this->assertCount(5, $response->json('data'));
+
+    $first = $response->json('data')[0];
+
+    $this->assertArrayHasKey('deal', $first);
+    $this->assertArrayHasKey('creator', $first);
+});
+
+test('show returns a quote with deal and creator loaded', function () {
+
+    $deal = Deal::factory()->create();
+
+    $quote = Quote::factory()->create([
+        'deal_id' => $deal->id,
+        'created_by' => $this->auth->id,
+    ]);
+
+    $response = $this->getJson(route('quotes.show', $quote));
+
+    $response->assertStatus(200);
+
+    $response->assertJsonFragment([
+        'id' => $quote->id,
+    ]);
+
+    $response->assertJsonStructure([
+        'id',
+        'deal_id',
+        'currency',
+        'subtotal',
+        'tax',
+        'total',
+        'sent_at',
+        'accepted_at',
+        'deal' => [],
+        'creator' => [],
+    ]);
+});
+
+test('store creates a quote and returns 201', function () {
+
+    $deal = Deal::factory()->create();
+
+    $payload = [
+        'deal_id' => $deal->id,
+        'currency' => 'GBP',
+        'subtotal' => 100,
+        'tax' => 20,
+        'total' => 120,
+    ];
+
+    $response = $this->postJson(route('quotes.store'), $payload);
+
+    $response->assertStatus(201);
+
+    $response->assertJsonFragment([
+        'currency' => 'GBP',
+        'subtotal' => 100,
+        'total' => 120,
+    ]);
+
+    $this->assertDatabaseHas('quotes', [
+        'deal_id' => $deal->id,
+        'currency' => 'GBP',
+    ]);
+});
+
+test('update modifies an existing quote', function () {
+
+    $deal = Deal::factory()->create();
+
+    $quote = Quote::factory()->create([
+        'deal_id' => $deal->id,
+        'currency' => 'GBP',
+        'subtotal' => 100,
+        'tax' => 20,
+        'total' => 120,
+    ]);
+
+    $payload = [
+        'currency' => 'USD',
+        'subtotal' => 200,
+        'tax' => 40,
+        'total' => 240,
+    ];
+
+    $response = $this->putJson(route('quotes.update', $quote), $payload);
+
+    $response->assertStatus(200);
+
+    $response->assertJsonFragment([
+        'currency' => 'USD',
+        'total' => 240,
+    ]);
+
+    $this->assertDatabaseHas('quotes', [
+        'id' => $quote->id,
+        'currency' => 'USD',
+    ]);
+});
+
+test('destroy deletes the quote', function () {
+
+    $deal = Deal::factory()->create();
+
+    $quote = Quote::factory()->create([
+        'deal_id' => $deal->id,
+    ]);
+
+    $response = $this->deleteJson(route('quotes.destroy', $quote));
+
+    $response->assertStatus(204);
+
+    $this->assertSoftDeleted('quotes', [
+        'id' => $quote->id,
+    ]);
+});
+
+test('restore deleted quotes', function () {
+
+    $deal = Deal::factory()->create();
+
+    $quote = Quote::factory()->create([
+        'deal_id' => $deal->id,
+        'created_by' => $this->auth->id,
+    ]);
+
+    $quote->delete();
+
+    $this->assertSoftDeleted('quotes', [
+        'id' => $quote->id,
+    ]);
+
+    $response = $this->postJson(route('quotes.restore', $quote->id));
+
+    $response->assertStatus(200);
+
+    $response->assertJsonFragment([
+        'id' => $quote->id,
+    ]);
+
+    $this->assertDatabaseHas('quotes', [
+        'id' => $quote->id,
+        'deleted_at' => null,
+    ]);
+});

@@ -186,6 +186,13 @@ class Log extends Model
     public const ACTION_PRODUCT_DEAL_RESTORED = 133;
     public const ACTION_PRODUCT_DEAL_VIEWED = 134;
 
+    // Quotes
+    public const ACTION_QUOTE_CREATED = 135;
+    public const ACTION_QUOTE_UPDATED = 136;
+    public const ACTION_QUOTE_DELETED = 137;
+    public const ACTION_QUOTE_RESTORED = 138;
+    public const ACTION_QUOTE_VIEWED = 139;
+
     // New Logging Actions should go here to be reviewed
     // by the development team for future releases.
     // Ensure to update the documentation accordingly.

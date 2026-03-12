@@ -154,6 +154,13 @@ class PermissionRoleSeeder extends Seeder
             'productDeals.delete.any',
             'productDeals.restore.any',
 
+            'quotes.view.all',
+            'quotes.view.own',
+            'quotes.create',
+            'quotes.update.any',
+            'quotes.delete.any',
+            'quotes.restore.any',
+
             'tasks.view.all',
             'tasks.view.own',
             'tasks.create',
@@ -301,6 +308,13 @@ class PermissionRoleSeeder extends Seeder
             'productDeals.update.own',
             'productDeals.delete.own',
             'productDeals.restore.own',
+
+            'quotes.view.all',
+            'quotes.view.own',
+            'quotes.create',
+            'quotes.update.own',
+            'quotes.delete.own',
+            'quotes.restore.own',
 
             'tasks.view.all',
             'tasks.view.own',

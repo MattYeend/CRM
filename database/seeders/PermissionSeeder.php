@@ -193,6 +193,17 @@ class PermissionSeeder extends Seeder
             ['name' => 'productDeals.restore.any', 'label' => 'Restore any product deals'],
             ['name' => 'productDeals.restore.own', 'label' => 'Restore own product deals'],
 
+            // Quotes
+            ['name' => 'quotes.view.all', 'label' => 'View quotes'],
+            ['name' => 'quotes.view.own', 'label' => 'View own quotes'],
+            ['name' => 'quotes.create', 'label' => 'Create quotes'],
+            ['name' => 'quotes.update.any', 'label' => 'Update any quotes'],
+            ['name' => 'quotes.update.own', 'label' => 'Update own quotes'],
+            ['name' => 'quotes.delete.any', 'label' => 'Delete any quotes'],
+            ['name' => 'quotes.delete.own', 'label' => 'Delete own quotes'],
+            ['name' => 'quotes.restore.any', 'label' => 'Restore any quotes'],
+            ['name' => 'quotes.restore.own', 'label' => 'Restore own quotes'],
+
             // Reports & exports
             ['name' => 'reports.view', 'label' => 'View reports'],
             ['name' => 'data.export', 'label' => 'Export data'],

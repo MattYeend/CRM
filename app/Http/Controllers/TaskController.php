@@ -70,9 +70,9 @@ class TaskController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\Task $task
+     * @param Task $task
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function show(Task $task): JsonResponse
     {
@@ -80,7 +80,7 @@ class TaskController extends Controller
 
         $task = $this->query->show($task);
 
-        return response()->json($task->load('assignee', 'creator', 'taskable'));
+        return response()->json($task);
     }
 
     /**
@@ -102,10 +102,9 @@ class TaskController extends Controller
             $task,
         );
 
-        return response()->json(
-            $task->load('assignee', 'creator', 'taskable'),
-            201
-        );
+        $task = $this->query->show($task);
+
+        return response()->json($task, 201);
     }
 
     /**
@@ -131,11 +130,7 @@ class TaskController extends Controller
             $task,
         );
 
-        return response()->json($task->fresh()->load(
-            'assignee',
-            'creator',
-            'taskable',
-        ));
+        return response()->json($task);
     }
 
     /**

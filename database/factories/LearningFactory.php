@@ -21,13 +21,11 @@ class LearningFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->sentence(4),
-            'description' => $this->faker->optional()->paragraph(),
-            'date' => $this->faker->optional()->date(),
+            'title' => fake()->sentence(4),
+            'description' => fake()->optional()->paragraph(),
+            'date' => fake()->optional()->date(),
             'created_by' => User::factory(),
-            'updated_by' => null,
-            'deleted_by' => null,
-            'meta' => null,
+            'meta' => [],
         ];
     }
 
