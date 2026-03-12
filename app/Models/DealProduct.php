@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -28,7 +27,7 @@ class DealProduct extends Pivot
         'updated_by',
         'deleted_by',
         'restored_by',
-        'restored_at'
+        'restored_at',
     ];
 
     /**

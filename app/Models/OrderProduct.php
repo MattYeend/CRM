@@ -27,7 +27,7 @@ class OrderProduct extends Pivot
         'updated_by',
         'deleted_by',
         'restored_by',
-        'restored_at'
+        'restored_at',
     ];
 
     /**

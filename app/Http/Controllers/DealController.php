@@ -38,7 +38,7 @@ class DealController extends Controller
      * @param DealManagementService $management
      *
      * @param DealQueryService $query
-     * 
+     *
      * @param DealProductManagementService $dealProductManagement
      *
      * An instance of the DealLogService used for logging

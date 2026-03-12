@@ -268,7 +268,9 @@ class ProductController extends Controller
      * Restore a previously removed deal on a product.
      *
      * @param Product $product
+     *
      * @param Deal $deal
+     *
      * @return JsonResponse
      */
     public function restoreDeal(Product $product, Deal $deal): JsonResponse
@@ -282,9 +284,10 @@ class ProductController extends Controller
      * Attach orders to a product.
      *
      * @param Request $request Request containing 'orders' array
+     *
      * @param Product $product The product to attach orders to
      *
-     * @return JsonResponse JSON message confirming attachment
+     * @return JsonResponse
      */
     public function addOrders(Request $request, Product $product): JsonResponse
     {
@@ -298,9 +301,10 @@ class ProductController extends Controller
      * Update orders attached to a product.
      *
      * @param Request $request Request containing 'orders' array
+     *
      * @param Product $product The product whose orders are being updated
      *
-     * @return JsonResponse JSON message confirming update
+     * @return JsonResponse
      */
     public function updateOrders(Request $request, Product $product): JsonResponse
     {
@@ -317,7 +321,7 @@ class ProductController extends Controller
      *
      * @param Order $order The order to remove
      *
-     * @return JsonResponse JSON message confirming removal
+     * @return JsonResponse
      */
     public function removeOrder(Product $product, Deal $deal): JsonResponse
     {
@@ -330,9 +334,10 @@ class ProductController extends Controller
      * Restore a previously removed order for a product.
      *
      * @param Product $product
+     *
      * @param Order $order The order to restore
      *
-     * @return JsonResponse JSON message confirming restoration
+     * @return JsonResponse
      */
     public function restoreOrder(Product $product, Order $order): JsonResponse
     {
@@ -345,9 +350,10 @@ class ProductController extends Controller
      * Attach quotes to a product.
      *
      * @param Request $request Request containing 'quotes' array
+     *
      * @param Product $product The product to attach quotes to
      *
-     * @return JsonResponse JSON message confirming attachment
+     * @return JsonResponse
      */
     public function addQuotes(Request $request, Product $product): JsonResponse
     {
@@ -361,9 +367,10 @@ class ProductController extends Controller
      * Update quotes attached to a product.
      *
      * @param Request $request Request containing 'quotes' array
+     *
      * @param Product $product The product whose quotes are being updated
      *
-     * @return JsonResponse JSON message confirming update
+     * @return JsonResponse
      */
     public function updateQuotes(Request $request, Product $product): JsonResponse
     {
@@ -380,7 +387,7 @@ class ProductController extends Controller
      *
      * @param Quote $quote The quote to remove
      *
-     * @return JsonResponse JSON message confirming removal
+     * @return JsonResponse
      */
     public function removeQuote(Product $product, Deal $deal): JsonResponse
     {
@@ -393,9 +400,10 @@ class ProductController extends Controller
      * Restore a previously removed quote for a product.
      *
      * @param Product $product
+     *
      * @param Quote $quote The quote to restore
      *
-     * @return JsonResponse JSON message confirming restoration
+     * @return JsonResponse
      */
     public function restoreQuote(Product $product, Quote $quote): JsonResponse
     {

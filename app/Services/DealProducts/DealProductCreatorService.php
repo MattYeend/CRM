@@ -3,6 +3,7 @@
 namespace App\Services\DealProducts;
 
 use Illuminate\Database\Eloquent\Model;
+
 class DealProductCreatorService
 {
     /**
