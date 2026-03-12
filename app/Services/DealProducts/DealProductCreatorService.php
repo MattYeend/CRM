@@ -2,13 +2,9 @@
 
 namespace App\Services\DealProducts;
 
-use App\Models\Product;
 use Illuminate\Database\Eloquent\Model;
-
-
 class DealProductCreatorService
 {
-    
     /**
      * Attach product(s) to a parent (Deal, Order, Quote)
      *
@@ -22,8 +18,8 @@ class DealProductCreatorService
             $parent->products()->syncWithoutDetaching([
                 $item['product_id'] => [
                     'quantity' => $item['quantity'] ?? 1,
-                    'price'    => $item['price'] ?? 0,
-                    'meta'     => $item['meta'] ?? null,
+                    'price' => $item['price'] ?? 0,
+                    'meta' => $item['meta'] ?? null,
                 ],
             ]);
         }

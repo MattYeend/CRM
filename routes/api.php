@@ -172,17 +172,17 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         'products/{product}/orders',
         [ProductController::class, 'addOrders']
     )->name('products.orders.add');
-    
+
     Route::put(
         'products/{product}/orders',
         [ProductController::class, 'updateOrders']
     )->name('products.orders.update');
-    
+
     Route::delete(
         'products/{product}/orders/{order}',
         [ProductController::class, 'removeOrder']
     )->name('products.orders.remove');
-    
+
     Route::post(
         'products/{product}/orders/{order}/restore',
         [ProductController::class, 'restoreOrder']
@@ -192,17 +192,17 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         'products/{product}/quotes',
         [ProductController::class, 'addQuotes']
     )->name('products.quotes.add');
-    
+
     Route::put(
         'products/{product}/quotes',
         [ProductController::class, 'updateQuotes']
     )->name('products.quotes.update');
-    
+
     Route::delete(
         'products/{product}/quotes/{quote}',
         [ProductController::class, 'removeQuote']
     )->name('products.quotes.remove');
-    
+
     Route::post(
         'products/{product}/quotes/{quote}/restore',
         [ProductController::class, 'restoreQuote']
@@ -212,17 +212,17 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         'products/{product}/deals',
         [ProductController::class, 'addDeals']
     )->name('products.deals.add');
-    
+
     Route::put(
         'products/{product}/deals',
         [ProductController::class, 'updateDeals']
     )->name('products.deals.update');
-    
+
     Route::delete(
         'products/{product}/deals/{deal}',
         [ProductController::class, 'removeDeal']
     )->name('products.deals.remove');
-    
+
     Route::post(
         'products/{product}/deals/{deal}/restore',
         [ProductController::class, 'restoreDeal']
@@ -327,17 +327,17 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         'orders/{order}/products',
         [OrderController::class, 'addProducts']
     )->name('orders.products.add');
-    
+
     Route::put(
         'orders/{order}/products',
         [OrderController::class, 'updateProducts']
     )->name('orders.products.update');
-    
+
     Route::delete(
         'orders/{order}/products/{product}',
         [OrderController::class, 'removeProduct']
     )->name('orders.products.remove');
-    
+
     Route::post(
         'orders/{order}/products/{product}/restore',
         [OrderController::class, 'restoreProduct']
@@ -352,17 +352,17 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         'quotes/{quote}/products',
         [QuoteController::class, 'addProducts']
     )->name('quotes.products.add');
-    
+
     Route::put(
         'quotes/{quote}/products',
         [QuoteController::class, 'updateProducts']
     )->name('quotes.products.update');
-    
+
     Route::delete(
         'quotes/{quote}/products/{product}',
         [QuoteController::class, 'removeProduct']
     )->name('quotes.products.remove');
-    
+
     Route::post(
         'quotes/{quote}/products/{product}/restore',
         [QuoteController::class, 'restoreProduct']

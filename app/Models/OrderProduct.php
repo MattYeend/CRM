@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OrderProduct extends Pivot
@@ -31,7 +30,7 @@ class OrderProduct extends Pivot
         'restored_at'
     ];
 
-        /**
+    /**
      * The attributes that should be cast.
      *
      * @var array<string, string>

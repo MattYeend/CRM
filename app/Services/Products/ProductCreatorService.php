@@ -42,8 +42,8 @@ class ProductCreatorService
             $product->deals()->syncWithoutDetaching([
                 $deal['deal_id'] => [
                     'quantity' => $deal['quantity'] ?? 1,
-                    'price'    => $deal['price'] ?? 0,
-                    'total'    => ($deal['quantity'] ?? 1) * ($deal['price'] ?? 0),
+                    'price' => $deal['price'] ?? 0,
+                    'total' => ($deal['quantity'] ?? 1) * ($deal['price'] ?? 0),
                 ],
             ]);
         }
@@ -68,8 +68,8 @@ class ProductCreatorService
             $product->quotes()->syncWithoutDetaching([
                 $quote['quote_id'] => [
                     'quantity' => $quote['quantity'] ?? 1,
-                    'price'    => $quote['price'] ?? 0,
-                    'total'    => ($quote['quantity'] ?? 1) * ($quote['price'] ?? 0),
+                    'price' => $quote['price'] ?? 0,
+                    'total' => ($quote['quantity'] ?? 1) * ($quote['price'] ?? 0),
                 ],
             ]);
         }
@@ -94,8 +94,8 @@ class ProductCreatorService
             $product->orders()->syncWithoutDetaching([
                 $order['order_id'] => [
                     'quantity' => $order['quantity'] ?? 1,
-                    'price'    => $order['price'] ?? 0,
-                    'total'    => ($order['quantity'] ?? 1) * ($order['price'] ?? 0),
+                    'price' => $order['price'] ?? 0,
+                    'total' => ($order['quantity'] ?? 1) * ($order['price'] ?? 0),
                 ],
             ]);
         }

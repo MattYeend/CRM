@@ -18,8 +18,8 @@ class DealProductUpdaterService
         foreach ($items as $item) {
             $parent->products()->updateExistingPivot($item['product_id'], [
                 'quantity' => $item['quantity'] ?? 1,
-                'price'    => $item['price'] ?? 0,
-                'meta'     => $item['meta'] ?? null,
+                'price' => $item['price'] ?? 0,
+                'meta' => $item['meta'] ?? null,
             ]);
         }
     }

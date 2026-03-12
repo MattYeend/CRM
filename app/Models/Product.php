@@ -149,9 +149,9 @@ class Product extends Model
     public function deals()
     {
         return $this->belongsToMany(Deal::class, 'deal_products')
-                    ->withPivot('quantity', 'price', 'deleted_at')
-                    ->withTimestamps()
-                    ->using(DealProduct::class); // optional pivot model
+            ->withPivot('quantity', 'price', 'deleted_at')
+            ->withTimestamps()
+            ->using(DealProduct::class); 
     }
 
     /**
@@ -162,9 +162,9 @@ class Product extends Model
     public function quotes()
     {
         return $this->belongsToMany(Quote::class, 'quote_products')
-                    ->withPivot('quantity', 'price', 'deleted_at')
-                    ->withTimestamps()
-                    ->using(QuoteProduct::class); // optional pivot model
+            ->withPivot('quantity', 'price', 'deleted_at')
+            ->withTimestamps()
+            ->using(QuoteProduct::class); 
     }
 
     /**
@@ -175,8 +175,8 @@ class Product extends Model
     public function orders()
     {
         return $this->belongsToMany(Order::class, 'order_products')
-                    ->withPivot('quantity', 'price', 'meta', 'deleted_at')
-                    ->withTimestamps()
-                    ->using(OrderProduct::class); // optional pivot model if needed
+            ->withPivot('quantity', 'price', 'meta', 'deleted_at')
+            ->withTimestamps()
+            ->using(OrderProduct::class); 
     }
 }

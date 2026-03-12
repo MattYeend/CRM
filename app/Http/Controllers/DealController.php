@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreDealRequest;
 use App\Http\Requests\UpdateDealRequest;
-use App\Models\Product;
 use App\Models\Deal;
+use App\Models\Product;
+use App\Services\DealProducts\DealProductManagementService;
 use App\Services\Deals\DealLogService;
 use App\Services\Deals\DealManagementService;
 use App\Services\Deals\DealQueryService;
-use App\Services\DealProducts\DealProductManagementService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

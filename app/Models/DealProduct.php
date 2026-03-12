@@ -31,7 +31,7 @@ class DealProduct extends Pivot
         'restored_at'
     ];
 
-        /**
+    /**
      * The attributes that should be cast.
      *
      * @var array<string, string>

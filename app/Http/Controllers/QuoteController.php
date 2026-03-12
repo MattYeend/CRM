@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreQuoteRequest;
 use App\Http\Requests\UpdateQuoteRequest;
-use App\Models\Quote;
 use App\Models\Product;
+use App\Models\Quote;
+use App\Services\QuoteProducts\QuoteProductManagementService;
 use App\Services\Quotes\QuoteLogService;
 use App\Services\Quotes\QuoteManagementService;
 use App\Services\Quotes\QuoteQueryService;
-use App\Services\QuoteProducts\QuoteProductManagementService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
