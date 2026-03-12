@@ -179,12 +179,12 @@ class Log extends Model
     public const ACTION_LEAD_ASSIGNED = 128;
     public const ACTION_LEAD_UNASSIGNED = 129;
 
-    // Product Deals
-    public const ACTION_PRODUCT_DEAL_CREATED = 130;
-    public const ACTION_PRODUCT_DEAL_UPDATED = 131;
-    public const ACTION_PRODUCT_DEAL_DELETED = 132;
-    public const ACTION_PRODUCT_DEAL_RESTORED = 133;
-    public const ACTION_PRODUCT_DEAL_VIEWED = 134;
+    // Orders
+    public const ACTION_ORDER_CREATED = 130;
+    public const ACTION_ORDER_UPDATED = 131;
+    public const ACTION_ORDER_DELETED = 132;
+    public const ACTION_ORDER_RESTORED = 133;
+    public const ACTION_ORDER_VIEWED = 134;
 
     // Quotes
     public const ACTION_QUOTE_CREATED = 135;

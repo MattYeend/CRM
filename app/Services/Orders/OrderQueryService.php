@@ -1,25 +1,25 @@
 <?php
 
-namespace App\Services\ProductDeals;
+namespace App\Services\Orders;
 
-use App\Models\ProductDeal;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class ProductDealQueryService
+class OrderQueryService
 {
-    private ProductDealSortingService $sorting;
-    private ProductDealTrashFilterService $trashFilter;
+    private OrderSortingService $sorting;
+    private OrderTrashFilterService $trashFilter;
     public function __construct(
-        ProductDealSortingService $sorting,
-        ProductDealTrashFilterService $trashFilter,
+        OrderSortingService $sorting,
+        OrderTrashFilterService $trashFilter,
     ) {
         $this->sorting = $sorting;
         $this->trashFilter = $trashFilter;
     }
 
     /**
-     * Return paginated product, applying filters/sorting.
+     * Return paginated order, applying filters/sorting.
      *
      * @param Request $request
      *
@@ -32,7 +32,7 @@ class ProductDealQueryService
             min((int) $request->query('per_page', 10), 100)
         );
 
-        $query = ProductDeal::query();
+        $query = Order::query();
 
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
@@ -41,14 +41,14 @@ class ProductDealQueryService
     }
 
     /**
-     * Return a single product deal.
+     * Return a single order.
      *
-     * @param ProductDeal $productDeal
+     * @param Order $order
      *
-     * @return ProductDeal
+     * @return Order
      */
-    public function show(ProductDeal $productDeal): ProductDeal
+    public function show(Order $order): Order
     {
-        return $productDeal;
+        return $order;
     }
 }

@@ -134,6 +134,17 @@ class PermissionSeeder extends Seeder
             ['name' => 'notes.restore.any', 'label' => 'Restore any notes'],
             ['name' => 'notes.restore.own', 'label' => 'Restore own notes'],
 
+            // Orders
+            ['name' => 'orders.view.all', 'label' => 'View orders'],
+            ['name' => 'orders.view.own', 'label' => 'View own orders'],
+            ['name' => 'orders.create', 'label' => 'Create orders'],
+            ['name' => 'orders.update.any', 'label' => 'Update any orders'],
+            ['name' => 'orders.update.own', 'label' => 'Update own orders'],
+            ['name' => 'orders.delete.any', 'label' => 'Delete any orders'],
+            ['name' => 'orders.delete.own', 'label' => 'Delete own orders'],
+            ['name' => 'orders.restore.any', 'label' => 'Restore any orders'],
+            ['name' => 'orders.restore.own', 'label' => 'Restore own orders'],
+
             // Permissions
             ['name' => 'permissions.view.all', 'label' => 'View permissions'],
             ['name' => 'permissions.view.own', 'label' => 'View own permissions'],
@@ -181,17 +192,6 @@ class PermissionSeeder extends Seeder
             ['name' => 'products.delete.own', 'label' => 'Delete own products'],
             ['name' => 'products.restore.any', 'label' => 'Restore any products'],
             ['name' => 'products.restore.own', 'label' => 'Restore own products'],
-
-            // Product Deals
-            ['name' => 'productDeals.view.all', 'label' => 'View product deals'],
-            ['name' => 'productDeals.view.own', 'label' => 'View own product deals'],
-            ['name' => 'productDeals.create', 'label' => 'Create product deals'],
-            ['name' => 'productDeals.update.any', 'label' => 'Update any product deals'],
-            ['name' => 'productDeals.update.own', 'label' => 'Update own product deals'],
-            ['name' => 'productDeals.delete.any', 'label' => 'Delete any product deals'],
-            ['name' => 'productDeals.delete.own', 'label' => 'Delete own product deals'],
-            ['name' => 'productDeals.restore.any', 'label' => 'Restore any product deals'],
-            ['name' => 'productDeals.restore.own', 'label' => 'Restore own product deals'],
 
             // Quotes
             ['name' => 'quotes.view.all', 'label' => 'View quotes'],

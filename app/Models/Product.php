@@ -140,13 +140,13 @@ class Product extends Model
         return $this->morphMany(Note::class, 'notable');
     }
 
-    /**
-     * Get the deals for the product.
-     *
-     * @return HasMany
-     */
-    public function productDeals(): HasMany
-    {
-        return $this->hasMany(ProductDeal::class);
-    }
+    // /**
+    //  * Get the deals for the product.
+    //  *
+    //  * @return HasMany
+    //  */
+    // public function productDeals(): HasMany
+    // {
+    //     return $this->hasMany(ProductDeal::class);
+    // }
 }

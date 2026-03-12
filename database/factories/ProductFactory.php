@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -22,7 +21,7 @@ class ProductFactory extends Factory
             'name' => fake()->word(),
             'description' => fake()->optional()->sentence(),
             'price' => fake()->randomFloat(2, 1, 1000),
-            'currency' => 'USD',
+            'currency' => fake()->randomElement(['USD', 'GBP', 'EUR']),
             'quantity' => fake()->numberBetween(0, 100),
             'meta' => [],
         ];

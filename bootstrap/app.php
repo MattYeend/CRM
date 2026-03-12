@@ -38,8 +38,6 @@ use App\Models\PipelineStage;
 use App\Policies\PipelineStagePolicy;
 use App\Models\Product;
 use App\Policies\ProductPolicy;
-use App\Models\ProductDeal;
-use App\Policies\ProductDealPolicy;
 use App\Models\Quote;
 use App\Policies\QuotePolicy;
 use App\Models\Role;
@@ -151,7 +149,6 @@ return Application::configure(basePath: dirname(__DIR__))
         Gate::policy(Pipeline::class, PipelinePolicy::class);
         Gate::policy(PipelineStage::class, PipelineStagePolicy::class);
         Gate::policy(Product::class, ProductPolicy::class);
-        Gate::policy(ProductDeal::class, ProductDealPolicy::class);
         Gate::policy(Quote::class, QuotePolicy::class);
         Gate::policy(Role::class, RolePolicy::class);
         Gate::policy(Task::class, TaskPolicy::class);

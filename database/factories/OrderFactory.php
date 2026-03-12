@@ -1,0 +1,36 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Order>
+ */
+class OrderFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        $amount = fake()->randomFloat(2, 50, 1000);
+
+        return [
+            'user_id' => User::factory(),
+            'amount' => $amount,
+            'currency' => fake()->randomElement(['USD', 'GBP', 'EUR']),
+            'status' => fake()->randomElement(['pending', 'paid', 'failed']),
+            'payment_method' => fake()->optional()->randomElement(['card', 'paypal', 'stripe']),
+            'paid_at' => fake()->optional()->dateTimeBetween('-1 month', 'now'),
+            'payment_intent_id' => fake()->uuid(),
+            'charge_id' => fake()->uuid(),
+            'meta' => [],
+            'created_by' => User::factory(),
+            'updated_by' => User::factory(),
+        ];
+    }
+}

@@ -2,13 +2,13 @@
 
 namespace App\Policies;
 
-use App\Models\ProductDeal;
+use App\Models\Order;
 use App\Models\Role;
 use App\Models\User;
 use App\Traits\HandlesPolicyPermissions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class ProductDealPolicy
+class OrderPolicy
 {
     use HandlesAuthorization, HandlesPolicyPermissions;
 
@@ -29,7 +29,7 @@ class ProductDealPolicy
     }
 
     /**
-     * Determine whether the user can view any product deals.
+     * Determine whether the user can view any orders.
      *
      * @param User $user
      *
@@ -37,30 +37,30 @@ class ProductDealPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $this->has($user, 'productDeals.view.all');
+        return $this->has($user, 'orders.view.all');
     }
 
     /**
-     * Determine whether the user can view the product deal.
+     * Determine whether the user can view the order.
      *
      * @param User $user
      *
-     * @param ProductDeal $productDeal
+     * @param Order $order
      *
      * @return bool
      */
-    public function view(User $user, ProductDeal $productDeal): bool
+    public function view(User $user, Order $order): bool
     {
         return $this->anyOrOwn(
             $user,
-            $productDeal,
-            'productDeals.view.all',
-            'productDeals.view.own'
+            $order,
+            'orders.view.all',
+            'orders.view.own'
         );
     }
 
     /**
-     * Determine whether the user can create product deals.
+     * Determine whether the user can create orders.
      *
      * @param User $user
      *
@@ -68,63 +68,63 @@ class ProductDealPolicy
      */
     public function create(User $user): bool
     {
-        return $this->has($user, 'productDeals.create');
+        return $this->has($user, 'orders.create');
     }
 
     /**
-     * Determine whether the user can update the product deal.
+     * Determine whether the user can update the order.
      *
      * @param User $user
      *
-     * @param ProductDeal $productDeal
+     * @param Order $order
      *
      * @return bool
      */
-    public function update(User $user, ProductDeal $productDeal): bool
+    public function update(User $user, Order $order): bool
     {
         return $this->anyOrOwn(
             $user,
-            $productDeal,
-            'productDeals.update.any',
-            'productDeals.update.own'
+            $order,
+            'orders.update.any',
+            'orders.update.own'
         );
     }
 
     /**
-     * Determine whether the user can delete the product deal.
+     * Determine whether the user can delete the order.
      *
      * @param User $user
      *
-     * @param ProductDeal $productDeal
+     * @param Order $order
      *
      * @return bool
      */
-    public function delete(User $user, ProductDeal $productDeal): bool
+    public function delete(User $user, Order $order): bool
     {
         return $this->anyOrOwn(
             $user,
-            $productDeal,
-            'productDeals.delete.any',
-            'productDeals.delete.own'
+            $order,
+            'orders.delete.any',
+            'orders.delete.own'
         );
     }
 
     /**
-     * Determine whether the user can restore the product deal.
+     * Determine whether the user can restore the order.
      *
      * @param User $user
      *
-     * @param ProductDeal $productDeal
+     * @param Order $order
      *
      * @return bool
      */
-    public function restore(User $user, ProductDeal $productDeal): bool
+    public function restore(User $user, Order $order): bool
     {
         return $this->anyOrOwn(
             $user,
-            $productDeal,
-            'productDeals.restore.any',
-            'productDeals.restore.own'
+            $order,
+            'orders.restore.any',
+            'orders.restore.own'
         );
     }
 }

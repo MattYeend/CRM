@@ -32,7 +32,7 @@ class ProductQueryService
             min((int) $request->query('per_page', 10), 100)
         );
 
-        $query = Product::with('productDeals');
+        $query = Product::query();
 
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
@@ -49,6 +49,6 @@ class ProductQueryService
      */
     public function show(Product $product): Product
     {
-        return $product->load('productDeals');
+        return $product;
     }
 }

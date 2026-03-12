@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services\ProductDeals;
+namespace App\Services\Orders;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
-class ProductDealTrashFilterService
+class OrderTrashFilterService
 {
     /**
      * Apply trash filters to the query.

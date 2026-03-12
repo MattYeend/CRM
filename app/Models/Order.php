@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ProductDeal extends Model
+class Order extends Model
 {
-    /** @use HasFactory<\Database\Factories\ProductDealsFactory> */
+    /** @use HasFactory<\Database\Factories\OrderFactory> */
     use HasFactory, SoftDeletes;
 
     /**
@@ -18,12 +19,15 @@ class ProductDeal extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'product_id',
         'deal_id',
-        'quantity',
-        'unit_price',
-        'total_price',
+        'user_id',
+        'amount',
         'currency',
+        'status',
+        'payment_method',
+        'paid_at',
+        'payment_intent_id',
+        'charge_id',
         'meta',
         'created_by',
         'updated_by',
@@ -39,6 +43,7 @@ class ProductDeal extends Model
      */
     protected $casts = [
         'meta' => 'array',
+        'paid_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
@@ -46,7 +51,27 @@ class ProductDeal extends Model
     ];
 
     /**
-     * Get the user that created the product deal.
+     * Get the user who owns the order.
+     *
+     * @return BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the deal associated with the order.
+     *
+     * @return BelongsTo
+     */
+    public function deal(): BelongsTo
+    {
+        return $this->belongsTo(Deal::class);
+    }
+
+    /**
+     * Get the creator of the order.
      *
      * @return BelongsTo
      */
@@ -56,7 +81,7 @@ class ProductDeal extends Model
     }
 
     /**
-     * Get the user that updated the product deal.
+     * Get the last updater of the order.
      *
      * @return BelongsTo
      */
@@ -66,7 +91,7 @@ class ProductDeal extends Model
     }
 
     /**
-     * Get the user that deleted the product deal.
+     * Get the user who deleted the order.
      *
      * @return BelongsTo
      */
@@ -76,7 +101,7 @@ class ProductDeal extends Model
     }
 
     /**
-     * Get the user that restored the product deal.
+     * Get the user who restored the order.
      *
      * @return BelongsTo
      */
@@ -86,22 +111,27 @@ class ProductDeal extends Model
     }
 
     /**
-     * Get the product the product deal belongs to.
+     * Scope a query to only include paid orders.
      *
-     * @return BelongsTo
+     * @param Builder $query
+     *
+     * @return Builder
      */
-    public function product(): BelongsTo
+    public function scopePaid(Builder $query): Builder
     {
-        return $this->belongsTo(Product::class);
+        return $query->where('status', 'paid');
     }
 
     /**
-     * Get the deal the product deal belongs to.
+     * Mark the order as paid and set the paid_at timestamp.
      *
-     * @return BelongsTo
+     * @return bool True if the model was successfully updated.
      */
-    public function deal(): BelongsTo
+    public function markAsPaid(): bool
     {
-        return $this->belongsTo(Deal::class);
+        return $this->update([
+            'status' => 'paid',
+            'paid_at' => now(),
+        ]);
     }
 }

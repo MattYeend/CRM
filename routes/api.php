@@ -10,11 +10,11 @@ use App\Http\Controllers\InvoiceItemController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\LearningController;
 use App\Http\Controllers\NoteController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PipelineController;
 use App\Http\Controllers\PipelineStageController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ProductDealController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TaskController;
@@ -168,12 +168,6 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         [ProductController::class, 'restore']
     )->name('products.restore');
 
-    Route::apiResource('product-deals', ProductDealController::class);
-    Route::post(
-        'product-deals/{id}/restore',
-        [ProductDealController::class, 'restore']
-    )->name('product-deals.restore');
-
     Route::apiResource('invoices', InvoiceController::class);
     Route::post(
         'invoices/{id}/restore',
@@ -222,4 +216,15 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         'leads/{id}/force',
         [LeadController::class, 'forceDelete']
     )->name('leads.forceDelete');
+
+    /**
+     * ----------------------------------------------------------
+     * ------------------------- Orders -------------------------
+     * ----------------------------------------------------------
+     */
+    Route::apiResource('orders', OrderController::class);
+    Route::post(
+        'orders/{id}/restore',
+        [OrderController::class, 'restore']
+    )->name('orders.restore');
 });

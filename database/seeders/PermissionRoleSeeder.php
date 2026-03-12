@@ -115,6 +115,13 @@ class PermissionRoleSeeder extends Seeder
             'notes.delete.any',
             'notes.restore.any',
 
+            'orders.view.all',
+            'orders.view.own',
+            'orders.create',
+            'orders.update.any',
+            'orders.delete.any',
+            'orders.restore.any',
+
             'permissions.view.all',
             'permissions.view.own',
             'permissions.create',
@@ -146,13 +153,6 @@ class PermissionRoleSeeder extends Seeder
             'products.update.any',
             'products.delete.any',
             'products.restore.any',
-
-            'productDeals.view.all',
-            'productDeals.view.own',
-            'productDeals.create',
-            'productDeals.update.any',
-            'productDeals.delete.any',
-            'productDeals.restore.any',
 
             'quotes.view.all',
             'quotes.view.own',
@@ -278,6 +278,13 @@ class PermissionRoleSeeder extends Seeder
             'notes.delete.own',
             'notes.restore.own',
 
+            'orders.view.all',
+            'orders.view.own',
+            'orders.create',
+            'orders.update.own',
+            'orders.delete.own',
+            'orders.restore.own',
+
             'permissions.view.own',
     
             'pipelines.view.all',
@@ -301,13 +308,6 @@ class PermissionRoleSeeder extends Seeder
             'products.update.own',
             'products.delete.own',
             'products.restore.own',
-            
-            'productDeals.view.all',
-            'productDeals.view.own',
-            'productDeals.create',
-            'productDeals.update.own',
-            'productDeals.delete.own',
-            'productDeals.restore.own',
 
             'quotes.view.all',
             'quotes.view.own',

@@ -1,23 +1,25 @@
 <?php
 
-namespace App\Services\ProductDeals;
+namespace App\Services\Orders;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
-class ProductDealSortingService
+class OrderSortingService
 {
     /**
      * Constants for allowed sorts
      */
     private const ALLOWED_SORTS = [
         'id',
-        'product_id',
-        'deal_id',
-        'quantity',
-        'unit_price',
-        'total_price',
+        'user_id',
+        'amount',
         'currency',
+        'status',
+        'payment_method',
+        'paid_at',
+        'payment_intent_id',
+        'charge_id',
         'created_at',
         'updated_at',
     ];
