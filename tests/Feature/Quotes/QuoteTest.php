@@ -3,6 +3,7 @@
 use App\Models\Quote;
 use App\Models\Deal;
 use App\Models\Permission;
+use App\Models\Product;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -19,6 +20,10 @@ beforeEach(function () {
         'quotes.update.any',
         'quotes.delete.any',
         'quotes.restore.any',
+        'quotes.products.add',
+        'quotes.products.update',
+        'quotes.products.remove',
+        'quotes.products.restore',
     ];
 
     $permissionModels = collect($permissions)
@@ -192,5 +197,112 @@ test('restore deleted quotes', function () {
     $this->assertDatabaseHas('quotes', [
         'id' => $quote->id,
         'deleted_at' => null,
+    ]);
+});
+
+test('add products to a quote', function () {
+
+    $quote = Quote::factory()->create();
+    $product = Product::factory()->create();
+
+    $payload = [
+        'products' => [
+            [
+                'product_id' => $product->id,
+                'quantity' => 2,
+                'price' => 25.50,
+                'meta' => ['color' => 'red'],
+            ]
+        ]
+    ];
+
+    $response = $this->postJson(route('quotes.products.add', $quote), $payload);
+
+    $response->assertStatus(200);
+    $response->assertJsonFragment([
+        'message' => 'Products added to quote'
+    ]);
+
+    $this->assertDatabaseHas('quote_products', [
+        'quote_id' => $quote->id,
+        'product_id' => $product->id,
+        'quantity' => 2,
+        'price' => 25.50,
+    ]);
+});
+
+test('update products on a quote', function () {
+
+    $quote = Quote::factory()->create();
+    $product = Product::factory()->create();
+
+    // Attach first
+    $quote->products()->attach($product->id, ['quantity' => 1, 'price' => 10]);
+
+    $payload = [
+        'products' => [
+            [
+                'product_id' => $product->id,
+                'quantity' => 5,
+                'price' => 50,
+            ]
+        ]
+    ];
+
+    $response = $this->putJson(route('quotes.products.update', $quote), $payload);
+
+    $response->assertStatus(200);
+
+    $this->assertDatabaseHas('quote_products', [
+        'quote_id' => $quote->id,
+        'product_id' => $product->id,
+        'quantity' => 5,
+        'price' => 50,
+    ]);
+});
+
+test('remove a product from a quote', function () {
+
+    $quote = Quote::factory()->create();
+    $product = Product::factory()->create();
+
+    // Attach first
+    $quote->products()->attach($product->id, ['quantity' => 1, 'price' => 10]);
+
+    $response = $this->deleteJson(route('quotes.products.remove', [$quote, $product]));
+
+    $response->assertStatus(200);
+
+    // Assert the row is soft-deleted
+    $this->assertDatabaseHas('quote_products', [
+        'quote_id' => $quote->id,
+        'product_id' => $product->id,
+    ]);
+
+    $deletedAt = DB::table('quote_products')
+        ->where('quote_id', $quote->id)
+        ->where('product_id', $product->id)
+        ->value('deleted_at');
+
+    $this->assertNotNull($deletedAt, 'Product row should be soft-deleted.');
+});
+
+test('restore a previously removed product on a quote', function () {
+
+    $quote = Quote::factory()->create();
+    $product = Product::factory()->create();
+
+    // Attach and then detach (soft delete if you implement it)
+    $quote->products()->attach($product->id, ['quantity' => 1, 'price' => 10]);
+    $quote->products()->detach($product->id);
+
+    // Call restore route
+    $response = $this->postJson(route('quotes.products.restore', [$quote, $product]));
+
+    $response->assertStatus(200);
+
+    $this->assertDatabaseHas('quote_products', [
+        'quote_id' => $quote->id,
+        'product_id' => $product->id,
     ]);
 });

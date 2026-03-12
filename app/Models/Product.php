@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -140,13 +141,42 @@ class Product extends Model
         return $this->morphMany(Note::class, 'notable');
     }
 
-    // /**
-    //  * Get the deals for the product.
-    //  *
-    //  * @return HasMany
-    //  */
-    // public function productDeals(): HasMany
-    // {
-    //     return $this->hasMany(ProductDeal::class);
-    // }
+    /**
+     * Get the deals for the product.
+     *
+     * @return BelongsToMany
+     */
+    public function deals()
+    {
+        return $this->belongsToMany(Deal::class, 'deal_products')
+                    ->withPivot('quantity', 'price', 'deleted_at')
+                    ->withTimestamps()
+                    ->using(DealProduct::class); // optional pivot model
+    }
+
+    /**
+     * Get the quotes for the product.
+     *
+     * @return BelongsToMany
+     */
+    public function quotes()
+    {
+        return $this->belongsToMany(Quote::class, 'quote_products')
+                    ->withPivot('quantity', 'price', 'deleted_at')
+                    ->withTimestamps()
+                    ->using(QuoteProduct::class); // optional pivot model
+    }
+
+    /**
+     * Get the orders for the product.
+     *
+     * @return BelongsToMany
+     */
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class, 'order_products')
+                    ->withPivot('quantity', 'price', 'meta', 'deleted_at')
+                    ->withTimestamps()
+                    ->using(OrderProduct::class); // optional pivot model if needed
+    }
 }

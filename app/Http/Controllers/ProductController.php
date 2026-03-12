@@ -5,9 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
+use App\Models\Deal;
+use App\Models\Quote;
+use App\Models\Order;
 use App\Services\Products\ProductLogService;
 use App\Services\Products\ProductManagementService;
 use App\Services\Products\ProductQueryService;
+use App\Services\DealProducts\DealProductManagementService;
+use App\Services\OrderProducts\OrderProductManagementService;
+use App\Services\QuoteProducts\QuoteProductManagementService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -15,15 +21,23 @@ class ProductController extends Controller
 {
     /**
      * Declare a protected property to hold the ProductLogService,
-     * ProductManagementService and ProductQueryService instance
+     * ProductManagementService, ProductQueryService,
+     * DealProductManagementService, OrderProductManagementService
+     * and QuoteProductManagementService instance
      *
      * @var ProductLogService
      * @var ProductManagementService
-     * @var ProductQueryServic
+     * @var ProductQueryService
+     * @var DealProductManagementService
+     * @var OrderProductManagementService
+     * @var QuoteProductManagementService
      */
     protected ProductLogService $logger;
     protected ProductManagementService $management;
     protected ProductQueryService $query;
+    protected DealProductManagementService $dealProductManagement;
+    protected OrderProductManagementService $orderProductManagement;
+    protected QuoteProductManagementService $quoteProductManagement;
 
     /**
      * Constructor for the controller
@@ -34,21 +48,39 @@ class ProductController extends Controller
      *
      * @param ProductQueryService $query
      *
+     * @param DealProductManagementService $dealProductManagement
+     *
+     * @param OrderProductManagementService $orderProductManagement
+     *
+     * @param QuoteProductManagementService $quoteProductManagement
+     *
      * An instance of the ProductLogService used for logging
      * product-related actions
      * An instance of the ProductManagementService for management
      * of products
      * An instance of the ProductQueryService for the query of
      * product-related actions
+     * An instance of the DealProductManagementService for the query
+     * of deal product-related actions
+     * An instance of the OrderProductManagementService for the query
+     * of order product-related actions
+     *  An instance of the QuoteProductManagementService for the query
+     * of quote product-related actions
      */
     public function __construct(
         ProductLogService $logger,
         ProductManagementService $management,
         ProductQueryService $query,
+        DealProductManagementService $dealProductManagement,
+        OrderProductManagementService $orderProductManagement,
+        QuoteProductManagementService $quoteProductManagement,
     ) {
         $this->logger = $logger;
         $this->management = $management;
         $this->query = $query;
+        $this->dealProductManagement = $dealProductManagement;
+        $this->orderProductManagement = $orderProductManagement;
+        $this->quoteProductManagement = $quoteProductManagement;
     }
 
     /**
@@ -175,5 +207,200 @@ class ProductController extends Controller
         );
 
         return response()->json($product);
+    }
+
+    /**
+     * Attach deals to a product.
+     *
+     * @param Request $request
+     *
+     * @param Product $product
+     *
+     * @return JsonResponse
+     *
+     * $request->input('deals') => [
+     *   ['deal_id' => 1, 'quantity' => 2, 'price' => 100, 'meta' => []],
+     * ]
+     */
+    public function addDeals(Request $request, Product $product): JsonResponse
+    {
+        $items = $request->input('deals');
+        $this->management->addDeals($product->id, $items);
+
+        return response()->json(['message' => 'Deals added to product'], 200);
+    }
+
+    /**
+     * Update pivot data for deals attached to a product.
+     *
+     * @param Request $request
+     *
+     * @param Product $product
+     *
+     * @return JsonResponse
+     */
+    public function updateDeals(Request $request, Product $product): JsonResponse
+    {
+        $items = $request->input('deals');
+        $this->management->updateDeals($product->id, $items);
+
+        return response()->json(['message' => 'Deals updated for product'], 200);
+    }
+
+    /**
+     * Remove a deal from a product.
+     *
+     * @param int $id
+     *
+     * @param Deal $deal
+     *
+     * @return JsonResponse
+     */
+    public function removeDeal(int $id, Deal $deal): JsonResponse
+    {
+        $product = Product::withTrashed()->findOrFail($id);
+        $this->management->removeDeal($product->id, $deal->id);
+
+        return response()->json(['message' => 'Deal removed from product'], 200);
+    }
+
+    /**
+     * Restore a previously removed deal on a product.
+     *
+     * @param Product $product
+     * @param Deal $deal
+     * @return JsonResponse
+     */
+    public function restoreDeal(Product $product, Deal $deal): JsonResponse
+    {
+        $this->management->restore($product->id, $deal->id);
+
+        return response()->json(['message' => 'Deal restored for product'], 200);
+    }
+
+    /**
+     * Attach orders to a product.
+     *
+     * @param Request $request Request containing 'orders' array
+     * @param Product $product The product to attach orders to
+     *
+     * @return JsonResponse JSON message confirming attachment
+     */
+    public function addOrders(Request $request, Product $product): JsonResponse
+    {
+        $items = $request->input('orders');
+        $this->management->addOrders($product->id, $items);
+
+        return response()->json(['message' => 'Orders added to product'], 200);
+    }
+
+    /**
+     * Update orders attached to a product.
+     *
+     * @param Request $request Request containing 'orders' array
+     * @param Product $product The product whose orders are being updated
+     *
+     * @return JsonResponse JSON message confirming update
+     */
+    public function updateOrders(Request $request, Product $product): JsonResponse
+    {
+        $items = $request->input('orders');
+        $this->management->updateOrders($product->id, $items);
+
+        return response()->json(['message' => 'Orders updated for product'], 200);
+    }
+
+    /**
+     * Remove an order from a product.
+     *
+     * @param Product $product
+     *
+     * @param Order $order The order to remove
+     *
+     * @return JsonResponse JSON message confirming removal
+     */
+    public function removeOrder(Product $product, Deal $deal): JsonResponse
+    {
+        $this->management->removeOrder($product->id, $deal->id);
+
+        return response()->json(['message' => 'Deal removed from product'], 200);
+    }
+
+    /**
+     * Restore a previously removed order for a product.
+     *
+     * @param Product $product
+     * @param Order $order The order to restore
+     *
+     * @return JsonResponse JSON message confirming restoration
+     */
+    public function restoreOrder(Product $product, Order $order): JsonResponse
+    {
+        $this->management->restoreOrder($product->id, $order->id);
+
+        return response()->json(['message' => 'Order restored for product'], 200);
+    }
+
+    /**
+     * Attach quotes to a product.
+     *
+     * @param Request $request Request containing 'quotes' array
+     * @param Product $product The product to attach quotes to
+     *
+     * @return JsonResponse JSON message confirming attachment
+     */
+    public function addQuotes(Request $request, Product $product): JsonResponse
+    {
+        $items = $request->input('quotes');
+        $this->management->addQuotes($product->id, $items);
+
+        return response()->json(['message' => 'Quotes added to product'], 200);
+    }
+
+    /**
+     * Update quotes attached to a product.
+     *
+     * @param Request $request Request containing 'quotes' array
+     * @param Product $product The product whose quotes are being updated
+     *
+     * @return JsonResponse JSON message confirming update
+     */
+    public function updateQuotes(Request $request, Product $product): JsonResponse
+    {
+        $items = $request->input('quotes');
+        $this->management->updateQuotes($product->id, $items);
+
+        return response()->json(['message' => 'Quotes updated for product'], 200);
+    }
+
+    /**
+     * Remove a quote from a product.
+     *
+     * @param Product $product
+     *
+     * @param Quote $quote The quote to remove
+     *
+     * @return JsonResponse JSON message confirming removal
+     */
+    public function removeQuote(Product $product, Deal $deal): JsonResponse
+    {
+        $this->management->removeQuote($product->id, $deal->id);
+
+        return response()->json(['message' => 'Deal removed from product'], 200);
+    }
+
+    /**
+     * Restore a previously removed quote for a product.
+     *
+     * @param Product $product
+     * @param Quote $quote The quote to restore
+     *
+     * @return JsonResponse JSON message confirming restoration
+     */
+    public function restoreQuote(Product $product, Quote $quote): JsonResponse
+    {
+        $this->management->restoreQuote($product->id, $quote->id);
+
+        return response()->json(['message' => 'Quote restored for product'], 200);
     }
 }

@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreQuoteRequest;
 use App\Http\Requests\UpdateQuoteRequest;
 use App\Models\Quote;
+use App\Models\Product;
 use App\Services\Quotes\QuoteLogService;
 use App\Services\Quotes\QuoteManagementService;
 use App\Services\Quotes\QuoteQueryService;
+use App\Services\QuoteProducts\QuoteProductManagementService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -15,15 +17,18 @@ class QuoteController extends Controller
 {
     /**
      * Declare a protected property to hold the QuoteLogService,
-     * QuoteManagementService and QuoteQueryService instance
+     * QuoteManagementService, QuoteQueryService and
+     * QuoteProductManagementService instance
      *
      * @var QuoteLogService
      * @var QuoteManagementService
      * @var QuoteQueryService
+     * @var QuoteProductManagementService
      */
     protected QuoteLogService $logger;
     protected QuoteManagementService $management;
     protected QuoteQueryService $query;
+    protected QuoteProductManagementService $quoteProductManagement;
 
     /**
      * Constructor for the controller
@@ -34,21 +39,27 @@ class QuoteController extends Controller
      *
      * @param QuoteQueryService $query
      *
+     * @param QuoteProductManagementService $quoteProductManagement
+     *
      * An instance of the QuoteLogService used for logging
      * quote-related actions
      * An instance of the QuoteManagementService for management
      * of quotes
      * An instance of the QuoteQueryService for the query of
      * quote-related actions
+     * An instance of the QuoteProductManagementService for the query of
+     * quote product-related actions
      */
     public function __construct(
         QuoteLogService $logger,
         QuoteManagementService $management,
         QuoteQueryService $query,
+        QuoteProductManagementService $quoteProductManagement,
     ) {
         $this->logger = $logger;
         $this->management = $management;
         $this->query = $query;
+        $this->quoteProductManagement = $quoteProductManagement;
     }
 
     /**
@@ -177,5 +188,47 @@ class QuoteController extends Controller
         );
 
         return response()->json($quote);
+    }
+
+    /**
+     * Attach products to a quote.
+     */
+    public function addProducts(Request $request, Quote $quote): JsonResponse
+    {
+        $items = $request->input('products');
+        $this->quoteProductManagement->add($quote, $items);
+
+        return response()->json(['message' => 'Products added to quote']);
+    }
+
+    /**
+     * Update products attached to a quote.
+     */
+    public function updateProducts(Request $request, Quote $quote): JsonResponse
+    {
+        $items = $request->input('products');
+        $this->quoteProductManagement->update($quote, $items);
+
+        return response()->json(['message' => 'Products updated for quote']);
+    }
+
+    /**
+     * Remove a product from a quote.
+     */
+    public function removeProduct(Quote $quote, Product $product): JsonResponse
+    {
+        $this->quoteProductManagement->remove($quote, $product->id);
+
+        return response()->json(['message' => 'Product removed from quote']);
+    }
+
+    /**
+     * Restore a product previously removed from a quote.
+     */
+    public function restoreProduct(Quote $quote, Product $product): JsonResponse
+    {
+        $this->quoteProductManagement->restore($quote, $product->id);
+
+        return response()->json(['message' => 'Product restored for quote']);
     }
 }

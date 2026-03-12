@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_deals', function (Blueprint $table) {
+        Schema::create('order_products', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->nullable()->constrained('products')->nullOnDelete();
-            $table->foreignId('deal_id')->nullable()->constrained('deals')->cascadeOnDelete();
+            $table->foreignId('order_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->integer('quantity')->default(1);
-            $table->decimal('unit_price', 10, 2)->nullable();
-            $table->decimal('total_price', 10, 2)->nullable();
-            $table->string('currency', 3)->nullable();
+            $table->decimal('price', 15, 2)->default(0);
+            $table->decimal('total', 15, 2)->default(0);
             $table->json('meta')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
@@ -27,7 +26,7 @@ return new class extends Migration
             $table->timestamp('restored_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unique(['product_id', 'deal_id']);
+            $table->unique(['order_id','product_id']);
         });
     }
 
@@ -36,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('product_deals');
+        Schema::dropIfExists('order_products');
     }
 };

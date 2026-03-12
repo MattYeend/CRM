@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreDealRequest;
 use App\Http\Requests\UpdateDealRequest;
+use App\Models\Product;
 use App\Models\Deal;
 use App\Services\Deals\DealLogService;
 use App\Services\Deals\DealManagementService;
 use App\Services\Deals\DealQueryService;
+use App\Services\DealProducts\DealProductManagementService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -15,15 +17,18 @@ class DealController extends Controller
 {
     /**
      * Declare a protected property to hold the DealLogService,
-     * DealManagementService and DealQueryService instance
+     * DealManagementService, DealQueryService and
+     * DealProductManagementService instance
      *
      * @var DealLogService
      * @var DealManagementService
      * @var DealQueryService
+     * @var DealProductManagementService
      */
     protected DealLogService $logger;
     protected DealManagementService $management;
     protected DealQueryService $query;
+    protected DealProductManagementService $dealProductManagement;
 
     /**
      * Constructor for the controller
@@ -33,6 +38,8 @@ class DealController extends Controller
      * @param DealManagementService $management
      *
      * @param DealQueryService $query
+     * 
+     * @param DealProductManagementService $dealProductManagement
      *
      * An instance of the DealLogService used for logging
      * deal-related actions
@@ -40,15 +47,19 @@ class DealController extends Controller
      * of deals
      * An instance of the DealQueryService for the query of
      * deal-related actions
+     * An instance of the DealProductManagementService for the
+     * management of deal products
      */
     public function __construct(
         DealLogService $logger,
         DealManagementService $management,
         DealQueryService $query,
+        DealProductManagementService $dealProductManagement
     ) {
         $this->logger = $logger;
         $this->management = $management;
         $this->query = $query;
+        $this->dealProductManagement = $dealProductManagement;
     }
 
     /**
@@ -177,5 +188,76 @@ class DealController extends Controller
         );
 
         return response()->json($deal);
+    }
+
+    /**
+     * Add products to a deal.
+     *
+     * @param Request $request The HTTP request containing 'products' array.
+     *
+     * @param Deal $deal The deal to which products will be attached.
+     *
+     * Each product in 'products' array should contain:
+     * - 'product_id' (int)
+     * - 'quantity' (int, optional, default 1)
+     * - 'price' (float, optional, default 0)
+     * - 'meta' (array, optional)
+     *
+     * @return JsonResponse
+     */
+    public function addProducts(Request $request, Deal $deal)
+    {
+        $items = $request->input('products');
+        $this->dealProductManagement->add($deal, $items);
+        return response()->json(['message' => 'Products added to deal']);
+    }
+
+    /**
+     * Update products attached to a deal.
+     *
+     * @param Request $request The HTTP request containing 'products' array.
+     *
+     * @param Deal $deal The deal whose products will be updated.
+     *
+     * Each product in 'products' array should contain:
+     * - 'product_id' (int)
+     * - 'quantity' (int, optional)
+     * - 'price' (float, optional)
+     * - 'meta' (array, optional)
+     *
+     * @return void
+     */
+    public function updateProducts(Request $request, Deal $deal)
+    {
+        $items = $request->input('products');
+        $this->dealProductManagement->update($deal, $items);
+    }
+
+    /**
+     * Remove a product from a deal.
+     *
+     * @param Deal $deal The deal from which the product will be removed.
+     *
+     * @param Product $product The product to remove.
+     *
+     * @return void
+     */
+    public function removeProduct(Deal $deal, Product $product)
+    {
+        $this->dealProductManagement->remove($deal, $product->id);
+    }
+
+    /**
+     * Restore a previously removed product on a deal.
+     *
+     * @param Deal $deal The deal where the product should be restored.
+     *
+     * @param Product $product The product to restore.
+     *
+     * @return void
+     */
+    public function restoreProduct(Deal $deal, Product $product)
+    {
+        $this->dealProductManagement->restore($deal, $product->id);
     }
 }

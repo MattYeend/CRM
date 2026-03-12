@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -185,12 +186,15 @@ class Deal extends Model
     }
 
     /**
-     * Get the products for the deal.
+     * Get the product for the deal.
      *
-     * @return HasMany
+     * @return BelongToMany
      */
-    public function productDeals(): HasMany
+    public function products(): BelongsToMany
     {
-        return $this->hasMany(ProductDeal::class);
+        return $this->belongsToMany(Product::class, 'deal_products')
+            ->using(DealProduct::class)
+            ->withPivot(['quantity','price','total'])
+            ->withTimestamps();
     }
 }

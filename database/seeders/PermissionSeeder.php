@@ -71,7 +71,7 @@ class PermissionSeeder extends Seeder
             ['name' => 'deals.delete.any', 'label' => 'Delete any deals'],
             ['name' => 'deals.delete.own', 'label' => 'Delete own deals'],
             ['name' => 'deals.restore.any', 'label' => 'Restore any deals'],
-            ['name' => 'deals.restore.own', 'label' => 'Restore own delas'],
+            ['name' => 'deals.restore.own', 'label' => 'Restore own deals'],
 
             // Invoices / finance
             ['name' => 'invoices.view.all', 'label' => 'View invoices'],
@@ -100,7 +100,7 @@ class PermissionSeeder extends Seeder
             ['name' => 'leads.view.own', 'label' => 'View own leads'],
             ['name' => 'leads.create', 'label' => 'Create leads'],
             ['name' => 'leads.update.any', 'label' => 'Update any leads'],
-            ['name' => 'leads.update.own', 'label' => 'Update  own leads'],
+            ['name' => 'leads.update.own', 'label' => 'Update own leads'],
             ['name' => 'leads.delete.any', 'label' => 'Delete any leads'],
             ['name' => 'leads.delete.own', 'label' => 'Delete own leads'],
             ['name' => 'leads.restore.any', 'label' => 'Restore any leads'],
@@ -152,7 +152,7 @@ class PermissionSeeder extends Seeder
             ['name' => 'permissions.update.any', 'label' => 'Update any permissions'],
             ['name' => 'permissions.update.own', 'label' => 'Update own permissions'],
             ['name' => 'permissions.delete.any', 'label' => 'Delete any permissions'],
-            ['name' => 'permissions.delete.own', 'label' => 'Detele own permissions'],
+            ['name' => 'permissions.delete.own', 'label' => 'Delete own permissions'],
             ['name' => 'permissions.restore.any', 'label' => 'Restore any permissions'],
             ['name' => 'permissions.restore.own', 'label' => 'Restore own permissions'],
 
@@ -176,7 +176,7 @@ class PermissionSeeder extends Seeder
             ['name' => 'pipelineStages.update.any', 'label' => 'Update any pipeline stages'],
             ['name' => 'pipelineStages.update.own', 'label' => 'Update own pipeline stages'],
             ['name' => 'pipelineStages.delete.any', 'label' => 'Delete any pipeline stages'],
-            ['name' => 'pipelineStages.delete.own', 'label' => 'Detele own pipeline stages'],
+            ['name' => 'pipelineStages.delete.own', 'label' => 'Delete own pipeline stages'],
             ['name' => 'pipelineStages.manage', 'label' => 'Manage pipeline stages'],
             ['name' => 'pipelineStages.assign', 'label' => 'Assign pipeline stages to pipelines'],
             ['name' => 'pipelineStages.restore.any', 'label' => 'Restore any pipeline stages'],
@@ -240,6 +240,24 @@ class PermissionSeeder extends Seeder
             ['name' => 'users.assign.permissions', 'label' => 'Assign permissions to users'],
             ['name' => 'users.restore.any', 'label' => 'Restore any users'],
             ['name' => 'users.restore.own', 'label' => 'Restore own users'],
+
+            // Deal Products
+            ['name' => 'deals.products.add', 'label' => 'Add products to deals'],
+            ['name' => 'deals.products.update', 'label' => 'Update products on deals'],
+            ['name' => 'deals.products.remove', 'label' => 'Remove products from deals'],
+            ['name' => 'deals.products.restore', 'label' => 'Restore products on deals'],
+
+            // Quote Products
+            ['name' => 'quotes.products.add', 'label' => 'Add products to quotes'],
+            ['name' => 'quotes.products.update', 'label' => 'Update products on quotes'],
+            ['name' => 'quotes.products.remove', 'label' => 'Remove products from quotes'],
+            ['name' => 'quotes.products.restore', 'label' => 'Restore products on quotes'],
+
+            // Order Products
+            ['name' => 'orders.products.add', 'label' => 'Add products to orders'],
+            ['name' => 'orders.products.update', 'label' => 'Update products on orders'],
+            ['name' => 'orders.products.remove', 'label' => 'Remove products from orders'],
+            ['name' => 'orders.products.restore', 'label' => 'Restore products on orders'],
         ];
 
         foreach ($permissions as $permission) {

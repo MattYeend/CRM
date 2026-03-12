@@ -6,8 +6,11 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\Company;
 use App\Models\Contact;
+use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Support\Facades\DB;
 
 uses(RefreshDatabase::class);
 
@@ -20,6 +23,10 @@ beforeEach(function () {
         'deals.update.any',
         'deals.delete.any',
         'deals.restore.any',
+        'deals.products.add',
+        'deals.products.update',
+        'deals.products.remove',
+        'deals.products.restore',
     ];
 
     // Create permissions in DB
@@ -149,4 +156,112 @@ test('restore recovers a soft-deleted deal', function () {
     $response->assertJsonFragment(['id' => $deal->id]);
 
     $this->assertDatabaseHas('deals', ['id' => $deal->id, 'deleted_at' => null]);
+});
+
+
+test('add products to a deal', function () {
+
+    $deal = Deal::factory()->create();
+    $product = Product::factory()->create();
+
+    $payload = [
+        'products' => [
+            [
+                'product_id' => $product->id,
+                'quantity' => 2,
+                'price' => 25.50,
+                'meta' => ['color' => 'red'],
+            ]
+        ]
+    ];
+
+    $response = $this->postJson(route('deals.products.add', $deal), $payload);
+
+    $response->assertStatus(200);
+    $response->assertJsonFragment([
+        'message' => 'Products added to deal'
+    ]);
+
+    $this->assertDatabaseHas('deal_products', [
+        'deal_id' => $deal->id,
+        'product_id' => $product->id,
+        'quantity' => 2,
+        'price' => 25.50,
+    ]);
+});
+
+test('update products on a deal', function () {
+
+    $deal = Deal::factory()->create();
+    $product = Product::factory()->create();
+
+    // Attach first
+    $deal->products()->attach($product->id, ['quantity' => 1, 'price' => 10]);
+
+    $payload = [
+        'products' => [
+            [
+                'product_id' => $product->id,
+                'quantity' => 5,
+                'price' => 50,
+            ]
+        ]
+    ];
+
+    $response = $this->putJson(route('deals.products.update', $deal), $payload);
+
+    $response->assertStatus(200);
+
+    $this->assertDatabaseHas('deal_products', [
+        'deal_id' => $deal->id,
+        'product_id' => $product->id,
+        'quantity' => 5,
+        'price' => 50,
+    ]);
+});
+
+test('remove a product from a deal', function () {
+
+    $deal = Deal::factory()->create();
+    $product = Product::factory()->create();
+
+    // Attach first
+    $deal->products()->attach($product->id, ['quantity' => 1, 'price' => 10]);
+
+    $response = $this->deleteJson(route('deals.products.remove', [$deal, $product]));
+
+    $response->assertStatus(200);
+
+    // Assert the row is soft-deleted
+    $this->assertDatabaseHas('deal_products', [
+        'deal_id' => $deal->id,
+        'product_id' => $product->id,
+    ]);
+
+    $deletedAt = DB::table('deal_products')
+        ->where('deal_id', $deal->id)
+        ->where('product_id', $product->id)
+        ->value('deleted_at');
+
+    $this->assertNotNull($deletedAt, 'Product row should be soft-deleted.');
+});
+
+test('restore a previously removed product on a deal', function () {
+
+    $deal = Deal::factory()->create();
+    $product = Product::factory()->create();
+
+    // Attach and then detach (soft delete if you implement it)
+    $deal->products()->attach($product->id, ['quantity' => 1, 'price' => 10]);
+    $deal->products()->detach($product->id);
+
+    // Call restore route
+    $response = $this->postJson(route('deals.products.restore', [$deal, $product]));
+
+    $response->assertStatus(200);
+
+    $this->assertDatabaseHas('deal_products', [
+        'deal_id' => $deal->id,
+        'product_id' => $product->id,
+    ]);
 });

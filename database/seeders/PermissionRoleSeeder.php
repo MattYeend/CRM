@@ -185,6 +185,21 @@ class PermissionRoleSeeder extends Seeder
             'users.assign.permissions',
             'users.manage',
             'users.restore.any',
+
+            'deals.products.add',
+            'deals.products.update',
+            'deals.products.remove',
+            'deals.products.restore',
+
+            'quotes.products.add',
+            'quotes.products.update',
+            'quotes.products.remove',
+            'quotes.products.restore',
+
+            'orders.products.add',
+            'orders.products.update',
+            'orders.products.remove',
+            'orders.products.restore',
         ];
 
         foreach ($adminPermissions as $permissionName) {

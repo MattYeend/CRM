@@ -4,6 +4,9 @@ use App\Models\Permission;
 use App\Models\Product;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\Order;
+use App\Models\Quote;
+use App\Models\Deal;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 
@@ -18,6 +21,18 @@ beforeEach(function () {
         'products.update.any',
         'products.delete.any',
         'products.restore.any',
+        'deals.products.add',
+        'deals.products.update',
+        'deals.products.remove',
+        'deals.products.restore',
+        'quotes.products.add',
+        'quotes.products.update',
+        'quotes.products.remove',
+        'quotes.products.restore',
+        'orders.products.add',
+        'orders.products.update',
+        'orders.products.remove',
+        'orders.products.restore',
     ];
 
     // Create permissions in DB
@@ -151,6 +166,246 @@ test('restore deleted product', function () {
     // Assert database no longer has deleted_at
     $this->assertDatabaseHas('products', [
         'id' => $product->id,
+        'deleted_at' => null,
+    ]);
+});
+
+// ---------------------- Orders ----------------------
+
+test('add orders to a product', function () {
+    $product = Product::factory()->create();
+    $order = Order::factory()->create();
+
+    $payload = [
+        'orders' => [
+            [
+                'order_id' => $order->id,
+                'quantity' => 3,
+                'price' => 50.25,
+                'meta' => ['size' => 'L']
+            ]
+        ]
+    ];
+
+    $response = $this->postJson(route('products.orders.add', $product), $payload);
+    $response->assertStatus(200);
+    $response->assertJsonFragment(['message' => 'Orders added to product']);
+
+    $this->assertDatabaseHas('order_products', [
+        'product_id' => $product->id,
+        'order_id' => $order->id,
+        'quantity' => 3,
+        'price' => 50.25,
+    ]);
+});
+
+test('update orders on a product', function () {
+    $product = Product::factory()->create();
+    $order = Order::factory()->create();
+    $product->orders()->attach($order->id, ['quantity' => 1, 'price' => 20]);
+
+    $payload = [
+        'orders' => [
+            [
+                'order_id' => $order->id,
+                'quantity' => 5,
+                'price' => 100,
+            ]
+        ]
+    ];
+
+    $response = $this->putJson(route('products.orders.update', $product), $payload);
+    $response->assertStatus(200);
+
+    $this->assertDatabaseHas('order_products', [
+        'product_id' => $product->id,
+        'order_id' => $order->id,
+        'quantity' => 5,
+        'price' => 100,
+    ]);
+});
+
+test('remove an order from a product', function () {
+    $product = Product::factory()->create();
+    $order = Order::factory()->create();
+    $product->orders()->attach($order->id, ['quantity' => 1, 'price' => 20]);
+
+    $response = $this->deleteJson(route('products.orders.remove', [$product, $order]));
+    $response->assertStatus(200);
+
+    $deletedAt = DB::table('order_products')
+        ->where('product_id', $product->id)
+        ->where('order_id', $order->id)
+        ->value('deleted_at');
+
+    $this->assertNotNull($deletedAt, 'Pivot row should be soft-deleted.');
+});
+
+test('restore a previously removed order on a product', function () {
+    $product = Product::factory()->create();
+    $order = Order::factory()->create();
+    $product->orders()->attach($order->id, ['quantity' => 1, 'price' => 20, 'deleted_at' => now()]);
+
+    $response = $this->postJson(route('products.orders.restore', [$product, $order]));
+    $response->assertStatus(200);
+
+    $this->assertDatabaseHas('order_products', [
+        'product_id' => $product->id,
+        'order_id' => $order->id,
+        'deleted_at' => null,
+    ]);
+});
+
+// ---------------------- Quotes ----------------------
+
+test('add quotes to a product', function () {
+    $product = Product::factory()->create();
+    $quote = Quote::factory()->create();
+
+    $payload = [
+        'quotes' => [
+            ['quote_id' => $quote->id, 'quantity' => 2, 'price' => 75.50]
+        ]
+    ];
+
+    $response = $this->postJson(route('products.quotes.add', $product), $payload);
+    $response->assertStatus(200);
+    $response->assertJsonFragment(['message' => 'Quotes added to product']);
+
+    $this->assertDatabaseHas('quote_products', [
+        'product_id' => $product->id,
+        'quote_id' => $quote->id,
+        'quantity' => 2,
+        'price' => 75.50,
+    ]);
+});
+
+test('update quotes on a product', function () {
+    $product = Product::factory()->create();
+    $quote = Quote::factory()->create();
+    $product->quotes()->attach($quote->id, ['quantity' => 1, 'price' => 20]);
+
+    $payload = [
+        'quotes' => [
+            ['quote_id' => $quote->id, 'quantity' => 4, 'price' => 80]
+        ]
+    ];
+
+    $response = $this->putJson(route('products.quotes.update', $product), $payload);
+    $response->assertStatus(200);
+
+    $this->assertDatabaseHas('quote_products', [
+        'product_id' => $product->id,
+        'quote_id' => $quote->id,
+        'quantity' => 4,
+        'price' => 80,
+    ]);
+});
+
+test('remove a quote from a product', function () {
+    $product = Product::factory()->create();
+    $quote = Quote::factory()->create();
+    $product->quotes()->attach($quote->id, ['quantity' => 1, 'price' => 20]);
+
+    $response = $this->deleteJson(route('products.quotes.remove', [$product, $quote]));
+    $response->assertStatus(200);
+
+    $deletedAt = DB::table('quote_products')
+        ->where('product_id', $product->id)
+        ->where('quote_id', $quote->id)
+        ->value('deleted_at');
+
+    $this->assertNotNull($deletedAt, 'Pivot row should be soft-deleted.');
+});
+
+test('restore a previously removed quote on a product', function () {
+    $product = Product::factory()->create();
+    $quote = Quote::factory()->create();
+    $product->quotes()->attach($quote->id, ['quantity' => 1, 'price' => 20, 'deleted_at' => now()]);
+
+    $response = $this->postJson(route('products.quotes.restore', [$product, $quote]));
+    $response->assertStatus(200);
+
+    $this->assertDatabaseHas('quote_products', [
+        'product_id' => $product->id,
+        'quote_id' => $quote->id,
+        'deleted_at' => null,
+    ]);
+});
+
+// ---------------------- Deals ----------------------
+
+test('add deals to a product', function () {
+    $product = Product::factory()->create();
+    $deal = Deal::factory()->create();
+
+    $payload = [
+        'deals' => [
+            ['deal_id' => $deal->id, 'quantity' => 3, 'price' => 60]
+        ]
+    ];
+
+    $response = $this->postJson(route('products.deals.add', $product), $payload);
+    $response->assertStatus(200);
+    $response->assertJsonFragment(['message' => 'Deals added to product']);
+
+    $this->assertDatabaseHas('deal_products', [
+        'product_id' => $product->id,
+        'deal_id' => $deal->id,
+        'quantity' => 3,
+        'price' => 60,
+    ]);
+});
+
+test('update deals on a product', function () {
+    $product = Product::factory()->create();
+    $deal = Deal::factory()->create();
+    $product->deals()->attach($deal->id, ['quantity' => 1, 'price' => 20]);
+
+    $payload = [
+        'deals' => [
+            ['deal_id' => $deal->id, 'quantity' => 5, 'price' => 100]
+        ]
+    ];
+
+    $response = $this->putJson(route('products.deals.update', $product), $payload);
+    $response->assertStatus(200);
+
+    $this->assertDatabaseHas('deal_products', [
+        'product_id' => $product->id,
+        'deal_id' => $deal->id,
+        'quantity' => 5,
+        'price' => 100,
+    ]);
+});
+
+test('remove a deal from a product', function () {
+    $product = Product::factory()->create();
+    $deal = Deal::factory()->create();
+    $product->deals()->attach($deal->id, ['quantity' => 1, 'price' => 20]);
+
+    $response = $this->deleteJson(route('products.deals.remove', [$product, $deal]));
+    $response->assertStatus(200);
+
+    $deletedAt = DB::table('deal_products')
+        ->where('product_id', $product->id)
+        ->where('deal_id', $deal->id)
+        ->value('deleted_at');
+
+    $this->assertNotNull($deletedAt, 'Pivot row should be soft-deleted.');
+});
+
+test('restore a previously removed deal on a product', function () {
+    $product = Product::factory()->create();
+    $deal = Deal::factory()->create();
+    $product->deals()->attach($deal->id, ['quantity' => 1, 'price' => 20, 'deleted_at' => now()]);
+
+    $response = $this->postJson(route('products.deals.restore', [$product, $deal]));
+    $response->assertStatus(200);
+
+    $this->assertDatabaseHas('deal_products', [
+        'product_id' => $product->id,
+        'deal_id' => $deal->id,
         'deleted_at' => null,
     ]);
 });
