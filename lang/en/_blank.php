@@ -27,5 +27,7 @@ return [
     'updated_at' => 'Updated At',
     'deleted_by' => 'Deleted By',
     'deleted_at' => 'Deleted At',
+    'restored_by' => 'Restored By',
+    'restored_at' => 'Restored At',
 
 ];

@@ -22,12 +22,14 @@ return [
     'description' => 'Description',
     'date' => 'Date',
     'users' => 'Users',
+    'meta' => 'Meta Information',
     'created_by' => 'Created By',
     'created_at' => 'Created At',
     'updated_by' => 'Updated By',
     'updated_at' => 'Updated At',
     'deleted_by' => 'Deleted By',
     'deleted_at' => 'Deleted At',
-    'meta' => 'Meta Information',
+    'restored_by' => 'Restored By',
+    'restored_at' => 'Restored At',
 
 ];

@@ -14,6 +14,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PipelineController;
 use App\Http\Controllers\PipelineStageController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductDealController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
@@ -126,6 +127,12 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         'products/{id}/restore',
         [ProductController::class, 'restore']
     )->name('products.restore');
+    Route::apiResource('product-deals', ProductDealController::class);
+    Route::post(
+        'product-deals/{id}/restore',
+        [ProductDealController::class, 'restore']
+    )->name('product-deals.restore');
+
     Route::apiResource('invoices', InvoiceController::class);
     Route::post(
         'invoices/{id}/restore',

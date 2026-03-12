@@ -39,7 +39,7 @@ class ProductManagementService
      *
      * @param UpdateProductRequest $request
      *
-     * @param Product $pipelineStage
+     * @param Product $product
      *
      * @return Product
      */

@@ -179,6 +179,13 @@ class Log extends Model
     public const ACTION_LEAD_ASSIGNED = 128;
     public const ACTION_LEAD_UNASSIGNED = 129;
 
+    // Product Deals
+    public const ACTION_PRODUCT_DEAL_CREATED = 130;
+    public const ACTION_PRODUCT_DEAL_UPDATED = 131;
+    public const ACTION_PRODUCT_DEAL_DELETED = 132;
+    public const ACTION_PRODUCT_DEAL_RESTORED = 133;
+    public const ACTION_PRODUCT_DEAL_VIEWED = 134;
+
     // New Logging Actions should go here to be reviewed
     // by the development team for future releases.
     // Ensure to update the documentation accordingly.

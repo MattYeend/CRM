@@ -27,6 +27,7 @@ return [
     'owner' => 'Owner',
     'assigned_to' => 'Assigned To',
     'assign' => 'Assign Lead',
+    'meta' => 'Meta Information',
     'assigned_by' => 'Assigned By',
     'assigned_at' => 'Assigned At',
     'created_by' => 'Created By',
@@ -35,6 +36,7 @@ return [
     'updated_at' => 'Updated At',
     'deleted_by' => 'Deleted By',
     'deleted_at' => 'Deleted At',
-    'meta' => 'Meta Information',
+    'restored_by' => 'Restored By',
+    'restored_at' => 'Restored At',
 
 ];
