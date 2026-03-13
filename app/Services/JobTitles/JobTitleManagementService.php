@@ -74,4 +74,3 @@ class JobTitleManagementService
         return $this->destructor->restore($id);
     }
 }
-

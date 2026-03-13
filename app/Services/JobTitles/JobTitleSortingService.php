@@ -43,4 +43,3 @@ class JobTitleSortingService
         $query->orderBy($sortBy, $sortDir);
     }
 }
-

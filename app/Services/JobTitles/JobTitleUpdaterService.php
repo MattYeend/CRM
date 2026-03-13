@@ -31,4 +31,3 @@ class JobTitleUpdaterService
         return $jobTitle->fresh();
     }
 }
-

@@ -91,7 +91,7 @@ class JobTitleLogService
     ): array {
         $data = $this->baseJobTitleData($jobTitle) + [
             'deleted_at' => $jobTitle->deleted_at,
-            'deleted_by' => $jobTitle->name,
+            'deleted_by' => $user->name,
         ];
 
         Log::log(
