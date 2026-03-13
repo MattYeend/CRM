@@ -2,18 +2,18 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Invoice;
+use App\Models\JobTitle;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StoreInvoiceRequest extends FormRequest
+class StoreJobTitleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return $this->user()->can('create', Invoice::class);
+        return $this->user()->can('create', JobTitle::class);
     }
 
     /**
@@ -37,20 +37,14 @@ class StoreInvoiceRequest extends FormRequest
     private function baseRules(): array
     {
         return [
-            'number' => [
+            'title' => [
                 'required',
                 'string',
-                Rule::unique('invoices', 'number'),
+                'max:255',
+                Rule::unique('job_titles', 'string'),
             ],
-            'company_id' => 'nullable|integer|exists:companies,id',
-            'contact_id' => 'nullable|integer|exists:contacts,id',
-            'issue_date' => 'nullable|date',
-            'due_date' => 'nullable|date',
-            'status' => 'nullable|in:draft,sent,paid,overdue,cancelled',
-            'subtotal' => 'nullable|numeric',
-            'tax' => 'nullable|numeric',
-            'total' => 'nullable|numeric',
-            'currency' => 'nullable|string|max:8',
+            'short_code' => 'required|string|max:255',
+            'group' => 'nullable|string|max:255',
         ];
     }
 

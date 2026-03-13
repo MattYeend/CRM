@@ -76,6 +76,11 @@ class PermissionRoleSeeder extends Seeder
             'deals.restore.any',
             'deals.restore.any',
 
+            'deals.products.add',
+            'deals.products.update',
+            'deals.products.remove',
+            'deals.products.restore',
+
             'invoices.view.all',
             'invoices.view.own',
             'invoices.create',
@@ -89,6 +94,13 @@ class PermissionRoleSeeder extends Seeder
             'invoiceItems.update.any',
             'invoiceItems.delete.any',
             'invoiceItems.restore.any',
+
+            'jobTitles.view.all',
+            'jobTitles.view.own',
+            'jobTitles.create',
+            'jobTitles.update.any',
+            'jobTitles.delete.any',
+            'jobTitles.restore.any',
 
             'leads.view.all',
             'leads.view.own',
@@ -121,6 +133,11 @@ class PermissionRoleSeeder extends Seeder
             'orders.update.any',
             'orders.delete.any',
             'orders.restore.any',
+
+            'orders.products.add',
+            'orders.products.update',
+            'orders.products.remove',
+            'orders.products.restore',
 
             'permissions.view.all',
             'permissions.view.own',
@@ -161,6 +178,11 @@ class PermissionRoleSeeder extends Seeder
             'quotes.delete.any',
             'quotes.restore.any',
 
+            'quotes.products.add',
+            'quotes.products.update',
+            'quotes.products.remove',
+            'quotes.products.restore',
+
             'tasks.view.all',
             'tasks.view.own',
             'tasks.create',
@@ -185,21 +207,6 @@ class PermissionRoleSeeder extends Seeder
             'users.assign.permissions',
             'users.manage',
             'users.restore.any',
-
-            'deals.products.add',
-            'deals.products.update',
-            'deals.products.remove',
-            'deals.products.restore',
-
-            'quotes.products.add',
-            'quotes.products.update',
-            'quotes.products.remove',
-            'quotes.products.restore',
-
-            'orders.products.add',
-            'orders.products.update',
-            'orders.products.remove',
-            'orders.products.restore',
         ];
 
         foreach ($adminPermissions as $permissionName) {
@@ -268,6 +275,13 @@ class PermissionRoleSeeder extends Seeder
             'invoiceItems.update.own',
             'invoiceItems.delete.own',
             'invoiceItems.restore.own',
+
+            'jobTitles.view.all',
+            'jobTitles.view.own',
+            'jobTitles.create',
+            'jobTitles.update.own',
+            'jobTitles.delete.own',
+            'jobTitles.restore.own',
 
             'leads.view.all',
             'leads.view.own',

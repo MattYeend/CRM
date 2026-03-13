@@ -7,6 +7,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DealController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceItemController;
+use App\Http\Controllers\JobTitleController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\LearningController;
 use App\Http\Controllers\NoteController;
@@ -367,4 +368,15 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         'quotes/{quote}/products/{product}/restore',
         [QuoteController::class, 'restoreProduct']
     )->name('quotes.products.restore');
+
+    /**
+     * ----------------------------------------------------------
+     * ---------------------- Job Titles ------------------------
+     * ----------------------------------------------------------
+     */
+    Route::apiResource('job-titles', JobTitleController::class);
+    Route::post(
+        'job-titles/{id}/restore',
+        [JobTitleController::class, 'restore']
+    )->name('job-titles.restore');
 });

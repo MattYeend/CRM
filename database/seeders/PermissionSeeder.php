@@ -73,6 +73,12 @@ class PermissionSeeder extends Seeder
             ['name' => 'deals.restore.any', 'label' => 'Restore any deals'],
             ['name' => 'deals.restore.own', 'label' => 'Restore own deals'],
 
+            // Deal Products
+            ['name' => 'deals.products.add', 'label' => 'Add products to deals'],
+            ['name' => 'deals.products.update', 'label' => 'Update products on deals'],
+            ['name' => 'deals.products.remove', 'label' => 'Remove products from deals'],
+            ['name' => 'deals.products.restore', 'label' => 'Restore products on deals'],
+
             // Invoices / finance
             ['name' => 'invoices.view.all', 'label' => 'View invoices'],
             ['name' => 'invoices.view.own', 'label' => 'View own invoices'],
@@ -94,6 +100,17 @@ class PermissionSeeder extends Seeder
             ['name' => 'invoiceItems.delete.own', 'label' => 'Delete own invoice items'],
             ['name' => 'invoiceItems.restore.any', 'label' => 'Restore any invoices items'],
             ['name' => 'invoiceItems.restore.own', 'label' => 'Restore own invoices items'],
+
+            // Job Titles
+            ['name' => 'jobTitles.view.all', 'label' => 'View job titles'],
+            ['name' => 'jobTitles.view.own', 'label' => 'View own job titles'],
+            ['name' => 'jobTitles.create', 'label' => 'Create job titles'],
+            ['name' => 'jobTitles.update.any', 'label' => 'Update any job titles'],
+            ['name' => 'jobTitles.update.own', 'label' => 'Update own job titles'],
+            ['name' => 'jobTitles.delete.any', 'label' => 'Delete any job titles'],
+            ['name' => 'jobTitles.delete.own', 'label' => 'Delete own job titles'],
+            ['name' => 'jobTitles.restore.any', 'label' => 'Restore any job titles'],
+            ['name' => 'jobTitles.restore.own', 'label' => 'Restore own job titles'],
 
             // Leads 
             ['name' => 'leads.view.all', 'label' => 'View leads'],
@@ -144,6 +161,12 @@ class PermissionSeeder extends Seeder
             ['name' => 'orders.delete.own', 'label' => 'Delete own orders'],
             ['name' => 'orders.restore.any', 'label' => 'Restore any orders'],
             ['name' => 'orders.restore.own', 'label' => 'Restore own orders'],
+
+            // Order Products
+            ['name' => 'orders.products.add', 'label' => 'Add products to orders'],
+            ['name' => 'orders.products.update', 'label' => 'Update products on orders'],
+            ['name' => 'orders.products.remove', 'label' => 'Remove products from orders'],
+            ['name' => 'orders.products.restore', 'label' => 'Restore products on orders'],
 
             // Permissions
             ['name' => 'permissions.view.all', 'label' => 'View permissions'],
@@ -204,6 +227,12 @@ class PermissionSeeder extends Seeder
             ['name' => 'quotes.restore.any', 'label' => 'Restore any quotes'],
             ['name' => 'quotes.restore.own', 'label' => 'Restore own quotes'],
 
+            // Quote Products
+            ['name' => 'quotes.products.add', 'label' => 'Add products to quotes'],
+            ['name' => 'quotes.products.update', 'label' => 'Update products on quotes'],
+            ['name' => 'quotes.products.remove', 'label' => 'Remove products from quotes'],
+            ['name' => 'quotes.products.restore', 'label' => 'Restore products on quotes'],
+
             // Reports & exports
             ['name' => 'reports.view', 'label' => 'View reports'],
             ['name' => 'data.export', 'label' => 'Export data'],
@@ -240,24 +269,6 @@ class PermissionSeeder extends Seeder
             ['name' => 'users.assign.permissions', 'label' => 'Assign permissions to users'],
             ['name' => 'users.restore.any', 'label' => 'Restore any users'],
             ['name' => 'users.restore.own', 'label' => 'Restore own users'],
-
-            // Deal Products
-            ['name' => 'deals.products.add', 'label' => 'Add products to deals'],
-            ['name' => 'deals.products.update', 'label' => 'Update products on deals'],
-            ['name' => 'deals.products.remove', 'label' => 'Remove products from deals'],
-            ['name' => 'deals.products.restore', 'label' => 'Restore products on deals'],
-
-            // Quote Products
-            ['name' => 'quotes.products.add', 'label' => 'Add products to quotes'],
-            ['name' => 'quotes.products.update', 'label' => 'Update products on quotes'],
-            ['name' => 'quotes.products.remove', 'label' => 'Remove products from quotes'],
-            ['name' => 'quotes.products.restore', 'label' => 'Restore products on quotes'],
-
-            // Order Products
-            ['name' => 'orders.products.add', 'label' => 'Add products to orders'],
-            ['name' => 'orders.products.update', 'label' => 'Update products on orders'],
-            ['name' => 'orders.products.remove', 'label' => 'Remove products from orders'],
-            ['name' => 'orders.products.restore', 'label' => 'Restore products on orders'],
         ];
 
         foreach ($permissions as $permission) {

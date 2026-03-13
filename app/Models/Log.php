@@ -193,6 +193,13 @@ class Log extends Model
     public const ACTION_QUOTE_RESTORED = 138;
     public const ACTION_QUOTE_VIEWED = 139;
 
+    // Job Titles
+    public const ACTION_JOB_TITLE_CREATED = 140;
+    public const ACTION_JOB_TITLE_UPDATED = 141;
+    public const ACTION_JOB_TITLE_DELETED = 142;
+    public const ACTION_JOB_TITLE_RESTORED = 143;
+    public const ACTION_JOB_TITLE_VIEWED = 144;
+
     // New Logging Actions should go here to be reviewed
     // by the development team for future releases.
     // Ensure to update the documentation accordingly.

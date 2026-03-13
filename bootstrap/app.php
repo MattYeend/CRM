@@ -24,6 +24,8 @@ use App\Models\Invoice;
 use App\Policies\InvoicePolicy;
 use App\Models\InvoiceItem;
 use App\Policies\InvoiceItemPolicy;
+use App\Models\JobTitle;
+use App\Policies\JobTitlePolicy;
 use App\Models\Lead;
 use App\Policies\LeadPolicy;
 use App\Models\Learning;
@@ -142,6 +144,7 @@ return Application::configure(basePath: dirname(__DIR__))
         Gate::policy(Deal::class, DealPolicy::class);
         Gate::policy(Invoice::class, InvoicePolicy::class);
         Gate::policy(InvoiceItem::class, InvoiceItemPolicy::class);
+        Gate::policy(JobTitle::class, JobTitlePolicy::class);
         Gate::policy(Lead::class, LeadPolicy::class);
         Gate::policy(Learning::class, LearningPolicy::class);
         Gate::policy(Note::class, NotePolicy::class);

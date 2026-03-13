@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Console\View\Components\Task;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -37,6 +38,7 @@ class User extends Authenticatable
         'password',
         'phone',
         'avatar',
+        'job_title_id',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -227,6 +229,16 @@ class User extends Authenticatable
     public function note(): MorphMany
     {
         return $this->morphMany(Note::class, 'notable');
+    }
+
+    /**
+     * Get the job title of the user
+     *
+     * @return BelongsTo
+     */
+    public function jobTitle(): BelongsTo
+    {
+        return $this->belongsTo(JobTitle::class, 'job_title_id');
     }
 
     /**

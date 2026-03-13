@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use App\Models\JobTitle;
 use App\Models\Role;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -32,6 +33,7 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'phone' => fake()->optional()->phoneNumber(),
             'avatar' => null,
+            'job_title_id' => JobTitle::inRandomOrder()->first()?->id, 
         ];
     }
 
@@ -85,5 +87,19 @@ class UserFactory extends Factory
     public function withRole(Role $role): static
     {
         return $this->hasAttached($role);
+    }
+
+    /**
+     * Assign a specific job title instance to the user.
+     *
+     * @param JobTitle $jobTitle
+     *
+     * @return static
+     */
+    public function withJobTitle(JobTitle $jobTitle): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'job_title_id' => $jobTitle->id,
+        ]);
     }
 }
