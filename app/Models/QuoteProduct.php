@@ -38,6 +38,7 @@ class QuoteProduct extends Pivot
     protected $casts = [
         'meta' => 'array',
         'price' => 'float',
+        'total' => 'float',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',

@@ -65,8 +65,8 @@ class ProductCreatorService
         $product = Product::findOrFail($productId);
 
         foreach ($quotes as $quote) {
-            $quantity = $order['quantity'] ?? 1;
-            $price = $order['price'] ?? 0;
+            $quantity = $quote['quantity'] ?? 1;
+            $price = $quote['price'] ?? 0;
             $product->quotes()->syncWithoutDetaching([
                 $quote['quote_id'] => [
                     'quantity' => $quantity,

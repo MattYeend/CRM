@@ -70,10 +70,12 @@ class ProductUpdaterService
         $product = Product::findOrFail($productId);
 
         foreach ($quotes as $quote) {
+            $quantity = $quote['quantity'] ?? 1;
+            $price = $quote['price'] ?? 0;
             $product->quotes()->updateExistingPivot($quote['quote_id'], [
-                'quantity' => $quote['quantity'] ?? 1,
-                'price' => $quote['price'] ?? 0,
-                'total' => ($quote['quantity'] ?? 1) * ($quote['price'] ?? 0),
+                'quantity' => $quantity,
+                'price' => $price,
+                'total' => $quantity * $price,
             ]);
         }
 
@@ -94,10 +96,12 @@ class ProductUpdaterService
         $product = Product::findOrFail($productId);
 
         foreach ($orders as $order) {
+            $quantity = $order['quantity'] ?? 1;
+            $price = $order['price'] ?? 0;
             $product->orders()->updateExistingPivot($order['order_id'], [
-                'quantity' => $order['quantity'] ?? 1,
-                'price' => $order['price'] ?? 0,
-                'total' => ($order['quantity'] ?? 1) * ($order['price'] ?? 0),
+                'quantity' => $quantity,
+                'price' => $price,
+                'total' => $quantity * $price,
             ]);
         }
 
