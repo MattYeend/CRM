@@ -25,7 +25,10 @@ class OrderProductDestructorService
      */
     public function restore(Model $order, int $productId): void
     {
-        $pivot = $order->products()->withTrashed()->wherePivot('product_id', $productId)->first();
+        $pivot = $order->products()
+            ->withTrashed()
+            ->wherePivot('product_id', $productId)
+            ->first();
         if ($pivot && method_exists($pivot->pivot, 'restore')) {
             $pivot->pivot->restore();
         }

@@ -24,7 +24,8 @@ class OrderProductManagementService
      * Attach products to an Order.
      *
      * @param Model $parent The order model
-     * @param array $items Products array with keys 'product_id', 'quantity', 'price', 'meta'
+     * @param array $items Products array with keys
+     * 'product_id', 'quantity', 'price', 'meta'
      */
     public function add(Model $parent, array $items): void
     {

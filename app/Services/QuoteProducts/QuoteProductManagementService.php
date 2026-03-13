@@ -24,7 +24,8 @@ class QuoteProductManagementService
      * Attach products to a Quote.
      *
      * @param Model $parent The quote model
-     * @param array $items Products array with keys 'product_id', 'quantity', 'price', 'meta'
+     * @param array $items Products array with keys
+     * 'product_id', 'quantity', 'price', 'meta'
      */
     public function add(Model $parent, array $items): void
     {

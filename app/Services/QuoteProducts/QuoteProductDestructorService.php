@@ -31,7 +31,10 @@ class QuoteProductDestructorService
      */
     public function restore(Model $quote, int $productId): void
     {
-        $pivot = $quote->products()->withTrashed()->wherePivot('product_id', $productId)->first();
+        $pivot = $quote->products()
+            ->withTrashed()
+            ->wherePivot('product_id', $productId)
+            ->first();
         if ($pivot && method_exists($pivot->pivot, 'restore')) {
             $pivot->pivot->restore();
         }

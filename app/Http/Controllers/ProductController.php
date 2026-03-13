@@ -227,7 +227,7 @@ class ProductController extends Controller
         $items = $request->input('deals');
         $this->management->addDeals($product->id, $items);
 
-        return response()->json(['message' => 'Deals added to product'], 200);
+        return response()->json(['message' => 'Deals added to product']);
     }
 
     /**
@@ -239,12 +239,14 @@ class ProductController extends Controller
      *
      * @return JsonResponse
      */
-    public function updateDeals(Request $request, Product $product): JsonResponse
-    {
+    public function updateDeals(
+        Request $request,
+        Product $product
+    ): JsonResponse {
         $items = $request->input('deals');
         $this->management->updateDeals($product->id, $items);
 
-        return response()->json(['message' => 'Deals updated for product'], 200);
+        return response()->json(['message' => 'Deals updated for product']);
     }
 
     /**
@@ -261,7 +263,7 @@ class ProductController extends Controller
         $product = Product::withTrashed()->findOrFail($id);
         $this->management->removeDeal($product->id, $deal->id);
 
-        return response()->json(['message' => 'Deal removed from product'], 200);
+        return response()->json(['message' => 'Deal removed from product']);
     }
 
     /**
@@ -277,7 +279,7 @@ class ProductController extends Controller
     {
         $this->management->restore($product->id, $deal->id);
 
-        return response()->json(['message' => 'Deal restored for product'], 200);
+        return response()->json(['message' => 'Deal restored for product']);
     }
 
     /**
@@ -294,7 +296,7 @@ class ProductController extends Controller
         $items = $request->input('orders');
         $this->management->addOrders($product->id, $items);
 
-        return response()->json(['message' => 'Orders added to product'], 200);
+        return response()->json(['message' => 'Orders added to product']);
     }
 
     /**
@@ -306,12 +308,14 @@ class ProductController extends Controller
      *
      * @return JsonResponse
      */
-    public function updateOrders(Request $request, Product $product): JsonResponse
-    {
+    public function updateOrders(
+        Request $request,
+        Product $product
+    ): JsonResponse {
         $items = $request->input('orders');
         $this->management->updateOrders($product->id, $items);
 
-        return response()->json(['message' => 'Orders updated for product'], 200);
+        return response()->json(['message' => 'Orders updated for product']);
     }
 
     /**
@@ -327,7 +331,7 @@ class ProductController extends Controller
     {
         $this->management->removeOrder($product->id, $deal->id);
 
-        return response()->json(['message' => 'Deal removed from product'], 200);
+        return response()->json(['message' => 'Deal removed from product']);
     }
 
     /**
@@ -343,7 +347,7 @@ class ProductController extends Controller
     {
         $this->management->restoreOrder($product->id, $order->id);
 
-        return response()->json(['message' => 'Order restored for product'], 200);
+        return response()->json(['message' => 'Order restored for product']);
     }
 
     /**
@@ -360,7 +364,7 @@ class ProductController extends Controller
         $items = $request->input('quotes');
         $this->management->addQuotes($product->id, $items);
 
-        return response()->json(['message' => 'Quotes added to product'], 200);
+        return response()->json(['message' => 'Quotes added to product']);
     }
 
     /**
@@ -372,12 +376,14 @@ class ProductController extends Controller
      *
      * @return JsonResponse
      */
-    public function updateQuotes(Request $request, Product $product): JsonResponse
-    {
+    public function updateQuotes(
+        Request $request,
+        Product $product
+    ): JsonResponse {
         $items = $request->input('quotes');
         $this->management->updateQuotes($product->id, $items);
 
-        return response()->json(['message' => 'Quotes updated for product'], 200);
+        return response()->json(['message' => 'Quotes updated for product']);
     }
 
     /**
@@ -393,7 +399,7 @@ class ProductController extends Controller
     {
         $this->management->removeQuote($product->id, $deal->id);
 
-        return response()->json(['message' => 'Deal removed from product'], 200);
+        return response()->json(['message' => 'Deal removed from product']);
     }
 
     /**
@@ -409,6 +415,6 @@ class ProductController extends Controller
     {
         $this->management->restoreQuote($product->id, $quote->id);
 
-        return response()->json(['message' => 'Quote restored for product'], 200);
+        return response()->json(['message' => 'Quote restored for product']);
     }
 }
