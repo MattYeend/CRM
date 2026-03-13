@@ -16,11 +16,15 @@ class DealProductCreatorService
     public function create(Model $parent, array $items): void
     {
         foreach ($items as $item) {
+            $quantity = $item['quantity'] ?? 1;
+            $price = $item['price'] ?? 0;
+            $meta = $item['meta'] ?? null;
+
             $parent->products()->syncWithoutDetaching([
                 $item['product_id'] => [
-                    'quantity' => $item['quantity'] ?? 1,
-                    'price' => $item['price'] ?? 0,
-                    'meta' => $item['meta'] ?? null,
+                    'quantity' => $quantity,
+                    'price' => $price,
+                    'meta' => $meta,
                 ],
             ]);
         }

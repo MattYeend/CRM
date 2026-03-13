@@ -24,10 +24,14 @@ class QuoteProductUpdaterService
     public function update(Model $quote, array $items): void
     {
         foreach ($items as $item) {
+            $quantity = $item['quantity'] ?? 1;
+            $price = $item['price'] ?? 0;
+            $meta = $item['meta'] ?? null;
+
             $quote->products()->updateExistingPivot($item['product_id'], [
-                'quantity' => $item['quantity'] ?? 1,
-                'price' => $item['price'] ?? 0,
-                'meta' => $item['meta'] ?? null,
+                'quantity' => $quantity,
+                'price' => $price,
+                'meta' => $meta,
             ]);
         }
     }
