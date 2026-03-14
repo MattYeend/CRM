@@ -75,7 +75,11 @@ class StoreTaskRequest extends FormRequest
             'priority' => ['nullable', Rule::in(['low', 'medium', 'high'])],
             'status' => [
                 'nullable',
-                Rule::in(['pending', 'completed', 'canceled']),
+                Rule::in([
+                    Task::STATUS_PENDING,
+                    Task::STATUS_COMPLETED,
+                    Task::STATUS_CANCELLED,
+                ])
             ],
             'due_at' => 'nullable|date',
             'meta' => 'nullable|array',

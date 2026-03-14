@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Order;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreOrderRequest extends FormRequest
 {
@@ -40,7 +41,14 @@ class StoreOrderRequest extends FormRequest
             'user_id' => 'required|exists:users,id',
             'amount' => 'required|numeric|min:0',
             'currency' => 'required|string|max:3',
-            'status' => 'nullable|string|in:pending,paid,failed',
+            'status' => [
+                'nullable',
+                Rule::in([
+                    Order::STATUS_PENDING,
+                    Order::STATUS_PAID,
+                    Order::STATUS_FAILED,
+                ])
+            ],
             'payment_method' => 'nullable|string|max:50',
             'paid_at' => 'nullable|date',
             'payment_intent_id' => 'nullable|string|max:255',

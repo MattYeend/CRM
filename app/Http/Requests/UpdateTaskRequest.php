@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Task;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -62,7 +63,11 @@ class UpdateTaskRequest extends FormRequest
             ],
             'status' => [
                 'nullable',
-                Rule::in(['pending', 'completed', 'canceled']),
+                Rule::in([
+                    Task::STATUS_PENDING,
+                    Task::STATUS_COMPLETED,
+                    Task::STATUS_CANCELLED,
+                ])
             ],
             'due_at' => 'nullable|date',
             'meta' => 'nullable|array',

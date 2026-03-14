@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Invoice;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -49,7 +50,16 @@ class UpdateInvoiceRequest extends FormRequest
             'contact_id' => 'nullable|integer|exists:contacts,id',
             'issue_date' => 'nullable|date',
             'due_date' => 'nullable|date',
-            'status' => 'nullable|in:draft,sent,paid,overdue,cancelled',
+            'status' => [
+                'nullable',
+                Rule::in([
+                    Invoice::STATUS_DRAFT,
+                    Invoice::STATUS_SENT,
+                    Invoice::STATUS_PAID,
+                    Invoice::STATUS_OVERDUE,
+                    Invoice::STATUS_CANCELLED,
+                ]),
+            ],
             'subtotal' => 'nullable|numeric',
             'tax' => 'nullable|numeric',
             'total' => 'nullable|numeric',

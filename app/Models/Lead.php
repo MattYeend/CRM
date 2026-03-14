@@ -113,7 +113,7 @@ class Lead extends Model
             'owner_id' => $this->owner_id,
             'pipeline_id' => null,
             'close_date' => null,
-            'status' => 'open',
+            'status' => Deal::STATUS_OPEN,
             'meta' => $this->meta,
             'created_by' => $this->created_by,
             'updated_by' => $this->updated_by,

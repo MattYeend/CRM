@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Deal;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateDealRequest extends FormRequest
 {
@@ -46,7 +48,15 @@ class UpdateDealRequest extends FormRequest
             'value' => 'nullable|numeric',
             'currency' => 'nullable|string|max:8',
             'close_date' => 'nullable|date',
-            'status' => 'nullable|in:open,won,lost,archived',
+            'status' => [
+                'nullable',
+                Rule::in([
+                    Deal::STATUS_OPEN,
+                    Deal::STATUS_WON,
+                    Deal::STATUS_LOST,
+                    Deal::STATUS_ARCHIVED,
+                ]),
+            ],
         ];
     }
 

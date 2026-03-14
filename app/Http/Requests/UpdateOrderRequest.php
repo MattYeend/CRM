@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Order;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateOrderRequest extends FormRequest
 {
@@ -41,8 +43,14 @@ class UpdateOrderRequest extends FormRequest
             'order_id' => 'sometimes|exists:orders,id',
             'amount' => 'sometimes|numeric|min:0',
             'currency' => 'sometimes|string|max:3',
-            'status' => 'nullable|string|in:pending,paid,failed',
-            'payment_method' => 'nullable|string|max:50',
+            'status' => [
+                'nullable',
+                Rule::in([
+                    Order::STATUS_PENDING,
+                    Order::STATUS_PAID,
+                    Order::STATUS_FAILED,
+                ])
+            ],            'payment_method' => 'nullable|string|max:50',
             'paid_at' => 'nullable|date',
             'payment_intent_id' => 'nullable|string|max:255',
             'charge_id' => 'nullable|string|max:255',
