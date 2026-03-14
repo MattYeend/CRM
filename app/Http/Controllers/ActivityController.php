@@ -68,22 +68,6 @@ class ActivityController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param Activity $activity
-     *
-     * @return JsonResponse
-     */
-    public function show(Activity $activity): JsonResponse
-    {
-        $this->authorize('view', $activity);
-
-        $activity = $this->query->show($activity);
-
-        return response()->json($activity);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param StoreActivityRequest $request
@@ -102,6 +86,22 @@ class ActivityController extends Controller
         );
 
         return response()->json($activity, 201);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param Activity $activity
+     *
+     * @return JsonResponse
+     */
+    public function show(Activity $activity): JsonResponse
+    {
+        $this->authorize('view', $activity);
+
+        $activity = $this->query->show($activity);
+
+        return response()->json($activity);
     }
 
     /**

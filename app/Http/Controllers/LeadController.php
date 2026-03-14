@@ -68,22 +68,6 @@ class LeadController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param Lead $lead
-     *
-     * @return JsonResponse
-     */
-    public function show(Lead $lead): JsonResponse
-    {
-        $this->authorize('view', $lead);
-
-        $lead = $this->query->show($lead);
-
-        return response()->json($lead);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param StoreLeadRequest $request
@@ -103,6 +87,22 @@ class LeadController extends Controller
         );
 
         return response()->json($lead, 201);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param Lead $lead
+     *
+     * @return JsonResponse
+     */
+    public function show(Lead $lead): JsonResponse
+    {
+        $this->authorize('view', $lead);
+
+        $lead = $this->query->show($lead);
+
+        return response()->json($lead);
     }
 
     /**

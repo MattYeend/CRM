@@ -50,7 +50,7 @@ class RoleController extends Controller
     }
 
     /**
-     * Display a listing of the roles with user counts and permissions.
+     * Display a listing of the resources with user counts and permissions.
      *
      * @param Request $request
      *
@@ -66,7 +66,7 @@ class RoleController extends Controller
     }
 
     /**
-     * Display the specified role with its permissions and users.
+     * Display the specified resource with its permissions and users.
      *
      * @param Role $role
      *
@@ -82,7 +82,7 @@ class RoleController extends Controller
     }
 
     /**
-     * Sync permissions for the given role.
+     * Sync permissions for the given resource.
      *
      * @param Role $role
      *

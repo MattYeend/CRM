@@ -79,22 +79,6 @@ class QuoteController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param Quote $quote
-     *
-     * @return JsonResponse
-     */
-    public function show(Quote $quote): JsonResponse
-    {
-        $this->authorize('view', $quote);
-
-        $quote = $this->query->show($quote);
-
-        return response()->json($quote);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param StoreQuoteRequest $request
@@ -114,6 +98,22 @@ class QuoteController extends Controller
         );
 
         return response()->json($quote, 201);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param Quote $quote
+     *
+     * @return JsonResponse
+     */
+    public function show(Quote $quote): JsonResponse
+    {
+        $this->authorize('view', $quote);
+
+        $quote = $this->query->show($quote);
+
+        return response()->json($quote);
     }
 
     /**

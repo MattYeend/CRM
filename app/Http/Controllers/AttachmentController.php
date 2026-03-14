@@ -81,22 +81,6 @@ class AttachmentController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param Attachment $attachment
-     *
-     * @return JsonResponse
-     */
-    public function show(Attachment $attachment): JsonResponse
-    {
-        $this->authorize('view', $attachment);
-
-        $attachment = $this->query->show($attachment);
-
-        return response()->json($attachment);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param StoreAttachmentRequest $request
@@ -127,6 +111,22 @@ class AttachmentController extends Controller
         );
 
         return response()->json($attachment->load('uploader'), 201);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param Attachment $attachment
+     *
+     * @return JsonResponse
+     */
+    public function show(Attachment $attachment): JsonResponse
+    {
+        $this->authorize('view', $attachment);
+
+        $attachment = $this->query->show($attachment);
+
+        return response()->json($attachment);
     }
 
     /**

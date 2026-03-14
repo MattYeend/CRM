@@ -68,22 +68,6 @@ class PipelineStageController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param PipelineStage $pipelineStage
-     *
-     * @return JsonResponse
-     */
-    public function show(PipelineStage $pipelineStage): JsonResponse
-    {
-        $this->authorize('view', $pipelineStage);
-
-        $pipelineStage = $this->query->show($pipelineStage);
-
-        return response()->json($pipelineStage);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param StorePipelineStageRequest $request
@@ -102,6 +86,22 @@ class PipelineStageController extends Controller
         );
 
         return response()->json($pipelineStage, 201);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param PipelineStage $pipelineStage
+     *
+     * @return JsonResponse
+     */
+    public function show(PipelineStage $pipelineStage): JsonResponse
+    {
+        $this->authorize('view', $pipelineStage);
+
+        $pipelineStage = $this->query->show($pipelineStage);
+
+        return response()->json($pipelineStage);
     }
 
     /**

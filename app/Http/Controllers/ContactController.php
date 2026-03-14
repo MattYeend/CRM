@@ -68,22 +68,6 @@ class ContactController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param Contact $contact
-     *
-     * @return JsonResponse
-     */
-    public function show(Contact $contact): JsonResponse
-    {
-        $this->authorize('view', $contact);
-
-        $contact = $this->query->show($contact);
-
-        return response()->json($contact);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param StoreContactRequest $request
@@ -103,6 +87,22 @@ class ContactController extends Controller
         );
 
         return response()->json($contact, 201);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param Contact $contact
+     *
+     * @return JsonResponse
+     */
+    public function show(Contact $contact): JsonResponse
+    {
+        $this->authorize('view', $contact);
+
+        $contact = $this->query->show($contact);
+
+        return response()->json($contact);
     }
 
     /**

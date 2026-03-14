@@ -77,22 +77,6 @@ class OrderController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param Order $order
-     *
-     * @return JsonResponse
-     */
-    public function show(Order $order): JsonResponse
-    {
-        $this->authorize('view', $order);
-
-        $order = $this->query->show($order);
-
-        return response()->json($order);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param StoreOrderRequest $request
@@ -112,6 +96,22 @@ class OrderController extends Controller
         );
 
         return response()->json($order, 201);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param Order $order
+     *
+     * @return JsonResponse
+     */
+    public function show(Order $order): JsonResponse
+    {
+        $this->authorize('view', $order);
+
+        $order = $this->query->show($order);
+
+        return response()->json($order);
     }
 
     /**

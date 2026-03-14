@@ -98,22 +98,6 @@ class ProductController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param Product $product
-     *
-     * @return JsonResponse
-     */
-    public function show(Product $product): JsonResponse
-    {
-        $this->authorize('view', $product);
-
-        $product = $this->query->show($product);
-
-        return response()->json($product);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param StoreProductRequest $request
@@ -133,6 +117,22 @@ class ProductController extends Controller
         );
 
         return response()->json($product, 201);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param Product $product
+     *
+     * @return JsonResponse
+     */
+    public function show(Product $product): JsonResponse
+    {
+        $this->authorize('view', $product);
+
+        $product = $this->query->show($product);
+
+        return response()->json($product);
     }
 
     /**

@@ -68,22 +68,6 @@ class PipelineController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param Pipeline $pipeline
-     *
-     * @return JsonResponse
-     */
-    public function show(Pipeline $pipeline): JsonResponse
-    {
-        $this->authorize('view', $pipeline);
-
-        $pipeline = $this->query->show($pipeline);
-
-        return response()->json($pipeline);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param StorePipelineRequest $request
@@ -103,6 +87,22 @@ class PipelineController extends Controller
         );
 
         return response()->json($pipeline, 201);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param Pipeline $pipeline
+     *
+     * @return JsonResponse
+     */
+    public function show(Pipeline $pipeline): JsonResponse
+    {
+        $this->authorize('view', $pipeline);
+
+        $pipeline = $this->query->show($pipeline);
+
+        return response()->json($pipeline);
     }
 
     /**

@@ -68,22 +68,6 @@ class JobTitleController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param JobTitle $jobTitle
-     *
-     * @return JsonResponse
-     */
-    public function show(JobTitle $jobTitle): JsonResponse
-    {
-        $this->authorize('view', $jobTitle);
-
-        $jobTitle = $this->query->show($jobTitle);
-
-        return response()->json($jobTitle);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param StoreJobTitleRequest $request
@@ -103,6 +87,22 @@ class JobTitleController extends Controller
         );
 
         return response()->json($jobTitle, 201);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param JobTitle $jobTitle
+     *
+     * @return JsonResponse
+     */
+    public function show(JobTitle $jobTitle): JsonResponse
+    {
+        $this->authorize('view', $jobTitle);
+
+        $jobTitle = $this->query->show($jobTitle);
+
+        return response()->json($jobTitle);
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace App\Services\Users;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Storage;
 
 class UserDestructorService
 {

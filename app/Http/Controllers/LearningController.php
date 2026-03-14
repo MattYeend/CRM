@@ -68,22 +68,6 @@ class LearningController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param Learning $learning
-     *
-     * @return JsonResponse
-     */
-    public function show(Learning $learning): JsonResponse
-    {
-        $this->authorize('view', $learning);
-
-        $learning = $this->query->show($learning);
-
-        return response()->json($learning);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param StoreLearningRequest $request
@@ -103,6 +87,22 @@ class LearningController extends Controller
         );
 
         return response()->json($learning, 201);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param Learning $learning
+     *
+     * @return JsonResponse
+     */
+    public function show(Learning $learning): JsonResponse
+    {
+        $this->authorize('view', $learning);
+
+        $learning = $this->query->show($learning);
+
+        return response()->json($learning);
     }
 
     /**

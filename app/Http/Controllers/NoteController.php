@@ -68,22 +68,6 @@ class NoteController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param Note $note
-     *
-     * @return JsonResponse
-     */
-    public function show(Note $note): JsonResponse
-    {
-        $this->authorize('view', $note);
-
-        $note = $this->query->show($note);
-
-        return response()->json($note);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param StoreNoteRequest $request
@@ -103,6 +87,22 @@ class NoteController extends Controller
         );
 
         return response()->json($note, 201);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param Note $note
+     *
+     * @return JsonResponse
+     */
+    public function show(Note $note): JsonResponse
+    {
+        $this->authorize('view', $note);
+
+        $note = $this->query->show($note);
+
+        return response()->json($note);
     }
 
     /**

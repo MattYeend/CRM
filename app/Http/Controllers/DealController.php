@@ -79,22 +79,6 @@ class DealController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param Deal $deal
-     *
-     * @return JsonResponse
-     */
-    public function show(Deal $deal): JsonResponse
-    {
-        $this->authorize('view', $deal);
-
-        $deal = $this->query->show($deal);
-
-        return response()->json($deal);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param StoreDealRequest $request
@@ -114,6 +98,22 @@ class DealController extends Controller
         );
 
         return response()->json($deal, 201);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param Deal $deal
+     *
+     * @return JsonResponse
+     */
+    public function show(Deal $deal): JsonResponse
+    {
+        $this->authorize('view', $deal);
+
+        $deal = $this->query->show($deal);
+
+        return response()->json($deal);
     }
 
     /**

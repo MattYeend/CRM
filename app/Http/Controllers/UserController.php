@@ -50,7 +50,7 @@ class UserController extends Controller
     }
 
     /**
-     * Display a listing of the users.
+     * Display a listing of the resource.
      *
      * @param Request $request
      *
@@ -66,23 +66,7 @@ class UserController extends Controller
     }
 
     /**
-     * Display the specified user.
-     *
-     * @param User $user
-     *
-     * @return JsonResponse
-     */
-    public function show(User $user): JsonResponse
-    {
-        $this->authorize('view', $user);
-
-        $user = $this->query->show($user);
-
-        return response()->json($user);
-    }
-
-    /**
-     * Store a newly created user in storage.
+     * Store a newly created resource in storage.
      *
      * @param StoreUserRequest $request
      *
@@ -102,7 +86,23 @@ class UserController extends Controller
     }
 
     /**
-     * Update the specified user in storage.
+     * Display the specified resource.
+     *
+     * @param User $user
+     *
+     * @return JsonResponse
+     */
+    public function show(User $user): JsonResponse
+    {
+        $this->authorize('view', $user);
+
+        $user = $this->query->show($user);
+
+        return response()->json($user);
+    }
+
+    /**
+     * Update the specified resource in storage.
      *
      * @param UpdateUserRequest $request
      *
@@ -126,7 +126,7 @@ class UserController extends Controller
     }
 
     /**
-     * Remove the specified user from storage (soft delete).
+     * Remove the specified resource from storage.
      *
      * @param User $user
      *
@@ -149,7 +149,7 @@ class UserController extends Controller
     }
 
     /**
-     * Restore the specified user from soft deletion.
+     * Restore the specified resource from storage.
      *
      * @param int $id
      *
@@ -173,7 +173,7 @@ class UserController extends Controller
     }
 
     /**
-     * Attach roles to the specified user without detaching existing ones.
+     * Attach roles to the specified resource without detaching existing ones.
      *
      * @param Request $request
      *
@@ -189,7 +189,7 @@ class UserController extends Controller
     }
 
     /**
-     * Detach roles from the specified user.
+     * Detach roles from the specified resource.
      *
      * @param Request $request
      *

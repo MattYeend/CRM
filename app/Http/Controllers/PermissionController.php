@@ -52,7 +52,7 @@ class PermissionController extends Controller
     }
 
     /**
-     * Display a listing of the permissions with their roles.
+     * Display a listing of the resource.
      *
      * @param Request $request
      *
@@ -68,23 +68,7 @@ class PermissionController extends Controller
     }
 
     /**
-     * Display the specified permission with its roles.
-     *
-     * @param Permission $permission
-     *
-     * @return JsonResponse
-     */
-    public function show(Permission $permission): JsonResponse
-    {
-        $this->authorize('view', $permission);
-
-        $permission = $this->query->show($permission);
-
-        return response()->json($permission);
-    }
-
-    /**
-     * Store a newly created permission in storage.
+     * Store a newly created resource in storage.
      *
      * @param StorePermissionRequest $request
      *
@@ -106,7 +90,23 @@ class PermissionController extends Controller
     }
 
     /**
-     * Update the specified permission in storage.
+     * Display the specified resource.
+     *
+     * @param Permission $permission
+     *
+     * @return JsonResponse
+     */
+    public function show(Permission $permission): JsonResponse
+    {
+        $this->authorize('view', $permission);
+
+        $permission = $this->query->show($permission);
+
+        return response()->json($permission);
+    }
+
+    /**
+     * Update the specified resource in storage.
      *
      * @param UpdatePermissionRequest $request
      *
@@ -132,7 +132,7 @@ class PermissionController extends Controller
     }
 
     /**
-     * Remove the specified permission from storage.
+     * Remove the specified resource from storage.
      *
      * @param Permission $permission
      *

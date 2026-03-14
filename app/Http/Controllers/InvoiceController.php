@@ -68,22 +68,6 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param Invoice $invoice
-     *
-     * @return JsonResponse
-     */
-    public function show(Invoice $invoice): JsonResponse
-    {
-        $this->authorize('view', $invoice);
-
-        $invoice = $this->query->show($invoice);
-
-        return response()->json($invoice);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param StoreInvoiceRequest $request
@@ -103,6 +87,22 @@ class InvoiceController extends Controller
         );
 
         return response()->json($invoice, 201);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param Invoice $invoice
+     *
+     * @return JsonResponse
+     */
+    public function show(Invoice $invoice): JsonResponse
+    {
+        $this->authorize('view', $invoice);
+
+        $invoice = $this->query->show($invoice);
+
+        return response()->json($invoice);
     }
 
     /**

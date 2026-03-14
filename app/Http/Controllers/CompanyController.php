@@ -68,22 +68,6 @@ class CompanyController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param Company $company
-     *
-     * @return JsonResponse
-     */
-    public function show(Company $company): JsonResponse
-    {
-        $this->authorize('view', $company);
-
-        $company = $this->query->show($company);
-
-        return response()->json($company);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param StoreCompanyRequest $request
@@ -103,6 +87,22 @@ class CompanyController extends Controller
         );
 
         return response()->json($company, 201);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param Company $company
+     *
+     * @return JsonResponse
+     */
+    public function show(Company $company): JsonResponse
+    {
+        $this->authorize('view', $company);
+
+        $company = $this->query->show($company);
+
+        return response()->json($company);
     }
 
     /**

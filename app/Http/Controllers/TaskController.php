@@ -68,22 +68,6 @@ class TaskController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param Task $task
-     *
-     * @return JsonResponse
-     */
-    public function show(Task $task): JsonResponse
-    {
-        $this->authorize('view', $task);
-
-        $task = $this->query->show($task);
-
-        return response()->json($task);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param StoreTaskRequest $request
@@ -105,6 +89,22 @@ class TaskController extends Controller
         $task = $this->query->show($task);
 
         return response()->json($task, 201);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param Task $task
+     *
+     * @return JsonResponse
+     */
+    public function show(Task $task): JsonResponse
+    {
+        $this->authorize('view', $task);
+
+        $task = $this->query->show($task);
+
+        return response()->json($task);
     }
 
     /**
