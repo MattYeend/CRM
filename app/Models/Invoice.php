@@ -181,7 +181,7 @@ class Invoice extends Model
      */
     public function getIsOverdueAttribute(): bool
     {
-        return $this->due_date < now() && $this->status !== 'paid';
+        return $this->due_date < now() && $this->status !== self::STATUS_PAID;
     }
 
     /**
@@ -191,7 +191,7 @@ class Invoice extends Model
      */
     public function getIsPaidAttribute(): bool
     {
-        return $this->status === 'paid';
+        return $this->status === self::STATUS_PAID;
     }
 
     /**
@@ -201,6 +201,6 @@ class Invoice extends Model
      */
     public function getIsDraftAttribute(): bool
     {
-        return $this->status === 'draft';
+        return $this->status === self::STATUS_DRAFT;
     }
 }

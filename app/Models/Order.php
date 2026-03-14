@@ -127,7 +127,7 @@ class Order extends Model
      */
     public function scopePaid(Builder $query): Builder
     {
-        return $query->where('status', 'paid');
+        return $query->where('status', self::STATUS_PAID);
     }
 
     /**
@@ -138,7 +138,7 @@ class Order extends Model
     public function markAsPaid(): bool
     {
         return $this->update([
-            'status' => 'paid',
+            'status' => self::STATUS_PAID,
             'paid_at' => now(),
         ]);
     }
