@@ -8,11 +8,6 @@ use App\Models\User;
 
 class CompanyLogService
 {
-    public function __construct()
-    {
-        // Empty constructor
-    }
-
     /**
      * Log the creation of a company.
      *

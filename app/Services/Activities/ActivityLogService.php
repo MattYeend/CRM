@@ -8,11 +8,6 @@ use App\Models\User;
 
 class ActivityLogService
 {
-    public function __construct()
-    {
-        // Empty constructor
-    }
-
     /**
      * Log activity when a new activity is created.
      *

@@ -8,11 +8,6 @@ use App\Models\User;
 
 class PipelineStageLogService
 {
-    public function __construct()
-    {
-        // Empty constructor
-    }
-
     /**
      * Log the creation of a Pipeline Stage.
      *

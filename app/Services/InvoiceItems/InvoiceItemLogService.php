@@ -8,11 +8,6 @@ use App\Models\User;
 
 class InvoiceItemLogService
 {
-    public function __construct()
-    {
-        // Empty constructor
-    }
-
     /**
      * Log the creation of an Invoice Item.
      *

@@ -8,11 +8,6 @@ use App\Models\User;
 
 class LearningLogService
 {
-    public function __construct()
-    {
-        // Empty Constructor
-    }
-
     /**
      * Log the creation of an Learning.
      *

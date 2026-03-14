@@ -6,7 +6,7 @@ use App\Models\Role;
 use App\Models\Task;
 use App\Models\User;
 use App\Services\Attachments\AttachmentAttacherService;
-use App\Services\Attachments\AttachmentService;
+use App\Services\Attachments\AttachmentFileService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Middleware\ThrottleRequests;
@@ -114,11 +114,11 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
     Storage::disk('public')->put($fakePath, 'fake-pdf-content');
 
     // Mock AttachmentService::storeFile to return the prepared attachment
-    $serviceMock = Mockery::mock(AttachmentService::class);
+    $serviceMock = Mockery::mock(AttachmentFileService::class);
     $serviceMock->shouldReceive('storeFile')
         ->once()
         ->andReturn($returnedAttachment);
-    $this->app->instance(AttachmentService::class, $serviceMock);
+    $this->app->instance(AttachmentFileService::class, $serviceMock);
 
     // Create a fake file to upload (the mock ignores the contents but controller still expects file)
     $file = UploadedFile::fake()->create('document.pdf', 120, 'application/pdf');

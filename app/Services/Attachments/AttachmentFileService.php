@@ -6,7 +6,7 @@ use App\Models\Attachment;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
-class AttachmentService
+class AttachmentFileService
 {
     /**
      * Store uploaded file and create Attachment model.

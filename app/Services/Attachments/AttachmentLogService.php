@@ -8,11 +8,6 @@ use App\Models\User;
 
 class AttachmentLogService
 {
-    public function __construct()
-    {
-        // Empty constructor
-    }
-
     /**
      * Log the attachment of a file.
      *
