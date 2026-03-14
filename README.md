@@ -16,7 +16,7 @@ A Laravel 12 CRM system
     2. [Maintainer Merge Strategy](#maintainer-merge-strategy)
 5. [General CLI Commands](#general-cli-commands)
 6. [Specific CLI Commands](#specific-cli-commands)
-7. [Events & Listeners](#events-&-listeners)
+7. [Events And Listeners](#events-and-listeners)
 8. [Sponsor The Project](#sponsor-the-project)
 <!-- /TOC -->
 
@@ -209,7 +209,7 @@ The `main` and `develop` branches are protected and should never be pushed to di
 
 ---
 
-## Events & Listeners
+## Events And Listeners
 
 The system uses Laravel Events & Listeners to handle asynchronous workflows.
 
