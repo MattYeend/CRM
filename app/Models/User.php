@@ -15,6 +15,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Laravel\Cashier\Billable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -25,7 +26,8 @@ class User extends Authenticatable
         Notifiable,
         TwoFactorAuthenticatable,
         SoftDeletes,
-        HasApiTokens;
+        HasApiTokens,
+        Billable;
 
     /**
      * The attributes that are mass assignable.
@@ -47,6 +49,10 @@ class User extends Authenticatable
         'updated_at',
         'deleted_at',
         'restored_at',
+        'stripe_id',
+        'pm_type',
+        'pm_last_four',
+        'trail_ends_at',
     ];
 
     /**
