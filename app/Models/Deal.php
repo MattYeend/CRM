@@ -14,6 +14,14 @@ class Deal extends Model
     use HasFactory, SoftDeletes;
 
     /**
+     * Constants
+     */
+    public const STATUS_OPEN = 'open';
+    public const STATUS_WON = 'won';
+    public const STATUS_LOST = 'lost';
+    public const STATUS_ARCHIVED = 'archived';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -53,14 +61,6 @@ class Deal extends Model
         'deleted_at' => 'datetime',
         'restored_at' => 'datetime',
     ];
-
-    /**
-     * Constants
-     */
-    public const STATUS_OPEN = 'open';
-    public const STATUS_WON = 'won';
-    public const STATUS_LOST = 'lost';
-    public const STATUS_ARCHIVED = 'archived';
 
     /**
      * Get the company that owns the deal.

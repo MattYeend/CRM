@@ -14,6 +14,15 @@ class Invoice extends Model
     use HasFactory, SoftDeletes;
 
     /**
+     * Constants
+     */
+    public const STATUS_DRAFT = 'draft';
+    public const STATUS_SENT = 'sent';
+    public const STATUS_PAID = 'paid';
+    public const STATUS_OVERDUE = 'overdue';
+    public const STATUS_CANCELLED = 'cancelled';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -54,15 +63,6 @@ class Invoice extends Model
         'deleted_at' => 'datetime',
         'restored_at' => 'datetime',
     ];
-
-    /**
-     * Constants
-     */
-    public const STATUS_DRAFT = 'draft';
-    public const STATUS_SENT = 'sent';
-    public const STATUS_PAID = 'paid';
-    public const STATUS_OVERDUE = 'overdue';
-    public const STATUS_CANCELLED = 'cancelled';
 
     /**
      * Get the company that owns the invoice.

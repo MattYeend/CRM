@@ -18,6 +18,12 @@ class Learning extends Model
      * */
     use HasFactory, SoftDeletes;
 
+    /**
+     * Contants
+     */
+    public const COMPLETE = 'complete';
+    public const INCOMPLETE = 'incomplete';
+
     protected $fillable = [
         'title',
         'description',
@@ -44,12 +50,6 @@ class Learning extends Model
         'deleted_at' => 'datetime',
         'restored_at' => 'datetime',
     ];
-
-    /**
-     * Contants
-     */
-    public const COMPLETE = 'complete';
-    public const INCOMPLETE = 'incomplete';
 
     /**
      * Get the user that created the learning.

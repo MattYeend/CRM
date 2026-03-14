@@ -32,11 +32,11 @@ class UpdateInvoiceRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Main base rules
      *
      * @return array
      */
-    private function baseRules(): array
+    public function mainBaseRules(): array
     {
         $invoice = $this->route('invoice');
 
@@ -50,6 +50,21 @@ class UpdateInvoiceRequest extends FormRequest
             'contact_id' => 'nullable|integer|exists:contacts,id',
             'issue_date' => 'nullable|date',
             'due_date' => 'nullable|date',
+            'subtotal' => 'nullable|numeric',
+            'tax' => 'nullable|numeric',
+            'total' => 'nullable|numeric',
+            'currency' => 'nullable|string|max:8',
+        ];
+    }
+
+    /**
+     * Status base rules
+     *
+     * @return array
+     */
+    public function statusBaseRules(): array
+    {
+        return [
             'status' => [
                 'nullable',
                 Rule::in([
@@ -60,11 +75,20 @@ class UpdateInvoiceRequest extends FormRequest
                     Invoice::STATUS_CANCELLED,
                 ]),
             ],
-            'subtotal' => 'nullable|numeric',
-            'tax' => 'nullable|numeric',
-            'total' => 'nullable|numeric',
-            'currency' => 'nullable|string|max:8',
         ];
+    }
+
+    /**
+     * Base rules
+     *
+     * @return array
+     */
+    private function baseRules(): array
+    {
+        return array_merge(
+            $this->mainBaseRules(),
+            $this->statusBaseRules(),
+        );
     }
 
     /**

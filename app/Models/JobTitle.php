@@ -14,39 +14,6 @@ class JobTitle extends Model
     use HasFactory, SoftDeletes;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'title',
-        'short_code',
-        'group',
-        'created_by',
-        'updated_by',
-        'deleted_by',
-        'restored_by',
-        'meta',
-        'created_at',
-        'updated_at',
-        'deleted_at',
-        'restored_at',
-    ];
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'meta' => 'array',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime',
-        'restored_at' => 'datetime',
-    ];
-
-    /**
      * Constants
      */
     public const TITLE_CEO = 'Chief Executive Officer';
@@ -89,6 +56,39 @@ class JobTitle extends Model
         self::TITLE_MD,
         self::TITLE_DIR,
         self::TITLE_SR_DIR,
+    ];
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'title',
+        'short_code',
+        'group',
+        'created_by',
+        'updated_by',
+        'deleted_by',
+        'restored_by',
+        'meta',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'restored_at',
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'meta' => 'array',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+        'restored_at' => 'datetime',
     ];
 
     /**

@@ -15,6 +15,13 @@ class Order extends Model
     use HasFactory, SoftDeletes;
 
     /**
+     * Constants
+     */
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_PAID = 'paid';
+    public const STATUS_FAILED = 'failed';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -50,13 +57,6 @@ class Order extends Model
         'deleted_at' => 'datetime',
         'restored_at' => 'datetime',
     ];
-
-    /**
-     * Constants
-     */
-    public const STATUS_PENDING = 'pending';
-    public const STATUS_PAID = 'paid';
-    public const STATUS_FAILED = 'failed';
 
     /**
      * Get the user who owns the order.

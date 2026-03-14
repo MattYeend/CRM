@@ -47,7 +47,7 @@ class StoreOrderRequest extends FormRequest
                     Order::STATUS_PENDING,
                     Order::STATUS_PAID,
                     Order::STATUS_FAILED,
-                ])
+                ]),
             ],
             'payment_method' => 'nullable|string|max:50',
             'paid_at' => 'nullable|date',

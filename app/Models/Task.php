@@ -15,6 +15,16 @@ class Task extends Model
     use HasFactory, SoftDeletes;
 
     /**
+     * Constants
+     */
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_COMPLETED = 'completed';
+    public const STATUS_CANCELLED = 'cancelled';
+    public const PRIORITY_LOW = 'low';
+    public const PRIORITY_MEDIUM = 'medium';
+    public const PRIORITY_HIGH = 'high';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -52,16 +62,6 @@ class Task extends Model
         'deleted_at' => 'datetime',
         'restored_at' => 'datetime',
     ];
-
-    /**
-     * Constants
-     */
-    public const STATUS_PENDING = 'pending';
-    public const STATUS_COMPLETED = 'completed';
-    public const STATUS_CANCELLED = 'cancelled';
-    public const PRIORITY_LOW = 'low';
-    public const PRIORITY_MEDIUM = 'medium';
-    public const PRIORITY_HIGH = 'high';
 
     /**
      * Get the parent taskable model (deal, contact, company, etc.).

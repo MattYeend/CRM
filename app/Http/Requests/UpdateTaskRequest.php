@@ -67,7 +67,7 @@ class UpdateTaskRequest extends FormRequest
                     Task::STATUS_PENDING,
                     Task::STATUS_COMPLETED,
                     Task::STATUS_CANCELLED,
-                ])
+                ]),
             ],
             'due_at' => 'nullable|date',
             'meta' => 'nullable|array',
