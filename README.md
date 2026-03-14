@@ -16,7 +16,8 @@ A Laravel 12 CRM system
     2. [Maintainer Merge Strategy](#maintainer-merge-strategy)
 5. [General CLI Commands](#general-cli-commands)
 6. [Specific CLI Commands](#specific-cli-commands)
-7. [Sponsor The Project](#sponsor-the-project)
+7. [Events & Listeners](#events-&-listeners)
+8. [Sponsor The Project](#sponsor-the-project)
 <!-- /TOC -->
 
 ---
@@ -76,32 +77,50 @@ Follow these steps to set up the project locally:
 git clone https://github.com/MattYeend/CRM.git
 cd CRM
 ```
+
 2. Install PHP dependencies
 ```bash
 composer install
 ```
+
 3. Install Node dependencies
 ```bash
 npm install && npm run build
 ```
+
 4. Set up environment
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
-5. Configure your database in `.env` and run migrations:
+
+5. Add the following lines to your `.env` file, and put in your own variables:
+```bash
+STRIPE_KEY=your-stripe-key
+STRIPE_SECRET=your-stripe-secret
+STRIPE_WEBHOOK_SECRET=your-stripe-webhook-secret
+
+CASHIER_CURRENCY=GBP
+CASHIER_CURRENCY_LOCALE=en_GB
+```
+Note: Ensure your `User` model uses Laravel Cashier's `Billable` trait so Stripe customers and payments work correctly.
+
+6. Configure your database in `.env` and run migrations:
 ```bash
 php artisan migrate
 ```
-6. Seed all tables if needed:
+
+7. Seed all tables if needed:
 ```bash
-php artisan seed
+php artisan db:seed
 ```
-7. Set up storage
+
+8. Set up storage
 ```bash
 php artisan storage:link
 ```
-8. Run the development servers
+
+9. Run the development servers
 ```bash
 php artisan serve
 npm run dev
@@ -157,7 +176,7 @@ For clarity and transparency:
 - Keeps `main` and `develop` history clean
 - One commit per feature or fix
 - Commit message may be edited by maintainers
-The `main` and `develop` branchs is protected and should never be pushed to directly.
+The `main` and `develop` branches are protected and should never be pushed to directly.
 
 --- 
 
@@ -187,6 +206,14 @@ The `main` and `develop` branchs is protected and should never be pushed to dire
 | `php artisan make:service ServiceName` | Creates a new service class |
 | `php artisan permission:clear` | Clear permissions if changed |
 | `php artisan insights` | Run insights package | 
+
+---
+
+## Events & Listeners
+
+The system uses Laravel Events & Listeners to handle asynchronous workflows.
+
+Example: `CashierPaymentSucceededListener` marks orders as paid automatically when a Stripe payment succeeds.
 
 ---
 
