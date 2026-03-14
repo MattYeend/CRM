@@ -38,8 +38,34 @@ class UpdateDealRequest extends FormRequest
      */
     private function baseRules(): array
     {
+        return array_merge(
+            $this->relationshipBaseRules(),
+            $this->coreBaseRules(),
+            $this->statusBaseRules(),
+        );
+    }
+
+    /**
+     * Relationship base rules
+     *
+     * @return array
+     */
+    private function relationshipBaseRules(): array
+    {
+        return array_merge(
+            $this->companyAndContactRelationshipRules(),
+            $this->ownerRelationshipRules(),
+            $this->pipelineAndStagesRelationshipRules(),
+        );
+    }
+    /**
+     * Company and Contact relationship rules
+     *
+     * @return array
+     */
+    private function companyAndContactRelationshipRules(): array
+    {
         return [
-            'title' => 'sometimes|string|max:255',
             'company_id' => [
                 'nullable',
                 'integer',
@@ -50,11 +76,33 @@ class UpdateDealRequest extends FormRequest
                 'integer',
                 Rule::exists('contacts', 'id'),
             ],
+        ];
+    }
+
+    /**
+     * User/Owner relationship rules
+     *
+     * @return array
+     */
+    private function ownerRelationshipRules(): array
+    {
+        return [
             'owner_id' => [
                 'nullable',
                 'integer',
                 Rule::exists('users', 'id'),
             ],
+        ];
+    }
+
+    /**
+     * Pipeline and Stages relationship rules
+     *
+     * @return array
+     */
+    private function pipelineAndStagesRelationshipRules(): array
+    {
+        return [
             'pipeline_id' => [
                 'nullable',
                 'integer',
@@ -65,9 +113,32 @@ class UpdateDealRequest extends FormRequest
                 'integer',
                 Rule::exists('pipeline_stages', 'id'),
             ],
+        ];
+    }
+
+    /**
+     * Core base rules
+     *
+     * @return array
+     */
+    private function coreBaseRules(): array
+    {
+        return [
+            'title' => 'sometimes|string|max:255',
             'value' => 'nullable|numeric',
             'currency' => 'nullable|string|max:8',
             'close_date' => 'nullable|date',
+        ];
+    }
+
+    /**
+     * Status base rules
+     *
+     * @return array
+     */
+    private function statusBaseRules(): array
+    {
+        return [
             'status' => [
                 'nullable',
                 Rule::in([

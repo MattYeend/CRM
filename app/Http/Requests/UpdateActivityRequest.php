@@ -43,7 +43,7 @@ class UpdateActivityRequest extends FormRequest
                 'nullable',
                 'integer',
                 Rule::exists('users', 'id'),
-            ]
+            ],
         ];
     }
 

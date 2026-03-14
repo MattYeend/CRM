@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Pipeline;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class UpdatePipelineRequest extends FormRequest
 {

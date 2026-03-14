@@ -36,6 +36,20 @@ class StoreOrderRequest extends FormRequest
      */
     private function baseRules(): array
     {
+        return array_merge(
+            $this->relationshipBaseRules(),
+            $this->coreBaseRules(),
+            $this->statusBaseRules(),
+        );
+    }
+
+    /**
+     * Relationship base rules
+     *
+     * @return array
+     */
+    private function relationshipBaseRules(): array
+    {
         return [
             'deal_id' => [
                 'required',
@@ -47,8 +61,34 @@ class StoreOrderRequest extends FormRequest
                 'integer',
                 Rule::exists('users', 'id'),
             ],
+        ];
+    }
+
+    /**
+     * Core base rules
+     *
+     * @return array
+     */
+    private function coreBaseRules(): array
+    {
+        return [
             'amount' => 'required|numeric|min:0',
             'currency' => 'required|string|max:3',
+            'payment_method' => 'nullable|string|max:50',
+            'paid_at' => 'nullable|date',
+            'payment_intent_id' => 'nullable|string|max:255',
+            'charge_id' => 'nullable|string|max:255',
+        ];
+    }
+
+    /**
+     * Status base rules
+     *
+     * @return array
+     */
+    private function statusBaseRules(): array
+    {
+        return [
             'status' => [
                 'nullable',
                 Rule::in([
@@ -57,10 +97,6 @@ class StoreOrderRequest extends FormRequest
                     Order::STATUS_FAILED,
                 ]),
             ],
-            'payment_method' => 'nullable|string|max:50',
-            'paid_at' => 'nullable|date',
-            'payment_intent_id' => 'nullable|string|max:255',
-            'charge_id' => 'nullable|string|max:255',
         ];
     }
 

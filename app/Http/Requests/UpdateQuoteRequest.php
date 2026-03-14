@@ -38,7 +38,7 @@ class UpdateQuoteRequest extends FormRequest
     private function baseRules(): array
     {
         $quote = $this->route('quote');
-    
+
         return [
             'deal_id' => [
                 'sometimes',

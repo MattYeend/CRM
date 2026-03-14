@@ -41,7 +41,7 @@ class StoreNoteRequest extends FormRequest
             'user_id' => [
                 'nullable',
                 'integer',
-                Rule::exists('users', 'id')
+                Rule::exists('users', 'id'),
             ],
             'body' => 'required|string',
         ];

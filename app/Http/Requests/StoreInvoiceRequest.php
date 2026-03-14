@@ -30,18 +30,27 @@ class StoreInvoiceRequest extends FormRequest
     }
 
     /**
-     * Main base rules
+     * Base rules
      *
      * @return array
      */
-    public function mainBaseRules(): array
+    private function baseRules(): array
+    {
+        return array_merge(
+            $this->relationshipBaseRules(),
+            $this->coreBaseRules(),
+            $this->statusBaseRules(),
+        );
+    }
+
+    /**
+     * Relationship base rules
+     *
+     * @return array
+     */
+    private function relationshipBaseRules(): array
     {
         return [
-            'number' => [
-                'required',
-                'string',
-                Rule::unique('invoices', 'number'),
-            ],
             'company_id' => [
                 'nullable',
                 'integer',
@@ -51,6 +60,21 @@ class StoreInvoiceRequest extends FormRequest
                 'nullable',
                 'integer',
                 Rule::exists('contacts', 'id'),
+            ],
+        ];
+    }
+    /**
+     * Core base rules
+     *
+     * @return array
+     */
+    private function coreBaseRules(): array
+    {
+        return [
+            'number' => [
+                'required',
+                'string',
+                Rule::unique('invoices', 'number'),
             ],
             'issue_date' => 'nullable|date',
             'due_date' => 'nullable|date',
@@ -66,7 +90,7 @@ class StoreInvoiceRequest extends FormRequest
      *
      * @return array
      */
-    public function statusBaseRules(): array
+    private function statusBaseRules(): array
     {
         return [
             'status' => [
@@ -80,19 +104,6 @@ class StoreInvoiceRequest extends FormRequest
                 ]),
             ],
         ];
-    }
-
-    /**
-     * Base rules
-     *
-     * @return array
-     */
-    private function baseRules(): array
-    {
-        return array_merge(
-            $this->mainBaseRules(),
-            $this->statusBaseRules(),
-        );
     }
 
     /**

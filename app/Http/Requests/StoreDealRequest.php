@@ -36,8 +36,35 @@ class StoreDealRequest extends FormRequest
      */
     private function baseRules(): array
     {
+        return array_merge(
+            $this->relationshipBaseRules(),
+            $this->coreBaseRules(),
+            $this->statusBaseRules(),
+        );
+    }
+
+    /**
+     * Relationship base rules
+     *
+     * @return array
+     */
+    private function relationshipBaseRules(): array
+    {
+        return array_merge(
+            $this->companyAndContactRelationshipRules(),
+            $this->ownerRelationshipRules(),
+            $this->pipelineAndStagesRelationshipRules(),
+        );
+    }
+
+    /**
+     * Company and Contact relationship rules
+     *
+     * @return array
+     */
+    private function companyAndContactRelationshipRules(): array
+    {
         return [
-            'title' => 'required|string|max:255',
             'company_id' => [
                 'nullable',
                 'integer',
@@ -46,26 +73,71 @@ class StoreDealRequest extends FormRequest
             'contact_id' => [
                 'nullable',
                 'integer',
-                Rule::exists('contacts', 'id')
+                Rule::exists('contacts', 'id'),
             ],
+        ];
+    }
+
+    /**
+     * User/Owner relationship rules
+     *
+     * @return array
+     */
+    private function ownerRelationshipRules(): array
+    {
+        return [
             'owner_id' => [
                 'nullable',
                 'integer',
-                Rule::exists('users', 'id')
+                Rule::exists('users', 'id'),
             ],
+        ];
+    }
+
+    /**
+     * Pipeline and Stages relationship rules
+     *
+     * @return array
+     */
+    private function pipelineAndStagesRelationshipRules(): array
+    {
+        return [
             'pipeline_id' => [
                 'nullable',
                 'integer',
-                Rule::exists('pipelines', 'id')
+                Rule::exists('pipelines', 'id'),
             ],
             'stage_id' => [
                 'nullable',
                 'integer',
-                Rule::exists('pipeline_stages', 'id')
+                Rule::exists('pipeline_stages', 'id'),
             ],
+        ];
+    }
+
+    /**
+     * Core base rules
+     *
+     * @return array
+     */
+    private function coreBaseRules(): array
+    {
+        return [
+            'title' => 'required|string|max:255',
             'value' => 'nullable|numeric',
             'currency' => 'nullable|string|max:8',
             'close_date' => 'nullable|date',
+        ];
+    }
+
+    /**
+     * Status base rules
+     *
+     * @return array
+     */
+    private function statusBaseRules(): array
+    {
+        return [
             'status' => [
                 'nullable',
                 Rule::in([

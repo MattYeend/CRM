@@ -38,6 +38,20 @@ class UpdateOrderRequest extends FormRequest
      */
     private function baseRules(): array
     {
+        return array_merge(
+            $this->relationshipBaseRules(),
+            $this->coreBaseRules(),
+            $this->statusBaseRules(),
+        );
+    }
+
+    /**
+     * Relationship base rules
+     *
+     * @return array
+     */
+    private function relationshipBaseRules(): array
+    {
         return [
             'user_id' => [
                 'sometimes',
@@ -49,8 +63,34 @@ class UpdateOrderRequest extends FormRequest
                 'integer',
                 Rule::exists('orders', 'id'),
             ],
+        ];
+    }
+
+    /**
+     * Core base rules
+     *
+     * @return array
+     */
+    private function coreBaseRules(): array
+    {
+        return [
             'amount' => 'sometimes|numeric|min:0',
             'currency' => 'sometimes|string|max:3',
+            'payment_method' => 'nullable|string|max:50',
+            'paid_at' => 'nullable|date',
+            'payment_intent_id' => 'nullable|string|max:255',
+            'charge_id' => 'nullable|string|max:255',
+        ];
+    }
+
+    /**
+     * Status base rules
+     *
+     * @return array
+     */
+    private function statusBaseRules(): array
+    {
+        return [
             'status' => [
                 'nullable',
                 Rule::in([
@@ -59,10 +99,6 @@ class UpdateOrderRequest extends FormRequest
                     Order::STATUS_FAILED,
                 ]),
             ],
-            'payment_method' => 'nullable|string|max:50',
-            'paid_at' => 'nullable|date',
-            'payment_intent_id' => 'nullable|string|max:255',
-            'charge_id' => 'nullable|string|max:255',
         ];
     }
 

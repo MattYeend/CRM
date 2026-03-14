@@ -32,20 +32,27 @@ class UpdateInvoiceRequest extends FormRequest
     }
 
     /**
-     * Main base rules
+     * Base rules
      *
      * @return array
      */
-    public function mainBaseRules(): array
+    private function baseRules(): array
     {
-        $invoice = $this->route('invoice');
+        return array_merge(
+            $this->relationshipBaseRules(),
+            $this->coreBaseRules(),
+            $this->statusBaseRules(),
+        );
+    }
 
+    /**
+     * Relationship base rules
+     *
+     * @return array
+     */
+    private function relationshipBaseRules(): array
+    {
         return [
-            'number' => [
-                'sometimes',
-                'string',
-                Rule::unique('invoices', 'number')->ignore($invoice),
-            ],
             'company_id' => [
                 'nullable',
                 'integer',
@@ -55,6 +62,24 @@ class UpdateInvoiceRequest extends FormRequest
                 'nullable',
                 'integer',
                 Rule::exists('contacts', 'id'),
+            ],
+        ];
+    }
+
+    /**
+     * Core base rules
+     *
+     * @return array
+     */
+    private function coreBaseRules(): array
+    {
+        $invoice = $this->route('invoice');
+
+        return [
+            'number' => [
+                'sometimes',
+                'string',
+                Rule::unique('invoices', 'number')->ignore($invoice),
             ],
             'issue_date' => 'nullable|date',
             'due_date' => 'nullable|date',
@@ -70,7 +95,7 @@ class UpdateInvoiceRequest extends FormRequest
      *
      * @return array
      */
-    public function statusBaseRules(): array
+    private function statusBaseRules(): array
     {
         return [
             'status' => [
@@ -84,19 +109,6 @@ class UpdateInvoiceRequest extends FormRequest
                 ]),
             ],
         ];
-    }
-
-    /**
-     * Base rules
-     *
-     * @return array
-     */
-    private function baseRules(): array
-    {
-        return array_merge(
-            $this->mainBaseRules(),
-            $this->statusBaseRules(),
-        );
     }
 
     /**
