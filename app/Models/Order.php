@@ -52,6 +52,13 @@ class Order extends Model
     ];
 
     /**
+     * Constants
+     */
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_PAID = 'paid';
+    public const STATUS_FAILED = 'failed';
+
+    /**
      * Get the user who owns the order.
      *
      * @return BelongsTo

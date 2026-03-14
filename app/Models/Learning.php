@@ -46,6 +46,12 @@ class Learning extends Model
     ];
 
     /**
+     * Contants
+     */
+    public const COMPLETE = 'complete';
+    public const INCOMPLETE = 'incomplete';
+
+    /**
      * Get the user that created the learning.
      *
      * @return BelongsTo

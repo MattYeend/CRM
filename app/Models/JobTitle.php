@@ -47,6 +47,51 @@ class JobTitle extends Model
     ];
 
     /**
+     * Constants
+     */
+    public const TITLE_CEO = 'Chief Executive Officer';
+    public const TITLE_CTO = 'Chief Technology Officer';
+    public const TITLE_CFO = 'Chief Financial Officer';
+    public const TITLE_COO = 'Chief Operating Officer';
+    public const TITLE_CMO = 'Chief Marketing Officer';
+    public const TITLE_CIO = 'Chief Information Officer';
+    public const TITLE_CRO = 'Chief Revenue Officer';
+    public const TITLE_CPO = 'Chief Product Officer';
+    public const TITLE_CSO = 'Chief Strategy Officer';
+    public const TITLE_CHRO = 'Chief Human Resources Officer';
+
+    public const TITLE_PRES = 'President';
+    public const TITLE_VP = 'Vice President';
+    public const TITLE_EVP = 'Executive Vice President';
+    public const TITLE_SVP = 'Senior Vice President';
+    public const TITLE_MD = 'Managing Director';
+    public const TITLE_DIR = 'Director';
+    public const TITLE_SR_DIR = 'Senior Director';
+
+    public const GROUP_C_SUITE = [
+        self::TITLE_CEO,
+        self::TITLE_CTO,
+        self::TITLE_CFO,
+        self::TITLE_COO,
+        self::TITLE_CMO,
+        self::TITLE_CIO,
+        self::TITLE_CRO,
+        self::TITLE_CPO,
+        self::TITLE_CSO,
+        self::TITLE_CHRO,
+    ];
+
+    public const GROUP_EXECUTIVE = [
+        self::TITLE_PRES,
+        self::TITLE_VP,
+        self::TITLE_EVP,
+        self::TITLE_SVP,
+        self::TITLE_MD,
+        self::TITLE_DIR,
+        self::TITLE_SR_DIR,
+    ];
+
+    /**
      * Get the user that created the lead.
      *
      * @return BelongsTo

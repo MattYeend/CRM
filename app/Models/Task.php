@@ -54,6 +54,16 @@ class Task extends Model
     ];
 
     /**
+     * Constants
+     */
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_COMPLETE = 'complete';
+    public const STATUS_CANCELLED = 'cancelled';
+    public const PRIORITY_LOW = 'low';
+    public const PRIORITY_MEDIUM = 'medium';
+    public const PRIORITY_HIGH = 'high';
+
+    /**
      * Get the parent taskable model (deal, contact, company, etc.).
      *
      * @return MorphTo

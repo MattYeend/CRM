@@ -55,6 +55,14 @@ class Deal extends Model
     ];
 
     /**
+     * Constants
+     */
+    public const STATUS_OPEN = 'open';
+    public const STATUS_WON = 'won';
+    public const STATUS_LOST = 'lost';
+    public const STATUS_ARCHIVED = 'archived';
+
+    /**
      * Get the company that owns the deal.
      *
      * @return BelongsTo

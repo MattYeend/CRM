@@ -56,6 +56,15 @@ class Invoice extends Model
     ];
 
     /**
+     * Constants
+     */
+    public const STATUS_DRAFT = 'draft';
+    public const STATUS_SENT = 'sent';
+    public const STATUS_PAID = 'paid';
+    public const STATUS_OVERDUE = 'overdue';
+    public const STATUS_CANCELLED = 'cancelled';
+
+    /**
      * Get the company that owns the invoice.
      *
      * @return BelongsTo
