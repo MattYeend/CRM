@@ -14,6 +14,22 @@ class Note extends Model
     use HasFactory, SoftDeletes;
 
     /**
+     * Constants
+     */
+    public const NOTABLE_COMPANY = Company::class;
+    public const NOTABLE_CONTACT = Contact::class;
+    public const NOTABLE_DEAL = Deal::class;
+    public const NOTABLE_TASK = Task::class;
+    public const NOTABLE_USER = User::class;
+
+    public const NOTABLE_TYPES = [
+        self::NOTABLE_COMPANY,
+        self::NOTABLE_CONTACT,
+        self::NOTABLE_DEAL,
+        self::NOTABLE_TASK,
+        self::NOTABLE_USER,
+    ];
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>

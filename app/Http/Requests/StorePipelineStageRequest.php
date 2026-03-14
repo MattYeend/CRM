@@ -37,7 +37,11 @@ class StorePipelineStageRequest extends FormRequest
     private function baseRules(): array
     {
         return [
-            'pipeline_id' => 'required|integer|exists:pipelines,id',
+            'pipeline_id' => [
+                'required',
+                'integer',
+                Rule::exists('pipelines', 'id'),
+            ],
             'name' => 'sometimes|required|string',
         ];
     }

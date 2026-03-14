@@ -44,7 +44,7 @@ class UpdateProductRequest extends FormRequest
                 'nullable',
                 'string',
                 'max:50',
-                Rule::unique('products', 'sku')->ignore($product->id),
+                Rule::unique('products', 'sku')->ignore($product),
             ],
             'name' => 'sometimes|string|max:255',
             'description' => 'nullable|string',

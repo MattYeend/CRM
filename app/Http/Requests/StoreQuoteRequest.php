@@ -40,7 +40,7 @@ class StoreQuoteRequest extends FormRequest
             'deal_id' => [
                 'required',
                 'integer',
-                'exists:deals,id',
+                Rule::exists('deals', 'id'),
                 Rule::unique('quotes', 'deal_id'),
             ],
             'currency' => 'nullable|string|size:3',

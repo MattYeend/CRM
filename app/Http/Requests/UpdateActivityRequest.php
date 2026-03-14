@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateActivityRequest extends FormRequest
 {
@@ -38,7 +39,11 @@ class UpdateActivityRequest extends FormRequest
     {
         return [
             'type' => 'sometimes|string',
-            'user_id' => 'nullable|integer|exists:users,id',
+            'user_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('users', 'id'),
+            ]
         ];
     }
 

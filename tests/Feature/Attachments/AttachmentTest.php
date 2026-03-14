@@ -3,6 +3,7 @@
 use App\Models\Attachment;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\Task;
 use App\Models\User;
 use App\Services\Attachments\AttachmentAttacherService;
 use App\Services\Attachments\AttachmentService;
@@ -47,7 +48,7 @@ test('index returns paginated attachments and respects per_page query', function
     $uploader = User::factory()->create();
     Attachment::factory()->count(12)->create([
         'uploaded_by' => $uploader->id,
-        'attachable_type' => 'user',
+        'attachable_type' => User::class,
         'attachable_id' => $uploader->id,
     ]);
 
@@ -65,7 +66,7 @@ test('show returns the attachment with uploader relationship loaded', function (
     // create a valid attachment record — include attachable_type/id
     $attachment = Attachment::factory()->create([
         'uploaded_by' => $uploader->id,
-        'attachable_type' => 'user',
+        'attachable_type' => User::class,
         'attachable_id' => $uploader->id,
     ]);
 
@@ -93,7 +94,7 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
 
     $attacherMock->shouldReceive('attach')
         ->once()
-        ->with('task', 1, Mockery::type(Attachment::class));
+        ->with(Task::class, 1, Mockery::type(Attachment::class));
     
     $this->app->instance(AttachmentAttacherService::class, $attacherMock);
 
@@ -105,7 +106,7 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
         'size' => 120_000,
         'mime' => 'application/pdf',
         'uploaded_by' => $this->auth->id,
-        'attachable_type' => 'task',
+        'attachable_type' => Task::class,
         'attachable_id' => $this->auth->id,
     ]);
 
@@ -124,7 +125,7 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
 
     $payload = [
         'file' => $file,
-        'attachable_type' => 'task',
+        'attachable_type' => Task::class,
         'attachable_id' => 1, 
         'uploaded_by' => $this->auth->id,
     ];
@@ -159,7 +160,7 @@ test('destroy deletes file from disk (if present) and deletes the model', functi
     $attachment = Attachment::factory()->create([
         'disk' => 'public',
         'path' => $path,
-        'attachable_type' => 'user',
+        'attachable_type' => User::class,
         'attachable_id' => $this->auth->id,
         'uploaded_by' => $this->auth->id,
     ]);
@@ -185,7 +186,7 @@ test('restore deleted attachment', function () {
     $attachment = Attachment::factory()->create([
         'disk' => 'public',
         'path' => $path,
-        'attachable_type' => 'user',
+        'attachable_type' => User::class,
         'attachable_id' => $this->auth->id,
         'uploaded_by' => $this->auth->id,
     ]);

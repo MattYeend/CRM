@@ -37,7 +37,7 @@ class UpdateInvoiceItemRequest extends FormRequest
     private function baseRules(): array
     {
         return [
-            'description' => 'sometimes|required|string|max:255',
+            'description' => 'sometimes|string|max:255',
             'quantity' => 'nullable|integer|min:1',
             'unit_price' => 'nullable|numeric',
         ];

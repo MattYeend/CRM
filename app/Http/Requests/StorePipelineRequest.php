@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\Models\Pipeline;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class StorePipelineRequest extends FormRequest
 {
@@ -50,13 +49,7 @@ class StorePipelineRequest extends FormRequest
     {
         return [
             'description' => 'nullable|string',
-            'is_default' => [
-                'nullable',
-                Rule::in([
-                    Pipeline::IS_DEFAULT,
-                    Pipeline::NOT_DEFAULT,
-                ]),
-            ],
+            'is_default' => 'nullable|boolean',
         ];
     }
 }

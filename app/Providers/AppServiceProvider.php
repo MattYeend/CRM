@@ -2,12 +2,6 @@
 
 namespace App\Providers;
 
-use App\Models\Company;
-use App\Models\Contact;
-use App\Models\Deal;
-use App\Models\Task;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\ServiceProvider;
 
@@ -29,14 +23,6 @@ class AppServiceProvider extends ServiceProvider
         if (app()->environment('production', 'staging', 'qa')) {
             $this->preventDestructiveCommands();
         }
-
-        Relation::morphMap([
-            'deal' => Deal::class,
-            'contact' => Contact::class,
-            'company' => Company::class,
-            'task' => Task::class,
-            'user' => User::class,
-        ]);
     }
 
     /**

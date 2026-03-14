@@ -54,9 +54,13 @@ class StoreTaskRequest extends FormRequest
         return [
             'taskable_type' => [
                 'required',
-                Rule::in(['deal', 'contact', 'company', 'task', 'user']),
+                Rule::in(Task::TASKABLE_TYPES),
             ],
-            'taskable_id' => 'required|integer|required_with:taskable_type',
+            'taskable_id' => [
+                'required',
+                'integer',
+                'required_with:taskable_type',
+            ],
         ];
     }
 
@@ -68,7 +72,14 @@ class StoreTaskRequest extends FormRequest
     private function metaRules(): array
     {
         return [
-            'priority' => ['nullable', Rule::in(['low', 'medium', 'high'])],
+            'priority' => [
+                'nullable',
+                Rule::in(
+                    Task::PRIORITY_LOW,
+                    Task::PRIORITY_MEDIUM,
+                    Task::PRIORITY_HIGH,
+                ),
+            ],
             'status' => [
                 'nullable',
                 Rule::in([

@@ -24,6 +24,20 @@ class Task extends Model
     public const PRIORITY_MEDIUM = 'medium';
     public const PRIORITY_HIGH = 'high';
 
+    public const TASKABLE_COMPANY = Company::class;
+    public const TASKABLE_CONTACT = Contact::class;
+    public const TASKABLE_DEAL = Deal::class;
+    public const TASKABLE_TASK = Task::class;
+    public const TASKABLE_USER = User::class;
+
+    public const TASKABLE_TYPES = [
+        self::TASKABLE_COMPANY,
+        self::TASKABLE_CONTACT,
+        self::TASKABLE_DEAL,
+        self::TASKABLE_TASK,
+        self::TASKABLE_USER,
+    ];
+
     /**
      * The attributes that are mass assignable.
      *

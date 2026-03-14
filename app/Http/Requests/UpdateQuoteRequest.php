@@ -38,12 +38,13 @@ class UpdateQuoteRequest extends FormRequest
     private function baseRules(): array
     {
         $quote = $this->route('quote');
+    
         return [
             'deal_id' => [
                 'sometimes',
                 'integer',
                 'exists:deals,id',
-                Rule::unique('quotes', 'deal_id')->ignore($quote->id),
+                Rule::unique('quotes', 'deal_id')->ignore($quote),
             ],
             'currency' => 'nullable|string|size:3',
             'subtotal' => 'nullable|numeric',

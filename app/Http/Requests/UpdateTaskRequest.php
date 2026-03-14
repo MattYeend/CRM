@@ -41,7 +41,11 @@ class UpdateTaskRequest extends FormRequest
         return [
             'title' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
-            'assigned_to' => 'nullable|integer|exists:users,id',
+            'assigned_to' => [
+                'nullable',
+                'integer',
+                Rule::exists('users', 'id'),
+            ],
         ];
     }
 

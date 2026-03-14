@@ -38,11 +38,31 @@ class StoreDealRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
-            'company_id' => 'nullable|integer|exists:companies,id',
-            'contact_id' => 'nullable|integer|exists:contacts,id',
-            'owner_id' => 'nullable|integer|exists:users,id',
-            'pipeline_id' => 'nullable|integer|exists:pipelines,id',
-            'stage_id' => 'nullable|integer|exists:pipeline_stages,id',
+            'company_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('companies', 'id'),
+            ],
+            'contact_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('contacts', 'id')
+            ],
+            'owner_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('users', 'id')
+            ],
+            'pipeline_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('pipelines', 'id')
+            ],
+            'stage_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('pipeline_stages', 'id')
+            ],
             'value' => 'nullable|numeric',
             'currency' => 'nullable|string|max:8',
             'close_date' => 'nullable|date',

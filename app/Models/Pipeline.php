@@ -15,12 +15,6 @@ class Pipeline extends Model
     use HasFactory, SoftDeletes;
 
     /**
-     * Constants
-     */
-    public const IS_DEFAULT = true;
-    public const NOT_DEFAULT = false;
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -81,7 +75,7 @@ class Pipeline extends Model
      */
     public function scopeDefault($query): Builder
     {
-        return $query->where('is_default', self::IS_DEFAULT);
+        return $query->where('is_default', true);
     }
 
     /**

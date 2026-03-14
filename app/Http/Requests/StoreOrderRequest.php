@@ -37,8 +37,16 @@ class StoreOrderRequest extends FormRequest
     private function baseRules(): array
     {
         return [
-            'deal_id' => 'required|exists:deals,id',
-            'user_id' => 'required|exists:users,id',
+            'deal_id' => [
+                'required',
+                'integer',
+                Rule::exists('deals', 'id'),
+            ],
+            'user_id' => [
+                'required',
+                'integer',
+                Rule::exists('users', 'id'),
+            ],
             'amount' => 'required|numeric|min:0',
             'currency' => 'required|string|max:3',
             'status' => [

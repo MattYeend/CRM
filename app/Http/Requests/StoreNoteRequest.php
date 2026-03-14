@@ -38,7 +38,11 @@ class StoreNoteRequest extends FormRequest
     private function baseRules(): array
     {
         return [
-            'user_id' => 'nullable|integer|exists:users,id',
+            'user_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('users', 'id')
+            ],
             'body' => 'required|string',
         ];
     }
@@ -53,9 +57,13 @@ class StoreNoteRequest extends FormRequest
         return [
             'notable_type' => [
                 'required',
-                Rule::in(['deal', 'contact', 'company', 'task', 'user']),
+                Rule::in(Note::NOTABLE_TYPES),
             ],
-            'notable_id' => 'required|integer|required_with:notable_type',
+            'notable_id' => [
+                'required',
+                'integer',
+                'required_with:notable_type',
+            ],
         ];
     }
 

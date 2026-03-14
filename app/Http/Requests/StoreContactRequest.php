@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Contact;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreContactRequest extends FormRequest
 {
@@ -37,6 +38,11 @@ class StoreContactRequest extends FormRequest
     {
         return [
             'company_id' => 'nullable|integer|exists:companies,id',
+            'company_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('companies', 'id'),
+            ],
             'first_name' => 'required|string|max:100',
             'last_name' => 'nullable|string|max:100',
             'email' => 'nullable|email|max:255',

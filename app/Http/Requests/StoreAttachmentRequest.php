@@ -52,9 +52,13 @@ class StoreAttachmentRequest extends FormRequest
         return [
             'attachable_type' => [
                 'required',
-                Rule::in(['deal', 'contact', 'company', 'task', 'user']),
+                Rule::in(Attachment::ATTACHABLE_TYPES),
             ],
-            'attachable_id' => 'required|integer|required_with:attactable_type',
+            'attachable_id' => [
+                'required',
+                'integer',
+                'required_with:attactable_type',
+            ],
         ];
     }
 

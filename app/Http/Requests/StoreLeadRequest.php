@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Lead;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreLeadRequest extends FormRequest
 {
@@ -53,8 +54,16 @@ class StoreLeadRequest extends FormRequest
     private function metaRules(): array
     {
         return [
-            'owner_id' => 'nullable|exists:users,id',
-            'assigned_to' => 'nullable|exists:users,id',
+            'owner_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('users', 'id'),
+            ],
+            'assigned_to' => [
+                'nullable',
+                'integer',
+                Rule::exists('users', 'id'),
+            ],
             'meta' => 'nullable|array',
         ];
     }

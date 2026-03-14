@@ -39,7 +39,11 @@ class UpdatePipelineStageRequest extends FormRequest
     private function baseRules(): array
     {
         return [
-            'pipeline_id' => 'nullable|integer|exists:pipelines,id',
+            'pipeline_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('pipelines', 'id'),
+            ],
             'name' => 'sometimes|string',
         ];
     }

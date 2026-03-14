@@ -44,10 +44,18 @@ class UpdateInvoiceRequest extends FormRequest
             'number' => [
                 'sometimes',
                 'string',
-                Rule::unique('invoices', 'number')->ignore($invoice->id),
+                Rule::unique('invoices', 'number')->ignore($invoice),
             ],
-            'company_id' => 'nullable|integer|exists:companies,id',
-            'contact_id' => 'nullable|integer|exists:contacts,id',
+            'company_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('companies', 'id'),
+            ],
+            'contact_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('contacts', 'id'),
+            ],
             'issue_date' => 'nullable|date',
             'due_date' => 'nullable|date',
             'subtotal' => 'nullable|numeric',

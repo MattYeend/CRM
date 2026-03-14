@@ -39,8 +39,16 @@ class UpdateOrderRequest extends FormRequest
     private function baseRules(): array
     {
         return [
-            'user_id' => 'sometimes|exists:users,id',
-            'order_id' => 'sometimes|exists:orders,id',
+            'user_id' => [
+                'sometimes',
+                'integer',
+                Rule::exists('users', 'id'),
+            ],
+            'order_id' => [
+                'sometimes',
+                'integer',
+                Rule::exists('orders', 'id'),
+            ],
             'amount' => 'sometimes|numeric|min:0',
             'currency' => 'sometimes|string|max:3',
             'status' => [

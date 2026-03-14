@@ -28,11 +28,16 @@ class UpdateUserRequest extends FormRequest
             $this->baseRules(),
             $this->roleRules(),
         );
-        $userId = $this->route('user')->id;
+        $user = $this->route('user');
 
         return [
             'name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|email|unique:users,email,' . $userId,
+            'email' => [
+                'sometimes',
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($user),
+            ],
             'password' => 'nullable|string|min:8|confirmed',
             'phone' => 'nullable|string|max:25',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -72,7 +77,10 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'roles' => 'nullable|array',
-            'roles.*' => 'integer|exists:roles,id',
+            'roles.*' => [
+                'integer',
+                Rule::exists('roles', 'id'),
+            ],
         ];
     }
 }
