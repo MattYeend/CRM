@@ -7,14 +7,14 @@ use App\Models\Product;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Middleware\ThrottleRequests;
-use Laravel\Cashier\Cashier;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    Cashier::fake();
+    Http::fake();
     $this->auth = User::factory()->create();
 
     $permissions = [
