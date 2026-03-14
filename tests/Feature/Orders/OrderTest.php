@@ -3,9 +3,9 @@
 use App\Models\Deal;
 use App\Models\Order;
 use App\Models\Permission;
+use App\Models\Product;
 use App\Models\Role;
 use App\Models\User;
-use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Middleware\ThrottleRequests;

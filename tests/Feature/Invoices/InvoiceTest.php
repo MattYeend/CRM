@@ -1,11 +1,11 @@
 <?php
 
+use App\Models\Company;
+use App\Models\Contact;
 use App\Models\Invoice;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
-use App\Models\Company;
-use App\Models\Contact;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 

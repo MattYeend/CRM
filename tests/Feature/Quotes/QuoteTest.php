@@ -1,9 +1,9 @@
 <?php
 
-use App\Models\Quote;
 use App\Models\Deal;
 use App\Models\Permission;
 use App\Models\Product;
+use App\Models\Quote;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

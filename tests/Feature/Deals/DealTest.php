@@ -1,13 +1,12 @@
 <?php
 
-use App\Models\Deal;
-use App\Models\Permission;
-use App\Models\Role;
-use App\Models\User;
 use App\Models\Company;
 use App\Models\Contact;
-use App\Models\Order;
+use App\Models\Deal;
+use App\Models\Permission;
 use App\Models\Product;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\DB;

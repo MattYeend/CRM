@@ -1,10 +1,10 @@
 <?php
 
-use App\Models\Task;
+use App\Models\Deal;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\Task;
 use App\Models\User;
-use App\Models\Deal;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 
