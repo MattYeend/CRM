@@ -36,6 +36,8 @@ class Order extends Model
         'paid_at',
         'payment_intent_id',
         'charge_id',
+        'stripe_payment_intent',
+        'stripe_invoice_id',
         'meta',
         'created_by',
         'updated_by',

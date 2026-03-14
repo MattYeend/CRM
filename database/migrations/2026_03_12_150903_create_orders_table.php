@@ -16,12 +16,14 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('deal_id')->nullable()->constrained('deals')->nullOnDelete();
             $table->decimal('amount', 10, 2)->default(0);
-            $table->string('currency', 3)->default('USD');
+            $table->string('currency', 3)->default('GBP');
             $table->string('status')->default('pending');
             $table->string('payment_method')->nullable();
             $table->timestamp('paid_at')->nullable();
             $table->string('payment_intent_id')->nullable();
             $table->string('charge_id')->nullable();
+            $table->string('stripe_payment_intent')->nullable();
+            $table->string('stripe_invoice_id')->nullable();
             $table->json('meta')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();

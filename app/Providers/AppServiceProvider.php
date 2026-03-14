@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Order;
+use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Cashier\Cashier;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,9 +24,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Cashier::useCustomerModel(User::class);
+        Cashier::calculateTaxes();
+
         if (app()->environment('production', 'staging', 'qa')) {
             $this->preventDestructiveCommands();
         }
+
+        Event::listen('cashier.payment_succeeded', function ($payload) {
+            Order::where(
+                'stripe_payment_intent',
+                $payload['data']['object']['id']
+            )->update(['status' => 'paid']);
+        });
     }
 
     /**

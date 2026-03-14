@@ -75,7 +75,7 @@ class UpdateOrderRequest extends FormRequest
     {
         return [
             'amount' => 'sometimes|numeric|min:0',
-            'currency' => 'sometimes|string|max:3',
+            'currency' => 'sometimes|string|size:3',
             'payment_method' => 'nullable|string|max:50',
             'paid_at' => 'nullable|date',
             'payment_intent_id' => 'nullable|string|max:255',

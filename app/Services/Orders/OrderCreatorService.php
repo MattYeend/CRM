@@ -19,6 +19,8 @@ class OrderCreatorService
         $user = $request->user();
         $data = $request->validated();
 
+        $user->createOrGetStripeCustomer();
+
         $data['created_by'] = $user->id;
         $data['created_at'] = now();
 

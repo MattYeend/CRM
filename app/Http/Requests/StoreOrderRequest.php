@@ -73,7 +73,7 @@ class StoreOrderRequest extends FormRequest
     {
         return [
             'amount' => 'required|numeric|min:0',
-            'currency' => 'required|string|max:3',
+            'currency' => 'required|string|size:3',
             'payment_method' => 'nullable|string|max:50',
             'paid_at' => 'nullable|date',
             'payment_intent_id' => 'nullable|string|max:255',

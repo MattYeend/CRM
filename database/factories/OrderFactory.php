@@ -21,13 +21,16 @@ class OrderFactory extends Factory
 
         return [
             'user_id' => User::factory(),
-            'amount' => $amount,
-            'currency' => fake()->randomElement(['USD', 'GBP', 'EUR']),
+            'deal_id' => null, 
+            'amount' => fake()->randomFloat(2, 50, 1000),
+            'currency' => fake()->randomElement(['GBP', 'USD', 'EUR']),
             'status' => fake()->randomElement(['pending', 'paid', 'failed']),
             'payment_method' => fake()->optional()->randomElement(['card', 'paypal', 'stripe']),
             'paid_at' => fake()->optional()->dateTimeBetween('-1 month', 'now'),
             'payment_intent_id' => fake()->uuid(),
             'charge_id' => fake()->uuid(),
+            'stripe_payment_intent' => fake()->uuid(),
+            'stripe_invoice_id' => fake()->uuid(),
             'meta' => [],
             'created_by' => User::factory(),
             'updated_by' => User::factory(),

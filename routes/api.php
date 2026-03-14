@@ -11,6 +11,7 @@ use App\Http\Controllers\JobTitleController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\LearningController;
 use App\Http\Controllers\NoteController;
+use App\Http\Controllers\OrderCheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PipelineController;
@@ -375,4 +376,14 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         'job-titles/{id}/restore',
         [JobTitleController::class, 'restore']
     )->name('job-titles.restore');
+
+    /**
+     * ----------------------------------------------------------
+     * -------------------- Order Checkout ----------------------
+     * ----------------------------------------------------------
+     */
+    Route::get(
+        '/orders/{order}/checkout',
+        [OrderCheckoutController::class, 'checkout']
+    )->name('orders.checkout');
 });
