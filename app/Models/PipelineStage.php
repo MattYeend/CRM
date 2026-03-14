@@ -15,6 +15,17 @@ class PipelineStage extends Model
     use HasFactory, SoftDeletes;
 
     /**
+     * Constants
+     */
+    public const TYPE_OPEN = 'open';
+    public const TYPE_WON = 'won';
+    public const TYPE_LOST = 'lost';
+    public const IS_WON_STAGE = true;
+    public const NOT_WON_STAGE = false;
+    public const IS_LOST_STAGE = true;
+    public const NOT_LOST_STAGE = false;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -78,7 +89,7 @@ class PipelineStage extends Model
      */
     public function scopeWon($query): Builder
     {
-        return $query->where('is_won_stage', true);
+        return $query->where('is_won_stage', self::IS_WON_STAGE);
     }
 
     /**
@@ -90,7 +101,7 @@ class PipelineStage extends Model
      */
     public function scopeLost($query): Builder
     {
-        return $query->where('is_lost_stage', true);
+        return $query->where('is_lost_stage', self::IS_LOST_STAGE);
     }
 
     /**
@@ -102,8 +113,8 @@ class PipelineStage extends Model
      */
     public function scopeOpen($query): Builder
     {
-        return $query->where('is_won_stage', false)
-            ->where('is_lost_stage', false);
+        return $query->where('is_won_stage', self::NOT_WON_STAGE)
+            ->where('is_lost_stage', self::NOT_LOST_STAGE);
     }
 
     /**
