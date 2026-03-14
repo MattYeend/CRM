@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\PipelineStage;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StorePipelineStageRequest extends FormRequest
 {
@@ -50,8 +51,20 @@ class StorePipelineStageRequest extends FormRequest
     {
         return [
             'position' => 'nullable|integer',
-            'is_won_stage' => 'nullable|boolean',
-            'is_lost_stage' => 'nullable|boolean',
+            'is_won_stage' => [
+                'nullable',
+                Rule::in([
+                    PipelineStage::IS_WON_STAGE,
+                    PipelineStage::NOT_WON_STAGE,
+                ]),
+            ],
+            'is_lost_stage' => [
+                'nullable',
+                Rule::in([
+                    PipelineStage::IS_LOST_STAGE,
+                    PipelineStage::NOT_LOST_STAGE,
+                ]),
+            ],
         ];
     }
 }
