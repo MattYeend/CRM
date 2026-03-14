@@ -14,7 +14,13 @@ use Illuminate\Routing\Middleware\ThrottleRequests;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    Http::fake();
+    Http::fake([
+        'https://api.stripe.com/*' => Http::response([
+            'id' => 'cus_test_123',
+            'object' => 'customer',
+        ], 200),
+    ]);
+
     $this->auth = User::factory()->create();
 
     $permissions = [
