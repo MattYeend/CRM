@@ -9,11 +9,12 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Middleware\ThrottleRequests;
+use Laravel\Cashier\Cashier;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-
+    Cashier::fake();
     $this->auth = User::factory()->create();
 
     $permissions = [
