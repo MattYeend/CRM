@@ -55,11 +55,7 @@ class StoreActivityRequest extends FormRequest
                 'nullable',
                 Rule::in(['deal','contact','company', 'task', 'user']),
             ],
-            'subject_id' => [
-                'nullable',
-                'integer',
-                'required_with:subject_type',
-            ],
+            'subject_id' => 'nullable|integer|required_with:subject_type',
         ];
     }
 

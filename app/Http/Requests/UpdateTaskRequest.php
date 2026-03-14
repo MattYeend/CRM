@@ -41,11 +41,7 @@ class UpdateTaskRequest extends FormRequest
         return [
             'title' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
-            'assigned_to' => [
-                'nullable',
-                'integer',
-                'exists:users,id',
-            ],
+            'assigned_to' => 'nullable|integer|exists:users,id',
         ];
     }
 
@@ -59,7 +55,11 @@ class UpdateTaskRequest extends FormRequest
         return [
             'priority' => [
                 'nullable',
-                Rule::in(['low', 'medium', 'high']),
+                Rule::in([
+                    Task::PRIORITY_LOW,
+                    Task::PRIORITY_MEDIUM,
+                    Task::PRIORITY_HIGH,
+                ]),
             ],
             'status' => [
                 'nullable',

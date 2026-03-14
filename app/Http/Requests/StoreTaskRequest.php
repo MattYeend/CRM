@@ -40,7 +40,7 @@ class StoreTaskRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'assigned_to' => ['nullable', 'integer', 'exists:users,id'],
+            'assigned_to' => 'nullable|integer|exists:users,id',
         ];
     }
 
@@ -56,11 +56,7 @@ class StoreTaskRequest extends FormRequest
                 'required',
                 Rule::in(['deal', 'contact', 'company', 'task', 'user']),
             ],
-            'taskable_id' => [
-                'required',
-                'integer',
-                'required_with:taskable_type',
-            ],
+            'taskable_id' => 'required|integer|required_with:taskable_type',
         ];
     }
 
