@@ -38,10 +38,6 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         'users/{id}/restore',
         [UserController::class, 'restore']
     )->name('users.restore');
-    Route::delete(
-        'users/{id}/force',
-        [UserController::class, 'forceDelete']
-    )->name('users.forceDelete');
     Route::post(
         'users/{user}/roles',
         [UserController::class, 'attachRoles']

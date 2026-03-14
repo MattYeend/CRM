@@ -49,22 +49,4 @@ class UserDestructorService
 
         return $user;
     }
-
-    /**
-     * Force-delete a user and remove avatar if present.
-     *
-     * @param int $id
-     *
-     * @return void
-     */
-    public function forceDelete(int $id): void
-    {
-        $user = User::withTrashed()->findOrFail($id);
-
-        if ($user->avatar) {
-            Storage::disk('public')->delete($user->avatar);
-        }
-
-        $user->forceDelete();
-    }
 }

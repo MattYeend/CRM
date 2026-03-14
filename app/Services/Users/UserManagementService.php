@@ -90,18 +90,6 @@ class UserManagementService
     }
 
     /**
-     * Permanently delete a user.
-     *
-     * @param int $id
-     *
-     * @return void
-     */
-    public function forceDelete(int $id): void
-    {
-        $this->destructor->forceDelete($id);
-    }
-
-    /**
      * Attach roles to a user without detaching existing ones.
      *
      * @param Request $request

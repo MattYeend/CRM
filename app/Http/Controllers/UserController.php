@@ -173,30 +173,6 @@ class UserController extends Controller
     }
 
     /**
-     * Permanently delete the specified user from storage.
-     *
-     * @param int $id
-     *
-     * @return JsonResponse
-     */
-    public function forceDelete($id): JsonResponse
-    {
-        $user = User::withTrashed()->find((int) $id);
-
-        $auth = auth()->user();
-
-        $this->logger->userForceDeleted(
-            $auth,
-            $auth->id,
-            $user,
-        );
-
-        $this->management->forceDelete((int) $id);
-
-        return response()->json(null, 204);
-    }
-
-    /**
      * Attach roles to the specified user without detaching existing ones.
      *
      * @param Request $request

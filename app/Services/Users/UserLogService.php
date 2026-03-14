@@ -168,37 +168,6 @@ class UserLogService
     }
 
     /**
-     * Log the force deletion of a User.
-     *
-     * @param User|null $actor The user that force deleted the user (nullable).
-     *
-     * @param int|null $actorId The ID of the user who performed the
-     * action (nullable).
-     *
-     * @param User|null $user The user being logged.
-     *
-     * @return array The force deleted log payload.
-     */
-    public function userForceDeleted(
-        ?User $actor,
-        ?int $actorId,
-        ?User $user
-    ): array {
-        $data = $this->baseUserData($user) + [
-            'force_deleted_at' => now(),
-            'force_deleted_by' => $actor?->name,
-        ];
-
-        Log::log(
-            Log::ACTION_USER_FORCED_DELETED,
-            $data,
-            $actorId,
-        );
-
-        return $data;
-    }
-
-    /**
      * Prepare base user data for logging.
      *
      * Accepts nullable User and returns a safe array even when the

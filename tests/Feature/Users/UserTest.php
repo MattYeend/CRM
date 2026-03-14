@@ -189,21 +189,6 @@ test('restore calls management service and returns restored user', function () {
     $response->assertJsonFragment(['id' => 77, 'name' => 'Restored']);
 });
 
-test('forceDelete calls management service and returns 204', function () {
-    $managementMock = Mockery::mock(UserManagementService::class);
-
-    $managementMock->shouldReceive('forceDelete')
-        ->once()
-        ->with(123)
-        ->andReturnNull();
-
-    $this->app->instance(UserManagementService::class, $managementMock);
-
-    $response = $this->deleteJson(route('users.forceDelete', 123));
-
-    $response->assertStatus(204);
-});
-
 test('attachRoles calls management service and returns user with roles (controller call)', function () {
     // Create an existing user to pass to controller
     $existing = User::factory()->create();
