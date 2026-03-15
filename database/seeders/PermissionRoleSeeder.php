@@ -114,7 +114,6 @@ class PermissionRoleSeeder extends Seeder
             'learnings.create',
             'learnings.update.any',
             'learnings.delete.any',
-            'learnings.manage',
             'learnings.access',
             'learnings.complete.any',
             'learnings.incomplete.any',
@@ -151,7 +150,6 @@ class PermissionRoleSeeder extends Seeder
             'pipelines.create',
             'pipelines.update.any',
             'pipelines.delete.any',
-            'pipelines.manage',
             'pipelines.assign',
             'pipelines.restore.any',
 
@@ -161,7 +159,6 @@ class PermissionRoleSeeder extends Seeder
             'pipelineStages.update.any',
             'pipelineStages.delete.any',
             'pipelineStages.assign',
-            'pipelineStages.manage',
             'pipelineStages.restore.any',
 
             'products.view.all',
@@ -205,7 +202,6 @@ class PermissionRoleSeeder extends Seeder
             'users.delete.any',
             'users.assign.roles',
             'users.assign.permissions',
-            'users.manage',
             'users.restore.any',
         ];
 
