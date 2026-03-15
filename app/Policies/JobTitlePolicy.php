@@ -82,6 +82,10 @@ class JobTitlePolicy
      */
     public function update(User $user, JobTitle $jobTitle): bool
     {
+        if ($jobTitle->users()->exists()) {
+            return false;
+        }
+
         return $this->anyOrOwn(
             $user,
             $jobTitle,
@@ -101,6 +105,10 @@ class JobTitlePolicy
      */
     public function delete(User $user, JobTitle $jobTitle): bool
     {
+        if ($jobTitle->users()->exists()) {
+            return false;
+        }
+
         return $this->anyOrOwn(
             $user,
             $jobTitle,

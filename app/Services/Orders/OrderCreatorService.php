@@ -19,7 +19,7 @@ class OrderCreatorService
         $user = $request->user();
         $data = $request->validated();
 
-        if (!app()->runningUnitTests()) {
+        if (! app()->runningUnitTests()) {
             $user->createOrGetStripeCustomer();
         }
         $data['created_by'] = $user->id;

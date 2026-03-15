@@ -41,7 +41,7 @@ class StoreJobTitleRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('job_titles', 'string'),
+                Rule::unique('job_titles', 'title'),
             ],
             'short_code' => 'required|string|max:255',
             'group' => 'nullable|string|max:255',

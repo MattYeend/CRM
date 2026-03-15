@@ -44,7 +44,7 @@ class UpdateJobTitleRequest extends FormRequest
                 'sometimes',
                 'string',
                 'max:255',
-                Rule::unique('job_titles', 'string')->ignore($jobTitle),
+                Rule::unique('job_titles', 'title')->ignore($jobTitle),
             ],
             'short_code' => 'sometimes|string|max:255',
             'group' => 'nullable|string|max:255',
