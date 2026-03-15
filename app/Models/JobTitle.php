@@ -35,6 +35,14 @@ class JobTitle extends Model
     public const TITLE_DIR = 'Director';
     public const TITLE_SR_DIR = 'Senior Director';
 
+    public const TITLE_TECH_DIR = 'Technical Director';
+    public const TITLE_SALES_DIR = 'Sales Director';
+    public const TITLE_MKT_DIR = 'Marketing Director';
+    public const TITLE_FIN_DIR = 'Finance Director';
+    public const TITLE_HR_DIR = 'HR Director';
+    public const TITLE_OPS_DIR = 'Operations Director';
+    public const TITLE_SUPPORT_DIR = 'Support Director';
+
     public const GROUP_C_SUITE = [
         self::TITLE_CEO,
         self::TITLE_CTO,
@@ -56,6 +64,19 @@ class JobTitle extends Model
         self::TITLE_MD,
         self::TITLE_DIR,
         self::TITLE_SR_DIR,
+    ];
+
+    public const GROUP_DIRS = [
+        self::TITLE_MD,
+        self::TITLE_DIR,
+        self::TITLE_SR_DIR,
+        self::TITLE_TECH_DIR,
+        self::TITLE_SALES_DIR,
+        self::TITLE_MKT_DIR,
+        self::TITLE_FIN_DIR,
+        self::TITLE_HR_DIR,
+        self::TITLE_OPS_DIR,
+        self::TITLE_SUPPORT_DIR,
     ];
 
     /**
