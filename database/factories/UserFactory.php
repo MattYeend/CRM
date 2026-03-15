@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
 use App\Models\JobTitle;
 use App\Models\Role;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -34,6 +33,7 @@ class UserFactory extends Factory
             'phone' => fake()->optional()->phoneNumber(),
             'avatar' => null,
             'job_title_id' => JobTitle::inRandomOrder()->first()?->id, 
+            'role_id' => Role::inRandomOrder()->first()?->id,
         ];
     }
 
@@ -61,32 +61,6 @@ class UserFactory extends Factory
             'two_factor_recovery_codes' => null,
             'two_factor_confirmed_at' => null,
         ]);
-    }
-
-    /**
-     * Attach one or more roles.
-     *
-     * @param int $count
-     *
-     * @return static
-     */
-    public function withRoles(int $count = 1): static
-    {
-        return $this->hasAttached(
-            Role::factory()->count($count)
-        );
-    }
-
-    /**
-     * Attach a specific role instance.
-     *
-     * @param Role $role
-     *
-     * @return static
-     */
-    public function withRole(Role $role): static
-    {
-        return $this->hasAttached($role);
     }
 
     /**

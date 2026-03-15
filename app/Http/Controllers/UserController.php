@@ -171,36 +171,4 @@ class UserController extends Controller
 
         return response()->json($user);
     }
-
-    /**
-     * Attach roles to the specified resource without detaching existing ones.
-     *
-     * @param Request $request
-     *
-     * @param User $user
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function attachRoles(Request $request, User $user): JsonResponse
-    {
-        $user = $this->management->attachRoles($request, $user);
-
-        return response()->json($user);
-    }
-
-    /**
-     * Detach roles from the specified resource.
-     *
-     * @param Request $request
-     *
-     * @param User $user
-     *
-     * @return JsonResponse
-     */
-    public function detachRoles(Request $request, User $user): JsonResponse
-    {
-        $user = $this->management->detachRoles($request, $user);
-
-        return response()->json($user);
-    }
 }

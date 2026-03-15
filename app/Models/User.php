@@ -41,6 +41,7 @@ class User extends Authenticatable
         'phone',
         'avatar',
         'job_title_id',
+        'role_id',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -70,25 +71,11 @@ class User extends Authenticatable
     /**
      * The roles that belong to the user.
      *
-     * @return BelongsToMany
+     * @return BelongsTo
      */
-    public function roles(): BelongsToMany
+    public function role(): BelongsTo
     {
-        return $this->belongsToMany(Role::class)->withTimestamps();
-    }
-
-    /**
-     * Attach roles to the user for testing purposes.
-     *
-     * @param int $count
-     *
-     * @return static
-     */
-    public function withRoles(int $count = 1): static
-    {
-        return $this->hasAttached(
-            Role::factory()->count($count)
-        );
+        return $this->belongsTo(Role::class);
     }
 
     /**
@@ -98,10 +85,9 @@ class User extends Authenticatable
      */
     public function permissions(): Collection
     {
-        return $this->roles
-            ->load('permissions')
-            ->flatMap(fn ($role) => $role->permissions->pluck('name'))
-            ->unique();
+        return $this->role
+            ? $this->role->permissions->pluck('name')->unique()
+            : collect();
     }
 
     /**
@@ -139,10 +125,15 @@ class User extends Authenticatable
      */
     public function hasRole(int|string $role): bool
     {
-        return $this->roles()
-            ->when(is_int($role), fn ($q) => $q->where('roles.id', $role))
-            ->when(is_string($role), fn ($q) => $q->where('roles.name', $role))
-            ->exists();
+        if (! $this->role) {
+            return false;
+        }
+
+        if (is_int($role)) {
+            return $this->role->id === $role;
+        }
+
+        return $this->role->name === $role;
     }
 
     /**

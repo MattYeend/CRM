@@ -5,24 +5,20 @@ namespace App\Services\Users;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
 
 class UserManagementService
 {
     private UserCreatorService $creator;
     private UserUpdaterService $updater;
-    private UserRolesManagerService $rolesManager;
     private UserDestructorService $destructor;
 
     public function __construct(
         UserCreatorService $creator,
         UserUpdaterService $updater,
-        UserRolesManagerService $rolesManager,
         UserDestructorService $destructor,
     ) {
         $this->creator = $creator;
         $this->updater = $updater;
-        $this->rolesManager = $rolesManager;
         $this->destructor = $destructor;
     }
 
@@ -36,9 +32,6 @@ class UserManagementService
     public function store(StoreUserRequest $request): User
     {
         $user = $this->creator->create($request);
-
-        $data = $request->validated();
-        $this->rolesManager->syncIfProvided($user, $data);
 
         return $user->load('roles');
     }
@@ -55,12 +48,6 @@ class UserManagementService
     public function update(UpdateUserRequest $request, User $user): User
     {
         $user = $this->updater->update($request, $user);
-
-        // sync roles if present
-        $data = $request->all();
-        if (array_key_exists('roles', $data)) {
-            $user->roles()->sync($data['roles'] ?? []);
-        }
 
         return $user->load('roles');
     }
@@ -87,33 +74,5 @@ class UserManagementService
     public function restore(int $id): User
     {
         return $this->destructor->restore($id);
-    }
-
-    /**
-     * Attach roles to a user without detaching existing ones.
-     *
-     * @param Request $request
-     *
-     * @param User $user
-     *
-     * @return User
-     */
-    public function attachRoles(Request $request, User $user): User
-    {
-        return $this->rolesManager->attach($request, $user)->load('roles');
-    }
-
-    /**
-     * Detach roles from a user.
-     *
-     * @param Request $request
-     *
-     * @param User $user
-     *
-     * @return User
-     */
-    public function detachRoles(Request $request, User $user): User
-    {
-        return $this->rolesManager->detach($request, $user)->load('roles');
     }
 }

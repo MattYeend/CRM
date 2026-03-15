@@ -32,7 +32,7 @@ class UserQueryService
             min((int) $request->query('per_page', 10), 100)
         );
 
-        $query = User::with('roles');
+        $query = User::with('role');
 
         $this->trashFilter->applyTrashFilters($query, $request);
         $this->sorting->applySorting($query, $request);
@@ -49,6 +49,6 @@ class UserQueryService
      */
     public function show(User $user): User
     {
-        return $user->load('roles');
+        return $user->load('role');
     }
 }

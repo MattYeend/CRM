@@ -4,11 +4,18 @@ namespace App\Services\Users;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 
 class UserUpdaterService
 {
+    public function __construct(
+        private UserPasswordUpdater $passwordUpdater,
+        private UserAvatarUpdater $avatarUpdater,
+        private UserRoleUpdater $roleUpdater,
+    ) {
+        $this->passwordUpdater = $passwordUpdater;
+        $this->avatarUpdater = $avatarUpdater;
+        $this->roleUpdater = $roleUpdater;
+    }
     /**
      * Update the user using request data.
      *
@@ -22,62 +29,15 @@ class UserUpdaterService
     {
         $data = $request->validated();
 
-        $this->preparePasswordForSave($data);
-        $this->handleAvatarForUpdate($request, $user, $data);
+        $this->roleUpdater->update($user, $data);
+        $this->passwordUpdater->handle($data);
+        $this->avatarUpdater->handle($request, $user, $data);
 
-        $data['updated_by'] = $user->id;
+        $data['updated_by'] = auth()->id();
         $data['updated_at'] = now();
 
         $user->update($data);
 
         return $user->fresh();
-    }
-
-    /**
-     * Prepare password for saving: hash if provided, remove if empty.
-     *
-     * @param array $data
-     *
-     * @return void
-     */
-    private function preparePasswordForSave(array & $data): void
-    {
-        if (! array_key_exists('password', $data)) {
-            return;
-        }
-
-        if ($data['password']) {
-            $data['password'] = Hash::make($data['password']);
-            return;
-        }
-
-        unset($data['password']);
-    }
-
-    /**
-     * Handle avatar upload and deletion on update.
-     *
-     * @param Request $request
-     *
-     * @param User $user
-     *
-     * @param array $data
-     *
-     * @return void
-     */
-    private function handleAvatarForUpdate(
-        Request $request,
-        User $user,
-        array & $data
-    ): void {
-        if (! $request->hasFile('avatar')) {
-            return;
-        }
-
-        if ($user->avatar) {
-            Storage::disk('public')->delete($user->avatar);
-        }
-
-        $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
     }
 }

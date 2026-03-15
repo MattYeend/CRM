@@ -39,14 +39,6 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         'users/{id}/restore',
         [UserController::class, 'restore']
     )->name('users.restore');
-    Route::post(
-        'users/{user}/roles',
-        [UserController::class, 'attachRoles']
-    )->name('users.roles.attach');
-    Route::delete(
-        'users/{user}/roles',
-        [UserController::class, 'detachRoles']
-    )->name('users.roles.detach');
 
     Route::apiResource('roles', RoleController::class)->only(['index', 'show']);
     Route::post(

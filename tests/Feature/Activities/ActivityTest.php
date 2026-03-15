@@ -28,8 +28,11 @@ beforeEach(function () {
     $role = Role::factory()->create(['name' => 'admin']);
     $role->permissions()->sync($permissionModels->pluck('id'));
     
-    // Attach role to user — this was missing
-    $this->auth->roles()->sync([$role->id]);
+    // Attach role to user
+    $this->auth->update([
+        'role_id' => $role->id
+    ]);
+
     $this->actingAs($this->auth, 'sanctum');
     $this->withoutMiddleware(ThrottleRequests::class);
 });

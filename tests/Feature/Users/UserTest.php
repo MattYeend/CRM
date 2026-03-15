@@ -36,7 +36,9 @@ beforeEach(function () {
     $role->permissions()->sync($permissionModels->pluck('id'));
 
     // Attach role to the user
-    $this->auth->roles()->sync([$role->id]);
+    $this->auth->update([
+        'role_id' => $role->id
+    ]);
 
     // Authenticate the user
     $this->actingAs($this->auth, 'sanctum');
@@ -78,7 +80,7 @@ test('show calls query service and returns single user', function () {
     $queryServiceMock->shouldReceive('show')
         ->once()
         ->with(Mockery::on(fn($arg) => $arg instanceof User && $arg->id === $user->id))
-        ->andReturn($user->load('roles'));
+        ->andReturn($user->load('role'));
 
     $this->app->instance(UserQueryService::class, $queryServiceMock);
 
@@ -86,7 +88,7 @@ test('show calls query service and returns single user', function () {
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $user->id, 'name' => 'Bob']);
-    $response->assertJsonStructure(['id', 'name', 'email', 'roles']);
+    $response->assertJsonStructure(['id', 'name', 'email', 'role']);
 });
 
 test('store calls management service and returns 201 with user', function () {
@@ -187,83 +189,4 @@ test('restore calls management service and returns restored user', function () {
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => 77, 'name' => 'Restored']);
-});
-
-test('attachRoles calls management service and returns user with roles (controller call)', function () {
-    // Create an existing user to pass to controller
-    $existing = User::factory()->create();
-
-    $managementMock = Mockery::mock(UserManagementService::class);
-
-    // Return a User model instance that includes roles on ->toArray()
-    $userWithRoles = User::factory()->make([
-        'id' => $existing->id,
-        'name' => $existing->name,
-        'email' => $existing->email,
-    ]);
-
-    // attach 'roles' attribute so JSON response contains roles
-    $userWithRoles->setAttribute('roles', [['id' => 1, 'name' => 'admin']]);
-
-    $managementMock->shouldReceive('attachRoles')
-        ->once()
-        ->with(Mockery::type(Request::class), Mockery::on(function ($arg) use ($existing) {
-            return $arg instanceof User && $arg->id === $existing->id;
-        }))
-        ->andReturn($userWithRoles);
-
-    $this->app->instance(UserManagementService::class, $managementMock);
-
-    // Build a request payload for roles
-    $payload = ['roles' => [1]];
-
-    // Resolve a controller instance so non-static method can be called
-    $controller = $this->app->make(UserController::class);
-
-    // Call the controller method via container to resolve method dependencies
-    $response = $this->app->call(
-        [$controller, 'attachRoles'],
-        ['request' => new Request($payload), 'user' => $existing]
-    );
-
-    $this->assertEquals(200, $response->getStatusCode());
-    $content = json_decode($response->getContent(), true);
-    $this->assertEquals($existing->id, $content['id']);
-    $this->assertEquals([['id' => 1, 'name' => 'admin']], $content['roles']);
-});
-
-test('detachRoles calls management service and returns user without those roles (controller call)', function () {
-    $existing = User::factory()->create();
-
-    $managementMock = Mockery::mock(UserManagementService::class);
-
-    $userNoRoles = User::factory()->make([
-        'id' => $existing->id,
-        'name' => $existing->name,
-        'email' => $existing->email,
-    ]);
-    $userNoRoles->setAttribute('roles', []);
-
-    $managementMock->shouldReceive('detachRoles')
-        ->once()
-        ->with(Mockery::type(Request::class), Mockery::on(function ($arg) use ($existing) {
-            return $arg instanceof User && $arg->id === $existing->id;
-        }))
-        ->andReturn($userNoRoles);
-
-    $this->app->instance(UserManagementService::class, $managementMock);
-
-    $payload = ['roles' => [1]];
-
-    $controller = $this->app->make(UserController::class);
-
-    $response = $this->app->call(
-        [$controller, 'detachRoles'],
-        ['request' => new Request($payload), 'user' => $existing]
-    );
-
-    $this->assertEquals(200, $response->getStatusCode());
-    $content = json_decode($response->getContent(), true);
-    $this->assertEquals($existing->id, $content['id']);
-    $this->assertEquals([], $content['roles']);
 });

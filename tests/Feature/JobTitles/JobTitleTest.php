@@ -31,7 +31,9 @@ beforeEach(function () {
     $role->permissions()->sync($permissionModels->pluck('id'));
 
     // Attach role to user
-    $this->auth->roles()->sync([$role->id]);
+    $this->auth->update([
+        'role_id' => $role->id
+    ]);
 
     // Authenticate user
     $this->actingAs($this->auth, 'sanctum');
