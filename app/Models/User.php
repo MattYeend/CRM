@@ -79,6 +79,36 @@ class User extends Authenticatable
     }
 
     /**
+     * Super admin user role
+     *
+     * @return bool
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->role_id === Role::ROLE_SUPER_ADMIN;
+    }
+
+    /**
+     * Admin user role
+     *
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role_id === Role::ROLE_ADMIN;
+    }
+
+    /**
+     * User role
+     *
+     * @return bool
+     */
+    public function isUser(): bool
+    {
+        return $this->role_id === Role::ROLE_USER;
+    }
+
+    /**
      * The permissions that belong to the user through roles.
      *
      * @return Collection
