@@ -13,6 +13,11 @@ A Laravel 12 CRM system
     4. [Information](#information)
         1. [Core Sales Flow](#core-sales-flow)
         2. [Leads](#leads)
+        3. [Deals](#deals)
+        4. [Pipelines and Stages](#pipelines-and-stages)
+        5. [Quotes](#quotes)
+        6. [Orders](#orders)
+        7. [Invoices](#invoices)
 3. [How To Setup](#how-to-setup)
 4. [How To Contribute](#how-to-contribute)
     1. [Commit Conventions](#commit-conventions)
@@ -101,6 +106,110 @@ Typical links:
     - Notes
     - Attachments
 These are attached using polymorphic relationships.
+
+### Deals
+`Deal`
+Deals represent active sales opportunities.
+
+Key relationships:
+- `company_id → Company`
+- `contact_id → Contact`
+- `owner_id → User`
+- `pipeline_id → Pipeline`
+- `stage_id → PipelineStage`
+A deal can have:
+- Products (many-to-many via `deal_products`)
+- Tasks (polymorphic)
+- Notes (polymorphic)
+- Attachments (polymorphic)
+- Activities (polymorphic)
+Example:
+```bash
+Deal
+ ├─ belongsTo Company
+ ├─ belongsTo Contact
+ ├─ belongsTo User (owner)
+ ├─ belongsTo Pipeline
+ ├─ belongsTo PipelineStage
+ ├─ belongsToMany Products
+ ├─ morphMany Tasks
+ ├─ morphMany Notes
+ ├─ morphMany Attachments
+ └─ morphMany Activities
+ ```
+
+### Pipelines and Stages
+Deals are organised inside pipelines.
+**Pipeline**
+Represents a sales pipeline.
+Example:
+```bash
+Sales Pipeline
+ ├─ Prospect
+ ├─ Qualified
+ ├─ Proposal
+ ├─ Negotiation
+ └─ Won
+ ```
+ **PipelineStage**
+ Each stage belongs to a pipeline.
+```bash
+Pipeline
+   └─ hasMany PipelineStages
+
+Deal
+   └─ belongsTo PipelineStage
+```
+
+### Quotes
+`Quote`
+Quotes represent proposed pricing before an order is placed.
+Quotes can contain:
+- Products (many-to-many via `quote_products`)
+- Pricing data
+- Associated company/contact
+- Activities / tasks / notes / attachments
+Typical flow:
+```bash
+Deal → Quote
+Quote → Products
+```
+
+### Orders
+`Order`
+Orders represent confirmed purchases.
+Relationships:
+- Products via `order_products`
+- Likely linked to:
+    - Company
+    - Contact
+    - Quote
+Example structure:
+```bash
+Order
+ ├─ belongsTo Company
+ ├─ belongsTo Contact
+ └─ belongsToMany Products
+```
+
+### Invoices
+`Invoice`
+Invoices represent billing documents.
+Invoices contain `InvoiceItems`, which store line items.
+```bash
+Invoice
+   └─ hasMany InvoiceItems
+```
+`InvoiceItem` includes
+```bash
+invoice_id
+product_id
+quantity
+price
+total
+```
+Typical flow:
+`Order → Invoice → InvoiceItems`
 
 ---
 
