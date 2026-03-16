@@ -10,6 +10,9 @@ A Laravel 12 CRM system
     3. [Key Functional Areas](#key-functional-areas)
         1. [CRM Features](#crm-features)
         2. [ERP Features](#erp-features)
+    4. [Information](#information)
+        1. [Core Sales Flow](#core-sales-flow)
+        2. [Leads](#leads)
 3. [How To Setup](#how-to-setup)
 4. [How To Contribute](#how-to-contribute)
     1. [Commit Conventions](#commit-conventions)
@@ -65,6 +68,39 @@ This project is an all-in-one CRM/ERP system designed to help businesses manage 
 - **Role-based access control** - Fine-grained permission system to control access to modules, actions, and sensitive data
 - **Workflow automation** - Automate repetitive processes such as status changes, notifications, and task creation based on business rules
 - **Reporting & dashboards** - Real-time insights into sales performance, revenue, pipeline health, and operational metrics
+
+---
+
+## Information
+
+### Core Sales Flow
+The typical lifecycle in the CRM looks like:
+```bash
+Lead
+   ↓
+Deal (in a Pipeline Stage)
+   ↓
+Quote
+   ↓
+Order
+   ↓
+Invoice
+```
+Products can be attached to deals, quotes, and orders via pivot tables.
+
+### Leads
+`Lead`
+Represents a potential customer before becoming a deal.
+
+Typical links:
+- May link to a Company
+- May link to a Contact
+- Can have:
+    - Activities
+    - Tasks
+    - Notes
+    - Attachments
+These are attached using polymorphic relationships.
 
 ---
 
