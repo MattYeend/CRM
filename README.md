@@ -18,6 +18,14 @@ A Laravel 12 CRM system
         5. [Quotes](#quotes)
         6. [Orders](#orders)
         7. [Invoices](#invoices)
+        8. [Products](#products)
+        9. [Activities](#activities)
+        10. [Tasks](#tasks)
+        11. [Attachments](#attachments)
+        12. [Notes](#notes)
+        13. [Users, Roles, and Permissions](#users-roles-and-permissions)
+        14. [Are Activities and Tasks the Same?](#are-activities-and-tasks-the-same)
+        15. [Relationship Overview Diagram](#relationship-overview-diagram)
 3. [How To Setup](#how-to-setup)
 4. [How To Contribute](#how-to-contribute)
     1. [Commit Conventions](#commit-conventions)
@@ -210,6 +218,218 @@ total
 ```
 Typical flow:
 `Order → Invoice → InvoiceItems`
+
+### Products
+`Product`
+Products represent goods or services that can be sold.
+Products are attached to multiple entities:
+```bash
+Product
+ ├─ belongsToMany Deals (deal_products)
+ ├─ belongsToMany Quotes (quote_products)
+ └─ belongsToMany Orders (order_products)
+```
+These pivot tables store:
+```bash
+quantity
+price
+total
+timestamps
+```
+
+### Activities
+`Activity`
+Activities are event logs or interactions related to a record.
+They are polymorphic using:
+```bash
+subject_type
+subject_id
+```
+Meaning activities can belong to:
+- Leads
+- Deals
+- Quotes
+- Orders
+- Companies
+- Contacts
+Example:
+```bash
+Activity
+   └─ morphTo subject
+```
+Examples of activities:
+- call made
+- email sent
+- meeting held
+- deal stage changed
+- note added
+
+### Tasks
+`Task`
+Tasks are actionable to-dos assigned to users.
+Tasks are also polymorphic:
+```bash
+taskable_type
+taskable_id
+```
+Meaning tasks can belong to:
+- Deals
+- Leads
+- Contacts
+- Companies
+Example:
+```bash
+Task
+   └─ morphTo taskable
+```
+
+### Attachments
+`Attachment`
+Attachments allow files to be uploaded to many entities.
+They use a polymorphic relationship:
+```bash
+attachable_type
+attachable_id
+```
+So attachments can belong to:
+- Deals
+- Leads
+- Contacts
+- Companies
+- Quotes
+- Orders
+Example:
+```bash
+Attachment
+   └─ morphTo attachable
+```
+
+### Notes
+`Note`
+Notes are internal comments.
+They use a polymorphic relationship:
+```bash
+notable_type
+notable_id
+```
+So notes can be attached to:
+- Deals
+- Leads
+- Contacts
+- Companies
+
+### Users, Roles, and Permissions
+Users
+`User`
+Users represent system accounts.
+Many records reference users for ownership and auditing.
+Examples:
+```bash
+owner_id
+created_by
+updated_by
+deleted_by
+restored_by
+```
+Example from the `Deal` model:
+```bash
+Deal
+ ├─ owner() → User
+ ├─ creator() → User
+ ├─ updater() → User
+ ├─ deleter() → User
+ └─ restorer() → User
+ ```
+
+Roles
+`Role`
+Roles group permissions.
+Example roles:
+- User
+- Admin
+- Super Admin
+Each User belongs to a single Role.
+```bash
+User
+   └─ belongsTo Role
+```
+This means:
+- One role can be assigned to many users
+- Each user can have only one role
+```bash
+Role
+   └─ hasMany Users
+```
+
+Permissions
+`Permission`
+Permissions define system capabilities.
+Examples:
+- create_deal
+- edit_invoice
+- delete_product
+Permissions are assigned to roles.
+`Role → belongsToMany Permissions`
+
+This creates a structure like:
+```bash
+User
+   ↓
+Roles
+   ↓
+Permissions
+```
+
+### Are Activities and Tasks the Same?
+No - they serve different purposes.
+Activities
+Activities represent things that happened.
+Examples:
+- Call logged
+- Meeting recorded
+- Email sent
+- Deal moved stage
+- They are historical records.
+Tasks
+Tasks represent things that need to be done.
+Examples:
+- Call customer tomorrow
+- Send proposal
+- Follow up next week
+
+### Relationship Overview Diagram
+```bash
+User
+ └─ Roles
+      └─ Permissions
+
+Company
+ └─ Contacts
+
+Lead
+ └─ Activities / Tasks / Notes / Attachments
+
+Deal
+ ├─ Company
+ ├─ Contact
+ ├─ Owner (User)
+ ├─ Pipeline
+ ├─ PipelineStage
+ ├─ Products
+ ├─ Activities
+ ├─ Tasks
+ ├─ Notes
+ └─ Attachments
+
+Quote
+ └─ Products
+
+Order
+ └─ Products
+
+Invoice
+ └─ InvoiceItems
+```
 
 ---
 
