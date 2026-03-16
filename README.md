@@ -15,6 +15,8 @@ A Laravel 12 CRM system
         2. [Leads](#leads)
         3. [Deals](#deals)
         4. [Pipelines and Stages](#pipelines-and-stages)
+            1. [Pipelines](#pipelines)
+            2. [PipelineStages](#pipelineStages)
         5. [Quotes](#quotes)
         6. [Orders](#orders)
         7. [Invoices](#invoices)
@@ -24,6 +26,9 @@ A Laravel 12 CRM system
         11. [Attachments](#attachments)
         12. [Notes](#notes)
         13. [Users, Roles, and Permissions](#users-roles-and-permissions)
+            1. [Users](#users)
+            2. [Roles](#roles)
+            3. [Permissions](#permissions)
         14. [Are Activities and Tasks the Same?](#are-activities-and-tasks-the-same)
         15. [Relationship Overview Diagram](#relationship-overview-diagram)
 3. [How To Setup](#how-to-setup)
@@ -103,9 +108,11 @@ Products can be attached to deals, quotes, and orders via pivot tables.
 
 ### Leads
 `Lead`
+
 Represents a potential customer before becoming a deal.
 
 Typical links:
+
 - May link to a Company
 - May link to a Contact
 - Can have:
@@ -113,10 +120,12 @@ Typical links:
     - Tasks
     - Notes
     - Attachments
+
 These are attached using polymorphic relationships.
 
 ### Deals
 `Deal`
+
 Deals represent active sales opportunities.
 
 Key relationships:
@@ -125,12 +134,14 @@ Key relationships:
 - `owner_id → User`
 - `pipeline_id → Pipeline`
 - `stage_id → PipelineStage`
+
 A deal can have:
 - Products (many-to-many via `deal_products`)
 - Tasks (polymorphic)
 - Notes (polymorphic)
 - Attachments (polymorphic)
 - Activities (polymorphic)
+
 Example:
 ```bash
 Deal
@@ -147,9 +158,13 @@ Deal
  ```
 
 ### Pipelines and Stages
+
 Deals are organised inside pipelines.
-**Pipeline**
+
+#### Pipelines
+
 Represents a sales pipeline.
+
 Example:
 ```bash
 Sales Pipeline
@@ -159,8 +174,10 @@ Sales Pipeline
  ├─ Negotiation
  └─ Won
  ```
- **PipelineStage**
- Each stage belongs to a pipeline.
+
+#### PipelineStages
+
+Each stage belongs to a pipeline.
 ```bash
 Pipeline
    └─ hasMany PipelineStages
@@ -171,12 +188,15 @@ Deal
 
 ### Quotes
 `Quote`
+
 Quotes represent proposed pricing before an order is placed.
+
 Quotes can contain:
 - Products (many-to-many via `quote_products`)
 - Pricing data
 - Associated company/contact
 - Activities / tasks / notes / attachments
+
 Typical flow:
 ```bash
 Deal → Quote
@@ -185,13 +205,16 @@ Quote → Products
 
 ### Orders
 `Order`
+
 Orders represent confirmed purchases.
+
 Relationships:
 - Products via `order_products`
 - Likely linked to:
     - Company
     - Contact
     - Quote
+
 Example structure:
 ```bash
 Order
@@ -202,12 +225,15 @@ Order
 
 ### Invoices
 `Invoice`
+
 Invoices represent billing documents.
+
 Invoices contain `InvoiceItems`, which store line items.
 ```bash
 Invoice
    └─ hasMany InvoiceItems
 ```
+
 `InvoiceItem` includes
 ```bash
 invoice_id
@@ -216,12 +242,15 @@ quantity
 price
 total
 ```
+
 Typical flow:
 `Order → Invoice → InvoiceItems`
 
 ### Products
 `Product`
+
 Products represent goods or services that can be sold.
+
 Products are attached to multiple entities:
 ```bash
 Product
@@ -229,6 +258,7 @@ Product
  ├─ belongsToMany Quotes (quote_products)
  └─ belongsToMany Orders (order_products)
 ```
+
 These pivot tables store:
 ```bash
 quantity
@@ -239,7 +269,9 @@ timestamps
 
 ### Activities
 `Activity`
+
 Activities are event logs or interactions related to a record.
+
 They are polymorphic using:
 ```bash
 subject_type
@@ -252,11 +284,13 @@ Meaning activities can belong to:
 - Orders
 - Companies
 - Contacts
+
 Example:
 ```bash
 Activity
    └─ morphTo subject
 ```
+
 Examples of activities:
 - call made
 - email sent
@@ -266,17 +300,21 @@ Examples of activities:
 
 ### Tasks
 `Task`
+
 Tasks are actionable to-dos assigned to users.
+
 Tasks are also polymorphic:
 ```bash
 taskable_type
 taskable_id
 ```
+
 Meaning tasks can belong to:
 - Deals
 - Leads
 - Contacts
 - Companies
+
 Example:
 ```bash
 Task
@@ -285,12 +323,15 @@ Task
 
 ### Attachments
 `Attachment`
+
 Attachments allow files to be uploaded to many entities.
+
 They use a polymorphic relationship:
 ```bash
 attachable_type
 attachable_id
 ```
+
 So attachments can belong to:
 - Deals
 - Leads
@@ -298,6 +339,7 @@ So attachments can belong to:
 - Companies
 - Quotes
 - Orders
+
 Example:
 ```bash
 Attachment
@@ -306,12 +348,15 @@ Attachment
 
 ### Notes
 `Note`
+
 Notes are internal comments.
+
 They use a polymorphic relationship:
 ```bash
 notable_type
 notable_id
 ```
+
 So notes can be attached to:
 - Deals
 - Leads
@@ -319,10 +364,13 @@ So notes can be attached to:
 - Companies
 
 ### Users, Roles, and Permissions
-Users
+#### Users
 `User`
+
 Users represent system accounts.
+
 Many records reference users for ownership and auditing.
+
 Examples:
 ```bash
 owner_id
@@ -331,6 +379,7 @@ updated_by
 deleted_by
 restored_by
 ```
+
 Example from the `Deal` model:
 ```bash
 Deal
@@ -341,13 +390,16 @@ Deal
  └─ restorer() → User
  ```
 
-Roles
+#### Roles
 `Role`
+
 Roles group permissions.
+
 Example roles:
 - User
 - Admin
 - Super Admin
+
 Each User belongs to a single Role.
 ```bash
 User
@@ -356,18 +408,22 @@ User
 This means:
 - One role can be assigned to many users
 - Each user can have only one role
+
 ```bash
 Role
    └─ hasMany Users
 ```
 
-Permissions
+#### Permissions
 `Permission`
+
 Permissions define system capabilities.
+
 Examples:
 - create_deal
 - edit_invoice
 - delete_product
+
 Permissions are assigned to roles.
 `Role → belongsToMany Permissions`
 
@@ -381,17 +437,24 @@ Permissions
 ```
 
 ### Are Activities and Tasks the Same?
+
 No - they serve different purposes.
-Activities
+
+**Activities**
+
 Activities represent things that happened.
+
 Examples:
 - Call logged
 - Meeting recorded
 - Email sent
 - Deal moved stage
 - They are historical records.
-Tasks
+
+**Tasks**
+
 Tasks represent things that need to be done.
+
 Examples:
 - Call customer tomorrow
 - Send proposal
