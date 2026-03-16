@@ -1,23 +1,23 @@
 <script setup lang="ts">
-    interface Role {
-        id: number
-        name: string
-    }
+interface Role {
+    id: number
+    name: string
+}
 
-    defineProps<{
-        roles: Role[]
-        modelValue: number | null
-    }>()
+defineProps<{
+    roles: Role[]
+    modelValue: number | null
+}>()
 
-    const emit = defineEmits<{
-        (e: 'update:modelValue', value: number | null): void
-    }>()
+const emit = defineEmits<{
+    (e: 'update:modelValue', value: number | null): void
+}>()
 
-    function handleChange(event: Event) {
-        const target = event.target as HTMLSelectElement
-        const value = target.value ? Number(target.value) : null
-        emit('update:modelValue', value)
-    }
+function handleChange(event: Event) {
+    const target = event.target as HTMLSelectElement
+    const value = target.value ? Number(target.value) : null
+    emit('update:modelValue', value)
+}
 </script>
 
 <template>

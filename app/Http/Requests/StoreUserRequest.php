@@ -57,8 +57,16 @@ class StoreUserRequest extends FormRequest
     private function roleRules(): array
     {
         return [
-            'roles' => 'nullable|array',
-            'roles.*' => 'integer|exists:roles,id',
+            'role_id' => [
+                'sometimes',
+                'integer',
+                Rule::exists('roles', 'id'),
+            ],
+            'job_title_id' => [
+                'sometimes',
+                'integer',
+                Rule::exists('job_titles', 'id'),
+            ],
         ];
     }
 }

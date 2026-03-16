@@ -33,7 +33,7 @@ class UserManagementService
     {
         $user = $this->creator->create($request);
 
-        return $user->load('roles');
+        return $user->load('role');
     }
 
     /**
@@ -49,7 +49,7 @@ class UserManagementService
     {
         $user = $this->updater->update($request, $user);
 
-        return $user->load('roles');
+        return $user->load('role');
     }
 
     /**

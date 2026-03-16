@@ -26,15 +26,21 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
-})->middleware('auth:sanctum');
+})->middleware(['web','auth:sanctum']);
 
-Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
+Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
     /**
      * ----------------------------------------------------------
      * -------------- Users, Roles, & Permissions ---------------
      * ----------------------------------------------------------
      */
-    Route::apiResource('users', UserController::class);
+    Route::apiResource('users', UserController::class)->names([
+        'index' => 'api.users.index',
+        'store' => 'api.users.store',
+        'show' => 'api.users.show',
+        'update' => 'api.users.update',
+        'destroy' => 'api.users.destroy',
+    ]);
     Route::post(
         'users/{id}/restore',
         [UserController::class, 'restore']

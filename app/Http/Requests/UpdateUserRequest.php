@@ -28,22 +28,6 @@ class UpdateUserRequest extends FormRequest
             $this->baseRules(),
             $this->roleRules(),
         );
-        $user = $this->route('user');
-
-        return [
-            'name' => 'sometimes|required|string|max:255',
-            'email' => [
-                'sometimes',
-                'required',
-                'email',
-                Rule::unique('users', 'email')->ignore($user),
-            ],
-            'password' => 'nullable|string|min:8|confirmed',
-            'phone' => 'nullable|string|max:25',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'roles' => 'nullable|array',
-            'roles.*' => 'integer|exists:roles,id',
-        ];
     }
 
     /**
@@ -60,7 +44,7 @@ class UpdateUserRequest extends FormRequest
             'email' => [
                 'sometimes',
                 'email',
-                Rule::unique('users', 'email')->ignore($user->id),
+                Rule::unique('users', 'email')->ignore($user),
             ],
             'password' => 'sometimes|string|min:8|confirmed',
             'phone' => 'nullable|string|max:25',
@@ -76,10 +60,15 @@ class UpdateUserRequest extends FormRequest
     private function roleRules(): array
     {
         return [
-            'roles' => 'nullable|array',
-            'roles.*' => [
+            'role_id' => [
+                'sometimes',
                 'integer',
                 Rule::exists('roles', 'id'),
+            ],
+            'job_title_id' => [
+                'sometimes',
+                'integer',
+                Rule::exists('job_titles', 'id'),
             ],
         ];
     }

@@ -9,10 +9,10 @@
 
     interface JobTitle {
         id: number
-        name: string
+        title: string
     }
-
-    defineProps<{
+    
+    const { form, roles, jobTitles } = defineProps<{
         form: any
         roles: Role[]
         jobTitles: JobTitle[]
@@ -32,13 +32,8 @@
         </div>
 
         <div>
-            <label class="block font-medium">Job Title</label>
-            <input v-model="form.job_title" class="border rounded w-full p-2"/>
-        </div>
-
-        <div>
             <label class="block font-medium">Role</label>
-            <UserRolesSelect
+            <UserRolesSelect 
                 v-model="form.role_id"
                 :roles="roles"
             />
@@ -48,7 +43,7 @@
             <label class="block font-medium">Job Title</label>
             <UserJobTitlesSelect
                 v-model="form.job_title_id"
-                :job-titles="jobTitles"
+                :jobTitles="jobTitles"
             />
         </div>
     </div>
