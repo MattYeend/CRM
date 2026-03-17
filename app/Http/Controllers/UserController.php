@@ -68,7 +68,7 @@ class UserController extends Controller
             'current_page' => $paginator->currentPage(),
             'last_page' => $paginator->lastPage(),
             'total' => $paginator->total(),
-    
+
             'permissions' => [
                 'create' => Gate::allows('create', User::class),
                 'viewAny' => Gate::allows('viewAny', User::class),

@@ -17,7 +17,7 @@ Route::get('dashboard', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/users', function () {
         return Inertia::render('Users/Index', [
-            'users' => User::with('role', 'jobTitle')->get()
+            'users' => User::with('role', 'jobTitle')->get(),
         ]);
     })->name('users.index');
 
@@ -30,7 +30,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/users/{user}', function (User $user) {
         return Inertia::render('Users/Show', [
-            'user' => $user->load('role', 'jobTitle')
+            'user' => $user->load('role', 'jobTitle'),
         ]);
     })->name('users.show');
 

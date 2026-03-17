@@ -34,35 +34,20 @@ class UserQueryService
         );
 
         $query = User::with('role', 'jobTitle');
-
         $this->trashFilter->applyTrashFilters($query, $request);
         $this->sorting->applySorting($query, $request);
 
         $paginator = $query->paginate($perPage)->appends($request->query());
 
-        $paginator->through(function ($user) {
-            return [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'avatar_url' => $user->avatar_url,
-                'job_title' => $user->jobTitle,
-                'role' => $user->role,
-    
-                'permissions' => [
-                    'view' => Gate::allows('view', $user),
-                    'update' => Gate::allows('update', $user),
-                    'delete' => Gate::allows('delete', $user),
-                ],
-            ];
-        });
+        $paginator->through(fn (User $user) => $this->formatUser($user));
+
         $paginator->appends([
             'permissions' => [
                 'create' => Gate::allows('create', User::class),
                 'viewAny' => Gate::allows('viewAny', User::class),
             ],
         ]);
-    
+
         return $paginator;
     }
 
@@ -75,6 +60,18 @@ class UserQueryService
      */
     public function show(User $user): array
     {
+        return $this->formatUser($user);
+    }
+
+    /**
+     * Format a user into an array with role, job title, and permissions.
+     *
+     * @param User $user
+     *
+     * @return array
+     */
+    private function formatUser(User $user): array
+    {
         return [
             'id' => $user->id,
             'name' => $user->name,
@@ -82,7 +79,6 @@ class UserQueryService
             'avatar_url' => $user->avatar_url,
             'job_title' => $user->jobTitle,
             'role' => $user->role,
-    
             'permissions' => [
                 'view' => Gate::allows('view', $user),
                 'update' => Gate::allows('update', $user),

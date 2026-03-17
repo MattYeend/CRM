@@ -67,7 +67,7 @@ test('index calls query service and returns list', function () {
 
     $this->app->instance(UserQueryService::class, $queryServiceMock);
 
-    $response = $this->getJson(route('users.index'));
+    $response = $this->getJson(route('api.users.index'));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['name' => 'Alice', 'email' => 'alice@example.test']);
@@ -80,11 +80,23 @@ test('show calls query service and returns single user', function () {
     $queryServiceMock->shouldReceive('show')
         ->once()
         ->with(Mockery::on(fn($arg) => $arg instanceof User && $arg->id === $user->id))
-        ->andReturn($user->load('role'));
+        ->andReturn([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'avatar_url' => $user->avatar_url,
+            'job_title' => $user->jobTitle,
+            'role' => $user->role,
+            'permissions' => [
+                'view' => true,
+                'update' => true,
+                'delete' => true,
+            ],
+        ]);
 
     $this->app->instance(UserQueryService::class, $queryServiceMock);
 
-    $response = $this->getJson(route('users.show', $user));
+    $response = $this->getJson(route('api.users.show', $user));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $user->id, 'name' => 'Bob']);
@@ -115,7 +127,7 @@ test('store calls management service and returns 201 with user', function () {
 
     $this->app->instance(UserManagementService::class, $managementMock);
 
-    $response = $this->postJson(route('users.store'), $payload);
+    $response = $this->postJson(route('api.users.store'), $payload);
 
     $response->assertStatus(201);
     $response->assertJsonFragment(['id' => 123, 'name' => 'New User', 'email' => 'new@example.test']);
@@ -144,7 +156,7 @@ test('update calls management service and returns updated user', function () {
 
     $this->app->instance(UserManagementService::class, $managementMock);
 
-    $response = $this->putJson(route('users.update', $existing), $updatePayload);
+    $response = $this->putJson(route('api.users.update', $existing), $updatePayload);
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $existing->id, 'name' => 'Updated Name']);
@@ -163,7 +175,7 @@ test('destroy calls management service and returns 204', function () {
 
     $this->app->instance(UserManagementService::class, $managementMock);
 
-    $response = $this->deleteJson(route('users.destroy', $existing));
+    $response = $this->deleteJson(route('api.users.destroy', $existing));
 
     $response->assertStatus(204);
 });
@@ -185,7 +197,7 @@ test('restore calls management service and returns restored user', function () {
 
     $this->app->instance(UserManagementService::class, $managementMock);
 
-    $response = $this->postJson(route('users.restore', 77));
+    $response = $this->postJson(route('api.users.restore', 77));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => 77, 'name' => 'Restored']);

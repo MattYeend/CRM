@@ -44,7 +44,7 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
     Route::post(
         'users/{id}/restore',
         [UserController::class, 'restore']
-    )->name('users.restore');
+    )->name('api.users.restore');
 
     Route::apiResource('roles', RoleController::class)->only(['index', 'show']);
     Route::post(
