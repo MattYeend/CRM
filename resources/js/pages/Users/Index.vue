@@ -4,6 +4,7 @@ import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
 import { ref, reactive, onMounted } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
+import { deleteUser } from '@/services/userService'
 import { fetchUsers } from '@/services/userService'
 
 // User interface
@@ -14,6 +15,7 @@ interface User {
     avatar_url?: string
     job_title?: { title: string }
     role?: { name: string }
+    permissions: UserPermissions
 }
 
 // Pagination interface
@@ -22,6 +24,22 @@ interface PaginationMeta {
     last_page: number
     total: number
 }
+
+interface GlobalPermissions {
+    create: boolean
+    viewAny: boolean
+}
+
+interface UserPermissions {
+    view: boolean
+    update: boolean
+    delete: boolean
+}
+
+const permissions = ref<GlobalPermissions>({
+    create: false,
+    viewAny: false,
+})
 
 const users = ref<User[]>([])
 const loading = ref(true)
@@ -46,6 +64,7 @@ async function loadUsers(page = 1) {
     try {
         const data = await fetchUsers(perPage, page)
         users.value = data.data
+        permissions.value = data.permissions
         pagination.current_page = data.current_page
         pagination.last_page = data.last_page
         pagination.total = data.total
@@ -53,6 +72,13 @@ async function loadUsers(page = 1) {
     } finally {
         loading.value = false
     }
+}
+
+async function handleDelete(id: number) {
+    if (!confirm('Are you sure?')) return
+
+    await deleteUser(id)
+    loadUsers(currentPage.value)
 }
 
 // Pagination navigation
@@ -72,8 +98,12 @@ onMounted(() => loadUsers())
         <div class="p-6">
             <div class="flex justify-between mb-6">
                 <h1 class="text-2xl font-bold">Users</h1>
-                <Link href="/users/create" class="bg-blue-600 text-white px-4 py-2 rounded">
-                Create
+                <Link
+                    v-if="permissions.create"
+                    href="/users/create"
+                    class="bg-blue-600 text-white px-4 py-2 rounded"
+                >
+                    Create
                 </Link>
             </div>
 
@@ -102,8 +132,26 @@ onMounted(() => loadUsers())
                         <td class="p-2">{{ user.job_title?.title || '—' }}</td>
                         <td class="p-2">{{ user.role?.name || '—' }}</td>
                         <td class="p-2 space-x-2">
-                            <Link :href="route('users.show', { user: user.id })">View</Link>
-                            <Link :href="route('users.edit', { user: user.id })">Edit</Link>
+                            <Link
+                                v-if="user.permissions.view"
+                                :href="route('users.show', { user: user.id })"
+                            >
+                                View
+                            </Link>
+
+                            <Link
+                                v-if="user.permissions.update"
+                                :href="route('users.edit', { user: user.id })"
+                            >
+                                Edit
+                            </Link>
+                            <button
+                                v-if="user.permissions.delete"
+                                @click="handleDelete(user.id)"
+                                class="text-red-600"
+                            >
+                                Delete
+                            </button>
                         </td>
                     </tr>
                 </tbody>

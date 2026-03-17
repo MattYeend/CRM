@@ -10,6 +10,7 @@ use App\Services\Users\UserManagementService;
 use App\Services\Users\UserQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
@@ -60,9 +61,19 @@ class UserController extends Controller
     {
         $this->authorize('viewAny', User::class);
 
-        $users = $this->query->list($request);
+        $paginator = $this->query->list($request);
 
-        return response()->json($users);
+        return response()->json([
+            'data' => $paginator->items(),
+            'current_page' => $paginator->currentPage(),
+            'last_page' => $paginator->lastPage(),
+            'total' => $paginator->total(),
+    
+            'permissions' => [
+                'create' => Gate::allows('create', User::class),
+                'viewAny' => Gate::allows('viewAny', User::class),
+            ],
+        ]);
     }
 
     /**

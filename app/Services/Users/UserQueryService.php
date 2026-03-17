@@ -5,6 +5,7 @@ namespace App\Services\Users;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 class UserQueryService
 {
@@ -37,7 +38,32 @@ class UserQueryService
         $this->trashFilter->applyTrashFilters($query, $request);
         $this->sorting->applySorting($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+
+        $paginator->through(function ($user) {
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'avatar_url' => $user->avatar_url,
+                'job_title' => $user->jobTitle,
+                'role' => $user->role,
+    
+                'permissions' => [
+                    'view' => Gate::allows('view', $user),
+                    'update' => Gate::allows('update', $user),
+                    'delete' => Gate::allows('delete', $user),
+                ],
+            ];
+        });
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', User::class),
+                'viewAny' => Gate::allows('viewAny', User::class),
+            ],
+        ]);
+    
+        return $paginator;
     }
 
     /**
@@ -45,10 +71,23 @@ class UserQueryService
      *
      * @param User $user
      *
-     * @return User
+     * @return array
      */
-    public function show(User $user): User
+    public function show(User $user): array
     {
-        return $user->load('role', 'jobTitle');
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'avatar_url' => $user->avatar_url,
+            'job_title' => $user->jobTitle,
+            'role' => $user->role,
+    
+            'permissions' => [
+                'view' => Gate::allows('view', $user),
+                'update' => Gate::allows('update', $user),
+                'delete' => Gate::allows('delete', $user),
+            ],
+        ];
     }
 }
