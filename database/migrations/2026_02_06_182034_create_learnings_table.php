@@ -16,12 +16,13 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->date('date')->nullable();
+            $table->boolean('is_test')->default(true);
+            $table->json('meta')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('restored_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('restored_at')->nullable();
-            $table->json('meta')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

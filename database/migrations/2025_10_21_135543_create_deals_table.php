@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('currency', 8)->default('USD');
             $table->date('close_date')->nullable();
             $table->enum('status', ['open','won','lost','archived'])->default('open');
+            $table->boolean('is_test')->default(true);
             $table->json('meta')->nullable();
             $table->unsignedBigInteger('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->unsignedBigInteger('updated_by')->nullable()->constrained('users')->nullOnDelete();

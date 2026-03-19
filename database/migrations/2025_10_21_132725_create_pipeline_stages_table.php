@@ -18,6 +18,8 @@ return new class extends Migration
             $table->integer('position')->default(0);
             $table->boolean('is_won_stage')->default(false);
             $table->boolean('is_lost_stage')->default(false);
+            $table->boolean('is_test')->default(true);
+            $table->json('meta')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();

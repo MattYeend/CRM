@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('short_code');
             $table->string('group')->nullable();
+            $table->boolean('is_test')->default(true);
             $table->json('meta')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();

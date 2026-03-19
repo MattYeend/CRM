@@ -20,6 +20,8 @@ return new class extends Migration
             $table->enum('priority', ['low','medium','high'])->default('medium');
             $table->enum('status', ['pending','completed','canceled'])->default('pending');
             $table->timestamp('due_at')->nullable();
+            $table->boolean('is_test')->default(true);
+            $table->json('meta')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
