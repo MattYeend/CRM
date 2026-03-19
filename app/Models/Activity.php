@@ -173,8 +173,10 @@ class Activity extends Model
      */
     public function getTestTypeAttribute(): string
     {
+        $type = class_basename($this->type);
+
         return $this->is_test
-            ? 'Test ' . $this->type
-            : $this->type;
+            ? "Test {$type}"
+            : $type;
     }
 }
