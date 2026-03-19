@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasTestPrefix;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +13,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use HasFactory, SoftDeletes;
+    /**
+     * @use HasFactory<\Database\Factories\ProductFactory>
+     * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
+     * @use HasTestPrefix<\App\Traits\HasTestPrefix>
+     */
+    use HasFactory,
+        SoftDeletes,
+        HasTestPrefix;
 
     /**
      * The attributes that are mass assignable.
@@ -180,5 +188,19 @@ class Product extends Model
             ->withPivot('quantity', 'price', 'meta', 'deleted_at')
             ->withTimestamps()
             ->using(OrderProduct::class);
+    }
+
+    /**
+     * Get the product name.
+     *
+     * Applies the test prefix when the product is marked as a test.
+     *
+     * @param  string|null  $value  The raw product name from the database.
+     *
+     * @return string
+     */
+    public function getNameAttribute($value): string
+    {
+        return $this->prefixTest($value);
     }
 }

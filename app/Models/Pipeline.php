@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasTestPrefix;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pipeline extends Model
 {
-    use HasFactory, SoftDeletes;
+    /**
+     * @use HasFactory<\Database\Factories\PipelineFactory>
+     * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
+     * @use HasTestPrefix<\App\Traits\HasTestPrefix>
+     */
+    use HasFactory,
+        SoftDeletes,
+        HasTestPrefix;
 
     /**
      * The attributes that are mass assignable.
@@ -160,5 +168,19 @@ class Pipeline extends Model
     public function notes(): MorphMany
     {
         return $this->morphMany(Note::class, 'notable');
+    }
+
+    /**
+     * Get the pipeline name.
+     *
+     * Applies the test prefix when the pipeline is marked as a test.
+     *
+     * @param  string|null  $value  The raw pipeline name from the database.
+     *
+     * @return string
+     */
+    public function getNameAttribute($value): string
+    {
+        return $this->prefixTest($value);
     }
 }

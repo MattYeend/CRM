@@ -14,7 +14,7 @@ class JobTitle extends Model
     /**
      * @use HasFactory<\Database\Factories\JobTitleFactory>
      * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
-     * @use HasTestPrifix<\App\Traits\HasTestPrefix>
+     * @use HasTestPrefix<\App\Traits\HasTestPrefix>
      */
     use HasFactory,
         SoftDeletes,

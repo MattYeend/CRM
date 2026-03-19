@@ -15,7 +15,7 @@ class Note extends Model
     /**
      * @use HasFactory<\Database\Factories\LearningFactory>
      * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
-     * @use HasTestPrifix<\App\Traits\HasTestPrefix>
+     * @use HasTestPrefix<\App\Traits\HasTestPrefix>
      */
     use HasFactory,
         SoftDeletes,
@@ -167,6 +167,8 @@ class Note extends Model
      * Get the note type.
      *
      * Applies the test prefix when the note is marked as a test.
+     *
+     * @param  string|null  $value  The raw note type from the database.
      *
      * @return string
      */

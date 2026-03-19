@@ -15,7 +15,7 @@ class Company extends Model
     /**
      * @use HasFactory<\Database\Factories\CompanyFactory>
      * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
-     * @use HasTestPrifix<\App\Traits\HasTestPrefix>
+     * @use HasTestPrefix<\App\Traits\HasTestPrefix>
      */
     use HasFactory,
         SoftDeletes,

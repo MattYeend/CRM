@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Traits\HasTestPrefix;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -19,13 +21,22 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /**
+     * @use HasFactory<\Database\Factories\UserFactory>
+     * @use Notifiable<\Illuminate\Notifications\Notifiable>
+     * @use TwoFactorAuthenticatable<\Laravel\Fortify\TwoFactorAuthenticatable>
+     * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
+     * @use HasApiTokens<\Laravel\Sanctum\HasApiTokens>
+     * @use Billable<\Laravel\Cashier\Billable>
+     * @use HasTestPrefix<\App\Traits\HasTestPrefix>
+     */
     use HasFactory,
         Notifiable,
         TwoFactorAuthenticatable,
         SoftDeletes,
         HasApiTokens,
-        Billable;
+        Billable,
+        HasTestPrefix;
 
     /**
      * The attributes that are mass assignable.
@@ -283,5 +294,19 @@ class User extends Authenticatable
     public function jobTitle(): BelongsTo
     {
         return $this->belongsTo(JobTitle::class, 'job_title_id');
+    }
+
+    /**
+     * Get the user name.
+     *
+     * Applies the test prefix when the user is marked as a test.
+     *
+     * @param  string|null  $value  The raw user title from the database.
+     *
+     * @return string
+     */
+    public function getUserAttribute($value): string
+    {
+        return $this->prefixTest($value);
     }
 }

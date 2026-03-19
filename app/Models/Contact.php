@@ -15,7 +15,7 @@ class Contact extends Model
     /**
      * @use HasFactory<\Database\Factories\ContactFactory>
      * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
-     * @use HasTestPrifix<\App\Traits\HasTestPrefix>
+     * @use HasTestPrefix<\App\Traits\HasTestPrefix>
      */
     use HasFactory,
         SoftDeletes,

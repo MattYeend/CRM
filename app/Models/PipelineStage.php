@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasTestPrefix;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PipelineStage extends Model
 {
-    use HasFactory, SoftDeletes;
+    /**
+     * @use HasFactory<\Database\Factories\PipelineStageFactory>
+     * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
+     * @use HasTestPrefix<\App\Traits\HasTestPrefix>
+     */
+    use HasFactory,
+        SoftDeletes,
+        HasTestPrefix;
 
     /**
      * Constants
@@ -199,5 +207,20 @@ class PipelineStage extends Model
     public function notes(): MorphMany
     {
         return $this->morphMany(Note::class, 'notable');
+    }
+
+    /**
+     * Get the pipeline stage name.
+     *
+     * Applies the test prefix when the pipeline stage is marked as a test.
+     *
+     * @param  string|null  $value  The raw pipeline stage name from
+     * the database.
+     *
+     * @return string
+     */
+    public function getNameAttribute($value): string
+    {
+        return $this->prefixTest($value);
     }
 }
