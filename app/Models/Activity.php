@@ -67,6 +67,15 @@ class Activity extends Model
     ];
 
     /**
+     * The accessors to append to the model's array and JSON form.
+     *
+     * @var array<int, string>
+     */
+    protected $appends = [
+        'test_type',
+    ];
+
+    /**
      * Get the user that owns the activity.
      *
      * @return BelongsTo
@@ -154,5 +163,18 @@ class Activity extends Model
     public function notes(): MorphMany
     {
         return $this->morphMany(Note::class, 'notable');
+    }
+
+    /**
+     * Appends 'Test' to type
+     * Can be used as $activity->test_type;
+     *
+     * @return string
+     */
+    public function getTestTypeAttribute(): string
+    {
+        return $this->is_test
+            ? 'Test ' . $this->type
+            : $this->type;
     }
 }
