@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignId('uploaded_by')->nullable()->constrained('users')->nullOnDelete();
             $table->bigInteger('size')->nullable();
             $table->string('mime')->nullable();
-            $table->boolean('is_test')->default(true);
+            $table->boolean('is_test')->default(false);
             $table->json('meta')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();

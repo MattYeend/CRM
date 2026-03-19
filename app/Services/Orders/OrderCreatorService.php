@@ -22,6 +22,7 @@ class OrderCreatorService
         if (! app()->runningUnitTests()) {
             $user->createOrGetStripeCustomer();
         }
+
         $data['created_by'] = $user->id;
         $data['created_at'] = now();
 

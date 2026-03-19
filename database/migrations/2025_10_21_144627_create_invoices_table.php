@@ -23,7 +23,7 @@ return new class extends Migration
             $table->decimal('tax', 15, 2)->default(0);
             $table->decimal('total', 15, 2)->default(0);
             $table->string('currency', 8)->default('USD');
-            $table->boolean('is_test')->default(true);
+            $table->boolean('is_test')->default(false);
             $table->json('meta')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();

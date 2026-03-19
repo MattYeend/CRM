@@ -20,7 +20,7 @@ return new class extends Migration
             $table->rememberToken();
             $table->string('phone')->nullable();
             $table->string('avatar')->nullable();
-            $table->boolean('is_test')->default(true);
+            $table->boolean('is_test')->default(false);
             $table->unsignedBigInteger('job_title_id')->nullable();
             $table->unsignedBigInteger('role_id')->nullable();
             $table->json('meta')->nullable();

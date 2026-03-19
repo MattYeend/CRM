@@ -25,6 +25,7 @@ class InvoiceUpdaterService
         $data = $request->validated();
 
         $data['updated_by'] = $user->id;
+        $date['updated_at'] = now();
 
         $invoice->update($data);
 

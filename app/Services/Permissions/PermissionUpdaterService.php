@@ -25,6 +25,7 @@ class PermissionUpdaterService
         $data = $request->validated();
 
         $data['updated_by'] = $user->id;
+        $data['updated_at'] = now();
 
         $permission->update($data);
 

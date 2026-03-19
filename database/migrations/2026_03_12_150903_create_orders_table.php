@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('charge_id')->nullable();
             $table->string('stripe_payment_intent')->nullable();
             $table->string('stripe_invoice_id')->nullable();
-            $table->boolean('is_test')->default(true);
+            $table->boolean('is_test')->default(false);
             $table->json('meta')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
