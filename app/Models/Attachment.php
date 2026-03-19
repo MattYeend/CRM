@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasTestPrefix;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +13,9 @@ use Illuminate\Support\Facades\Storage;
 
 class Attachment extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory,
+        SoftDeletes,
+        HasTestPrefix;
 
     /**
      * Constants
@@ -203,6 +206,18 @@ class Attachment extends Model
     public function notes(): MorphMany
     {
         return $this->morphMany(Note::class, 'notable');
+    }
+
+    /**
+     * Get the attachment name.
+     *
+     * Applies the test prefix when the attachment is marked as a test.
+     *
+     * @return string
+     */
+    public function getNameAttribute($value): string
+    {
+        return $this->prefixTest($value);
     }
 
     /**

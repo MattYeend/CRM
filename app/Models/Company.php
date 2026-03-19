@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasTestPrefix;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Company extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory,
+        SoftDeletes,
+        HasTestPrefix;
 
     /**
      * The attributes that are mass assignable.
@@ -161,5 +164,18 @@ class Company extends Model
     public function restorer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'restored_by');
+    }
+
+    /**
+     * Get the companies title.
+     *
+     * Applies the test prefix when the company is marked as a test.
+     *
+     * @param  string|null  $value  The raw title from the database.
+     * @return string
+     */
+    public function getNameAttribute($value): string
+    {
+        return $this->prefixTest($value);
     }
 }

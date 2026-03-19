@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasTestPrefix;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Deal extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory,
+        SoftDeletes,
+        HasTestPrefix;
 
     /**
      * Constants
@@ -197,7 +200,7 @@ class Deal extends Model
     /**
      * Get the product for the deal.
      *
-     * @return BelongToMany
+     * @return BelongsToMany
      */
     public function products(): BelongsToMany
     {
@@ -205,5 +208,18 @@ class Deal extends Model
             ->using(DealProduct::class)
             ->withPivot(['quantity','price','total'])
             ->withTimestamps();
+    }
+
+    /**
+     * Get the deal title.
+     *
+     * Applies the test prefix when the deal is marked as a test.
+     *
+     * @param  string|null  $value  The raw title from the database.
+     * @return string
+     */
+    public function getTitleAttribute($value): string
+    {
+        return $this->prefixTest($value);
     }
 }

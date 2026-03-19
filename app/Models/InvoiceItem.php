@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasTestPrefix;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,7 +11,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class InvoiceItem extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory,
+        SoftDeletes,
+        HasTestPrefix;
 
     /**
      * The attributes that are mass assignable.
@@ -158,5 +161,18 @@ class InvoiceItem extends Model
     public function notes(): MorphMany
     {
         return $this->morphMany(Note::class, 'notable');
+    }
+
+    /**
+     * Get the invoice description.
+     *
+     * Applies the test prefix when the invoice item is marked as a test.
+     *
+     * @param  string|null  $value  The raw invoice item description from the database.
+     * @return string
+     */
+    public function getDescriptionAttribute($value): string
+    {
+        return $this->prefixTest($value);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasTestPrefix;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Activity extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory,
+        SoftDeletes,
+        HasTestPrefix;
 
     /**
      * Constants
@@ -64,15 +67,6 @@ class Activity extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
         'restored_at' => 'datetime',
-    ];
-
-    /**
-     * The accessors to append to the model's array and JSON form.
-     *
-     * @var array<int, string>
-     */
-    protected $appends = [
-        'test_type',
     ];
 
     /**
@@ -166,17 +160,14 @@ class Activity extends Model
     }
 
     /**
-     * Appends 'Test' to type
-     * Can be used as $activity->test_type;
+     * Get the activity type.
+     *
+     * Applies the test prefix when the activity is marked as a test.
      *
      * @return string
      */
-    public function getTestTypeAttribute(): string
+    public function getTypeAttribute($value): string
     {
-        $type = class_basename($this->type);
-
-        return $this->is_test
-            ? "Test {$type}"
-            : $type;
+        return $this->prefixTest($value);
     }
 }

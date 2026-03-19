@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasTestPrefix;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Contact extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory,
+        SoftDeletes,
+        HasTestPrefix;
 
     /**
      * The attributes that are mass assignable.
@@ -149,5 +152,20 @@ class Contact extends Model
     public function restorer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'restored_by');
+    }
+
+    /**
+     * Get the contact's full name.
+     *
+     * Combines first and last name, and applies the test prefix
+     * when the contact is marked as a test.
+     *
+     * @return string
+     */
+    public function getNameAttribute(): string
+    {
+        $name = trim("{$this->first_name} {$this->last_name}");
+
+        return $this->prefixTest($name);
     }
 }

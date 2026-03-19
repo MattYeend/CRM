@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasTestPrefix;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class JobTitle extends Model
 {
     /** @use HasFactory<\Database\Factories\JobTitleFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory,
+        SoftDeletes,
+        HasTestPrefix;
 
     /**
      * Constants
@@ -162,5 +165,18 @@ class JobTitle extends Model
     public function users(): HasMany
     {
         return $this->hasMany(User::class, 'job_title_id');
+    }
+
+    /**
+     * Get the job title title.
+     *
+     * Applies the test prefix when the job title is marked as a test.
+     *
+     * @param  string|null  $value  The raw job title title from the database.
+     * @return string
+     */
+    public function getDescriptionAttribute($value): string
+    {
+        return $this->prefixTest($value);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasTestPrefix;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Invoice extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory,
+        SoftDeletes,
+        HasTestPrefix;
 
     /**
      * Constants
@@ -204,5 +207,18 @@ class Invoice extends Model
     public function getIsDraftAttribute(): bool
     {
         return $this->status === self::STATUS_DRAFT;
+    }
+
+    /**
+     * Get the invoice number.
+     *
+     * Applies the test prefix when the invoice is marked as a test.
+     *
+     * @param  string|null  $value  The raw invoice number from the database.
+     * @return string
+     */
+    public function getNumberAttribute($value): string
+    {
+        return $this->prefixTest($value);
     }
 }
