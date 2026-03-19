@@ -22,6 +22,7 @@ class ActivityFactory extends Factory
             'user_id' => User::factory(),
             'type' => 'generic',
             'description' => fake()->optional()->sentence(),
+            'is_test' => true,
             'meta' => [],
         ];
     }

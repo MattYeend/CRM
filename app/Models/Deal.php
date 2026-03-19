@@ -37,6 +37,7 @@ class Deal extends Model
         'currency',
         'close_date',
         'status',
+        'is_test',
         'meta',
         'created_by',
         'updated_by',
@@ -54,6 +55,7 @@ class Deal extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'is_test' => 'boolean',
         'meta' => 'array',
         'close_date' => 'date',
         'created_at' => 'datetime',

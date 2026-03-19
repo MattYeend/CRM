@@ -52,6 +52,7 @@ class Task extends Model
         'priority',
         'status',
         'due_at',
+        'is_test',
         'meta',
         'created_by',
         'updated_by',
@@ -69,6 +70,7 @@ class Task extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'is_test' => 'boolean',
         'meta' => 'array',
         'due_at' => 'datetime',
         'created_at' => 'datetime',

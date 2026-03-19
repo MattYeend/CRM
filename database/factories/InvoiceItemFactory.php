@@ -29,6 +29,7 @@ class InvoiceItemFactory extends Factory
             'quantity' => $quantity,
             'unit_price' => $unitPrice,
             'line_total' => bcmul((string)$quantity, (string)$unitPrice, 2),
+            'is_test' => true,
             'meta' => [],
         ];
     }

@@ -36,6 +36,8 @@ class PipelineStage extends Model
         'position',
         'is_won_stage',
         'is_lost_stage',
+        'is_test',
+        'meta',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -54,6 +56,8 @@ class PipelineStage extends Model
     protected $casts = [
         'is_won_stage' => 'boolean',
         'is_lost_stage' => 'boolean',
+        'is_test' => 'boolean',
+        'meta' => 'array',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',

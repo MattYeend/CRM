@@ -28,7 +28,8 @@ class ProductDealFactory extends Factory
             'quantity' => $quantity,
             'unit_price' => $unitPrice,
             'total_price' => $unitPrice * $quantity,
-            'currency' => fake()->randomElement(['USD', 'GBP', 'EUR']),
+            'currency' => fake()->randomElement(['GBP', 'USD', 'EUR']),
+            'is_test' => true,
             'meta' => [],
         ];
     }

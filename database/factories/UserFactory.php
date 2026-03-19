@@ -34,6 +34,8 @@ class UserFactory extends Factory
             'avatar' => null,
             'job_title_id' => JobTitle::inRandomOrder()->first()?->id, 
             'role_id' => Role::inRandomOrder()->first()?->id,
+            'is_test' => true,
+            'meta' => [],
         ];
     }
 

@@ -27,6 +27,7 @@ class LeadFactory extends Factory
             'owner_id' => User::factory(),
             'assigned_to' => User::factory(),
             'assigned_at' => now(),
+            'is_test' => true,
             'meta' => [],
         ];
     }

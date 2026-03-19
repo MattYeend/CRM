@@ -38,6 +38,7 @@ class Invoice extends Model
         'tax',
         'total',
         'currency',
+        'is_test',
         'meta',
         'created_by',
         'updated_by',
@@ -55,6 +56,7 @@ class Invoice extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'is_test' => 'boolean',
         'meta' => 'array',
         'issue_date' => 'date',
         'due_date' => 'date',

@@ -38,6 +38,7 @@ class Order extends Model
         'charge_id',
         'stripe_payment_intent',
         'stripe_invoice_id',
+        'is_test',
         'meta',
         'created_by',
         'updated_by',
@@ -52,6 +53,7 @@ class Order extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'is_test' => 'boolean',
         'meta' => 'array',
         'paid_at' => 'datetime',
         'created_at' => 'datetime',

@@ -26,6 +26,7 @@ class Product extends Model
         'price',
         'currency',
         'quantity',
+        'is_test',
         'meta',
         'created_by',
         'updated_by',
@@ -43,6 +44,7 @@ class Product extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'is_test' => 'boolean',
         'meta' => 'array',
         'price' => 'float',
         'created_at' => 'datetime',

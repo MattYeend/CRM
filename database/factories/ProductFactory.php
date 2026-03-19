@@ -23,6 +23,7 @@ class ProductFactory extends Factory
             'price' => fake()->randomFloat(2, 1, 1000),
             'currency' => fake()->randomElement(['USD', 'GBP', 'EUR']),
             'quantity' => fake()->numberBetween(0, 100),
+            'is_test' => true,
             'meta' => [],
         ];
     }

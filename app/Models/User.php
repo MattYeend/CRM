@@ -3,8 +3,6 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-
-use Illuminate\Console\View\Components\Task;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -42,10 +40,11 @@ class User extends Authenticatable
         'avatar',
         'job_title_id',
         'role_id',
+        'is_test',
+        'meta',
         'created_by',
         'updated_by',
         'deleted_by',
-        'updated_by',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -66,6 +65,24 @@ class User extends Authenticatable
         'two_factor_secret',
         'two_factor_recovery_codes',
         'remember_token',
+    ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected $casts = [
+        'permissions' => 'array',
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'two_factor_confirmed_at' => 'datetime',
+        'is_test' => 'boolean',
+        'meta' => 'array',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+        'restored_at' => 'datetime',
     ];
 
     /**
@@ -266,24 +283,5 @@ class User extends Authenticatable
     public function jobTitle(): BelongsTo
     {
         return $this->belongsTo(JobTitle::class, 'job_title_id');
-    }
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'permissions' => 'array',
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'two_factor_confirmed_at' => 'datetime',
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
-            'deleted_at' => 'datetime',
-            'restored_at' => 'datetime',
-        ];
     }
 }

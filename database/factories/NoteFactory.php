@@ -24,6 +24,7 @@ class NoteFactory extends Factory
         return [
             'user_id' => User::factory(),
             'body' => fake()->paragraph(),
+            'is_test' => true,
             'meta' => [],
         ];
     }

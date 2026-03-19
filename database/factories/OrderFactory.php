@@ -31,6 +31,7 @@ class OrderFactory extends Factory
             'charge_id' => fake()->uuid(),
             'stripe_payment_intent' => fake()->uuid(),
             'stripe_invoice_id' => fake()->uuid(),
+            'is_test' => true,
             'meta' => [],
             'created_by' => User::factory(),
             'updated_by' => User::factory(),

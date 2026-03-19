@@ -28,6 +28,7 @@ class Company extends Model
         'region',
         'postal_code',
         'country',
+        'is_test',
         'meta',
         'created_by',
         'updated_by',
@@ -45,6 +46,7 @@ class Company extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'is_test' => 'boolean',
         'meta' => 'array',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',

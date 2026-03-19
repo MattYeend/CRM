@@ -37,6 +37,7 @@ class Note extends Model
     protected $fillable = [
         'body',
         'user_id',
+        'is_test',
         'meta',
         'notable_type',
         'notable_id',
@@ -56,6 +57,7 @@ class Note extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'is_test' => 'boolean',
         'meta' => 'array',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',

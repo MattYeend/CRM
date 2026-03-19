@@ -35,6 +35,7 @@ class Lead extends Model
         'updated_by',
         'deleted_by',
         'restored_by',
+        'is_test',
         'meta',
         'created_at',
         'updated_at',
@@ -48,6 +49,7 @@ class Lead extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'is_test' => 'boolean',
         'meta' => 'array',
         'assigned_at' => 'datetime',
         'created_at' => 'datetime',

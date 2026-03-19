@@ -30,7 +30,8 @@ class InvoiceFactory extends Factory
             'subtotal' => 0,
             'tax' => 0,
             'total' => 0,
-            'currency' => 'GDP',
+            'currency' => fake()->randomElement(['GBP', 'USD', 'EUR']),
+            'is_test' => true,
             'meta' => [],
         ];
     }

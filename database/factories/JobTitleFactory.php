@@ -54,6 +54,7 @@ class JobTitleFactory extends Factory
             'title' => $title,
             'short_code' => $short_code,
             'group' => $group,
+            'is_test' => true,
             'meta' => [],
         ];
     }

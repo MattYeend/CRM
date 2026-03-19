@@ -29,9 +29,10 @@ class DealFactory extends Factory
             'owner_id' => User::factory(),
             'pipeline_id' => Pipeline::factory(),
             'value' => fake()->randomFloat(2, 100, 10000),
-            'currency' => 'USD',
+            'currency' => fake()->randomElement(['GBP', 'USD', 'EUR']),
             'close_date' => fake()->optional()->dateTimeBetween('now', '+1 year'),
             'status' => 'open',
+            'is_test' => true,
             'meta' => [],
         ];
     }

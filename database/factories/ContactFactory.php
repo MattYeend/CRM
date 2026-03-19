@@ -25,6 +25,7 @@ class ContactFactory extends Factory
             'email' => fake()->optional()->safeEmail(),
             'phone' => fake()->optional()->phoneNumber(),
             'job_title' => fake()->optional()->jobTitle(),
+            'is_test' => true,
             'meta' => [],
         ];
     }

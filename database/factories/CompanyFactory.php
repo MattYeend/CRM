@@ -26,6 +26,7 @@ class CompanyFactory extends Factory
             'region' => fake()->optional()->state(),
             'postal_code' => fake()->optional()->postcode(),
             'country' => fake()->country(),
+            'is_test' => true,
             'meta' => [],
         ];
     }

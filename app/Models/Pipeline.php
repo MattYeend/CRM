@@ -23,6 +23,8 @@ class Pipeline extends Model
         'name',
         'description',
         'is_default',
+        'is_test',
+        'meta',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -40,6 +42,8 @@ class Pipeline extends Model
      */
     protected $casts = [
         'is_default' => 'boolean',
+        'is_test' => 'boolean',
+        'meta' => 'array',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',

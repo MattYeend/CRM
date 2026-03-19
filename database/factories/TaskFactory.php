@@ -25,6 +25,8 @@ class TaskFactory extends Factory
             'status' => 'pending',
             'due_at' => fake()->optional()->dateTimeBetween('now', '+30 days'),
             'assigned_to' => User::factory(),
+            'is_test' => true,
+            'meta' => [],
         ];
     }
 }

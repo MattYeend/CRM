@@ -26,6 +26,7 @@ class Quote extends Model
         'total',
         'sent_at',
         'accepted_at',
+        'is_test',
         'meta',
         'created_by',
         'updated_by',
@@ -40,6 +41,7 @@ class Quote extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'is_test' => 'boolean',
         'meta' => 'array',
         'sent_at' => 'datetime',
         'accepted_at' => 'datetime',

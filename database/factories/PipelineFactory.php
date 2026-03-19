@@ -21,6 +21,8 @@ class PipelineFactory extends Factory
             'name' => fake()->words(2, true),
             'description' => fake()->optional()->sentence(),
             'is_default' => false,
+            'is_test' => true,
+            'meta' => [],
         ];
     }
 }

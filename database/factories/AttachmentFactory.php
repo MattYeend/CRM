@@ -27,6 +27,8 @@ class AttachmentFactory extends Factory
             'mime' => 'text/plain',
             'attachable_id' => 1,
             'attachable_type' => 'Document',
+            'is_test' => true,
+            'meta' => [],
         ];
     }
 }

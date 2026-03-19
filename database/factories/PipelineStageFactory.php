@@ -25,6 +25,8 @@ class PipelineStageFactory extends Factory
             'position' => 0,
             'is_won_stage' => false,
             'is_lost_stage' => false,
+            'is_test' => true,
+            'meta' => [],
         ];
     }
 

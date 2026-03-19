@@ -25,6 +25,7 @@ class LearningFactory extends Factory
             'description' => fake()->optional()->paragraph(),
             'date' => fake()->optional()->date(),
             'created_by' => User::factory(),
+            'is_test' => true,
             'meta' => [],
         ];
     }

@@ -32,6 +32,7 @@ class Learning extends Model
         'updated_by',
         'deleted_by',
         'restored_by',
+        'is_test',
         'meta',
         'created_at',
         'updated_at',
@@ -43,6 +44,7 @@ class Learning extends Model
      * The attributes that should be cast.
      */
     protected $casts = [
+        'is_test' => 'boolean',
         'meta' => 'array',
         'date' => 'date',
         'created_at' => 'datetime',

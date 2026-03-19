@@ -29,6 +29,7 @@ class QuoteFactory extends Factory
             'total' => $subtotal + $tax,
             'sent_at' => null,
             'accepted_at' => null,
+            'is_test' => true,
             'meta' => [],
         ];
     }

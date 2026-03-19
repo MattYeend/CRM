@@ -43,6 +43,8 @@ class Attachment extends Model
         'uploaded_by',
         'size',
         'mime',
+        'is_test',
+        'meta',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -59,6 +61,8 @@ class Attachment extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'is_test' => 'boolean',
+        'meta' => 'array',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
