@@ -12,6 +12,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Company extends Model
 {
+    /**
+     * @use HasFactory<\Database\Factories\CompanyFactory>
+     * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
+     * @use HasTestPrifix<\App\Traits\HasTestPrefix>
+     */
     use HasFactory,
         SoftDeletes,
         HasTestPrefix;
@@ -172,6 +177,7 @@ class Company extends Model
      * Applies the test prefix when the company is marked as a test.
      *
      * @param  string|null  $value  The raw title from the database.
+     *
      * @return string
      */
     public function getNameAttribute($value): string

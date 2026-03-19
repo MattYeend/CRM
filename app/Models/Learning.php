@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasTestPrefix;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,8 +16,11 @@ class Learning extends Model
     /**
      * @use HasFactory<\Database\Factories\LearningFactory>
      * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
-     * */
-    use HasFactory, SoftDeletes;
+     * @use HasTestPrifix<\App\Traits\HasTestPrefix>
+     */
+    use HasFactory,
+        SoftDeletes,
+        HasTestPrefix;
 
     /**
      * Contants
@@ -193,5 +197,19 @@ class Learning extends Model
     public function scopeIncomplete(Builder $query): Builder
     {
         return $query->where('is_completed', false);
+    }
+
+    /**
+     * Get the learning title.
+     *
+     * Applies the test prefix when the learning is marked as a test.
+     *
+     * @param  string|null  $value  The raw learning title from the database.
+     *
+     * @return string
+     */
+    public function getTitleAttribute($value): string
+    {
+        return $this->prefixTest($value);
     }
 }

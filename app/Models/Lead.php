@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasTestPrefix;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,10 +12,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Lead extends Model
 {
     /**
-     * @use HasFactory<\Database\Factories\LearningFactory>
+     * @use HasFactory<\Database\Factories\LeadFactory>
      * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
-     * */
-    use HasFactory, SoftDeletes;
+     * @use HasTestPrifix<\App\Traits\HasTestPrefix>
+     */
+    use HasFactory,
+        SoftDeletes,
+        HasTestPrefix;
 
     /**
      * The attributes that are mass assignable.
@@ -204,5 +208,19 @@ class Lead extends Model
     public function notes(): MorphMany
     {
         return $this->morphMany(Note::class, 'notable');
+    }
+
+    /**
+     * Get the lead title.
+     *
+     * Applies the test prefix when the lead is marked as a test.
+     *
+     * @param  string|null  $value  The raw lead title from the database.
+     *
+     * @return string
+     */
+    public function getTitleAttribute($value): string
+    {
+        return $this->prefixTest($value);
     }
 }

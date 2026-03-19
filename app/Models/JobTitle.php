@@ -11,7 +11,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JobTitle extends Model
 {
-    /** @use HasFactory<\Database\Factories\JobTitleFactory> */
+    /**
+     * @use HasFactory<\Database\Factories\JobTitleFactory>
+     * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
+     * @use HasTestPrifix<\App\Traits\HasTestPrefix>
+     */
     use HasFactory,
         SoftDeletes,
         HasTestPrefix;
@@ -173,9 +177,10 @@ class JobTitle extends Model
      * Applies the test prefix when the job title is marked as a test.
      *
      * @param  string|null  $value  The raw job title title from the database.
+     *
      * @return string
      */
-    public function getDescriptionAttribute($value): string
+    public function getTitleAttribute($value): string
     {
         return $this->prefixTest($value);
     }

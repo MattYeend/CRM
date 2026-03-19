@@ -12,6 +12,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Deal extends Model
 {
+    /**
+     * @use HasFactory<\Database\Factories\DealFactory>
+     * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
+     * @use HasTestPrifix<\App\Traits\HasTestPrefix>
+     */
     use HasFactory,
         SoftDeletes,
         HasTestPrefix;
@@ -216,6 +221,7 @@ class Deal extends Model
      * Applies the test prefix when the deal is marked as a test.
      *
      * @param  string|null  $value  The raw title from the database.
+     *
      * @return string
      */
     public function getTitleAttribute($value): string

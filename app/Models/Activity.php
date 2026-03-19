@@ -12,6 +12,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Activity extends Model
 {
+    /**
+     * @use HasFactory<\Database\Factories\ActivityFactory>
+     * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
+     * @use HasTestPrifix<\App\Traits\HasTestPrefix>
+     */
     use HasFactory,
         SoftDeletes,
         HasTestPrefix;

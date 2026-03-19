@@ -11,6 +11,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class InvoiceItem extends Model
 {
+    /**
+     * @use HasFactory<\Database\Factories\InvoiceItemFactory>
+     * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
+     * @use HasTestPrifix<\App\Traits\HasTestPrefix>
+     */
     use HasFactory,
         SoftDeletes,
         HasTestPrefix;
@@ -168,7 +173,9 @@ class InvoiceItem extends Model
      *
      * Applies the test prefix when the invoice item is marked as a test.
      *
-     * @param  string|null  $value  The raw invoice item description from the database.
+     * @param  string|null  $value  The raw invoice item description
+     * from the database.
+     *
      * @return string
      */
     public function getDescriptionAttribute($value): string

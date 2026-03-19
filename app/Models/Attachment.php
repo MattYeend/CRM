@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\Storage;
 
 class Attachment extends Model
 {
+    /**
+     * @use HasFactory<\Database\Factories\AttachmentFactory>
+     * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
+     * @use HasTestPrifix<\App\Traits\HasTestPrefix>
+     */
     use HasFactory,
         SoftDeletes,
         HasTestPrefix;
