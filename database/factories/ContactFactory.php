@@ -19,7 +19,7 @@ class ContactFactory extends Factory
     public function definition(): array
     {
         return [
-            'company_id' => Company::factory(),
+            'company_id' => Company::inRandomOrder()->first()?->id,
             'first_name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
             'email' => fake()->optional()->safeEmail(),
@@ -27,7 +27,7 @@ class ContactFactory extends Factory
             'job_title' => fake()->optional()->jobTitle(),
             'is_test' => true,
             'meta' => [],
-            'created_by' => User::inRandomOrder()->value('id'),
+            'created_by' => User::inRandomOrder()->first()?->id,
         ];
     }
 }

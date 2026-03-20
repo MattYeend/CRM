@@ -55,7 +55,7 @@ class JobTitleFactory extends Factory
             'group' => $group,
             'is_test' => true,
             'meta' => [],
-            'created_by' => User::inRandomOrder()->value('id'),
+            'created_by' => User::inRandomOrder()->first()?->id,
         ];
     }
 }

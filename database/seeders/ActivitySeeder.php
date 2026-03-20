@@ -12,6 +12,10 @@ class ActivitySeeder extends Seeder
      */
     public function run(): void
     {
-        Activity::factory(50)->create();
+        Activity::factory(50)->make()->each(function ($activity) {
+            if ($activity->subject_id) {
+                $activity->save();
+            }
+        });
     }
 }

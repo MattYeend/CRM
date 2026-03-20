@@ -32,7 +32,7 @@ class InvoiceItemFactory extends Factory
             'line_total' => bcmul((string)$quantity, (string)$unitPrice, 2),
             'is_test' => true,
             'meta' => [],
-            'created_by' => User::inRandomOrder()->value('id'),
+            'created_by' => User::inRandomOrder()->first()?->id,
         ];
     }
 }

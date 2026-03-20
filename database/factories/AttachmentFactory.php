@@ -21,14 +21,14 @@ class AttachmentFactory extends Factory
             'filename' => fake()->word() . '.txt',
             'disk' => 'public',
             'path' => 'attachments/' . fake()->uuid() . '/file.txt',
-            'uploaded_by' => User::inRandomOrder()->value('id'),
+            'uploaded_by' => User::inRandomOrder()->first()?->id,
             'size' => fake()->numberBetween(100, 1000000),
             'mime' => 'text/plain',
             'attachable_id' => 1,
             'attachable_type' => 'Document',
             'is_test' => true,
             'meta' => [],
-            'created_by' => User::inRandomOrder()->value('id'),
+            'created_by' => User::inRandomOrder()->first()?->id,
         ];
     }
 }

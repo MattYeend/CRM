@@ -23,27 +23,40 @@ class ActivityFactory extends Factory
     public function definition(): array
     {
         $models = [
-            Company::class,
-            Contact::class,
-            Deal::class,
-            Task::class,
-            User::class,
+            'company' => Company::class,
+            'contact' => Contact::class,
+            'deal' => Deal::class,
+            'task' => Task::class,
+            'user' => User::class,
         ];
 
-        $modelClass = fake()->randomElement($models);
-        $subject = $modelClass::factory()->create();
+        $alias = fake()->randomElement(array_keys($models));
+        $modelClass = $models[$alias];
 
-        $morphAlias = array_search($modelClass, Relation::morphMap(), true);
+        $subject = $modelClass::inRandomOrder()->first();
+
+        if (! $subject) {
+            return [
+                'user_id' => null,
+                'type' => 'generic',
+                'subject_type' => $alias,
+                'subject_id' => null,
+                'description' => null,
+                'is_test' => true,
+                'meta' => [],
+                'created_by' => null,
+            ];
+        }
 
         return [
-            'user_id' => User::inRandomOrder()->value('id'),
+            'user_id' => User::inRandomOrder()->first()?->id ?? User::factory()->create()->id,
             'type' => 'generic',
-            'subject_type' => $morphAlias,
+            'subject_type' => $alias,
             'subject_id' => $subject->id,
             'description' => fake()->optional()->sentence(),
             'is_test' => true,
             'meta' => [],
-            'created_by' => User::inRandomOrder()->value('id'),
+            'created_by' => User::inRandomOrder()->first()?->id ?? User::factory()->create()->id,
         ];
     }
 }

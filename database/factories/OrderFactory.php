@@ -20,7 +20,7 @@ class OrderFactory extends Factory
         $amount = fake()->randomFloat(2, 50, 1000);
 
         return [
-            'user_id' => User::inRandomOrder()->value('id'),
+            'user_id' => User::inRandomOrder()->first()?->id,
             'deal_id' => null, 
             'amount' => fake()->randomFloat(2, 50, 1000),
             'currency' => fake()->randomElement(['GBP', 'USD', 'EUR']),
@@ -33,7 +33,7 @@ class OrderFactory extends Factory
             'stripe_invoice_id' => fake()->uuid(),
             'is_test' => true,
             'meta' => [],
-            'created_by' => User::inRandomOrder()->value('id'),
+            'created_by' => User::inRandomOrder()->first()?->id,
         ];
     }
 }

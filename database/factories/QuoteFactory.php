@@ -31,7 +31,7 @@ class QuoteFactory extends Factory
             'accepted_at' => null,
             'is_test' => true,
             'meta' => [],
-            'created_by' => User::inRandomOrder()->value('id'),
+            'created_by' => User::inRandomOrder()->first()?->id,
         ];
     }
 }

@@ -33,7 +33,7 @@ class InvoiceFactory extends Factory
             'currency' => fake()->randomElement(['GBP', 'USD', 'EUR']),
             'is_test' => true,
             'meta' => [],
-            'created_by' => User::inRandomOrder()->value('id'),
+            'created_by' => User::inRandomOrder()->first()?->id,
         ];
     }
 }

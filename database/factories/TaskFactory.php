@@ -26,12 +26,12 @@ class TaskFactory extends Factory
             'priority' => 'medium',
             'status' => 'pending',
             'due_at' => fake()->optional()->dateTimeBetween('now', '+30 days'),
-            'assigned_to' => User::inRandomOrder()->value('id'),
+            'assigned_to' => User::inRandomOrder()->first()?->id,
             'taskable_type' => $taskable::class,
             'taskable_id' => $taskable->id,
             'is_test' => true,
             'meta' => [],
-            'created_by' => User::inRandomOrder()->value('id'),
+            'created_by' => User::inRandomOrder()->first()?->id,
         ];
     }
 }

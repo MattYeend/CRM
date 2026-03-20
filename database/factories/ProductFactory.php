@@ -26,7 +26,7 @@ class ProductFactory extends Factory
             'quantity' => fake()->numberBetween(0, 100),
             'is_test' => true,
             'meta' => [],
-            'created_by' => User::inRandomOrder()->value('id'),
+            'created_by' => User::inRandomOrder()->first()?->id,
         ];
     }
 }

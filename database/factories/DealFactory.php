@@ -26,7 +26,7 @@ class DealFactory extends Factory
             'title' => fake()->sentence(3),
             'company_id' => Company::factory(),
             'contact_id' => Contact::factory(),
-            'owner_id' => User::factory(),
+            'owner_id' => User::inRandomOrder()->first()?->id,
             'pipeline_id' => Pipeline::factory(),
             'value' => fake()->randomFloat(2, 100, 10000),
             'currency' => fake()->randomElement(['GBP', 'USD', 'EUR']),
@@ -34,7 +34,7 @@ class DealFactory extends Factory
             'status' => 'open',
             'is_test' => true,
             'meta' => [],
-            'created_by' => User::inRandomOrder()->value('id'),
+            'created_by' => User::inRandomOrder()->first()?->id,
         ];
     }
 

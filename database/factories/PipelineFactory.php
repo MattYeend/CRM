@@ -23,7 +23,7 @@ class PipelineFactory extends Factory
             'is_default' => false,
             'is_test' => true,
             'meta' => [],
-            'created_by' => User::inRandomOrder()->value('id'),
+            'created_by' => User::inRandomOrder()->first()?->id,
         ];
     }
 }
