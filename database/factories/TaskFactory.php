@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Company;
+use App\Models\Contact;
+use App\Models\Deal;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -18,7 +21,32 @@ class TaskFactory extends Factory
      */
     public function definition(): array
     {
-        $taskable = User::factory()->create();
+        $models = [
+            'company' => Company::class,
+            'contact' => Contact::class,
+            'deal' => Deal::class,
+            'user' => User::class,
+        ];
+
+        $alias = fake()->randomElement(array_keys($models));
+        $modelClass = $models[$alias];
+
+        $taskable = $modelClass::inRandomOrder()->first();
+
+        if (! $taskable) {
+            return [
+                'title' => null,
+                'priority' => null,
+                'status' => null,
+                'due_at' => null,
+                'assigned_to' => null,
+                'taskable_type' => $alias,
+                'taskable_id' => null,
+                'is_test' => true,
+                'meta' => [],
+                'created_by' => null,
+            ];
+        }
 
         return [
             'title' => fake()->sentence(4),
@@ -27,7 +55,7 @@ class TaskFactory extends Factory
             'status' => 'pending',
             'due_at' => fake()->optional()->dateTimeBetween('now', '+30 days'),
             'assigned_to' => User::inRandomOrder()->first()?->id,
-            'taskable_type' => $taskable::class,
+            'taskable_type' => $alias,
             'taskable_id' => $taskable->id,
             'is_test' => true,
             'meta' => [],

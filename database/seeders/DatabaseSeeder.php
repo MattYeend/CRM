@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -37,6 +36,7 @@ class DatabaseSeeder extends Seeder
             PermissionRoleSeeder::class,
             QuoteSeeder::class,
             QuoteProductSeeder::class,
+            TaskSeeder::class,
             ActivitySeeder::class,
             AttachmentSeeder::class,
         ]);

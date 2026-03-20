@@ -37,22 +37,4 @@ class DealFactory extends Factory
             'created_by' => User::inRandomOrder()->first()?->id,
         ];
     }
-
-    /**
-     * Configure the factory.
-     *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
-     */
-    public function configure()
-    {
-        return $this->afterMaking(function (Deal $deal) {
-            if (!$deal->stage_id && $deal->pipeline_id) {
-                $stage = PipelineStage::factory()
-                    ->for($deal->pipeline)
-                    ->create();
-    
-                $deal->stage_id = $stage->id;
-            }
-        });
-    }
 }
