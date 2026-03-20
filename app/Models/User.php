@@ -309,7 +309,7 @@ class User extends Authenticatable
      *
      * @return string
      */
-    public function getUserAttribute($value): string
+    public function getNameAttribute($value): string
     {
         return $this->prefixTest($value);
     }
