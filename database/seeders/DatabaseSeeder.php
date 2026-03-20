@@ -35,6 +35,8 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             RoleSeeder::class,
             PermissionRoleSeeder::class,
+            QuoteSeeder::class,
+            QuoteProductSeeder::class,
             ActivitySeeder::class,
             AttachmentSeeder::class,
         ]);
