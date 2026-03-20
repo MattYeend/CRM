@@ -30,6 +30,8 @@ class DatabaseSeeder extends Seeder
             LearningUserSeeder::class,
             NoteSeeder::class,
             NoteUserSeeder::class,
+            OrderSeeder::class,
+            OrderProductSeeder::class,
             PermissionSeeder::class,
             RoleSeeder::class,
             PermissionRoleSeeder::class,
