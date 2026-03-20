@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('assigned_to')->nullable()->constrained('users')->nullOnDelete();
             $table->morphs('taskable');
             $table->enum('priority', ['low','medium','high'])->default('medium');
-            $table->enum('status', ['pending','completed','canceled'])->default('pending');
+            $table->enum('status', ['pending','completed','cancelled'])->default('pending');
             $table->timestamp('due_at')->nullable();
             $table->boolean('is_test')->default(false);
             $table->json('meta')->nullable();

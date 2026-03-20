@@ -118,7 +118,7 @@ class Learning extends Model
             ->using(LearningUser::class)
             ->withPivot([
                 'is_complete', 'user_id', 'completed_at', 'is_test', 'meta',
-                'created_by', 'updated_by'
+                'created_by', 'updated_by',
             ])
             ->withTimestamps();
     }
@@ -192,7 +192,7 @@ class Learning extends Model
     {
         return $query->whereHas('users', function ($q) use ($userId) {
             $q->where('users.id', $userId)
-            ->wherePivot('is_complete', true);
+                ->wherePivot('is_complete', true);
         });
     }
 
@@ -209,7 +209,7 @@ class Learning extends Model
     {
         return $query->whereHas('users', function ($q) use ($userId) {
             $q->where('users.id', $userId)
-            ->wherePivot('is_complete', false);
+                ->wherePivot('is_complete', false);
         });
     }
 

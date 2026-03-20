@@ -34,9 +34,9 @@ class TaskFactory extends Factory
 
         if (! $taskable) {
             return [
-                'title' => null,
-                'priority' => null,
-                'status' => null,
+                'title' => fake()->sentence(4),
+                'priority' => fake()->randomElement(['low', 'medium', 'high']),
+                'status' => fake()->randomElement(['pending', 'completed', 'cancelled']),
                 'due_at' => null,
                 'assigned_to' => null,
                 'taskable_type' => $alias,
@@ -50,8 +50,8 @@ class TaskFactory extends Factory
         return [
             'title' => fake()->sentence(4),
             'description' => fake()->optional()->paragraph(),
-            'priority' => 'medium',
-            'status' => 'pending',
+            'priority' => fake()->randomElement(['low', 'medium', 'high']),
+            'status' => fake()->randomElement(['pending', 'completed', 'cancelled']),
             'due_at' => fake()->optional()->dateTimeBetween('now', '+30 days'),
             'assigned_to' => User::inRandomOrder()->first()?->id,
             'taskable_type' => $alias,

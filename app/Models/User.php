@@ -245,7 +245,7 @@ class User extends Authenticatable
             ->using(LearningUser::class)
             ->withPivot([
                 'is_complete', 'user_id', 'completed_at', 'is_test', 'meta',
-                'created_by', 'updated_by'
+                'created_by', 'updated_by',
             ])
             ->withTimestamps();
     }
