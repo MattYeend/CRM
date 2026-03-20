@@ -2,8 +2,13 @@
 
 namespace App\Providers;
 
+use App\Models\Company;
+use App\Models\Contact;
+use App\Models\Deal;
 use App\Models\Order;
+use App\Models\Task;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -24,6 +29,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Relation::morphMap([
+            'company' => Company::class,
+            'contact' => Contact::class,
+            'deal' => Deal::class,
+            'task' => Task::class,
+            'user' => User::class,
+        ]);
+
         Cashier::useCustomerModel(User::class);
         Cashier::calculateTaxes();
 
