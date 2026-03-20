@@ -5,8 +5,6 @@ const props = defineProps<{
     form: any
 }>()
 
-const emit = defineEmits(['update:form'])
-
 const form = props.form
 </script>
 

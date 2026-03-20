@@ -19,8 +19,6 @@ const props = defineProps<{
     jobTitles: JobTitle[]
 }>()
 
-const emit = defineEmits(['update:form'])
-
 const form = props.form
 </script>
 
