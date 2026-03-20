@@ -7,7 +7,7 @@ use App\Models\Product;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
-class DealProductsSeeder extends Seeder
+class DealProductSeeder extends Seeder
 {
     /**
      * Run the database seeds.

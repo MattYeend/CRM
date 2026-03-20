@@ -24,8 +24,8 @@ class InvoiceItemFactory extends Factory
         $unitPrice = fake()->randomFloat(2, 1, 500);
 
         return [
-            'invoice_id' => Invoice::factory(),
-            'product_id' => Product::factory(),
+            'invoice_id' => Invoice::inRandomOrder()->first()?->id,
+            'product_id' => Product::inRandomOrder()->first()?->id,
             'description' => fake()->sentence(3),
             'quantity' => $quantity,
             'unit_price' => $unitPrice,
