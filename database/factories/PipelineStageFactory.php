@@ -20,7 +20,7 @@ class PipelineStageFactory extends Factory
     public function definition(): array
     {
         return [
-            'pipeline_id' => Pipeline::factory(),
+            'pipeline_id' => Pipeline::inRandomOrder()->first()?->id ?? Pipeline::factory()->create()->id,
             'name' => fake()->word(),
             'position' => 0,
             'is_won_stage' => false,

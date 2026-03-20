@@ -24,10 +24,10 @@ class DealFactory extends Factory
     {
         return [
             'title' => fake()->sentence(3),
-            'company_id' => Company::factory(),
-            'contact_id' => Contact::factory(),
+            'company_id' => Company::inRandomOrder()->first()?->id,
+            'contact_id' => Contact::inRandomOrder()->first()?->id,
             'owner_id' => User::inRandomOrder()->first()?->id,
-            'pipeline_id' => Pipeline::factory(),
+            'pipeline_id' => Pipeline::inRandomOrder()->first()?->id,
             'value' => fake()->randomFloat(2, 100, 10000),
             'currency' => fake()->randomElement(['GBP', 'USD', 'EUR']),
             'close_date' => fake()->optional()->dateTimeBetween('now', '+1 year'),
