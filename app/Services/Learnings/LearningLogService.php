@@ -147,7 +147,7 @@ class LearningLogService
         $data = $this->baseLearningData($learning) + [
             'learning_complete' => now(),
             'learning_complete_by' => $user->name,
-            'is_completed' => $learning->is_completed,
+            'is_complete' => $learning->is_complete,
         ];
 
         Log::log(
@@ -176,7 +176,7 @@ class LearningLogService
         $data = $this->baseLearningData($learning) + [
             'learning_incomplete' => now(),
             'learning_incomplete_by' => $user->name,
-            'is_completed' => $learning->is_completed,
+            'is_complete' => $learning->is_complete,
         ];
 
         Log::log(

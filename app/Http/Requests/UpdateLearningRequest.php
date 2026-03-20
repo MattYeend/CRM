@@ -50,7 +50,7 @@ class UpdateLearningRequest extends FormRequest
     {
         return [
             'description' => 'nullable|string',
-            'is_completed' => 'boolean',
+            'is_complete' => 'boolean',
             'meta' => 'nullable|array',
         ];
     }

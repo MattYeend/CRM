@@ -16,8 +16,7 @@ class LearningIncompleteService
     public function incomplete(Learning $learning): Learning
     {
         $learning->update([
-            'is_completed' => false,
-            'completed_by' => null,
+            'is_complete' => false,
             'completed_at' => null,
         ]);
 

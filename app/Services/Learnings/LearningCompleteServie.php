@@ -16,8 +16,7 @@ class LearningCompleteServie
     public function complete(Learning $learning): Learning
     {
         $learning->update([
-            'is_completed' => true,
-            'completed_by' => auth()->id,
+            'is_complete' => true,
             'completed_at' => now(),
         ]);
 

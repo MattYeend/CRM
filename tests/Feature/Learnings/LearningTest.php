@@ -119,37 +119,32 @@ test('user can update a learning', function () {
 
 test('user can mark a learning as completed', function () {
     $learning = Learning::factory()->create(['created_by' => $this->auth->id]);
-    $learning->users()->attach($this->auth->id, ['is_completed' => false]);
+    $learning->users()->attach($this->auth->id, ['is_complete' => false]);
 
     $learning->users()->updateExistingPivot($this->auth->id, [
-        'is_completed' => true,
-        'completed_by' => $this->auth->id,
+        'is_complete' => true,
         'completed_at' => now(),
     ]);
 
     $pivot = $learning->users()->where('user_id', $this->auth->id)->first()->pivot;
-    expect((bool)$pivot->is_completed)->toBeTrue();
-    expect($pivot->completed_by)->toBe($this->auth->id);
+    expect((bool)$pivot->is_complete)->toBeTrue();
     expect($pivot->completed_at)->not()->toBeNull();
 });
 
 test('user can mark a learning as incomplete', function () {
     $learning = Learning::factory()->create(['created_by' => $this->auth->id]);
     $learning->users()->attach($this->auth->id, [
-        'is_completed' => true,
-        'completed_by' => $this->auth->id,
+        'is_complete' => true,
         'completed_at' => now(),
     ]);
 
     $learning->users()->updateExistingPivot($this->auth->id, [
-        'is_completed' => false,
-        'completed_by' => null,
+        'is_complete' => false,
         'completed_at' => null,
     ]);
 
     $pivot = $learning->users()->where('user_id', $this->auth->id)->first()->pivot;
-    expect((bool)$pivot->is_completed)->toBeFalse();
-    expect($pivot->completed_by)->toBeNull();
+    expect((bool)$pivot->is_complete)->toBeFalse();
     expect($pivot->completed_at)->toBeNull();
 });
 

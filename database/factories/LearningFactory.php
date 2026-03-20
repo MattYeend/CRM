@@ -39,12 +39,15 @@ class LearningFactory extends Factory
      */
     public function completed(?User $user = null)
     {
-        return $this->state(function () use ($user) {
-            return [
-                'is_completed' => true,
-                'completed_at' => now(),
-                'completed_by' => $user?->id,
-            ];
-        });
+        $learning = Learning::factory()->create();
+
+        $user = User::inRandomOrder()->first();
+
+        $learning->users()->attach($user->id, [
+            'is_complete' => true,
+            'completed_at' => now(),
+            'user_id' => $user->id,
+            'created_by' => 1,
+        ]);
     }
 }

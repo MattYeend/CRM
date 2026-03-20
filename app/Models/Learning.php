@@ -104,7 +104,7 @@ class Learning extends Model
      */
     public function completer(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'completed_by');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
@@ -115,7 +115,11 @@ class Learning extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class)
-            ->withPivot(['is_completed', 'completed_by', 'completed_at'])
+            ->using(LearningUser::class)
+            ->withPivot([
+                'is_complete', 'user_id', 'completed_at', 'is_test', 'meta',
+                'created_by', 'updated_by'
+            ])
             ->withTimestamps();
     }
 
@@ -180,11 +184,16 @@ class Learning extends Model
      *
      * @param Builder $query The query builder instance.
      *
+     * @param int $userId The id of the user.
+     *
      * @return Builder The modified query builder instance.
      */
-    public function scopeCompleted(Builder $query): Builder
+    public function scopeCompletedForUser(Builder $query, int $userId): Builder
     {
-        return $query->where('is_completed', true);
+        return $query->whereHas('users', function ($q) use ($userId) {
+            $q->where('users.id', $userId)
+            ->wherePivot('is_complete', true);
+        });
     }
 
     /**
@@ -192,11 +201,16 @@ class Learning extends Model
      *
      * @param Builder $query The query builder instance.
      *
+     * @param int $userId The id of the user.
+     *
      * @return Builder The modified query builder instance.
      */
-    public function scopeIncomplete(Builder $query): Builder
+    public function scopeIncompleteForUser(Builder $query, int $userId): Builder
     {
-        return $query->where('is_completed', false);
+        return $query->whereHas('users', function ($q) use ($userId) {
+            $q->where('users.id', $userId)
+            ->wherePivot('is_complete', false);
+        });
     }
 
     /**

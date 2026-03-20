@@ -242,7 +242,11 @@ class User extends Authenticatable
     public function learnings(): BelongsToMany
     {
         return $this->belongsToMany(Learning::class)
-            ->withPivot(['is_completed', 'completed_by', 'completed_at'])
+            ->using(LearningUser::class)
+            ->withPivot([
+                'is_complete', 'user_id', 'completed_at', 'is_test', 'meta',
+                'created_by', 'updated_by'
+            ])
             ->withTimestamps();
     }
 
