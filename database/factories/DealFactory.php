@@ -34,6 +34,7 @@ class DealFactory extends Factory
             'status' => 'open',
             'is_test' => true,
             'meta' => [],
+            'created_by' => User::inRandomOrder()->value('id'),
         ];
     }
 

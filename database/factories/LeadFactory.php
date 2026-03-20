@@ -24,11 +24,12 @@ class LeadFactory extends Factory
             'email' => fake()->optional()->safeEmail(),
             'phone' => fake()->optional()->phoneNumber(),
             'source' => fake()->randomElement(['website', 'email', 'phone', 'referral', 'social_media']),
-            'owner_id' => User::factory(),
-            'assigned_to' => User::factory(),
+            'owner_id' => User::inRandomOrder()->value('id'),
+            'assigned_to' => User::inRandomOrder()->value('id'),
             'assigned_at' => now(),
             'is_test' => true,
             'meta' => [],
+            'created_by' => User::inRandomOrder()->value('id'),
         ];
     }
 

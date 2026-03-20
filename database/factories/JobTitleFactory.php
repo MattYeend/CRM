@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -42,12 +43,10 @@ class JobTitleFactory extends Factory
             'Support' => ['Customer Support Specialist', 'Technical Support Engineer', 'Office Manager', 'Administrative Assistant'],
         ];
 
-        // Pick a random group
         $group = fake()->randomElement($groups);
-        // Pick a title from that group
+
         $title = fake()->randomElement($titlesByGroup[$group]);
 
-        // Generate a short code automatically
         $short_code = strtoupper(implode('_', array_map(fn($w) => substr($w, 0, 3), explode(' ', $title))));
 
         return [
@@ -56,6 +55,7 @@ class JobTitleFactory extends Factory
             'group' => $group,
             'is_test' => true,
             'meta' => [],
+            'created_by' => User::inRandomOrder()->value('id'),
         ];
     }
 }

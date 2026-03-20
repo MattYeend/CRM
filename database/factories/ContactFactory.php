@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\Contact;
 use App\Models\Company;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -27,6 +27,7 @@ class ContactFactory extends Factory
             'job_title' => fake()->optional()->jobTitle(),
             'is_test' => true,
             'meta' => [],
+            'created_by' => User::inRandomOrder()->value('id'),
         ];
     }
 }

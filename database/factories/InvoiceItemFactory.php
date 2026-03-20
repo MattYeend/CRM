@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\InvoiceItem;
 use App\Models\Invoice;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -31,6 +32,7 @@ class InvoiceItemFactory extends Factory
             'line_total' => bcmul((string)$quantity, (string)$unitPrice, 2),
             'is_test' => true,
             'meta' => [],
+            'created_by' => User::inRandomOrder()->value('id'),
         ];
     }
 }

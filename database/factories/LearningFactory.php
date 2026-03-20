@@ -24,9 +24,9 @@ class LearningFactory extends Factory
             'title' => fake()->sentence(4),
             'description' => fake()->optional()->paragraph(),
             'date' => fake()->optional()->date(),
-            'created_by' => User::factory(),
             'is_test' => true,
             'meta' => [],
+            'created_by' => User::inRandomOrder()->value('id'),
         ];
     }
 
