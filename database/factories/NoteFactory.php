@@ -2,8 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\Company;
+use App\Models\Contact;
 use App\Models\Deal;
 use App\Models\Note;
+use App\Models\Task;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -21,34 +24,39 @@ class NoteFactory extends Factory
      */
     public function definition(): array
     {
+        $models = [
+            'company' => Company::class,
+            'contact' => Contact::class,
+            'deal' => Deal::class,
+            'task' => Task::class,
+            'user' => User::class,
+        ];
+
+        $alias = fake()->randomElement(array_keys($models));
+        $modelClass = $models[$alias];
+
+        $notable = $modelClass::inRandomOrder()->first();
+
+        if (! $notable) {
+            return [
+                'user_id' => null,
+                'notable_type' => $alias,
+                'notable_id' => null,
+                'body' => null,
+                'is_test' => true,
+                'meta' => [],
+                'created_by' => null,
+            ];
+        }
+
         return [
-            'user_id' => User::inRandomOrder()->first()?->id,
-            'body' => fake()->paragraph(),
+            'user_id' => User::inRandomOrder()->first()?->id ?? User::factory()->create()->id,
+            'notable_type' => $alias,
+            'notable_id' => $notable->id,
+            'body' => fake()->optional()->paragraph(),
             'is_test' => true,
             'meta' => [],
-            'created_by' => User::inRandomOrder()->first()?->id,
+            'created_by' => User::inRandomOrder()->first()?->id ?? User::factory()->create()->id,
         ];
-    }
-
-    /**
-     * Associate the note with a deal.
-     *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
-     */
-    public function forDeal(): static
-    {
-        return $this->for(Deal::factory(), 'notable');
-    }
-
-    /**
-     * Associate the note with any model.
-     *
-     * @param mixed $model
-     *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
-     */
-    public function forModel($model): static
-    {
-        return $this->for($model, 'notable');
     }
 }

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->morphs('notable');
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->text('body');
+            $table->text('body')->nullable();
             $table->boolean('is_test')->default(false);
             $table->json('meta')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();

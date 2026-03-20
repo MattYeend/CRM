@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('note_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->boolean('is_test')->default(false);
+            $table->json('meta')->nullable();
             $table->timestamps();
             $table->unique(['note_id','user_id']);
         });
