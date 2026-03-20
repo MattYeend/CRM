@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { useForm } from '@inertiajs/vue3'
+import axios from 'axios'
+import { useForm, router } from '@inertiajs/vue3'
 import UserAvatarUpload from './UserAvatarUpload.vue'
 import UserDetailsSection from './UserDetailsSection.vue'
 import UserPasswordSection from './UserPasswordSection.vue'
-import axios from 'axios'
-import { router } from '@inertiajs/vue3';
-
 
 interface Role { id: number; name: string }
 interface JobTitle { id: number; title: string }
@@ -40,14 +38,16 @@ async function submit() {
         await axios.get('/sanctum/csrf-cookie', { withCredentials: true });
 
         const formData = new FormData();
-        Object.entries(form).forEach(([key, value]) => {
-            if (
-                value !== null &&
-                value !== undefined &&
-                value !== '' &&
-                !(key === 'password' && value === '')
-            ) {
-                formData.append(key, value as any);
+
+        Object.entries(form.data()).forEach(([key, value]) => {
+            if ((key === 'password' || key === 'password_confirmation') && !value) return;
+
+            if (value !== null && value !== undefined) {
+                if (value instanceof File) {
+                    formData.append(key, value);
+                } else {
+                    formData.append(key, String(value)); // 🔥 important
+                }
             }
         });
 
@@ -64,15 +64,15 @@ async function submit() {
             headers: { 'Content-Type': 'multipart/form-data' },
         });
 
-        if (props.method === 'put' && props.user?.id) {
-            router.get(`/users/${props.user.id}`);
-        } else {
-            // assume new user ID is returned in response
-            router.get(`/users/${response.data.id}`);
-        }
+        // ✅ SPA navigation AFTER API success
+        router.visit(`/users/${response.data.id}`);
 
     } catch (err: any) {
         console.error(err.response?.data ?? err);
+
+        if (err.response?.status === 422) {
+            form.setError(err.response.data.errors);
+        }
     }
 }
 </script>
