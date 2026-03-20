@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Activity;
+use App\Models\Company;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,9 +18,13 @@ class ActivityFactory extends Factory
      */
     public function definition(): array
     {
+        $subject = Company::factory()->create();
+
         return [
             'user_id' => User::factory(),
             'type' => 'generic',
+            'subject_type' => $subject::class,
+            'subject_id' => $subject->id,
             'description' => fake()->optional()->sentence(),
             'is_test' => true,
             'meta' => [],
