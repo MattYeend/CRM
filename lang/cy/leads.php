@@ -27,6 +27,7 @@ return [
     'owner' => 'Perchennog',
     'assigned_to' => 'Neilltuo I',
     'assign' => 'Neilltuo Arweinydd',
+    'is_test' => 'Gwybodaeth Profion',
     'meta' => 'Gwybodaeth Meta',
     'assigned_by' => 'Neilltuo Gan',
     'assigned_at' => 'Neilltuo Ar',

@@ -22,6 +22,7 @@ return [
     'description' => 'Disgrifiad',
     'type' => 'Math',
     'subject_type' => 'Math Pwnc',
+    'is_test' => 'Gwybodaeth Profion',
     'meta' => 'Gwybodaeth Meta',
     'created_by' => 'Wedi\'i Greu Gan',
     'created_at' => 'Wedi\'i Greu Ar',

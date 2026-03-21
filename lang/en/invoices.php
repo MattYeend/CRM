@@ -28,6 +28,7 @@ return [
     'tax' => 'Tax',
     'total' => 'Total',
     'currency' => 'Currency',
+    'is_test' => 'Test Information',
     'meta' => 'Meta Information',
     'created_by' => 'Created By',
     'created_at' => 'Created At',

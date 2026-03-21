@@ -22,6 +22,7 @@ return [
     'description' => 'Description',
     'type' => 'Type',
     'subject_type' => 'Subject Type',
+    'is_test' => 'Test Information',
     'meta' => 'Meta Information',
     'created_by' => 'Created By',
     'created_at' => 'Created At',

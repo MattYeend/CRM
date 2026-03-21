@@ -28,6 +28,7 @@ return [
     'region' => 'Rhanbarth',
     'postal_code' => 'Cod Post',
     'country' => 'Gwlad',
+    'is_test' => 'Gwybodaeth Profion',
     'meta' => 'Gwybodaeth Meta',
     'number_of_employees' => 'Nifer y Gweithwyr',
     'created_by' => 'Wedi\'i Greu Gan',

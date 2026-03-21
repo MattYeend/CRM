@@ -22,6 +22,7 @@ return [
     'notable_id' => 'Notable ID',
     'user' => 'User',
     'body' => 'Body',
+    'is_test' => 'Test Information',
     'meta' => 'Meta Information',
     'created_by' => 'Created By',
     'created_at' => 'Created At',

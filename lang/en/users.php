@@ -25,6 +25,8 @@ return [
     'remove_role' => 'Remove Role',
     'phone' => 'Phone',
     'avatar' => 'Avatar',
+    'is_test' => 'Test Information',
+    'meta' => 'Meta Information',
     'created_by' => 'Created By',
     'created_at' => 'Created At',
     'updated_by' => 'Updated By',

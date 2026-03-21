@@ -27,6 +27,7 @@ return [
     'owner' => 'Owner',
     'assigned_to' => 'Assigned To',
     'assign' => 'Assign Lead',
+    'is_test' => 'Test Information',
     'meta' => 'Meta Information',
     'assigned_by' => 'Assigned By',
     'assigned_at' => 'Assigned At',

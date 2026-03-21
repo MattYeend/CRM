@@ -24,6 +24,8 @@ return [
     'position' => 'Sefyllfa',
     'is_won_stage' => 'Ydy\'n Gam Wedi Ennill',
     'is_lost_stage' => 'Ydy\'n Gam Wedi Colli',
+    'is_test' => 'Gwybodaeth Profion',
+    'meta' => 'Gwybodaeth Meta',
     'created_by' => 'Wedi\'i Greu Gan',
     'created_at' => 'Wedi\'i Greu Ar',
     'updated_by' => 'Wedi\'i Ddiweddaru Gan',

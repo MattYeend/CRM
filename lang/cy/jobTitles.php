@@ -21,6 +21,7 @@ return [
     'title' => 'Teitl',
     'short_code' => 'Cod Byr',
     'group' => 'Grŵp',
+    'is_test' => 'Gwybodaeth Profion',
     'meta' => 'Gwybodaeth Meta',
     'created_by' => 'Crëwyd Gan',
     'created_at' => 'Crëwyd Ar',

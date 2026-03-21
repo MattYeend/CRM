@@ -22,6 +22,7 @@ return [
     'description' => 'Description',
     'date' => 'Date',
     'users' => 'Users',
+    'is_test' => 'Test Information',
     'meta' => 'Meta Information',
     'created_by' => 'Created By',
     'created_at' => 'Created At',

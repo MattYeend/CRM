@@ -24,6 +24,7 @@ return [
     'quantity' => 'Quantity',
     'unit_price' => 'Unit Price',
     'line_total' => 'Line Total',
+    'is_test' => 'Test Information',
     'meta' => 'Meta Information',
     'created_by' => 'Created By',
     'created_at' => 'Created At',

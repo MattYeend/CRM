@@ -26,6 +26,8 @@ return [
     'priority' => 'Priority',
     'status' => 'Status',
     'due_date' => 'Due Date',
+    'is_test' => 'Test Information',
+    'meta' => 'Meta Information',
     'created_by' => 'Created By',
     'created_at' => 'Created At',
     'updated_by' => 'Updated By',

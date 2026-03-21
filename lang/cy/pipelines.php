@@ -21,6 +21,8 @@ return [
     'name' => 'Enw',
     'description' => 'Disgrifiad',
     'is_default' => 'Ydy\'n Ddiofyn',
+    'is_test' => 'Gwybodaeth Profion',
+    'meta' => 'Gwybodaeth Meta',
     'created_by' => 'Wedi\'i Greu Gan',
     'created_at' => 'Wedi\'i Greu Ar',
     'updated_by' => 'Wedi\'i Ddiweddaru Gan',

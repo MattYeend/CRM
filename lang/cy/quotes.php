@@ -25,6 +25,8 @@ return [
     'total' => 'Cyfanswm',
     'sent_at' => 'Anfonwyd Am',
     'accepted_at' => 'Derbyniwyd Am',
+    'is_test' => 'Gwybodaeth Profion',
+    'meta' => 'Gwybodaeth Meta',
     'created_by' => 'Wedi\'i Greu Gan',
     'created_at' => 'Wedi\'i Greu Am',
     'updated_by' => 'Wedi\'i Ddiweddaru Gan',

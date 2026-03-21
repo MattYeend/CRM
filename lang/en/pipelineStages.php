@@ -24,6 +24,8 @@ return [
     'position' => 'Position',
     'is_won_stage' => 'Is Won Stage',
     'is_lost_stage' => 'Is Lost Stage',
+    'is_test' => 'Test Information',
+    'meta' => 'Meta Information',
     'created_by' => 'Created By',
     'created_at' => 'Created At',
     'updated_by' => 'Updated By',

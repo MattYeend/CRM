@@ -24,6 +24,7 @@ return [
     'price' => 'Price',
     'currency' => 'Currency',
     'quantity' => 'Quantity',
+    'is_test' => 'Test Information',
     'meta' => 'Meta Information',
     'created_by' => 'Created By',
     'created_at' => 'Created At',

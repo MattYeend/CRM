@@ -21,6 +21,8 @@ return [
     'name' => 'Name',
     'description' => 'Description',
     'is_default' => 'Is Default',
+    'is_test' => 'Test Information',
+    'meta' => 'Meta Information',
     'created_by' => 'Created By',
     'created_at' => 'Created At',
     'updated_by' => 'Updated By',

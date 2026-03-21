@@ -25,6 +25,7 @@ return [
     'email' => 'E-bost',
     'phone' => 'Ffôn',
     'job_title' => 'Teitl Swydd',
+    'is_test' => 'Gwybodaeth Profion',
     'meta' => 'Gwybodaeth Meta',
     'company' => 'Cwmni',
     'created_by' => 'Wedi\'i Greu Gan',

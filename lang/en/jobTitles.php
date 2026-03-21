@@ -21,6 +21,7 @@ return [
     'title' => 'Title',
     'short_code' => 'Short Code',
     'group' => 'Group',
+    'is_test' => 'Test Information',
     'meta' => 'Meta Information',
     'created_by' => 'Created By',
     'created_at' => 'Created At',

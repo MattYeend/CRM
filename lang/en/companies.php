@@ -28,6 +28,7 @@ return [
     'region' => 'Region',
     'postal_code' => 'Postal Code',
     'country' => 'Country',
+    'is_test' => 'Test Information',
     'meta' => 'Meta Information',
     'number_of_employees' => 'Number of Employees',
     'created_by' => 'Created By',

@@ -25,6 +25,8 @@ return [
     'remove_role' => 'Tynnu Rôl',
     'phone' => 'Ffôn',
     'avatar' => 'Avatar',
+    'is_test' => 'Gwybodaeth Profion',
+    'meta' => 'Gwybodaeth Meta',
     'created_by' => 'Wedi\'i Greu Gan',
     'created_at' => 'Wedi\'i Greu Ar',
     'updated_by' => 'Wedi\'i Ddiweddaru Gan',

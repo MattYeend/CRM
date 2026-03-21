@@ -25,6 +25,7 @@ return [
     'email' => 'Email',
     'phone' => 'Phone',
     'job_title' => 'Job Title',
+    'is_test' => 'Test Information',
     'meta' => 'Meta Information',
     'company' => 'Company',
     'created_by' => 'Created By',

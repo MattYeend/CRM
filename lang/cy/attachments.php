@@ -26,6 +26,8 @@ return [
     'attachable_id' => 'ID Atodiadwy',
     'size' => 'Maint',
     'mime' => 'Math MIME',
+    'is_test' => 'Gwybodaeth Profion',
+    'meta' => 'Gwybodaeth Meta',
     'uploaded_by' => 'Wedi\'i uwchlwytho Gan',
     'created_by' => 'Wedi\'i Greu Gan',
     'created_at' => 'Wedi\'i Greu Ar',
