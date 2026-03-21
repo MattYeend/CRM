@@ -22,6 +22,10 @@ class Contact extends Model
         HasTestPrefix;
 
     /**
+     * Accessor for name attribute
+     */
+    protected $appends = ['name'];
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>

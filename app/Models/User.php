@@ -225,13 +225,13 @@ class User extends Authenticatable
     }
 
     /**
-     * The notes created by the user.
+     * Get notes with the user id.
      *
      * @return HasMany
      */
     public function notes(): HasMany
     {
-        return $this->hasMany(Note::class);
+        return $this->hasMany(Note::class, 'user_id');
     }
 
     /**
@@ -255,7 +255,7 @@ class User extends Authenticatable
      *
      * @return MorphMany
      */
-    public function attachments(): MorphMany
+    public function attachment(): MorphMany
     {
         return $this->morphMany(Attachment::class, 'attachable');
     }
@@ -265,7 +265,7 @@ class User extends Authenticatable
      *
      * @return MorphMany
      */
-    public function activities(): MorphMany
+    public function activity(): MorphMany
     {
         return $this->morphMany(Activity::class, 'subject');
     }

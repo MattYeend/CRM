@@ -30,7 +30,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/users/{user}', function (User $user) {
         return Inertia::render('Users/Show', [
-            'user' => $user->load('role', 'jobTitle'),
+            'user' => $user->load([
+                'role',
+                'jobTitle',
+                'notes',
+                'tasks',
+                'activity',
+                'learnings',
+                'deals' => fn ($q) => $q->with([
+                    'company',
+                    'contact',
+                    'pipeline',
+                    'stage',
+                ]),
+            ]),
         ]);
     })->name('users.show');
 
