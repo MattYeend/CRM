@@ -21,6 +21,8 @@ return [
     'list' => 'Elenco di {ITEMS}',
     'name' => 'Nome',
     'description' => 'Descrizione',
+    'is_test' => 'Informazioni sul Test',
+    'meta' => 'Informazioni Meta',
     'created_by' => 'Creato Da',
     'created_at' => 'Creato Il',
     'updated_by' => 'Aggiornato Da',

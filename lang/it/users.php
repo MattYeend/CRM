@@ -25,6 +25,8 @@ return [
     'remove_role' => 'Rimuovi Ruolo',
     'phone' => 'Telefono',
     'avatar' => 'Avatar',
+    'is_test' => 'Informazioni sul Test',
+    'meta' => 'Informazioni Meta',
     'created_by' => 'Creato Da',
     'created_at' => 'Creato Il',
     'updated_by' => 'Aggiornato Da',

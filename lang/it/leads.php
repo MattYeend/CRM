@@ -27,6 +27,7 @@ return [
     'owner' => 'Proprietario',
     'assigned_to' => 'Assegnato a',
     'assign' => 'Assegna Lead',
+    'is_test' => 'Informazioni sul Test',
     'meta' => 'Informazioni Meta',
     'assigned_by' => 'Assegnato Da',
     'assigned_at' => 'Assegnato Il',

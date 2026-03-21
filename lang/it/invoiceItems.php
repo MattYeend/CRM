@@ -24,6 +24,7 @@ return [
     'quantity' => 'Quantità',
     'unit_price' => 'Prezzo Unitario',
     'line_total' => 'Totale Riga',
+    'is_test' => 'Informazioni sul Test',
     'meta' => 'Informazioni Meta',
     'created_by' => 'Creato Da',
     'created_at' => 'Creato Il',

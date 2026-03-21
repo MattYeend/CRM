@@ -26,6 +26,8 @@ return [
     'attachable_id' => 'ID Allegabile',
     'size' => 'Dimensione',
     'mime' => 'Tipo MIME',
+    'is_test' => 'Informazioni sul Test',
+    'meta' => 'Informazioni Meta',
     'created_by' => 'Creato Da',
     'created_at' => 'Creato Il',
     'updated_by' => 'Aggiornato Da',

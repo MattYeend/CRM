@@ -26,6 +26,8 @@ return [
     'priority' => 'Priorità',
     'status' => 'Stato',
     'due_date' => 'Data di Scadenza',
+    'is_test' => 'Informazioni sul Test',
+    'meta' => 'Informazioni Meta',
     'created_by' => 'Creato Da',
     'created_at' => 'Creato Il',
     'updated_by' => 'Aggiornato Da',

@@ -25,6 +25,7 @@ return [
     'email' => 'Email',
     'phone' => 'Telefono',
     'job_title' => 'Titolo di Lavoro',
+    'is_test' => 'Informazioni sul Test',
     'meta' => 'Informazioni Meta',
     'company' => 'Azienda',
     'created_by' => 'Creato Da',
