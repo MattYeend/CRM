@@ -85,7 +85,7 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
         'show' => 'api.contacts.show',
         'update' => 'api.contacts.update',
         'destroy' => 'api.contacts.destroy',
-    ]);;
+    ]);
     Route::post(
         'contacts/{id}/restore',
         [ContactController::class, 'restore']
@@ -159,7 +159,7 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
         'show' => 'api.tasks.show',
         'update' => 'api.tasks.update',
         'destroy' => 'api.tasks.destroy',
-    ]);;
+    ]);
     Route::post(
         'tasks/{id}/restore',
         [TaskController::class, 'restore']

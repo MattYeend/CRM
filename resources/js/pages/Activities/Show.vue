@@ -114,6 +114,11 @@ onMounted(() => {
                     <div>
                         <span class="font-semibold">Subject Type: </span>
                         <span>{{ activity.subject_type }}</span>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div>
+                        <span class="font-semibold">Subject Name: </span>
                         <span>{{ activity.subject_name }}</span>
                     </div>
                 </div>

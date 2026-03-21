@@ -75,13 +75,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ])->latest()->get(),
         ]);
     })->name('activities.index');
-    
+
     Route::get('/activities/create', function () {
         return Inertia::render('Activities/Create', [
             'subjectTypes' => array_keys(Relation::morphMap()),
         ]);
     })->name('activities.create');
-    
+
     Route::get('/activities/{activity}', function (Activity $activity) {
         return Inertia::render('Activities/Show', [
             'activity' => $activity->load([
@@ -93,7 +93,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]),
         ]);
     })->name('activities.show');
-    
+
     Route::get('/activities/{activity}/edit', function (Activity $activity) {
         return Inertia::render('Activities/Update', [
             'activity' => $activity->load([

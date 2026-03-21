@@ -3,11 +3,6 @@
 namespace App\Services\Activities;
 
 use App\Models\Activity;
-use App\Models\Company;
-use App\Models\Contact;
-use App\Models\Deal;
-use App\Models\Task;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
@@ -45,7 +40,9 @@ class ActivityQueryService
 
         $paginator = $query->paginate($perPage)->appends($request->query());
 
-        $paginator->through(fn (Activity $activity) => $this->formatActivity($activity));
+        $paginator->through(
+            fn (Activity $activity) => $this->formatActivity($activity)
+        );
 
         $paginator->appends([
             'permissions' => [
@@ -78,14 +75,6 @@ class ActivityQueryService
      */
     private function formatActivity(Activity $activity): array
     {
-        $subjectName = null;
-
-        if ($activity->subject) {
-            $subjectName = $activity->subject->name ?? $activity->subject->title ?? null;
-        }
-
-        $activity->subject_name = $subjectName;
-
         return [
             'id' => $activity->id,
             'user_id' => $activity->user_id,
@@ -93,7 +82,7 @@ class ActivityQueryService
             'type' => $activity->type,
             'subject_type' => $activity->subject_type,
             'description' => $activity->description,
-            'subject_name' => $subjectName,
+            'subject_name' => $this->subjectName($activity),
             'creator' => $activity->creator,
             'permissions' => [
                 'view' => Gate::allows('view', $activity),
@@ -101,5 +90,23 @@ class ActivityQueryService
                 'delete' => Gate::allows('delete', $activity),
             ],
         ];
+    }
+
+    /**
+     * Get the subject name.
+     *
+     * @param Activity $activity
+     *
+     * @return string
+     */
+    private function subjectName(Activity $activity): string
+    {
+        if ($activity->subject) {
+            $subjectName = $activity->subject->name ??
+                $activity->subject->title ??
+                null;
+        }
+
+        return $activity->subject_name = $subjectName;
     }
 }

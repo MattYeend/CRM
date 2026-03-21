@@ -3,9 +3,9 @@
 namespace App\Http\Requests;
 
 use App\Models\Activity;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Illuminate\Database\Eloquent\Relations\Relation;
 
 class StoreActivityRequest extends FormRequest
 {
@@ -16,19 +16,6 @@ class StoreActivityRequest extends FormRequest
     {
         return $this->user()->can('create', Activity::class);
     }
-
-    /**
-     * Convert subject_type from morph key to full class before validation
-     */
-    protected function prepareForValidation(): void
-    {
-        if ($this->subject_type) {
-            $this->merge([
-                'subject_type' => Relation::getMorphedModel($this->subject_type),
-            ]);
-        }
-    }
-
 
     /**
      * Get the validation rules that apply to the request.
@@ -42,6 +29,20 @@ class StoreActivityRequest extends FormRequest
             $this->subjectRules(),
             $this->metaRules(),
         );
+    }
+
+    /**
+     * Convert subject_type from morph key to full class before validation
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->subject_type) {
+            $this->merge([
+                'subject_type' => Relation::getMorphedModel(
+                    $this->subject_type
+                ),
+            ]);
+        }
     }
 
     /**

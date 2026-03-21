@@ -3,9 +3,9 @@
 namespace App\Http\Requests;
 
 use App\Models\Activity;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Illuminate\Database\Eloquent\Relations\Relation;
 
 class UpdateActivityRequest extends FormRequest
 {
@@ -20,18 +20,6 @@ class UpdateActivityRequest extends FormRequest
     }
 
     /**
-     * Convert subject_type from morph key to full class before validation
-     */
-    protected function prepareForValidation(): void
-    {
-        if ($this->subject_type) {
-            $this->merge([
-                'subject_type' => Relation::getMorphedModel($this->subject_type),
-            ]);
-        }
-    }
-
-    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
@@ -43,6 +31,20 @@ class UpdateActivityRequest extends FormRequest
             $this->subjectRules(),
             $this->metaRules()
         );
+    }
+
+    /**
+     * Convert subject_type from morph key to full class before validation
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->subject_type) {
+            $this->merge([
+                'subject_type' => Relation::getMorphedModel(
+                    $this->subject_type
+                ),
+            ]);
+        }
     }
 
     /**

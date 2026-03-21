@@ -8,9 +8,9 @@ use App\Models\Activity;
 use App\Services\Activities\ActivityLogService;
 use App\Services\Activities\ActivityManagementService;
 use App\Services\Activities\ActivityQueryService;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ActivityController extends Controller
 {
