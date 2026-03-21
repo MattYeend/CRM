@@ -24,6 +24,7 @@ return [
     'quantity' => 'Cantidad',
     'unit_price' => 'Precio Unitario',
     'line_total' => 'Total de Línea',
+    'is_test' => 'Información de la Prueba',
     'meta' => 'Información Meta',
     'created_by' => 'Creado Por',
     'created_at' => 'Creado El',

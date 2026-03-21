@@ -26,6 +26,8 @@ return [
     'attachable_id' => 'ID del Adjunto',
     'size' => 'Tamaño',
     'mime' => 'Tipo MIME',
+    'is_test' => 'Información de la Prueba',
+    'meta' => 'Información Meta',
     'created_by' => 'Creado Por',
     'created_at' => 'Creado El',
     'updated_by' => 'Actualizado Por',

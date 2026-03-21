@@ -22,6 +22,7 @@ return [
     'notable_id' => 'ID de Notable',
     'user' => 'Usuario',
     'body' => 'Cuerpo',
+    'is_test' => 'Información de la Prueba',
     'meta' => 'Información Meta',
     'created_by' => 'Creado Por',
     'created_at' => 'Creado El',

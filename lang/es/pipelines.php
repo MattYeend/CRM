@@ -21,6 +21,8 @@ return [
     'name' => 'Nombre',
     'description' => 'Descripción',
     'is_default' => 'Es Predeterminado',
+    'is_test' => 'Información de la Prueba',
+    'meta' => 'Información Meta',
     'created_by' => 'Creado Por',
     'created_at' => 'Creado El',
     'updated_by' => 'Actualizado Por',

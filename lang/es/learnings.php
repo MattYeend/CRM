@@ -22,6 +22,7 @@ return [
     'description' => 'Descripción',
     'date' => 'Fecha',
     'users' => 'Usuarios',
+    'is_test' => 'Información de la Prueba',
     'meta' => 'Información Meta',
     'created_by' => 'Creado Por',
     'created_at' => 'Creado El',

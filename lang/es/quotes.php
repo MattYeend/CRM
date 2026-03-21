@@ -25,6 +25,8 @@ return [
     'total' => 'Total',
     'sent_at' => 'Enviado El',
     'accepted_at' => 'Aceptado El',
+    'is_test' => 'Información de la Prueba',
+    'meta' => 'Información Meta',
     'created_by' => 'Creado Por',
     'created_at' => 'Creado El',
     'updated_by' => 'Actualizado Por',
