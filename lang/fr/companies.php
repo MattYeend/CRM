@@ -28,6 +28,7 @@ return [
     'region' => 'Région',
     'postal_code' => 'Code postal',
     'country' => 'Pays',
+    'is_test' => 'Informations sur le Test',
     'meta' => 'Informations méta',
     'number_of_employees' => 'Nombre d\'employés',
     'created_by' => 'Créé Par',

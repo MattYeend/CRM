@@ -28,6 +28,7 @@ return [
     'value' => 'Valeur',
     'currency' => 'Devise',
     'close_date' => 'Date de clôture',
+    'is_test' => 'Informations sur le Test',
     'meta' => 'Informations méta',
     'created_by' => 'Créé Par',
     'created_at' => 'Créé Le',

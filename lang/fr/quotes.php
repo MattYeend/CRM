@@ -24,6 +24,8 @@ return [
     'tax' => 'Taxe',
     'total' => 'Total',
     'sent_at' => 'Envoyé Le',
+    'is_test' => 'Informations sur le Test',
+    'meta' => 'Informations méta',
     'accepted_at' => 'Accepté Le',
     'created_by' => 'Créé Par',
     'created_at' => 'Créé Le',

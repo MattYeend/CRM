@@ -28,6 +28,7 @@ return [
     'tax' => 'Taxe',
     'total' => 'Total',
     'currency' => 'Devise',
+    'is_test' => 'Informations sur le Test',
     'meta' => 'Informations méta',
     'created_by' => 'Créé Par',
     'created_at' => 'Créé Le',

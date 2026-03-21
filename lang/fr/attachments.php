@@ -26,6 +26,8 @@ return [
     'attachable_id' => 'ID de la pièce jointe',
     'size' => 'Taille',
     'mime' => 'Type MIME',
+    'is_test' => 'Informations sur le Test',
+    'meta' => 'Informations méta',
     'created_by' => 'Créé Par',
     'created_at' => 'Créé Le',
     'updated_by' => 'Mis à Jour Par',

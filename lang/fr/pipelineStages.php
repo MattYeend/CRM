@@ -24,6 +24,8 @@ return [
     'position' => 'Position',
     'is_won_stage' => 'Est une étape gagnée',
     'is_lost_stage' => 'Est une étape perdue',
+    'is_test' => 'Informations sur le Test',
+    'meta' => 'Informations méta',
     'created_by' => 'Créé Par',
     'created_at' => 'Créé Le',
     'updated_by' => 'Mis à Jour Par',

@@ -22,6 +22,7 @@ return [
     'description' => 'Description',
     'type' => 'Type',
     'subject_type' => 'Type de sujet',
+    'is_test' => 'Informations sur le Test',
     'meta' => 'Informations méta',
     'created_by' => 'Créé Par',
     'created_at' => 'Créé Le',

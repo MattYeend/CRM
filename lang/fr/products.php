@@ -24,6 +24,7 @@ return [
     'price' => 'Prix',
     'currency' => 'Devise',
     'quantity' => 'Quantité',
+    'is_test' => 'Informations sur le Test',
     'meta' => 'Informations méta',
     'created_by' => 'Créé Par',
     'created_at' => 'Créé Le',
