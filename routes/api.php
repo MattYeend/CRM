@@ -63,21 +63,33 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
      * ------------------ Compnies & Contacts -------------------
      * ----------------------------------------------------------
      */
-    Route::apiResource('companies', CompanyController::class);
+    Route::apiResource('companies', CompanyController::class)->names([
+        'index' => 'api.companies.index',
+        'store' => 'api.companies.store',
+        'show' => 'api.companies.show',
+        'update' => 'api.companies.update',
+        'destroy' => 'api.companies.destroy',
+    ]);
     Route::post(
         'companies/{id}/restore',
         [CompanyController::class, 'restore']
-    )->name('companies.restore');
+    )->name('api.companies.restore');
     Route::delete(
         'companies/{id}/force',
         [CompanyController::class, 'forceDelete']
-    )->name('companies.forceDelete');
+    )->name('api.companies.forceDelete');
 
-    Route::apiResource('contacts', ContactController::class);
+    Route::apiResource('contacts', ContactController::class)->names([
+        'index' => 'api.contacts.index',
+        'store' => 'api.contacts.store',
+        'show' => 'api.contacts.show',
+        'update' => 'api.contacts.update',
+        'destroy' => 'api.contacts.destroy',
+    ]);;
     Route::post(
         'contacts/{id}/restore',
         [ContactController::class, 'restore']
-    )->name('contacts.restore');
+    )->name('api.contacts.restore');
 
     /**
      * ----------------------------------------------------------
@@ -120,26 +132,38 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
      * ------------------------- Deals -------------------------
      * ---------------------------------------------------------
      */
-    Route::apiResource('deals', DealController::class);
+    Route::apiResource('deals', DealController::class)->names([
+        'index' => 'api.deals.index',
+        'store' => 'api.deals.store',
+        'show' => 'api.deals.show',
+        'update' => 'api.deals.update',
+        'destroy' => 'api.deals.destroy',
+    ]);
     Route::post(
         'deals/{id}/restore',
         [DealController::class, 'restore']
-    )->name('deals.restore');
+    )->name('apideals.restore');
     Route::delete(
         'deals/{id}/force',
         [DealController::class, 'forceDelete']
-    )->name('deals.forceDelete');
+    )->name('api.deals.forceDelete');
 
     /**
      * ----------------------------------------------------------
      * --------------- Tasks, Notes, & Activities ---------------
      * ----------------------------------------------------------
      */
-    Route::apiResource('tasks', TaskController::class);
+    Route::apiResource('tasks', TaskController::class)->names([
+        'index' => 'api.tasks.index',
+        'store' => 'api.tasks.store',
+        'show' => 'api.tasks.show',
+        'update' => 'api.tasks.update',
+        'destroy' => 'api.tasks.destroy',
+    ]);;
     Route::post(
         'tasks/{id}/restore',
         [TaskController::class, 'restore']
-    )->name('tasks.restore');
+    )->name('api.tasks.restore');
 
     Route::apiResource('notes', NoteController::class);
     Route::post(
@@ -147,11 +171,17 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
         [NoteController::class, 'restore']
     )->name('notes.restore');
 
-    Route::apiResource('activities', ActivityController::class);
+    Route::apiResource('activities', ActivityController::class)->names([
+        'index' => 'api.activities.index',
+        'store' => 'api.activities.store',
+        'show' => 'api.activities.show',
+        'update' => 'api.activities.update',
+        'destroy' => 'api.activities.destroy',
+    ]);
     Route::post(
         'activities/{id}/restore',
         [ActivityController::class, 'restore']
-    )->name('activities.restore');
+    )->name('api.activities.restore');
 
     /**
      * ----------------------------------------------------------

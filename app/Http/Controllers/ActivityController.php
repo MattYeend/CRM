@@ -8,6 +8,7 @@ use App\Models\Activity;
 use App\Services\Activities\ActivityLogService;
 use App\Services\Activities\ActivityManagementService;
 use App\Services\Activities\ActivityQueryService;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -62,9 +63,19 @@ class ActivityController extends Controller
     {
         $this->authorize('viewAny', Activity::class);
 
-        $activities = $this->query->list($request);
+        $paginator = $this->query->list($request);
 
-        return response()->json($activities);
+        return response()->json([
+            'data' => $paginator->items(),
+            'current_page' => $paginator->currentPage(),
+            'last_page' => $paginator->lastPage(),
+            'total' => $paginator->total(),
+
+            'permissions' => [
+                'create' => Gate::allows('create', Activity::class),
+                'viewAny' => Gate::allows('viewAny', Activity::class),
+            ],
+        ]);
     }
 
     /**

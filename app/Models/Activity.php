@@ -175,4 +175,14 @@ class Activity extends Model
     {
         return $this->prefixTest($value);
     }
+
+    /**
+     * Get the user name.
+     *
+     * @return string
+     */
+    public function getUserNameAttribute(): string
+    {
+        return $this->user?->name;
+    }
 }

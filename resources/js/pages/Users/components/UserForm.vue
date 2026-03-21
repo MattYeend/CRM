@@ -46,7 +46,7 @@ async function submit() {
                 if (value instanceof File) {
                     formData.append(key, value);
                 } else {
-                    formData.append(key, String(value)); // 🔥 important
+                    formData.append(key, String(value));
                 }
             }
         });
@@ -64,7 +64,6 @@ async function submit() {
             headers: { 'Content-Type': 'multipart/form-data' },
         });
 
-        // ✅ SPA navigation AFTER API success
         router.visit(`/users/${response.data.id}`);
 
     } catch (err: any) {
