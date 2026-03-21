@@ -61,7 +61,7 @@ test('index returns paginated deals with relations and filters', function () {
     ]);
 
     $response = $this->actingAs($this->auth, 'sanctum')
-                     ->getJson(route('deals.index', ['per_page' => 5, 'status' => 'open', 'owner_id' => $owner->id]));
+                     ->getJson(route('api.deals.index', ['per_page' => 5, 'status' => 'open', 'owner_id' => $owner->id]));
 
     $response->assertStatus(200);
     $response->assertJsonPath('per_page', 5);
@@ -72,7 +72,7 @@ test('show returns a deal with relations loaded', function () {
     $deal = Deal::factory()->create();
 
     $response = $this->actingAs($this->auth, 'sanctum')
-                     ->getJson(route('deals.show', $deal));
+                     ->getJson(route('api.deals.show', $deal));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $deal->id]);
@@ -109,7 +109,7 @@ test('store creates a new deal and returns 201', function () {
     ];
 
     $response = $this->actingAs($this->auth, 'sanctum')
-                     ->postJson(route('deals.store'), $payload);
+                     ->postJson(route('api.deals.store'), $payload);
 
     $response->assertStatus(201);
     $response->assertJsonFragment(['title' => 'New Deal', 'status' => 'open']);
@@ -125,7 +125,7 @@ test('update modifies an existing deal', function () {
     ];
 
     $response = $this->actingAs($this->auth, 'sanctum')
-                     ->putJson(route('deals.update', $deal), $payload);
+                     ->putJson(route('api.deals.update', $deal), $payload);
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['title' => 'Updated Deal', 'status' => 'won']);
@@ -136,7 +136,7 @@ test('destroy deletes the deal', function () {
     $deal = Deal::factory()->create();
 
     $response = $this->actingAs($this->auth, 'sanctum')
-                     ->deleteJson(route('deals.destroy', $deal));
+                     ->deleteJson(route('api.deals.destroy', $deal));
 
     $response->assertStatus(204);
 
@@ -151,7 +151,7 @@ test('restore recovers a soft-deleted deal', function () {
     $deal = Deal::factory()->create();
     $deal->delete();
 
-    $response = $this->postJson(route('deals.restore', $deal->id));
+    $response = $this->postJson(route('api.deals.restore', $deal->id));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $deal->id]);

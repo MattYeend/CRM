@@ -44,7 +44,7 @@ beforeEach(function () {
 test('index returns paginated contacts and respects per_page query', function () {
     Contact::factory()->count(15)->create();
 
-    $response = $this->getJson(route('contacts.index', ['per_page' => 5]));
+    $response = $this->getJson(route('api.contacts.index', ['per_page' => 5]));
 
     $response->assertStatus(200);
     $response->assertJsonPath('per_page', 5);
@@ -59,7 +59,7 @@ test('index filters contacts by company_id', function () {
     Contact::factory()->count(3)->create(['company_id' => $companyA->id]);
     Contact::factory()->count(2)->create(['company_id' => $companyB->id]);
 
-    $response = $this->getJson(route('contacts.index', ['company_id' => $companyA->id]));
+    $response = $this->getJson(route('api.contacts.index', ['company_id' => $companyA->id]));
 
     $response->assertStatus(200);
 
@@ -75,7 +75,7 @@ test('index searches contacts by q (first_name, last_name, email)', function () 
     Contact::factory()->create(['first_name' => 'Alice', 'last_name' => 'Smith', 'email' => 'alice@example.com']);
     Contact::factory()->create(['first_name' => 'Bob', 'last_name' => 'Jones', 'email' => 'bob@example.com']);
 
-    $response = $this->getJson(route('contacts.index', ['q' => 'Alice']));
+    $response = $this->getJson(route('api.contacts.index', ['q' => 'Alice']));
 
     $response->assertStatus(200);
     $data = $response->json('data');
@@ -87,7 +87,7 @@ test('show returns the contact with relationships loaded', function () {
     $company = Company::factory()->create();
     $contact = Contact::factory()->create(['company_id' => $company->id]);
 
-    $response = $this->getJson(route('contacts.show', $contact));
+    $response = $this->getJson(route('api.contacts.show', $contact));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $contact->id, 'first_name' => $contact->first_name]);
@@ -101,9 +101,9 @@ test('show returns the contact with relationships loaded', function () {
         'phone',
         'job_title',
         'meta',
-        'company',      // relationship
-        'deals',        // relationship
-        'attachments',  // relationship
+        'company',
+        'deals',
+        'attachments',
     ]);
 });
 
@@ -120,7 +120,7 @@ test('store creates a contact with valid payload and returns 201', function () {
         'meta' => ['notes' => 'Important contact'],
     ];
 
-    $response = $this->postJson(route('contacts.store'), $payload);
+    $response = $this->postJson(route('api.contacts.store'), $payload);
 
     $response->assertStatus(201);
     $response->assertJsonFragment(['first_name' => 'Charlie', 'email' => 'charlie@example.com']);
@@ -133,12 +133,11 @@ test('store creates a contact with valid payload and returns 201', function () {
 });
 
 test('store returns 422 when required fields are missing', function () {
-    // Missing required first_name
     $payload = [
         'email' => 'no-name@example.com',
     ];
 
-    $response = $this->postJson(route('contacts.store'), $payload);
+    $response = $this->postJson(route('api.contacts.store'), $payload);
 
     $response->assertStatus(422);
     $response->assertJsonValidationErrors('first_name');
@@ -157,7 +156,7 @@ test('update modifies allowed fields and returns the updated contact', function 
         'job_title' => 'Director',
     ];
 
-    $response = $this->patchJson(route('contacts.update', $contact), $payload);
+    $response = $this->patchJson(route('api.contacts.update', $contact), $payload);
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['first_name' => 'New', 'email' => 'new@example.com']);
@@ -172,11 +171,10 @@ test('update modifies allowed fields and returns the updated contact', function 
 test('destroy soft deletes the contact and returns 204', function () {
     $contact = Contact::factory()->create();
 
-    $response = $this->deleteJson(route('contacts.destroy', $contact));
+    $response = $this->deleteJson(route('api.contacts.destroy', $contact));
 
     $response->assertStatus(204);
 
-    // Use assertSoftDeleted when model uses SoftDeletes
     $this->assertSoftDeleted('contacts', ['id' => $contact->id]);
 });
 
@@ -186,7 +184,7 @@ test('restre deleted company', function () {
 
     $this->assertSoftDeleted('contacts', ['id' => $contact->id]);
 
-    $response = $this->postJson(route('contacts.restore', $contact->id));
+    $response = $this->postJson(route('api.contacts.restore', $contact->id));
 
     $response->assertStatus(200);
     $this->assertNotSoftDeleted('contacts', ['id' => $contact->id]);

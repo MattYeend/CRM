@@ -142,7 +142,7 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
     Route::post(
         'deals/{id}/restore',
         [DealController::class, 'restore']
-    )->name('apideals.restore');
+    )->name('api.deals.restore');
     Route::delete(
         'deals/{id}/force',
         [DealController::class, 'forceDelete']

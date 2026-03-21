@@ -21,31 +21,25 @@ beforeEach(function () {
         'companies.restore.any',
     ];
 
-    // Create permissions in DB
     $permissionModels = collect($permissions)
         ->map(fn($name) => Permission::firstOrCreate(['name' => $name]));
 
-    // Create admin role and attach permissions
     $role = Role::factory()->create(['name' => 'admin']);
     $role->permissions()->sync($permissionModels->pluck('id'));
 
-    // Attach role to the user
     $this->auth->update([
         'role_id' => $role->id
     ]);
 
-    // Authenticate the user
     $this->actingAs($this->auth, 'sanctum');
 
-    // Disable throttling for tests
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
 test('index returns paginated companies and respects per_page query', function () {
-    // Create more companies than default per-page
     Company::factory()->count(15)->create();
 
-    $response = $this->getJson(route('companies.index', ['per_page' => 5]));
+    $response = $this->getJson(route('api.companies.index', ['per_page' => 5]));
 
     $response->assertStatus(200);
     $response->assertJsonPath('per_page', 5);
@@ -57,28 +51,24 @@ test('index filters companies by q query parameter (search by name)', function (
     Company::factory()->create(['name' => 'Beta Solutions']);
     Company::factory()->create(['name' => 'Gamma Labs']);
 
-    $response = $this->getJson(route('companies.index', ['q' => 'Beta']));
+    $response = $this->getJson(route('api.companies.index', ['q' => 'Beta']));
 
     $response->assertStatus(200);
 
-    // Expect data array to contain just the matching company
     $data = $response->json('data');
     $this->assertCount(1, $data);
     $this->assertStringContainsString('Beta', $data[0]['name']);
 });
 
 test('show returns the company with relationships loaded', function () {
-    // Create a company. We don't need to create related models here —
-    // the controller loads relationships; empty arrays are fine.
     $company = Company::factory()->create();
 
-    $response = $this->getJson(route('companies.show', $company));
+    $response = $this->getJson(route('api.companies.show', $company));
 
     $response->assertStatus(200);
 
     $response->assertJsonFragment(['id' => $company->id, 'name' => $company->name]);
 
-    // Ensure relationships are present (may be empty arrays)
     $response->assertJsonStructure([
         'id',
         'name',
@@ -91,10 +81,10 @@ test('show returns the company with relationships loaded', function () {
         'postal_code',
         'country',
         'meta',
-        'contacts',   // array
-        'deals',      // array
-        'invoices',   // array
-        'attachments' // array
+        'contacts',
+        'deals',
+        'invoices',
+        'attachments'
     ]);
 });
 
@@ -112,7 +102,7 @@ test('store creates a company with valid payload and returns 201', function () {
         'meta' => ['notes' => 'Important client'],
     ];
 
-    $response = $this->postJson(route('companies.store'), $payload);
+    $response = $this->postJson(route('api.companies.store'), $payload);
 
     $response->assertStatus(201);
     $response->assertJsonFragment(['name' => 'NewCo Ltd', 'industry' => 'Software']);
@@ -121,12 +111,11 @@ test('store creates a company with valid payload and returns 201', function () {
 });
 
 test('store returns 422 when required fields are missing', function () {
-    // Missing 'name'
     $payload = [
         'industry' => 'Software',
     ];
 
-    $response = $this->postJson(route('companies.store'), $payload);
+    $response = $this->postJson(route('api.companies.store'), $payload);
 
     $response->assertStatus(422);
     $response->assertJsonValidationErrors('name');
@@ -144,7 +133,7 @@ test('update modifies allowed fields and returns the updated company', function 
         'meta' => ['tier' => 'gold'],
     ];
 
-    $response = $this->patchJson(route('companies.update', $company), $payload);
+    $response = $this->patchJson(route('api.companies.update', $company), $payload);
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['name' => 'Updated Name Ltd', 'website' => 'https://updated.example']);
@@ -158,11 +147,10 @@ test('update modifies allowed fields and returns the updated company', function 
 test('destroy soft deletes the company and returns 204', function () {
     $company = Company::factory()->create();
 
-    $response = $this->deleteJson(route('companies.destroy', $company));
+    $response = $this->deleteJson(route('api.companies.destroy', $company));
 
     $response->assertStatus(204);
 
-    // Model should be soft-deleted (exists in database but with deleted_at)
     $this->assertSoftDeleted('companies', ['id' => $company->id]);
 });
 
@@ -173,11 +161,10 @@ test('restore brings back a soft-deleted company', function () {
     // Ensure it's soft deleted first
     $this->assertSoftDeleted('companies', ['id' => $company->id]);
 
-    $response = $this->postJson(route('companies.restore', $company->id));
+    $response = $this->postJson(route('api.companies.restore', $company->id));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $company->id]);
 
-    // Now it should not be soft deleted
     $this->assertDatabaseHas('companies', ['id' => $company->id, 'name' => $company->name]);
 });

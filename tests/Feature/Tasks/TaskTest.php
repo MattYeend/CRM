@@ -53,7 +53,7 @@ test('index returns paginated tasks with relations', function () {
         'taskable_id' => $taskable->id,
     ]);
 
-    $response = $this->getJson(route('tasks.index', ['per_page' => 5]));
+    $response = $this->getJson(route('api.tasks.index', ['per_page' => 5]));
 
     $response->assertStatus(200);
     $response->assertJsonPath('per_page', 5);
@@ -78,7 +78,7 @@ test('show returns a task with assignee, creator and taskable loaded', function 
         'taskable_id' => $taskable->id,
     ]);
 
-    $response = $this->getJson(route('tasks.show', $task));
+    $response = $this->getJson(route('api.tasks.show', $task));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $task->id]);
@@ -114,7 +114,7 @@ test('store creates a task, handles polymorphic assignment and returns 201', fun
         'due_at' => now()->addDays(3)->toDateTimeString(),
     ];
 
-    $response = $this->postJson(route('tasks.store'), $payload);
+    $response = $this->postJson(route('api.tasks.store'), $payload);
 
     $response->assertStatus(201);
     $response->assertJsonFragment(['title' => 'Follow up', 'priority' => 'high', 'status' => 'pending']);
@@ -145,7 +145,7 @@ test('update modifies an existing task and returns updated resource', function (
         'status' => 'completed',
     ];
 
-    $response = $this->putJson(route('tasks.update', $task), $payload);
+    $response = $this->putJson(route('api.tasks.update', $task), $payload);
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['title' => 'New title', 'priority' => 'medium', 'status' => 'completed']);
@@ -160,7 +160,7 @@ test('destroy deletes the task', function () {
         'taskable_id' => $taskable->id,
     ]);
 
-    $response = $this->deleteJson(route('tasks.destroy', $task));
+    $response = $this->deleteJson(route('api.tasks.destroy', $task));
 
     $response->assertStatus(204);
 
@@ -183,7 +183,7 @@ test('restore deleted tasks', function () {
 
     $this->assertSoftDeleted('tasks', ['id' => $task->id]);
 
-    $response = $this->postJson(route('tasks.restore', $task->id));
+    $response = $this->postJson(route('api.tasks.restore', $task->id));
 
     $response->assertStatus(200);
 
