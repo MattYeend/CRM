@@ -70,6 +70,25 @@ class AuthenticatedSessionLogService
     }
 
     /**
+     * Log failed login.
+     */
+    public function failedLogin(User $user, int $userId): array
+    {
+        $data = [
+            'id' => $user->id,
+            'name' => $user->name,
+        ];
+
+        Log::log(
+            Log::ACTION_LOGIN_FAILED,
+            $data,
+            $userId,
+        );
+
+        return $data;
+    }
+
+    /**
      * Log logging out an existing user.
      */
     public function logout(User $user, int $userId): array
