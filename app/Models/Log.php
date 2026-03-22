@@ -59,7 +59,7 @@ class Log extends Model
     public const ACTION_ACTIVITY_COMPLETED = 38;
     public const ACTION_ACTIVITY_REOPENED = 39;
     public const ACTION_ACTIVITY_VIEWED = 40;
-    public const ACTION_ACTIVIED_RESTORED = 41;
+    public const ACTION_ACTIVITY_RESTORED = 41;
 
     // Attachments
     public const ACTION_ATTACHMENT_CREATED = 42;
@@ -107,97 +107,97 @@ class Log extends Model
     public const ACTION_INVOICE_ITEM_RESTORED = 74;
     public const ACTION_INVOICE_ITEM_VIEWED = 75;
 
-    // Notes
-    public const ACTION_NOTE_CREATED = 76;
-    public const ACTION_NOTE_UPDATED = 77;
-    public const ACTION_NOTE_DELETED = 78;
-    public const ACTION_NOTE_RESTORED = 79;
-    public const ACTION_NOTE_VIEWED = 80;
-
-    // Permissions
-    public const ACTION_PERMISSION_CREATED = 81;
-    public const ACTION_PERMISSION_UPDATED = 82;
-    public const ACTION_PERMISSION_DELETED = 83;
-    public const ACTION_PERMISSION_RESTORED = 84;
-    public const ACTION_PERMISSION_VIEWED = 85;
-
-    // Pipelines
-    public const ACTION_PIPELINE_CREATED = 86;
-    public const ACTION_PIPELINE_UPDATED = 87;
-    public const ACTION_PIPELINE_DELETED = 88;
-    public const ACTION_PIPELINE_RESTORED = 89;
-    public const ACTION_PIPELINE_VIEWED = 90;
-
-    // Pipeline Stages
-    public const ACTION_PIPELINE_STAGE_CREATED = 91;
-    public const ACTION_PIPELINE_STAGE_UPDATED = 92;
-    public const ACTION_PIPELINE_STAGE_DELETED = 93;
-    public const ACTION_PIPELINE_STAGE_RESTORED = 94;
-    public const ACTION_PIPELINE_STAGE_VIEWED = 95;
-
-    // Products
-    public const ACTION_PRODUCT_CREATED = 96;
-    public const ACTION_PRODUCT_UPDATED = 97;
-    public const ACTION_PRODUCT_DELETED = 98;
-    public const ACTION_PRODUCT_RESTORED = 99;
-    public const ACTION_PRODUCT_VIEWED = 100;
-
-    // Roles
-    public const ACTION_ROLE_CREATED = 101;
-    public const ACTION_ROLE_UPDATED = 102;
-    public const ACTION_ROLE_DELETED = 103;
-    public const ACTION_ROLE_RESTORED = 104;
-    public const ACTION_ROLE_VIEWED = 105;
-
-    // Tasks
-    public const ACTION_TASK_CREATED = 106;
-    public const ACTION_TASK_UPDATED = 107;
-    public const ACTION_TASK_DELETED = 108;
-    public const ACTION_TASK_RESTORED = 109;
-    public const ACTION_TASK_COMPLETED = 110;
-    public const ACTION_TASK_REOPENED = 111;
-    public const ACTION_TASK_VIEWED = 112;
+    // Job Titles
+    public const ACTION_JOB_TITLE_CREATED = 76;
+    public const ACTION_JOB_TITLE_UPDATED = 77;
+    public const ACTION_JOB_TITLE_DELETED = 78;
+    public const ACTION_JOB_TITLE_RESTORED = 79;
+    public const ACTION_JOB_TITLE_VIEWED = 80;
+    
+    // Leads
+    public const ACTION_LEAD_CREATED = 81;
+    public const ACTION_LEAD_UPDATED = 82;
+    public const ACTION_LEAD_DELETED = 83;
+    public const ACTION_LEAD_RESTORED = 84;
+    public const ACTION_LEAD_CONVERTED = 85;
+    public const ACTION_LEAD_UNCONVERTED = 86;
+    public const ACTION_LEAD_VIEWED = 87;
+    public const ACTION_LEAD_ASSIGNED = 88;
+    public const ACTION_LEAD_UNASSIGNED = 89;
 
     // Learning Material
-    public const ACTION_LEARNING_CREATED = 113;
-    public const ACTION_LEARNING_UPDATED = 114;
-    public const ACTION_LEARNING_DELETED = 115;
-    public const ACTION_LEARNING_RESTORED = 116;
-    public const ACTION_LEARNING_VIEWED = 117;
-    public const ACTION_LEARNING_COMPLETED = 118;
-    public const ACTION_LEARNING_INCOMPLETE = 119;
+    public const ACTION_LEARNING_CREATED = 90;
+    public const ACTION_LEARNING_UPDATED = 91;
+    public const ACTION_LEARNING_DELETED = 92;
+    public const ACTION_LEARNING_RESTORED = 93;
+    public const ACTION_LEARNING_VIEWED = 94;
+    public const ACTION_LEARNING_COMPLETED = 95;
+    public const ACTION_LEARNING_INCOMPLETE = 96;
 
-    // Leads
-    public const ACTION_LEAD_CREATED = 120;
-    public const ACTION_LEAD_UPDATED = 121;
-    public const ACTION_LEAD_DELETED = 122;
-    public const ACTION_LEAD_RESTORED = 123;
-    public const ACTION_LEAD_CONVERTED = 124;
-    public const ACTION_LEAD_UNCONVERTED = 125;
-    public const ACTION_LEAD_VIEWED = 126;
-    public const ACTION_LEAD_ASSIGNED = 127;
-    public const ACTION_LEAD_UNASSIGNED = 128;
+    // Notes
+    public const ACTION_NOTE_CREATED = 97;
+    public const ACTION_NOTE_UPDATED = 98;
+    public const ACTION_NOTE_DELETED = 99;
+    public const ACTION_NOTE_RESTORED = 100;
+    public const ACTION_NOTE_VIEWED = 101;
 
     // Orders
-    public const ACTION_ORDER_CREATED = 129;
-    public const ACTION_ORDER_UPDATED = 130;
-    public const ACTION_ORDER_DELETED = 131;
-    public const ACTION_ORDER_RESTORED = 132;
-    public const ACTION_ORDER_VIEWED = 133;
+    public const ACTION_ORDER_CREATED = 102;
+    public const ACTION_ORDER_UPDATED = 103;
+    public const ACTION_ORDER_DELETED = 104;
+    public const ACTION_ORDER_RESTORED = 105;
+    public const ACTION_ORDER_VIEWED = 106;
+
+    // Permissions
+    public const ACTION_PERMISSION_CREATED = 107;
+    public const ACTION_PERMISSION_UPDATED = 108;
+    public const ACTION_PERMISSION_DELETED = 109;
+    public const ACTION_PERMISSION_RESTORED = 110;
+    public const ACTION_PERMISSION_VIEWED = 111;
+
+    // Pipelines
+    public const ACTION_PIPELINE_CREATED = 112;
+    public const ACTION_PIPELINE_UPDATED = 113;
+    public const ACTION_PIPELINE_DELETED = 114;
+    public const ACTION_PIPELINE_RESTORED = 115;
+    public const ACTION_PIPELINE_VIEWED = 116;
+
+    // Pipeline Stages
+    public const ACTION_PIPELINE_STAGE_CREATED = 117;
+    public const ACTION_PIPELINE_STAGE_UPDATED = 118;
+    public const ACTION_PIPELINE_STAGE_DELETED = 119;
+    public const ACTION_PIPELINE_STAGE_RESTORED = 120;
+    public const ACTION_PIPELINE_STAGE_VIEWED = 121;
+
+    // Products
+    public const ACTION_PRODUCT_CREATED = 122;
+    public const ACTION_PRODUCT_UPDATED = 123;
+    public const ACTION_PRODUCT_DELETED = 124;
+    public const ACTION_PRODUCT_RESTORED = 125;
+    public const ACTION_PRODUCT_VIEWED = 126;
 
     // Quotes
-    public const ACTION_QUOTE_CREATED = 134;
-    public const ACTION_QUOTE_UPDATED = 135;
-    public const ACTION_QUOTE_DELETED = 136;
-    public const ACTION_QUOTE_RESTORED = 137;
-    public const ACTION_QUOTE_VIEWED = 138;
+    public const ACTION_QUOTE_CREATED = 127;
+    public const ACTION_QUOTE_UPDATED = 128;
+    public const ACTION_QUOTE_DELETED = 129;
+    public const ACTION_QUOTE_RESTORED = 130;
+    public const ACTION_QUOTE_VIEWED = 131;
 
-    // Job Titles
-    public const ACTION_JOB_TITLE_CREATED = 139;
-    public const ACTION_JOB_TITLE_UPDATED = 140;
-    public const ACTION_JOB_TITLE_DELETED = 141;
-    public const ACTION_JOB_TITLE_RESTORED = 142;
-    public const ACTION_JOB_TITLE_VIEWED = 143;
+    // Roles
+    public const ACTION_ROLE_CREATED = 132;
+    public const ACTION_ROLE_UPDATED = 133;
+    public const ACTION_ROLE_DELETED = 134;
+    public const ACTION_ROLE_RESTORED = 135;
+    public const ACTION_ROLE_VIEWED = 136;
+
+    // Tasks
+    public const ACTION_TASK_CREATED = 137;
+    public const ACTION_TASK_UPDATED = 138;
+    public const ACTION_TASK_DELETED = 139;
+    public const ACTION_TASK_RESTORED = 140;
+    public const ACTION_TASK_COMPLETED = 141;
+    public const ACTION_TASK_REOPENED = 142;
+    public const ACTION_TASK_VIEWED = 143;
 
     // New Logging Actions should go here to be reviewed
     // by the development team for future releases.

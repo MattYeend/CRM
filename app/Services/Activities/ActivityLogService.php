@@ -120,7 +120,7 @@ class ActivityLogService
         ];
 
         Log::log(
-            Log::ACTION_ACTIVIED_RESTORED,
+            Log::ACTION_ACTIVITY_RESTORED,
             $data,
             $userId,
         );
