@@ -11,21 +11,21 @@ class Log extends Model
     // Login/Logout
     public const ACTION_LOGIN = 1;
     public const ACTION_LOGOUT = 2;
+    public const ACTION_LOGIN_FAILED = 3;
+    public const ACTION_LOGIN_PASSWORD_FAILED = 4;
+    public const ACTION_LOGIN_EMAIL_FAILED = 5;
+    public const ACTION_LOGIN_USERNAME_FAILED = 6;
+    public const ACTION_LOGIN_SUCCESS = 7;
 
     // User Management
-    public const ACTION_CREATE_USER = 3;
-    public const ACTION_UPDATE_USER = 4;
-    public const ACTION_DELETE_USER = 5;
-    public const ACTION_SHOW_USER = 6;
-    public const ACTION_WELCOME_EMAIL_SENT = 7;
-    public const ACTION_CONFIRM_PASSWORD = 8;
-    public const ACTION_FORGOT_PASSWORD = 9;
-    public const ACTION_REGISTER_USER = 10;
-    public const ACTION_LOGIN_FAILED = 11;
-    public const ACTION_LOGIN_PASSWORD_FAILED = 12;
-    public const ACTION_LOGIN_EMAIL_FAILED = 13;
-    public const ACTION_LOGIN_USERNAME_FAILED = 14;
-    public const ACTION_LOGIN_SUCCESS = 15;
+    public const ACTION_CREATE_USER = 8;
+    public const ACTION_UPDATE_USER = 9;
+    public const ACTION_DELETE_USER = 10;
+    public const ACTION_SHOW_USER =11;
+    public const ACTION_WELCOME_EMAIL_SENT = 12;
+    public const ACTION_CONFIRM_PASSWORD = 13;
+    public const ACTION_FORGOT_PASSWORD = 14;
+    public const ACTION_REGISTER_USER = 15;
     public const ACTION_RESET_PASSWORD = 16;
     public const ACTION_RESET_EMAIL = 17;
     public const ACTION_RESET_USERNAME = 18;
