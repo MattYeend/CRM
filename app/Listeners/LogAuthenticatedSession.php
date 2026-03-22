@@ -2,8 +2,8 @@
 
 namespace App\Listeners;
 
-use Illuminate\Auth\Events\Login;
 use App\Services\AuthenticatedSessionLogService;
+use Illuminate\Auth\Events\Login;
 
 class LogAuthenticatedSession
 {

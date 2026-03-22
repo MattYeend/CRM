@@ -3,8 +3,6 @@
 namespace App\Listeners;
 
 use App\Services\AuthenticatedSessionLogService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Auth\Events\Failed;
 
 class LogFailedLogin
@@ -14,8 +12,7 @@ class LogFailedLogin
      */
     public function __construct(
         protected AuthenticatedSessionLogService $logService
-    )
-    {
+    ) {
         $this->logService = $logService;
     }
 

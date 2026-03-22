@@ -21,7 +21,7 @@ class Log extends Model
     public const ACTION_CREATE_USER = 8;
     public const ACTION_UPDATE_USER = 9;
     public const ACTION_DELETE_USER = 10;
-    public const ACTION_SHOW_USER =11;
+    public const ACTION_SHOW_USER = 11;
     public const ACTION_WELCOME_EMAIL_SENT = 12;
     public const ACTION_CONFIRM_PASSWORD = 13;
     public const ACTION_FORGOT_PASSWORD = 14;
@@ -113,7 +113,7 @@ class Log extends Model
     public const ACTION_JOB_TITLE_DELETED = 78;
     public const ACTION_JOB_TITLE_RESTORED = 79;
     public const ACTION_JOB_TITLE_VIEWED = 80;
-    
+
     // Leads
     public const ACTION_LEAD_CREATED = 81;
     public const ACTION_LEAD_UPDATED = 82;

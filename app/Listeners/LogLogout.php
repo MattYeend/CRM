@@ -12,8 +12,7 @@ class LogLogout
      */
     public function __construct(
         protected AuthenticatedSessionLogService $logService
-    )
-    {
+    ) {
         $this->logService = $logService;
     }
 
