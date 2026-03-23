@@ -153,7 +153,7 @@ async function submit() {
             <input
                 v-model="form.type"
                 type="text"
-                class="input w-full"
+                class="border rounded w-full p-2"
             />
             <p v-if="form.errors.type" class="text-red-500 text-sm">
                 {{ form.errors.type }}
@@ -163,7 +163,7 @@ async function submit() {
         <!-- Users Dropdown -->
         <div v-if="usersOptions.length">
             <label class="block text-sm font-medium mb-1">Assign User</label>
-            <select v-model="form.selected_user_id" class="input w-full">
+            <select v-model="form.selected_user_id" class="border rounded w-full p-2">
                 <option value="">Select user</option>
                 <option v-for="user in usersOptions" :key="user.id" :value="user.id">
                     {{ user.name }}
@@ -179,7 +179,7 @@ async function submit() {
             <label class="block text-sm font-medium mb-1">Description</label>
             <textarea
                 v-model="form.description"
-                class="input w-full"
+                class="border rounded w-full p-2"
             />
             <p v-if="form.errors.description" class="text-red-500 text-sm">
                 {{ form.errors.description }}
@@ -189,7 +189,7 @@ async function submit() {
         <!-- Subject Type -->
         <div>
             <label class="block text-sm font-medium mb-1">Subject Type</label>
-            <select v-model="form.subject_type" class="input w-full">
+            <select v-model="form.subject_type" class="border rounded w-full p-2">
                 <option value="">Select type</option>
                 <option v-for="type in props.subjectTypes" :key="type" :value="type">
                     {{ type }}
@@ -203,7 +203,7 @@ async function submit() {
         <!-- Subject ID -->
         <div v-if="subjectOptions.length">
             <label class="block text-sm font-medium mb-1">Subject</label>
-            <select v-model="form.subject_id" class="input w-full">
+            <select v-model="form.subject_id" class="border rounded w-full p-2">
                 <option value="">Select subject</option>
                 <option v-for="item in subjectOptions" :key="item.id" :value="item.id">
                     {{ item.name }}
