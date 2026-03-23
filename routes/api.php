@@ -46,11 +46,16 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
         [UserController::class, 'restore']
     )->name('api.users.restore');
 
-    Route::apiResource('roles', RoleController::class)->only(['index', 'show']);
+    Route::apiResource('roles', RoleController::class)
+        ->only(['index', 'show'])
+        ->names([
+            'index' => 'api.roles.index',
+            'show' => 'api.roles.show',
+        ]);
     Route::post(
         'roles/{role}/permissions',
         [RoleController::class, 'syncPermissions']
-    )->name('roles.permissions.sync');
+    )->name('api.roles.permissions.sync');
 
     Route::apiResource('permissions', PermissionController::class);
     Route::post(

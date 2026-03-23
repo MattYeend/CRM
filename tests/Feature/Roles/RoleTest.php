@@ -42,7 +42,7 @@ test('index returns paginated roles with user_count and permissions', function (
         $role->permissions()->attach($permission);
     });
 
-    $response = $this->getJson(route('roles.index', ['per_page' => 5]));
+    $response = $this->getJson(route('api.roles.index', ['per_page' => 5]));
 
     $response->assertStatus(200);
     $response->assertJsonPath('per_page', 5);
@@ -61,7 +61,7 @@ test('show returns a role with permissions and users', function () {
     $role = Role::factory()->create();
     $role->permissions()->attach($permission);
 
-    $response = $this->getJson(route('roles.show', $role));
+    $response = $this->getJson(route('api.roles.show', $role));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $role->id]);
