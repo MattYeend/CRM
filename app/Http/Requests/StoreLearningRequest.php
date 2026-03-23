@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Learning;
+use App\Rules\HasCorrectAnswer;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreLearningRequest extends FormRequest
@@ -51,15 +52,7 @@ class StoreLearningRequest extends FormRequest
         return [
             'questions' => ['nullable', 'array'],
             'questions.*.question' => ['nullable', 'string'],
-            'questions.*.answers' => [
-                'array',
-                function ($attribute, $answers, $fail) {
-                    if (! collect($answers)->contains('is_correct', true)) {
-                        $fail('Each question must have at least one 
-                            correct answer.');
-                    }
-                },
-            ],
+            'questions.*.answers' => ['array', new HasCorrectAnswer()],
             'questions.*.answers.*.answer' => ['nullable', 'string'],
             'questions.*.answers.*.is_correct' => ['boolean'],
         ];
