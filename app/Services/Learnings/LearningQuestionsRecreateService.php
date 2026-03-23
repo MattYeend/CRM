@@ -4,7 +4,7 @@ namespace App\Services\Learnings;
 
 use App\Models\Learning;
 
-class RecreateLearningQuestionsService
+class LearningQuestionsRecreateService
 {
     /**
      * Recreate questions and answers for a learning.

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class LearningUpdaterService
 {
     public function __construct(
-        private RecreateLearningQuestionsService $questionsService,
+        private LearningQuestionsRecreateService $questionsService,
     ) {
         $this->questionsService = $questionsService;
     }

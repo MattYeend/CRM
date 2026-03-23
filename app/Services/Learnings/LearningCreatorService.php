@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class LearningCreatorService
 {
     public function __construct(
-        private CreateLearningQuestionsService $questionsService,
+        private LearningQuestionsCreateService $questionsService,
     ) {
         $this->questionsService = $questionsService;
     }
