@@ -25,6 +25,7 @@ class UpdateLearningRequest extends FormRequest
     {
         return array_merge(
             $this->baseRules(),
+            $this->questionAndAnswerRules(),
             $this->metaRules(),
         );
     }
@@ -38,6 +39,30 @@ class UpdateLearningRequest extends FormRequest
     {
         return [
             'title' => 'sometimes|string|max:255',
+        ];
+    }
+
+    /**
+     * Question and answer rules
+     *
+     * @return array
+     */
+    private function questionAndAnswerRules(): array
+    {
+        return [
+            'questions' => ['nullable', 'array'],
+            'questions.*.question' => ['nullable', 'string'],
+            'questions.*.answers' => [
+                'array',
+                function ($answers, $fail) {
+                    if (! collect($answers)->contains('is_correct', true)) {
+                        $fail('Each question must have at least one 
+                            correct answer.');
+                    }
+                },
+            ],
+            'questions.*.answers.*.answer' => ['nullable', 'string'],
+            'questions.*.answers.*.is_correct' => ['boolean'],
         ];
     }
 

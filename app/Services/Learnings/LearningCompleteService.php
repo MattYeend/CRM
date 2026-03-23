@@ -4,7 +4,7 @@ namespace App\Services\Learnings;
 
 use App\Models\Learning;
 
-class LearningCompleteServie
+class LearningCompleteService
 {
     /**
      * Complete a learning
@@ -15,7 +15,7 @@ class LearningCompleteServie
      */
     public function complete(Learning $learning): Learning
     {
-        $learning->update([
+        $learning->users()->updateExistingPivot(auth()->id(), [
             'is_complete' => true,
             'completed_at' => now(),
         ]);

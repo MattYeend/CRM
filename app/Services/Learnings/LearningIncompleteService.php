@@ -15,7 +15,7 @@ class LearningIncompleteService
      */
     public function incomplete(Learning $learning): Learning
     {
-        $learning->update([
+        $learning->users()->updateExistingPivot(auth()->id(), [
             'is_complete' => false,
             'completed_at' => null,
         ]);

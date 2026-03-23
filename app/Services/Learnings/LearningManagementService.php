@@ -11,14 +11,14 @@ class LearningManagementService
     private LearningCreatorService $creator;
     private LearningUpdaterService $updater;
     private LearningDestructorService $destructor;
-    private LearningCompleteServie $complete;
+    private LearningCompleteService $complete;
     private LearningIncompleteService $incomplete;
 
     public function __construct(
         LearningCreatorService $creator,
         LearningUpdaterService $updater,
         LearningDestructorService $destructor,
-        LearningCompleteServie $complete,
+        LearningCompleteService $complete,
         LearningIncompleteService $incomplete,
     ) {
         $this->creator = $creator;
