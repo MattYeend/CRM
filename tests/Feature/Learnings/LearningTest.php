@@ -308,7 +308,7 @@ test('restore deleted learning', function () {
 
     $this->assertSoftDeleted('learnings', ['id' => $learning->id]);
 
-    $response = $this->postJson(route('learnings.restore', $learning->id));
+    $response = $this->postJson(route('api.learnings.restore', $learning->id));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $learning->id]);

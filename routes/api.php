@@ -45,8 +45,7 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
     Route::post(
         'users/{id}/restore',
         [UserController::class, 'restore']
-    )
-        ->name('api.users.restore');
+    )->name('api.users.restore');
 
     Route::apiResource('roles', RoleController::class)
         ->only(['index', 'show'])
@@ -57,8 +56,7 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
     Route::post(
         'roles/{role}/permissions',
         [RoleController::class, 'syncPermissions']
-    )
-        ->name('api.roles.permissions.sync');
+    )->name('api.roles.permissions.sync');
 
     Route::apiResource('permissions', PermissionController::class)
         ->names([
@@ -71,8 +69,7 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
     Route::post(
         'permissions/{id}/restore',
         [PermissionController::class, 'restore']
-    )
-        ->name('api.permissions.restore');
+    )->name('api.permissions.restore');
 
     /**
      * ----------------------------------------------------------
@@ -112,19 +109,26 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
      * ----------------------- Learnings ------------------------
      * ----------------------------------------------------------
      */
-    Route::apiResource('learnings', LearningController::class);
+    Route::apiResource('learnings', LearningController::class)
+        ->names([
+            'index' => 'api.learnings.index',
+            'store' => 'api.learnings.store',
+            'show' => 'api.learnings.show',
+            'update' => 'api.learnings.update',
+            'destroy' => 'api.learnings.destroy',
+        ]);
     Route::post(
         'learnings/{learning}/complete',
         [LearningController::class, 'complete']
-    )->name('learnings.complete');
+    )->name('api.learnings.complete');
     Route::post(
         'learnings/{learning}/incomplete',
         [LearningController::class, 'incomplete']
-    )->name('learnings.incomplete');
+    )->name('api.learnings.incomplete');
     Route::post(
         'learnings/{id}/restore',
         [LearningController::class, 'restore']
-    )->name('learnings.restore');
+    )->name('api.learnings.restore');
 
     /**
      * -----------------------------------------------------------
