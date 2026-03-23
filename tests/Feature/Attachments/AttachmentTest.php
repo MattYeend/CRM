@@ -54,7 +54,7 @@ test('index returns paginated attachments and respects per_page query', function
         'attachable_id' => $uploader->id,
     ]);
 
-    $response = $this->getJson(route('attachments.index', ['per_page' => 5]));
+    $response = $this->getJson(route('api.attachments.index', ['per_page' => 5]));
 
     $response->assertStatus(200);
     $response->assertJsonPath('per_page', 5);
@@ -72,7 +72,7 @@ test('show returns the attachment with uploader relationship loaded', function (
         'attachable_id' => $uploader->id,
     ]);
 
-    $response = $this->getJson(route('attachments.show', $attachment));
+    $response = $this->getJson(route('api.attachments.show', $attachment));
 
     $response->assertStatus(200);
 
@@ -132,7 +132,7 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
         'uploaded_by' => $this->auth->id,
     ];
 
-    $response = $this->postJson(route('attachments.store'), $payload);
+    $response = $this->postJson(route('api.attachments.store'), $payload);
 
     $response->assertStatus(201);
 
@@ -170,7 +170,7 @@ test('destroy deletes file from disk (if present) and deletes the model', functi
     // ensure file exists before delete
     Storage::disk('public')->assertExists($path);
 
-    $response = $this->deleteJson(route('attachments.destroy', $attachment));
+    $response = $this->deleteJson(route('api.attachments.destroy', $attachment));
 
     $response->assertStatus(204);
 
@@ -199,7 +199,7 @@ test('restore deleted attachment', function () {
         'id' => $attachment->id,
     ]);
 
-    $response = $this->postJson(route('attachments.restore', $attachment->id));
+    $response = $this->postJson(route('api.attachments.restore', $attachment->id));
 
     $response->assertStatus(200);
 

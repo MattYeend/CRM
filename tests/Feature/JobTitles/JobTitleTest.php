@@ -47,7 +47,7 @@ test('index returns paginated job titles', function () {
         'created_by' => $this->auth->id,
     ]);
 
-    $response = $this->getJson(route('job-titles.index', ['per_page' => 5]));
+    $response = $this->getJson(route('api.jobTitles.index', ['per_page' => 5]));
 
     $response->assertStatus(200);
     $response->assertJsonPath('per_page', 5);
@@ -59,7 +59,7 @@ test('show returns a job title', function () {
         'created_by' => $this->auth->id,
     ]);
 
-    $response = $this->getJson(route('job-titles.show', $jobTitle));
+    $response = $this->getJson(route('api.jobTitles.show', $jobTitle));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $jobTitle->id]);
@@ -83,7 +83,7 @@ test('store creates a new job title', function () {
         'created_by' => $this->auth->id,
     ];
 
-    $response = $this->postJson(route('job-titles.store'), $payload);
+    $response = $this->postJson(route('api.jobTitles.store'), $payload);
 
     $response->assertStatus(201);
     $response->assertJsonFragment(['title' => 'Test Title']);
@@ -105,7 +105,7 @@ test('update modifies an existing job title', function () {
         'updated_by' => $this->auth->id,
     ];
 
-    $response = $this->putJson(route('job-titles.update', $jobTitle), $payload);
+    $response = $this->putJson(route('api.jobTitles.update', $jobTitle), $payload);
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['title' => 'Updated Title']);
@@ -117,7 +117,7 @@ test('destroy deletes a job title', function () {
         'created_by' => $this->auth->id,
     ]);
 
-    $response = $this->deleteJson(route('job-titles.destroy', $jobTitle));
+    $response = $this->deleteJson(route('api.jobTitles.destroy', $jobTitle));
 
     $response->assertStatus(204);
     $this->assertSoftDeleted('job_titles', ['id' => $jobTitle->id]);
@@ -132,7 +132,7 @@ test('restore deleted job title', function () {
 
     $this->assertSoftDeleted('job_titles', ['id' => $jobTitle->id]);
 
-    $response = $this->postJson(route('job-titles.restore', $jobTitle->id));
+    $response = $this->postJson(route('api.jobTitles.restore', $jobTitle->id));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $jobTitle->id]);

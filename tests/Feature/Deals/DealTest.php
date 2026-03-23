@@ -176,7 +176,7 @@ test('add products to a deal', function () {
         ]
     ];
 
-    $response = $this->postJson(route('deals.products.add', $deal), $payload);
+    $response = $this->postJson(route('api.deals.products.add', $deal), $payload);
 
     $response->assertStatus(200);
     $response->assertJsonFragment([
@@ -209,7 +209,7 @@ test('update products on a deal', function () {
         ]
     ];
 
-    $response = $this->putJson(route('deals.products.update', $deal), $payload);
+    $response = $this->putJson(route('api.deals.products.update', $deal), $payload);
 
     $response->assertStatus(200);
 
@@ -229,7 +229,7 @@ test('remove a product from a deal', function () {
     // Attach first
     $deal->products()->attach($product->id, ['quantity' => 1, 'price' => 10]);
 
-    $response = $this->deleteJson(route('deals.products.remove', [$deal, $product]));
+    $response = $this->deleteJson(route('api.deals.products.remove', [$deal, $product]));
 
     $response->assertStatus(200);
 
@@ -257,7 +257,7 @@ test('restore a previously removed product on a deal', function () {
     $deal->products()->detach($product->id);
 
     // Call restore route
-    $response = $this->postJson(route('deals.products.restore', [$deal, $product]));
+    $response = $this->postJson(route('api.deals.products.restore', [$deal, $product]));
 
     $response->assertStatus(200);
 

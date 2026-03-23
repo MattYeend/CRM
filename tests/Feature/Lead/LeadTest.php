@@ -48,7 +48,7 @@ test('index returns paginated leads with filters', function () {
         'source' => 'website',
     ]);
 
-    $response = $this->getJson(route('leads.index', [
+    $response = $this->getJson(route('api.leads.index', [
         'per_page' => 5,
         'owner_id' => $owner->id,
         'source' => 'website',
@@ -69,7 +69,7 @@ test('show returns a lead with relations loaded', function () {
         'meta' => ['campaign' => 'spring'],
     ]);
 
-    $response = $this->getJson(route('leads.show', $lead));
+    $response = $this->getJson(route('api.leads.show', $lead));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $lead->id]);
@@ -109,7 +109,7 @@ test('store creates a new lead and returns 201', function () {
         'meta' => ['campaign' => 'summer-sale'],
     ];
 
-    $response = $this->postJson(route('leads.store'), $payload);
+    $response = $this->postJson(route('api.leads.store'), $payload);
 
     $response->assertStatus(201);
     $response->assertJsonFragment(['title' => 'New Lead']);
@@ -129,7 +129,7 @@ test('update modifies an existing lead', function () {
         'source' => 'referral',
     ];
 
-    $response = $this->putJson(route('leads.update', $lead), $payload);
+    $response = $this->putJson(route('api.leads.update', $lead), $payload);
 
     $response->assertStatus(200);
     $response->assertJsonFragment([
@@ -149,7 +149,7 @@ test('update modifies an existing lead', function () {
 test('destroy soft deletes the lead', function () {
     $lead = Lead::factory()->create();
 
-    $response = $this->deleteJson(route('leads.destroy', $lead));
+    $response = $this->deleteJson(route('api.leads.destroy', $lead));
 
     $response->assertStatus(204);
 
@@ -164,7 +164,7 @@ test('restore recovers a soft deleted lead', function () {
     $lead = Lead::factory()->create();
     $lead->delete();
 
-    $response = $this->postJson(route('leads.restore', $lead->id));
+    $response = $this->postJson(route('api.leads.restore', $lead->id));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $lead->id]);

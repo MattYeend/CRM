@@ -338,48 +338,76 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
      * ------------------------ Quotes ------------------------
      * --------------------------------------------------------
      */
-    Route::apiResource('quotes', QuoteController::class);
+    Route::apiResource('quotes', QuoteController::class)
+        ->names([
+            'index' => 'api.quotes.index',
+            'store' => 'api.quotes.store',
+            'show' => 'api.quotes.show',
+            'update' => 'api.quotes.update',
+            'destroy' => 'api.quotes.destroy',
+        ]);
     Route::post(
         'quotes/{id}/restore',
         [QuoteController::class, 'restore']
-    )->name('quotes.restore');
+    )->name('api.quotes.restore');
 
     /**
      * ---------------------------------------------------------
      * ---------------------- Attachments ----------------------
      * ---------------------------------------------------------
      */
-    Route::apiResource('attachments', AttachmentController::class);
+    Route::apiResource('attachments', AttachmentController::class)
+        ->names([
+            'index' => 'api.attachments.index',
+            'store' => 'api.attachments.store',
+            'show' => 'api.attachments.show',
+            'update' => 'api.attachments.update',
+            'destroy' => 'api.attachments.destroy',
+        ]);
     Route::post(
         'attachments/{id}/restore',
         [AttachmentController::class, 'restore']
-    )->name('attachments.restore');
+    )->name('api.attachments.restore');
 
     /**
      * ---------------------------------------------------------
      * ------------------------- Leads -------------------------
      * ---------------------------------------------------------
      */
-    Route::apiResource('leads', LeadController::class);
+    Route::apiResource('leads', LeadController::class)
+        ->names([
+            'index' => 'api.leads.index',
+            'store' => 'api.leads.store',
+            'show' => 'api.leads.show',
+            'update' => 'api.leads.update',
+            'destroy' => 'api.leads.destroy',
+        ]);
     Route::post(
         'leads/{id}/restore',
         [LeadController::class, 'restore']
-    )->name('leads.restore');
+    )->name('api.leads.restore');
     Route::delete(
         'leads/{id}/force',
         [LeadController::class, 'forceDelete']
-    )->name('leads.forceDelete');
+    )->name('api.leads.forceDelete');
 
     /**
      * ----------------------------------------------------------
      * ------------------------- Orders -------------------------
      * ----------------------------------------------------------
      */
-    Route::apiResource('orders', OrderController::class);
+    Route::apiResource('orders', OrderController::class)
+        ->names([
+            'index' => 'api.orders.index',
+            'store' => 'api.orders.store',
+            'show' => 'api.orders.show',
+            'update' => 'api.orders.update',
+            'destroy' => 'api.orders.destroy',
+        ]);
     Route::post(
         'orders/{id}/restore',
         [OrderController::class, 'restore']
-    )->name('orders.restore');
+    )->name('api.orders.restore');
 
     /**
      * ----------------------------------------------------------
@@ -389,22 +417,22 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
     Route::post(
         'deals/{deal}/products',
         [DealController::class, 'addProducts']
-    )->name('deals.products.add');
+    )->name('api.deals.products.add');
 
     Route::put(
         'deals/{deal}/products',
         [DealController::class, 'updateProducts']
-    )->name('deals.products.update');
+    )->name('api.deals.products.update');
 
     Route::delete(
         'deals/{deal}/products/{product}',
         [DealController::class, 'removeProduct']
-    )->name('deals.products.remove');
+    )->name('api.deals.products.remove');
 
     Route::post(
         'deals/{deal}/products/{product}/restore',
         [DealController::class, 'restoreProduct']
-    )->name('deals.products.restore');
+    )->name('api.deals.products.restore');
 
     /**
      * ----------------------------------------------------------
@@ -414,22 +442,22 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
     Route::post(
         'orders/{order}/products',
         [OrderController::class, 'addProducts']
-    )->name('orders.products.add');
+    )->name('api.orders.products.add');
 
     Route::put(
         'orders/{order}/products',
         [OrderController::class, 'updateProducts']
-    )->name('orders.products.update');
+    )->name('api.orders.products.update');
 
     Route::delete(
         'orders/{order}/products/{product}',
         [OrderController::class, 'removeProduct']
-    )->name('orders.products.remove');
+    )->name('api.orders.products.remove');
 
     Route::post(
         'orders/{order}/products/{product}/restore',
         [OrderController::class, 'restoreProduct']
-    )->name('orders.products.restore');
+    )->name('api.orders.products.restore');
 
     /**
      * ----------------------------------------------------------
@@ -439,33 +467,40 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
     Route::post(
         'quotes/{quote}/products',
         [QuoteController::class, 'addProducts']
-    )->name('quotes.products.add');
+    )->name('api.quotes.products.add');
 
     Route::put(
         'quotes/{quote}/products',
         [QuoteController::class, 'updateProducts']
-    )->name('quotes.products.update');
+    )->name('api.quotes.products.update');
 
     Route::delete(
         'quotes/{quote}/products/{product}',
         [QuoteController::class, 'removeProduct']
-    )->name('quotes.products.remove');
+    )->name('api.quotes.products.remove');
 
     Route::post(
         'quotes/{quote}/products/{product}/restore',
         [QuoteController::class, 'restoreProduct']
-    )->name('quotes.products.restore');
+    )->name('api.quotes.products.restore');
 
     /**
      * ----------------------------------------------------------
      * ---------------------- Job Titles ------------------------
      * ----------------------------------------------------------
      */
-    Route::apiResource('job-titles', JobTitleController::class);
+    Route::apiResource('job-titles', JobTitleController::class)
+        ->names([
+            'index' => 'api.jobTitles.index',
+            'store' => 'api.jobTitles.store',
+            'show' => 'api.jobTitles.show',
+            'update' => 'api.jobTitles.update',
+            'destroy' => 'api.jobTitles.destroy',
+        ]);
     Route::post(
         'job-titles/{id}/restore',
         [JobTitleController::class, 'restore']
-    )->name('job-titles.restore');
+    )->name('api.jobTitles.restore');
 
     /**
      * ----------------------------------------------------------

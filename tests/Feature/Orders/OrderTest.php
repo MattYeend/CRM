@@ -53,7 +53,7 @@ test('index returns paginated orders', function () {
 
     Order::factory()->count(12)->create();
 
-    $response = $this->getJson(route('orders.index', ['per_page' => 5]));
+    $response = $this->getJson(route('api.orders.index', ['per_page' => 5]));
 
     $response->assertStatus(200);
     $response->assertJsonPath('per_page', 5);
@@ -66,7 +66,7 @@ test('show returns a single order', function () {
 
     $order = Order::factory()->create();
 
-    $response = $this->getJson(route('orders.show', $order));
+    $response = $this->getJson(route('api.orders.show', $order));
 
     $response->assertStatus(200);
 
@@ -105,7 +105,7 @@ test('store creates a new order and returns 201', function () {
         'meta' => [],
     ];
 
-    $response = $this->postJson(route('orders.store'), $payload);
+    $response = $this->postJson(route('api.orders.store'), $payload);
 
     $response->assertStatus(201);
 
@@ -128,7 +128,7 @@ test('store returns validation error when required fields missing', function () 
         'currency' => 'USD'
     ];
 
-    $response = $this->postJson(route('orders.store'), $payload);
+    $response = $this->postJson(route('api.orders.store'), $payload);
 
     $response->assertStatus(422);
 
@@ -148,7 +148,7 @@ test('update modifies an existing order', function () {
         'status' => 'paid',
     ];
 
-    $response = $this->putJson(route('orders.update', $order), $payload);
+    $response = $this->putJson(route('api.orders.update', $order), $payload);
 
     $response->assertStatus(200);
 
@@ -168,7 +168,7 @@ test('destroy deletes the order', function () {
 
     $order = Order::factory()->create();
 
-    $response = $this->deleteJson(route('orders.destroy', $order));
+    $response = $this->deleteJson(route('api.orders.destroy', $order));
 
     $response->assertStatus(204);
 
@@ -190,7 +190,7 @@ test('restore deleted order', function () {
         'id' => $order->id,
     ]);
 
-    $response = $this->postJson(route('orders.restore', $order->id));
+    $response = $this->postJson(route('api.orders.restore', $order->id));
 
     $response->assertStatus(200);
 
@@ -220,7 +220,7 @@ test('add products to an order', function () {
         ]
     ];
 
-    $response = $this->postJson(route('orders.products.add', $order), $payload);
+    $response = $this->postJson(route('api.orders.products.add', $order), $payload);
 
     $response->assertStatus(200);
     $response->assertJsonFragment([
@@ -253,7 +253,7 @@ test('update products on an order', function () {
         ]
     ];
 
-    $response = $this->putJson(route('orders.products.update', $order), $payload);
+    $response = $this->putJson(route('api.orders.products.update', $order), $payload);
 
     $response->assertStatus(200);
 
@@ -273,7 +273,7 @@ test('remove a product from an order', function () {
     // Attach first
     $order->products()->attach($product->id, ['quantity' => 1, 'price' => 10]);
 
-    $response = $this->deleteJson(route('orders.products.remove', [$order, $product]));
+    $response = $this->deleteJson(route('api.orders.products.remove', [$order, $product]));
 
     $response->assertStatus(200);
 
@@ -301,7 +301,7 @@ test('restore a previously removed product on an order', function () {
     $order->products()->detach($product->id);
 
     // Call restore route
-    $response = $this->postJson(route('orders.products.restore', [$order, $product]));
+    $response = $this->postJson(route('api.orders.products.restore', [$order, $product]));
 
     $response->assertStatus(200);
 

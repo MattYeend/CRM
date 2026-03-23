@@ -50,7 +50,7 @@ test('index returns paginated quotes with relations', function () {
         'created_by' => $this->auth->id,
     ]);
 
-    $response = $this->getJson(route('quotes.index', ['per_page' => 5]));
+    $response = $this->getJson(route('api.quotes.index', ['per_page' => 5]));
 
     $response->assertStatus(200);
     $response->assertJsonPath('per_page', 5);
@@ -72,7 +72,7 @@ test('show returns a quote with deal and creator loaded', function () {
         'created_by' => $this->auth->id,
     ]);
 
-    $response = $this->getJson(route('quotes.show', $quote));
+    $response = $this->getJson(route('api.quotes.show', $quote));
 
     $response->assertStatus(200);
 
@@ -106,7 +106,7 @@ test('store creates a quote and returns 201', function () {
         'total' => 120,
     ];
 
-    $response = $this->postJson(route('quotes.store'), $payload);
+    $response = $this->postJson(route('api.quotes.store'), $payload);
 
     $response->assertStatus(201);
 
@@ -141,7 +141,7 @@ test('update modifies an existing quote', function () {
         'total' => 240,
     ];
 
-    $response = $this->putJson(route('quotes.update', $quote), $payload);
+    $response = $this->putJson(route('api.quotes.update', $quote), $payload);
 
     $response->assertStatus(200);
 
@@ -164,7 +164,7 @@ test('destroy deletes the quote', function () {
         'deal_id' => $deal->id,
     ]);
 
-    $response = $this->deleteJson(route('quotes.destroy', $quote));
+    $response = $this->deleteJson(route('api.quotes.destroy', $quote));
 
     $response->assertStatus(204);
 
@@ -188,7 +188,7 @@ test('restore deleted quotes', function () {
         'id' => $quote->id,
     ]);
 
-    $response = $this->postJson(route('quotes.restore', $quote->id));
+    $response = $this->postJson(route('api.quotes.restore', $quote->id));
 
     $response->assertStatus(200);
 
@@ -218,7 +218,7 @@ test('add products to a quote', function () {
         ]
     ];
 
-    $response = $this->postJson(route('quotes.products.add', $quote), $payload);
+    $response = $this->postJson(route('api.quotes.products.add', $quote), $payload);
 
     $response->assertStatus(200);
     $response->assertJsonFragment([
@@ -251,7 +251,7 @@ test('update products on a quote', function () {
         ]
     ];
 
-    $response = $this->putJson(route('quotes.products.update', $quote), $payload);
+    $response = $this->putJson(route('api.quotes.products.update', $quote), $payload);
 
     $response->assertStatus(200);
 
@@ -271,7 +271,7 @@ test('remove a product from a quote', function () {
     // Attach first
     $quote->products()->attach($product->id, ['quantity' => 1, 'price' => 10]);
 
-    $response = $this->deleteJson(route('quotes.products.remove', [$quote, $product]));
+    $response = $this->deleteJson(route('api.quotes.products.remove', [$quote, $product]));
 
     $response->assertStatus(200);
 
@@ -299,7 +299,7 @@ test('restore a previously removed product on a quote', function () {
     $quote->products()->detach($product->id);
 
     // Call restore route
-    $response = $this->postJson(route('quotes.products.restore', [$quote, $product]));
+    $response = $this->postJson(route('api.quotes.products.restore', [$quote, $product]));
 
     $response->assertStatus(200);
 
