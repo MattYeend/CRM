@@ -229,71 +229,78 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
      * ------------------------ Products ------------------------
      * ----------------------------------------------------------
      */
-    Route::apiResource('products', ProductController::class);
+    Route::apiResource('products', ProductController::class)
+        ->names([
+            'index' => 'api.products.index',
+            'store' => 'api.products.store',
+            'show' => 'api.products.show',
+            'update' => 'api.products.update',
+            'destroy' => 'api.products.destroy',
+        ]);
     Route::post(
         'products/{id}/restore',
         [ProductController::class, 'restore']
-    )->name('products.restore');
+    )->name('api.products.restore');
 
     Route::post(
         'products/{product}/orders',
         [ProductController::class, 'addOrders']
-    )->name('products.orders.add');
+    )->name('api.products.orders.add');
 
     Route::put(
         'products/{product}/orders',
         [ProductController::class, 'updateOrders']
-    )->name('products.orders.update');
+    )->name('api.products.orders.update');
 
     Route::delete(
         'products/{product}/orders/{order}',
         [ProductController::class, 'removeOrder']
-    )->name('products.orders.remove');
+    )->name('api.products.orders.remove');
 
     Route::post(
         'products/{product}/orders/{order}/restore',
         [ProductController::class, 'restoreOrder']
-    )->name('products.orders.restore');
+    )->name('api.products.orders.restore');
 
     Route::post(
         'products/{product}/quotes',
         [ProductController::class, 'addQuotes']
-    )->name('products.quotes.add');
+    )->name('api.products.quotes.add');
 
     Route::put(
         'products/{product}/quotes',
         [ProductController::class, 'updateQuotes']
-    )->name('products.quotes.update');
+    )->name('api.products.quotes.update');
 
     Route::delete(
         'products/{product}/quotes/{quote}',
         [ProductController::class, 'removeQuote']
-    )->name('products.quotes.remove');
+    )->name('api.products.quotes.remove');
 
     Route::post(
         'products/{product}/quotes/{quote}/restore',
         [ProductController::class, 'restoreQuote']
-    )->name('products.quotes.restore');
+    )->name('api.products.quotes.restore');
 
     Route::post(
         'products/{product}/deals',
         [ProductController::class, 'addDeals']
-    )->name('products.deals.add');
+    )->name('api.products.deals.add');
 
     Route::put(
         'products/{product}/deals',
         [ProductController::class, 'updateDeals']
-    )->name('products.deals.update');
+    )->name('api.products.deals.update');
 
     Route::delete(
         'products/{product}/deals/{deal}',
         [ProductController::class, 'removeDeal']
-    )->name('products.deals.remove');
+    )->name('api.products.deals.remove');
 
     Route::post(
         'products/{product}/deals/{deal}/restore',
         [ProductController::class, 'restoreDeal']
-    )->name('products.deals.restore');
+    )->name('api.products.deals.restore');
 
     /**
      * --------------------------------------------------------

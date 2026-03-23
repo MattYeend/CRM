@@ -59,7 +59,7 @@ test('index returns paginated products', function () {
     // Ensure factory creates valid products
     Product::factory()->count(12)->create();
 
-    $response = $this->getJson(route('products.index', ['per_page' => 5]));
+    $response = $this->getJson(route('api.products.index', ['per_page' => 5]));
 
     $response->assertStatus(200);
     $response->assertJsonPath('per_page', 5);
@@ -71,7 +71,7 @@ test('index returns paginated products', function () {
 test('show returns a single product', function () {
     $product = Product::factory()->create();
 
-    $response = $this->getJson(route('products.show', $product));
+    $response = $this->getJson(route('api.products.show', $product));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $product->id, 'name' => $product->name]);
@@ -98,7 +98,7 @@ test('store creates a new product and returns 201', function () {
         'meta' => ['color' => 'red'],
     ];
 
-    $response = $this->postJson(route('products.store'), $payload);
+    $response = $this->postJson(route('api.products.store'), $payload);
 
     $response->assertStatus(201);
     $response->assertJsonFragment(['name' => 'Test Product', 'sku' => 'SKU-1234']);
@@ -111,7 +111,7 @@ test('store returns validation error when required fields missing', function () 
         'sku' => 'SKU-9999',
     ];
 
-    $response = $this->postJson(route('products.store'), $payload);
+    $response = $this->postJson(route('api.products.store'), $payload);
 
     $response->assertStatus(422);
     $response->assertJsonValidationErrors('name');
@@ -129,7 +129,7 @@ test('update modifies an existing product', function () {
         'quantity' => 7,
     ];
 
-    $response = $this->putJson(route('products.update', $product), $payload);
+    $response = $this->putJson(route('api.products.update', $product), $payload);
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['name' => 'Updated Product', 'price' => 25.5]);
@@ -139,7 +139,7 @@ test('update modifies an existing product', function () {
 test('destroy deletes the product', function () {
     $product = Product::factory()->create();
 
-    $response = $this->deleteJson(route('products.destroy', $product));
+    $response = $this->deleteJson(route('api.products.destroy', $product));
 
     $response->assertStatus(204);
 
@@ -156,7 +156,7 @@ test('restore deleted product', function () {
     $this->assertSoftDeleted('products', ['id' => $product->id]);
 
     // Call restore route
-    $response = $this->postJson(route('products.restore', $product->id));
+    $response = $this->postJson(route('api.products.restore', $product->id));
 
     $response->assertStatus(200);
 
@@ -189,7 +189,7 @@ test('add orders to a product', function () {
         ]
     ];
 
-    $response = $this->postJson(route('products.orders.add', $product), $payload);
+    $response = $this->postJson(route('api.products.orders.add', $product), $payload);
     $response->assertStatus(200);
     $response->assertJsonFragment(['message' => 'Orders added to product']);
 
@@ -216,7 +216,7 @@ test('update orders on a product', function () {
         ]
     ];
 
-    $response = $this->putJson(route('products.orders.update', $product), $payload);
+    $response = $this->putJson(route('api.products.orders.update', $product), $payload);
     $response->assertStatus(200);
 
     $this->assertDatabaseHas('order_products', [
@@ -232,7 +232,7 @@ test('remove an order from a product', function () {
     $order = Order::factory()->create();
     $product->orders()->attach($order->id, ['quantity' => 1, 'price' => 20]);
 
-    $response = $this->deleteJson(route('products.orders.remove', [$product, $order]));
+    $response = $this->deleteJson(route('api.products.orders.remove', [$product, $order]));
     $response->assertStatus(200);
 
     $deletedAt = DB::table('order_products')
@@ -248,7 +248,7 @@ test('restore a previously removed order on a product', function () {
     $order = Order::factory()->create();
     $product->orders()->attach($order->id, ['quantity' => 1, 'price' => 20, 'deleted_at' => now()]);
 
-    $response = $this->postJson(route('products.orders.restore', [$product, $order]));
+    $response = $this->postJson(route('api.products.orders.restore', [$product, $order]));
     $response->assertStatus(200);
 
     $this->assertDatabaseHas('order_products', [
@@ -270,7 +270,7 @@ test('add quotes to a product', function () {
         ]
     ];
 
-    $response = $this->postJson(route('products.quotes.add', $product), $payload);
+    $response = $this->postJson(route('api.products.quotes.add', $product), $payload);
     $response->assertStatus(200);
     $response->assertJsonFragment(['message' => 'Quotes added to product']);
 
@@ -293,7 +293,7 @@ test('update quotes on a product', function () {
         ]
     ];
 
-    $response = $this->putJson(route('products.quotes.update', $product), $payload);
+    $response = $this->putJson(route('api.products.quotes.update', $product), $payload);
     $response->assertStatus(200);
 
     $this->assertDatabaseHas('quote_products', [
@@ -309,7 +309,7 @@ test('remove a quote from a product', function () {
     $quote = Quote::factory()->create();
     $product->quotes()->attach($quote->id, ['quantity' => 1, 'price' => 20]);
 
-    $response = $this->deleteJson(route('products.quotes.remove', [$product, $quote]));
+    $response = $this->deleteJson(route('api.products.quotes.remove', [$product, $quote]));
     $response->assertStatus(200);
 
     $deletedAt = DB::table('quote_products')
@@ -325,7 +325,7 @@ test('restore a previously removed quote on a product', function () {
     $quote = Quote::factory()->create();
     $product->quotes()->attach($quote->id, ['quantity' => 1, 'price' => 20, 'deleted_at' => now()]);
 
-    $response = $this->postJson(route('products.quotes.restore', [$product, $quote]));
+    $response = $this->postJson(route('api.products.quotes.restore', [$product, $quote]));
     $response->assertStatus(200);
 
     $this->assertDatabaseHas('quote_products', [
@@ -347,7 +347,7 @@ test('add deals to a product', function () {
         ]
     ];
 
-    $response = $this->postJson(route('products.deals.add', $product), $payload);
+    $response = $this->postJson(route('api.products.deals.add', $product), $payload);
     $response->assertStatus(200);
     $response->assertJsonFragment(['message' => 'Deals added to product']);
 
@@ -370,7 +370,7 @@ test('update deals on a product', function () {
         ]
     ];
 
-    $response = $this->putJson(route('products.deals.update', $product), $payload);
+    $response = $this->putJson(route('api.products.deals.update', $product), $payload);
     $response->assertStatus(200);
 
     $this->assertDatabaseHas('deal_products', [
@@ -386,7 +386,7 @@ test('remove a deal from a product', function () {
     $deal = Deal::factory()->create();
     $product->deals()->attach($deal->id, ['quantity' => 1, 'price' => 20]);
 
-    $response = $this->deleteJson(route('products.deals.remove', [$product, $deal]));
+    $response = $this->deleteJson(route('api.products.deals.remove', [$product, $deal]));
     $response->assertStatus(200);
 
     $deletedAt = DB::table('deal_products')
@@ -402,7 +402,7 @@ test('restore a previously removed deal on a product', function () {
     $deal = Deal::factory()->create();
     $product->deals()->attach($deal->id, ['quantity' => 1, 'price' => 20, 'deleted_at' => now()]);
 
-    $response = $this->postJson(route('products.deals.restore', [$product, $deal]));
+    $response = $this->postJson(route('api.products.deals.restore', [$product, $deal]));
     $response->assertStatus(200);
 
     $this->assertDatabaseHas('deal_products', [
