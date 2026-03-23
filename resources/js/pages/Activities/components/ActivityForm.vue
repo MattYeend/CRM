@@ -2,6 +2,9 @@
 import { useForm, router } from '@inertiajs/vue3'
 import axios from 'axios'
 import { ref, onMounted, watch } from 'vue'
+import ActivityTypeUserSection from './ActivityTypeUserSection.vue'
+import ActivityDescriptionSection from './ActivityDescriptionSection.vue'
+import ActivitySubjectSection from './ActivitySubjectSection.vue'
 
 interface Activity {
     id?: number
@@ -11,7 +14,6 @@ interface Activity {
     subject_id?: number
     user_id?: number
 }
-
 
 const props = defineProps<{
     activity?: Activity
@@ -25,7 +27,6 @@ function normalizeSubjectType(type?: string): string | undefined {
     return type.split('\\').pop()?.toLowerCase()
 }
 
-// --- Form ---
 const form = useForm({
     type: props.activity?.type ?? '',
     description: props.activity?.description ?? '',
@@ -46,7 +47,7 @@ const typeApiMap: Record<string, string> = {
     user: 'users',
 }
 
-// --- Watch subject type ---
+// Watch subject type
 watch(
     () => form.subject_type,
     async (type) => {
@@ -84,7 +85,7 @@ watch(
     { immediate: true }
 )
 
-// --- Load users ---
+// Load users
 onMounted(async () => {
     try {
         const response = await axios.get('/api/users')
@@ -105,7 +106,6 @@ onMounted(async () => {
     }
 })
 
-// --- Submit ---
 async function submit() {
     try {
         await axios.get('/sanctum/csrf-cookie', { withCredentials: true })
@@ -147,74 +147,16 @@ async function submit() {
 
 <template>
     <form @submit.prevent="submit" class="space-y-4 max-w-xl">
-        <!-- Type -->
-        <div>
-            <label class="block text-sm font-medium mb-1">Type</label>
-            <input
-                v-model="form.type"
-                type="text"
-                class="border rounded w-full p-2"
-            />
-            <p v-if="form.errors.type" class="text-red-500 text-sm">
-                {{ form.errors.type }}
-            </p>
-        </div>
+        <ActivityTypeUserSection :form="form" :users="usersOptions" />
+ 
+        <ActivityDescriptionSection :form="form" />
+ 
+        <ActivitySubjectSection
+            :form="form"
+            :subject-types="props.subjectTypes"
+            :subject-options="subjectOptions"
+        />
 
-        <!-- Users Dropdown -->
-        <div v-if="usersOptions.length">
-            <label class="block text-sm font-medium mb-1">Assign User</label>
-            <select v-model="form.selected_user_id" class="border rounded w-full p-2">
-                <option value="">Select user</option>
-                <option v-for="user in usersOptions" :key="user.id" :value="user.id">
-                    {{ user.name }}
-                </option>
-            </select>
-            <p v-if="form.errors.selected_user_id" class="text-red-500 text-sm">
-                {{ form.errors.selected_user_id }}
-            </p>
-        </div>
-
-        <!-- Description -->
-        <div>
-            <label class="block text-sm font-medium mb-1">Description</label>
-            <textarea
-                v-model="form.description"
-                class="border rounded w-full p-2"
-            />
-            <p v-if="form.errors.description" class="text-red-500 text-sm">
-                {{ form.errors.description }}
-            </p>
-        </div>
-
-        <!-- Subject Type -->
-        <div>
-            <label class="block text-sm font-medium mb-1">Subject Type</label>
-            <select v-model="form.subject_type" class="border rounded w-full p-2">
-                <option value="">Select type</option>
-                <option v-for="type in props.subjectTypes" :key="type" :value="type">
-                    {{ type }}
-                </option>
-            </select>
-            <p v-if="form.errors.subject_type" class="text-red-500 text-sm">
-                {{ form.errors.subject_type }}
-            </p>
-        </div>
-
-        <!-- Subject ID -->
-        <div v-if="subjectOptions.length">
-            <label class="block text-sm font-medium mb-1">Subject</label>
-            <select v-model="form.subject_id" class="border rounded w-full p-2">
-                <option value="">Select subject</option>
-                <option v-for="item in subjectOptions" :key="item.id" :value="item.id">
-                    {{ item.name }}
-                </option>
-            </select>
-            <p v-if="form.errors.subject_id" class="text-red-500 text-sm">
-                {{ form.errors.subject_id }}
-            </p>
-        </div>
-
-        <!-- Submit -->
         <div>
             <button
                 class="bg-blue-600 text-white px-5 py-2 rounded"
