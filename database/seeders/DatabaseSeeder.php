@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             JobTitleSeeder::class,
             LeadSeeder::class,
             LearningSeeder::class,
+            LearningQuestionSeeder::class,
             PermissionSeeder::class,
             RoleSeeder::class,
             PermissionRoleSeeder::class,

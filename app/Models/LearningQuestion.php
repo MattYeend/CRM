@@ -17,6 +17,11 @@ class LearningQuestion extends Model
     use HasFactory,
         HasTestPrefix;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'learning_id',
         'question',
@@ -61,7 +66,7 @@ class LearningQuestion extends Model
      *
      * @return string
      */
-    public function getQuestionttribute($value): string
+    public function getQuestionAttribute($value): string
     {
         return $this->prefixTest($value);
     }

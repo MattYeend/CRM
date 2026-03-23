@@ -53,7 +53,7 @@ class StoreLearningRequest extends FormRequest
             'questions.*.question' => ['nullable', 'string'],
             'questions.*.answers' => [
                 'array',
-                function ($answers, $fail) {
+                function ($attribute, $answers, $fail) {
                     if (! collect($answers)->contains('is_correct', true)) {
                         $fail('Each question must have at least one 
                             correct answer.');

@@ -17,6 +17,11 @@ class LearningDestructorService
     {
         $userId = auth()->id();
 
+        $learning->questions()->each(function ($question) {
+            $question->answers()->delete();
+            $question->delete();
+        });
+
         $learning->update([
             'deleted_by' => $userId,
             'deleted_at' => now(),
