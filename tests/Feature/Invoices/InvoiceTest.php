@@ -51,7 +51,7 @@ test('index returns paginated invoices with relations', function () {
     $company = Company::factory()->create();
     Invoice::factory()->count(12)->create(['company_id' => $company->id]);
 
-    $response = $this->getJson(route('invoices.index', ['per_page' => 5]));
+    $response = $this->getJson(route('api.invoices.index', ['per_page' => 5]));
 
     $response->assertStatus(200);
     $response->assertJsonPath('per_page', 5);
@@ -61,7 +61,7 @@ test('index returns paginated invoices with relations', function () {
 test('show returns an invoice with relations loaded', function () {
     $invoice = Invoice::factory()->create();
 
-    $response = $this->getJson(route('invoices.show', $invoice));
+    $response = $this->getJson(route('api.invoices.show', $invoice));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $invoice->id]);
@@ -93,7 +93,7 @@ test('store creates a new invoice and returns 201', function () {
         'currency' => 'USD',
     ];
 
-    $response = $this->postJson(route('invoices.store'), $payload);
+    $response = $this->postJson(route('api.invoices.store'), $payload);
 
     $response->assertStatus(201);
     $response->assertJsonFragment(['number' => 'INV-1001', 'status' => 'draft']);
@@ -108,7 +108,7 @@ test('update modifies an existing invoice', function () {
         'status' => 'sent',
     ];
 
-    $response = $this->putJson(route('invoices.update', $invoice), $payload);
+    $response = $this->putJson(route('api.invoices.update', $invoice), $payload);
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['number' => 'INV-2001', 'status' => 'sent']);
@@ -118,7 +118,7 @@ test('update modifies an existing invoice', function () {
 test('destroy deletes an invoice', function () {
     $invoice = Invoice::factory()->create();
 
-    $response = $this->deleteJson(route('invoices.destroy', $invoice));
+    $response = $this->deleteJson(route('api.invoices.destroy', $invoice));
 
     $response->assertStatus(204);
 
@@ -133,7 +133,7 @@ test('restore deleted invoice', function () {
     // Ensure it's soft deleted first
     $this->assertSoftDeleted('invoices', ['id' => $invoice->id]);
 
-    $response = $this->postJson(route('invoices.restore', $invoice->id));
+    $response = $this->postJson(route('api.invoices.restore', $invoice->id));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $invoice->id]);

@@ -56,7 +56,7 @@ test('index returns paginated invoice items with relations', function () {
         'product_id' => $product->id,
     ]);
 
-    $response = $this->getJson(route('invoice-items.index', ['per_page' => 5]));
+    $response = $this->getJson(route('api.invoiceItems.index', ['per_page' => 5]));
 
     $response->assertStatus(200);
     $response->assertJsonPath('per_page', 5);
@@ -78,7 +78,7 @@ test('show returns an invoice item with relations loaded', function () {
         'product_id' => $product->id,
     ]);
 
-    $response = $this->getJson(route('invoice-items.show', $invoiceItem));
+    $response = $this->getJson(route('api.invoiceItems.show', $invoiceItem));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $invoiceItem->id]);
@@ -108,7 +108,7 @@ test('store creates a new invoice item and returns 201', function () {
         'unit_price' => 50,
     ];
 
-    $response = $this->postJson(route('invoice-items.store'), $payload);
+    $response = $this->postJson(route('api.invoiceItems.store'), $payload);
 
     $response->assertStatus(201);
     $response->assertJsonFragment([
@@ -140,7 +140,7 @@ test('update modifies an existing invoice item', function () {
         'unit_price' => 30,
     ];
 
-    $response = $this->putJson(route('invoice-items.update', $invoiceItem), $payload);
+    $response = $this->putJson(route('api.invoiceItems.update', $invoiceItem), $payload);
 
     $response->assertStatus(200);
     $response->assertJsonFragment([
@@ -165,7 +165,7 @@ test('destroy deletes an invoice item', function () {
         'product_id' => $product->id,
     ]);
 
-    $response = $this->deleteJson(route('invoice-items.destroy', $invoiceItem));
+    $response = $this->deleteJson(route('api.invoiceItems.destroy', $invoiceItem));
 
     $response->assertStatus(204);
     $this->assertSoftDeleted('invoice_items', ['id' => $invoiceItem->id]);
@@ -186,7 +186,7 @@ test('restore deleted invoice item', function () {
         'id' => $invoiceItem->id,
     ]);
 
-    $response = $this->postJson(route('invoice-items.restore', $invoiceItem->id));
+    $response = $this->postJson(route('api.invoiceItems.restore', $invoiceItem->id));
 
     $response->assertStatus(200);
 

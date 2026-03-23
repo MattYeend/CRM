@@ -307,17 +307,31 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
      * ----------------------- Invoices -----------------------
      * --------------------------------------------------------
      */
-    Route::apiResource('invoices', InvoiceController::class);
+    Route::apiResource('invoices', InvoiceController::class)
+        ->names([
+            'index' => 'api.invoices.index',
+            'store' => 'api.invoices.store',
+            'show' => 'api.invoices.show',
+            'update' => 'api.invoices.update',
+            'destroy' => 'api.invoices.destroy',
+        ]);
     Route::post(
         'invoices/{id}/restore',
         [InvoiceController::class, 'restore']
-    )->name('invoices.restore');
+    )->name('api.invoices.restore');
 
-    Route::apiResource('invoice-items', InvoiceItemController::class);
+    Route::apiResource('invoice-items', InvoiceItemController::class)
+        ->names([
+            'index' => 'api.invoiceItems.index',
+            'store' => 'api.invoiceItems.store',
+            'show' => 'api.invoiceItems.show',
+            'update' => 'api.invoiceItems.update',
+            'destroy' => 'api.invoiceItems.destroy',
+        ]);
     Route::post(
         'invoice-items/{id}/restore',
         [InvoiceItemController::class, 'restore']
-    )->name('invoice-items.restore');
+    )->name('api.invoiceItems.restore');
 
     /**
      * --------------------------------------------------------
