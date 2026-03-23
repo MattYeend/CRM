@@ -50,7 +50,7 @@ test('index returns paginated notes with relations', function () {
         'notable_id' => $notable->id,
     ]);
 
-    $response = $this->getJson(route('notes.index', ['per_page' => 5]));
+    $response = $this->getJson(route('api.notes.index', ['per_page' => 5]));
 
     $response->assertStatus(200);
     $response->assertJsonPath('per_page', 5);
@@ -65,7 +65,7 @@ test('show returns a note with user and notable loaded', function () {
         'notable_id' => $notable->id,
     ]);
 
-    $response = $this->getJson(route('notes.show', $note));
+    $response = $this->getJson(route('api.notes.show', $note));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $note->id]);
@@ -90,7 +90,7 @@ test('store creates a new note and returns 201', function () {
         'meta' => ['priority' => 'high'],
     ];
 
-    $response = $this->postJson(route('notes.store'), $payload);
+    $response = $this->postJson(route('api.notes.store'), $payload);
 
     $response->assertStatus(201);
     $response->assertJsonFragment(['body' => 'This is a test note']);
@@ -111,7 +111,7 @@ test('update modifies an existing note', function () {
         'meta' => ['priority' => 'low'],
     ];
 
-    $response = $this->putJson(route('notes.update', $note), $payload);
+    $response = $this->putJson(route('api.notes.update', $note), $payload);
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['body' => 'Updated note']);
@@ -126,7 +126,7 @@ test('destroy deletes a note', function () {
         'notable_id' => $notable->id,
     ]);
 
-    $response = $this->deleteJson(route('notes.destroy', $note));
+    $response = $this->deleteJson(route('api.notes.destroy', $note));
 
     $response->assertStatus(204);
     $this->assertSoftDeleted('notes', ['id' => $note->id]);
@@ -145,7 +145,7 @@ test('restore deleted note', function () {
     // Ensure it's soft deleted first
     $this->assertSoftDeleted('notes', ['id' => $note->id]);
 
-    $response = $this->postJson(route('notes.restore', $note->id));
+    $response = $this->postJson(route('api.notes.restore', $note->id));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $note->id]);

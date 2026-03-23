@@ -199,11 +199,18 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
         [TaskController::class, 'restore']
     )->name('api.tasks.restore');
 
-    Route::apiResource('notes', NoteController::class);
+    Route::apiResource('notes', NoteController::class)
+        ->names([
+            'index' => 'api.notes.index',
+            'store' => 'api.notes.store',
+            'show' => 'api.notes.show',
+            'update' => 'api.notes.update',
+            'destroy' => 'api.notes.destroy',
+        ]);
     Route::post(
         'notes/{id}/restore',
         [NoteController::class, 'restore']
-    )->name('notes.restore');
+    )->name('api.notes.restore');
 
     Route::apiResource('activities', ActivityController::class)->names([
         'index' => 'api.activities.index',
