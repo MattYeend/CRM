@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useForm, router } from '@inertiajs/vue3'
 import axios from 'axios'
+import { useForm, router } from '@inertiajs/vue3'
 import { ref, onMounted, watch } from 'vue'
 import ActivityTypeUserSection from './ActivityTypeUserSection.vue'
 import ActivityDescriptionSection from './ActivityDescriptionSection.vue'
@@ -38,7 +38,6 @@ const form = useForm({
 const subjectOptions = ref<{ id: number; name: string }[]>([])
 const usersOptions = ref<{ id: number; name: string }[]>([])
 
-// Map of subject_type to API endpoint
 const typeApiMap: Record<string, string> = {
     company: 'companies',
     contact: 'contacts',
@@ -47,7 +46,6 @@ const typeApiMap: Record<string, string> = {
     user: 'users',
 }
 
-// Watch subject type
 watch(
     () => form.subject_type,
     async (type) => {
@@ -68,7 +66,6 @@ watch(
                 name: item.name ?? item.title ?? `#${item.id}`,
             }))
 
-            // Preselect subject_id if editing
             if (props.activity) {
                 const activityType = normalizeSubjectType(props.activity.subject_type)
                 const activityId = props.activity.subject_id
@@ -85,7 +82,6 @@ watch(
     { immediate: true }
 )
 
-// Load users
 onMounted(async () => {
     try {
         const response = await axios.get('/api/users')
@@ -96,7 +92,6 @@ onMounted(async () => {
             name: user.name ?? user.email ?? `#${user.id}`,
         }))
 
-        // Preselect user on edit
         if (props.activity?.user_id) {
             form.selected_user_id = props.activity.user_id
         }
@@ -113,7 +108,6 @@ async function submit() {
         const formData = new FormData()
         Object.entries(form.data()).forEach(([key, value]) => {
             if (value !== null && value !== undefined) {
-                // Map selected_user_id to user_id for backend
                 if (key === 'selected_user_id') {
                     formData.append('user_id', String(value))
                 } else {
@@ -146,11 +140,11 @@ async function submit() {
 </script>
 
 <template>
-    <form @submit.prevent="submit" class="space-y-4 max-w-xl">
+    <form @submit.prevent="submit" class="space-y-8 max-w-xl">
         <ActivityTypeUserSection :form="form" :users="usersOptions" />
- 
+
         <ActivityDescriptionSection :form="form" />
- 
+
         <ActivitySubjectSection
             :form="form"
             :subject-types="props.subjectTypes"
