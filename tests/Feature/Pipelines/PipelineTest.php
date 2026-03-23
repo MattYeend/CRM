@@ -53,7 +53,7 @@ test('index returns paginated pipelines with stages relation', function () {
         PipelineStage::factory()->create(['pipeline_id' => $pipeline->id]);
     });
 
-    $response = $this->getJson(route('pipelines.index', ['per_page' => 5]));
+    $response = $this->getJson(route('api.pipelines.index', ['per_page' => 5]));
 
     $response->assertStatus(200);
     $response->assertJsonPath('per_page', 5);
@@ -69,7 +69,7 @@ test('show returns a pipeline with stages loaded', function () {
     $pipeline = Pipeline::factory()->create();
     $stage = PipelineStage::factory()->create(['pipeline_id' => $pipeline->id]);
 
-    $response = $this->getJson(route('pipelines.show', $pipeline));
+    $response = $this->getJson(route('api.pipelines.show', $pipeline));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $pipeline->id]);
@@ -89,7 +89,7 @@ test('store creates a new pipeline and returns 201', function () {
         'is_default' => false,
     ];
 
-    $response = $this->postJson(route('pipelines.store'), $payload);
+    $response = $this->postJson(route('api.pipelines.store'), $payload);
 
     $response->assertStatus(201);
     $response->assertJsonFragment(['name' => 'Sales Pipeline', 'description' => 'Pipeline for outbound sales']);
@@ -105,7 +105,7 @@ test('update modifies an existing pipeline', function () {
         'is_default' => true,
     ];
 
-    $response = $this->putJson(route('pipelines.update', $pipeline), $payload);
+    $response = $this->putJson(route('api.pipelines.update', $pipeline), $payload);
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['name' => 'New Pipeline Name', 'description' => 'Updated description']);
@@ -115,7 +115,7 @@ test('update modifies an existing pipeline', function () {
 test('destroy deletes the pipeline', function () {
     $pipeline = Pipeline::factory()->create();
 
-    $response = $this->deleteJson(route('pipelines.destroy', $pipeline));
+    $response = $this->deleteJson(route('api.pipelines.destroy', $pipeline));
 
     $response->assertStatus(204);
     $this->assertSoftDeleted('pipelines', ['id' => $pipeline->id]);
@@ -131,7 +131,7 @@ test('restore deleted pipeline', function () {
     $this->assertSoftDeleted('pipelines', ['id' => $pipeline->id]);
 
     // Call restore route
-    $response = $this->postJson(route('pipelines.restore', $pipeline->id));
+    $response = $this->postJson(route('api.pipelines.restore', $pipeline->id));
 
     $response->assertStatus(200);
 

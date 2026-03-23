@@ -135,17 +135,31 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
      * ------------------- Pipelines & Stages --------------------
      * -----------------------------------------------------------
      */
-    Route::apiResource('pipelines', PipelineController::class);
+    Route::apiResource('pipelines', PipelineController::class)
+        ->names([
+            'index' => 'api.pipelines.index',
+            'store' => 'api.pipelines.store',
+            'show' => 'api.pipelines.show',
+            'update' => 'api.pipelines.update',
+            'destroy' => 'api.pipelines.destroy',
+        ]);
     Route::post(
         'pipelines/{id}/restore',
         [PipelineController::class, 'restore']
-    )->name('pipelines.restore');
+    )->name('api.pipelines.restore');
 
-    Route::apiResource('pipeline-stages', PipelineStageController::class);
+    Route::apiResource('pipeline-stages', PipelineStageController::class)
+        ->names([
+            'index' => 'api.pipelineStages.index',
+            'store' => 'api.pipelineStages.store',
+            'show' => 'api.pipelineStages.show',
+            'update' => 'api.pipelineStages.update',
+            'destroy' => 'api.pipelineStages.destroy',
+        ]);
     Route::post(
         'pipeline-stages/{id}/restore',
         [PipelineStageController::class, 'restore']
-    )->name('pipelineStages.restore');
+    )->name('api.pipelineStages.restore');
 
     /**
      * ---------------------------------------------------------
