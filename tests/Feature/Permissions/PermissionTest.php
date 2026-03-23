@@ -45,7 +45,7 @@ test('index returns paginated permissions with roles', function () {
         $permission->roles()->attach($role);
     });
 
-    $response = $this->getJson(route('permissions.index', ['per_page' => 5]));
+    $response = $this->getJson(route('api.permissions.index', ['per_page' => 5]));
 
     $response->assertStatus(200);
     $response->assertJsonPath('per_page', 5);
@@ -60,7 +60,7 @@ test('show returns a permission with roles', function () {
     $permission = Permission::factory()->create();
     $permission->roles()->attach($role);
 
-    $response = $this->getJson(route('permissions.show', $permission));
+    $response = $this->getJson(route('api.permissions.show', $permission));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $permission->id]);
@@ -78,7 +78,7 @@ test('store creates a new permission', function () {
         'label' => 'View Reports',
     ];
 
-    $response = $this->postJson(route('permissions.store'), $payload);
+    $response = $this->postJson(route('api.permissions.store'), $payload);
 
     $response->assertStatus(201);
     $response->assertJsonFragment($payload);
@@ -96,7 +96,7 @@ test('update modifies an existing permission', function () {
         'label' => 'Edit Accounts',
     ];
 
-    $response = $this->putJson(route('permissions.update', $permission), $payload);
+    $response = $this->putJson(route('api.permissions.update', $permission), $payload);
 
     $response->assertStatus(200);
     $response->assertJsonFragment($payload);
@@ -108,7 +108,7 @@ test('destroy deletes a permission and detaches roles', function () {
     $permission = Permission::factory()->create();
     $permission->roles()->attach($role);
 
-    $response = $this->deleteJson(route('permissions.destroy', $permission));
+    $response = $this->deleteJson(route('api.permissions.destroy', $permission));
 
     $response->assertStatus(204);
     $this->assertSoftDeleted('permissions', [
@@ -130,7 +130,7 @@ test('restore deleted permission', function () {
     // Ensure it's soft deleted first
     $this->assertSoftDeleted('permissions', ['id' => $permission->id]);
 
-    $response = $this->postJson(route('permissions.restore', $permission->id));
+    $response = $this->postJson(route('api.permissions.restore', $permission->id));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $permission->id]);

@@ -34,17 +34,19 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
      * -------------- Users, Roles, & Permissions ---------------
      * ----------------------------------------------------------
      */
-    Route::apiResource('users', UserController::class)->names([
-        'index' => 'api.users.index',
-        'store' => 'api.users.store',
-        'show' => 'api.users.show',
-        'update' => 'api.users.update',
-        'destroy' => 'api.users.destroy',
-    ]);
+    Route::apiResource('users', UserController::class)
+        ->names([
+            'index' => 'api.users.index',
+            'store' => 'api.users.store',
+            'show' => 'api.users.show',
+            'update' => 'api.users.update',
+            'destroy' => 'api.users.destroy',
+        ]);
     Route::post(
         'users/{id}/restore',
         [UserController::class, 'restore']
-    )->name('api.users.restore');
+    )
+        ->name('api.users.restore');
 
     Route::apiResource('roles', RoleController::class)
         ->only(['index', 'show'])
@@ -55,13 +57,22 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
     Route::post(
         'roles/{role}/permissions',
         [RoleController::class, 'syncPermissions']
-    )->name('api.roles.permissions.sync');
+    )
+        ->name('api.roles.permissions.sync');
 
-    Route::apiResource('permissions', PermissionController::class);
+    Route::apiResource('permissions', PermissionController::class)
+        ->names([
+            'index' => 'api.permissions.index',
+            'store' => 'api.permissions.store',
+            'show' => 'api.permissions.show',
+            'update' => 'api.permissions.update',
+            'destroy' => 'api.permissions.destroy',
+        ]);
     Route::post(
         'permissions/{id}/restore',
         [PermissionController::class, 'restore']
-    )->name('permissions.restore');
+    )
+        ->name('api.permissions.restore');
 
     /**
      * ----------------------------------------------------------
