@@ -624,6 +624,7 @@ The `main` and `develop` branches are protected and should never be pushed to di
 | `php artisan make:event EventName` | Creates an event class |
 | `php artisan make:listener ListenerName` | Creates a listener class |
 | `php artisan make:job JobName` | Creates a queued job |
+| `php artisan make:rule RuleName` | Createa a new rule |
 
 --- 
 
