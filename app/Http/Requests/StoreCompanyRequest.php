@@ -45,6 +45,10 @@ class StoreCompanyRequest extends FormRequest
             'region' => 'nullable|string|max:100',
             'postal_code' => 'nullable|string|max:20',
             'country' => 'nullable|string|max:100',
+            'contact_first_name' => 'nullable|string|max:100',
+            'contact_last_name' => 'nullable|string|max:100',
+            'contact_email' => 'nullable|email|max:255',
+            'contact_phone' => 'nullable|string|max:30',
         ];
     }
 

@@ -19,8 +19,6 @@ use App\Models\Attachment;
 use App\Policies\AttachmentPolicy;
 use App\Models\Company;
 use App\Policies\CompanyPolicy;
-use App\Models\Contact;
-use App\Policies\ContactPolicy;
 use App\Models\Deal;
 use App\Policies\DealPolicy;
 use App\Models\Invoice;
@@ -149,7 +147,6 @@ return Application::configure(basePath: dirname(__DIR__))
         Gate::policy(Activity::class, ActivityPolicy::class);
         Gate::policy(Attachment::class, AttachmentPolicy::class);
         Gate::policy(Company::class, CompanyPolicy::class);
-        Gate::policy(Contact::class, ContactPolicy::class);
         Gate::policy(Deal::class, DealPolicy::class);
         Gate::policy(Invoice::class, InvoicePolicy::class);
         Gate::policy(InvoiceItem::class, InvoiceItemPolicy::class);

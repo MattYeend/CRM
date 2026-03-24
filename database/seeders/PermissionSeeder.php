@@ -48,17 +48,6 @@ class PermissionSeeder extends Seeder
             ['name' => 'companies.delete.own', 'label' => 'Delete own companies'],
             ['name' => 'companies.restore.any', 'label' => 'Restore any companies'],
             ['name' => 'companies.restore.own', 'label' => 'Restore own companies'],
-            
-            // Contacts
-            ['name' => 'contacts.view.all', 'label' => 'View contacts'],
-            ['name' => 'contacts.view.own', 'label' => 'View own contacts'],
-            ['name' => 'contacts.create', 'label' => 'Create contacts'],
-            ['name' => 'contacts.update.any', 'label' => 'Update any contacts'],
-            ['name' => 'contacts.update.own', 'label' => 'Update own contacts'],
-            ['name' => 'contacts.delete.any', 'label' => 'Delete any contacts'],
-            ['name' => 'contacts.delete.own', 'label' => 'Delete own contacts'],
-            ['name' => 'contacts.restore.any', 'label' => 'Restore any contacts'],
-            ['name' => 'contacts.restore.own', 'label' => 'Restore own contacts'],
 
             // Deals
             ['name' => 'deals.view.all', 'label' => 'View deals'],

@@ -54,7 +54,6 @@ class CompanyQueryService
     public function show(Company $company): Company
     {
         return $company->load(
-            'contacts',
             'deals',
             'invoices',
             'attachments'

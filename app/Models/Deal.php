@@ -37,7 +37,6 @@ class Deal extends Model
     protected $fillable = [
         'title',
         'company_id',
-        'contact_id',
         'owner_id',
         'pipeline_id',
         'stage_id',
@@ -80,16 +79,6 @@ class Deal extends Model
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
-    }
-
-    /**
-     * Get the contact that owns the deal.
-     *
-     * @return BelongsTo
-     */
-    public function contact(): BelongsTo
-    {
-        return $this->belongsTo(Contact::class);
     }
 
     /**

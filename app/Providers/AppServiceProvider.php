@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use App\Models\Company;
-use App\Models\Contact;
 use App\Models\Deal;
 use App\Models\Order;
 use App\Models\Task;
@@ -31,7 +30,6 @@ class AppServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'company' => Company::class,
-            'contact' => Contact::class,
             'deal' => Deal::class,
             'task' => Task::class,
             'user' => User::class,

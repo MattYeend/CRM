@@ -2,12 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Models\Deal;
 use App\Models\Company;
-use App\Models\Contact;
 use App\Models\User;
 use App\Models\Pipeline;
-use App\Models\PipelineStage;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -25,7 +22,6 @@ class DealFactory extends Factory
         return [
             'title' => fake()->sentence(3),
             'company_id' => Company::inRandomOrder()->first()?->id,
-            'contact_id' => Contact::inRandomOrder()->first()?->id,
             'owner_id' => User::inRandomOrder()->first()?->id,
             'pipeline_id' => Pipeline::inRandomOrder()->first()?->id,
             'value' => fake()->randomFloat(2, 100, 10000),

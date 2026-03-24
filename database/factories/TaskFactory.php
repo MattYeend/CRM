@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Company;
-use App\Models\Contact;
 use App\Models\Deal;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -22,7 +21,6 @@ class TaskFactory extends Factory
     {
         $models = [
             'company' => Company::class,
-            'contact' => Contact::class,
             'deal' => Deal::class,
             'user' => User::class,
         ];

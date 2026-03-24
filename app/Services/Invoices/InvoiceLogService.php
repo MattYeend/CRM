@@ -231,7 +231,6 @@ class InvoiceLogService
             'id' => $invoice->id,
             'number' => $invoice->number,
             'company_id' => $invoice->company_id,
-            'contact_id' => $invoice->contact_id,
             'issue_date' => $invoice->issue_date,
             'due_date' => $invoice->due_date,
             'status' => $invoice->status,

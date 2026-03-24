@@ -37,7 +37,6 @@ interface Deal {
     value?: number
     close_date?: string | null
     company?: { name: string }
-    contact?: { name: string }
     pipeline?: { name: string }
     stage?: { name: string }
 }
@@ -258,7 +257,7 @@ onMounted(() => {
                                         </span>
                                     </div>
                                     <div class="text-sm text-gray-600 mt-1">
-                                        {{ deal.company?.name || '-' }} • {{ deal.contact?.name || '-' }}
+                                        {{ deal.company?.name || '-' }}
                                     </div>
                                     <div class="text-xs text-gray-500 mt-2">
                                         {{ deal.pipeline?.name }} - {{ deal.stage?.name || '-' }}

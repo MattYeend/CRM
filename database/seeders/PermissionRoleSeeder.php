@@ -60,13 +60,6 @@ class PermissionRoleSeeder extends Seeder
             'companies.restore.any',
             'companies.restore.any',
 
-            'contacts.view.all',
-            'contacts.view.own',
-            'contacts.create',
-            'contacts.update.any',
-            'contacts.delete.any',
-            'contacts.restore.any',
-
             'deals.view.all',
             'deals.view.own',
             'deals.create',
@@ -249,13 +242,6 @@ class PermissionRoleSeeder extends Seeder
             'companies.delete.own',
             'companies.restore.own',
             'companies.restore.own',
-
-            'contacts.view.all',
-            'contacts.view.own',
-            'contacts.create',
-            'contacts.update.own',
-            'contacts.delete.own',
-            'contacts.restore.own',
 
             'deals.view.all',
             'deals.view.own',

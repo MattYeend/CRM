@@ -3,7 +3,6 @@
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\CompanyController;
-use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DealController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceItemController;
@@ -74,7 +73,7 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
 
     /**
      * ----------------------------------------------------------
-     * ------------------ Compnies & Contacts -------------------
+     * ------------------------ Compnies ------------------------
      * ----------------------------------------------------------
      */
     Route::apiResource('companies', CompanyController::class)->names([
@@ -92,18 +91,6 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
         'companies/{id}/force',
         [CompanyController::class, 'forceDelete']
     )->name('api.companies.forceDelete');
-
-    Route::apiResource('contacts', ContactController::class)->names([
-        'index' => 'api.contacts.index',
-        'store' => 'api.contacts.store',
-        'show' => 'api.contacts.show',
-        'update' => 'api.contacts.update',
-        'destroy' => 'api.contacts.destroy',
-    ]);
-    Route::post(
-        'contacts/{id}/restore',
-        [ContactController::class, 'restore']
-    )->name('api.contacts.restore');
 
     /**
      * ----------------------------------------------------------

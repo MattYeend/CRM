@@ -14,7 +14,6 @@ class InvoiceSortingService
         'id',
         'number',
         'company_id',
-        'contact_id',
         'issue_date',
         'due_date',
         'status',

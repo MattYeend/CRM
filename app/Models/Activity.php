@@ -25,14 +25,12 @@ class Activity extends Model
      * Constants
      */
     public const ACTIVITY_COMPANY = Company::class;
-    public const ACTIVITY_CONTACT = Contact::class;
     public const ACTIVITY_DEAL = Deal::class;
     public const ACTIVITY_TASK = Task::class;
     public const ACTIVITY_USER = User::class;
 
     public const ACTIVITY_TYPES = [
         self::ACTIVITY_COMPANY,
-        self::ACTIVITY_CONTACT,
         self::ACTIVITY_DEAL,
         self::ACTIVITY_TASK,
         self::ACTIVITY_USER,

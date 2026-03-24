@@ -37,7 +37,6 @@ class DealQueryService
 
         $query = Deal::with(
             'company',
-            'contact',
             'owner',
             'pipeline',
             'stage',
@@ -61,7 +60,6 @@ class DealQueryService
     {
         return $deal->load(
             'company',
-            'contact',
             'owner',
             'pipeline',
             'stage',

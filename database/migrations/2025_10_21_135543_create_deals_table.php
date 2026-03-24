@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->foreignId('company_id')->nullable()->constrained('companies')->nullOnDelete();
-            $table->foreignId('contact_id')->nullable()->constrained('contacts')->nullOnDelete();
             $table->foreignId('owner_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('pipeline_id')->nullable()->constrained('pipelines')->nullOnDelete();
             $table->foreignId('stage_id')->nullable()->constrained('pipeline_stages')->nullOnDelete();

@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Company;
-use App\Models\Contact;
 use App\Models\Invoice;
 use App\Models\Permission;
 use App\Models\Role;
@@ -72,19 +71,16 @@ test('show returns an invoice with relations loaded', function () {
         'total',
         'currency',
         'company' => [],
-        'contact' => [],
         'items' => [],
     ]);
 });
 
 test('store creates a new invoice and returns 201', function () {
     $company = Company::factory()->create();
-    $contact = Contact::factory()->create();
 
     $payload = [
         'number' => 'INV-1001',
         'company_id' => $company->id,
-        'contact_id' => $contact->id,
         'created_by' => $this->auth->id,
         'status' => 'draft',
         'subtotal' => 100,

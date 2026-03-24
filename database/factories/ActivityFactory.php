@@ -3,12 +3,10 @@
 namespace Database\Factories;
 
 use App\Models\Company;
-use App\Models\Contact;
 use App\Models\Deal;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Activity>
@@ -24,7 +22,6 @@ class ActivityFactory extends Factory
     {
         $models = [
             'company' => Company::class,
-            'contact' => Contact::class,
             'deal' => Deal::class,
             'task' => Task::class,
             'user' => User::class,

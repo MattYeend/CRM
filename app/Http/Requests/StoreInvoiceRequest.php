@@ -56,11 +56,6 @@ class StoreInvoiceRequest extends FormRequest
                 'integer',
                 Rule::exists('companies', 'id'),
             ],
-            'contact_id' => [
-                'nullable',
-                'integer',
-                Rule::exists('contacts', 'id'),
-            ],
         ];
     }
     /**

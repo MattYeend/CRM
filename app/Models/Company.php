@@ -36,6 +36,10 @@ class Company extends Model
         'region',
         'postal_code',
         'country',
+        'contact_first_name',
+        'contact_last_name',
+        'contact_email',
+        'contact_phone',
         'is_test',
         'meta',
         'created_by',
@@ -61,16 +65,6 @@ class Company extends Model
         'deleted_at' => 'datetime',
         'restored_at' => 'datetime',
     ];
-
-    /**
-     * Get the contacts for the company.
-     *
-     * @return HasMany
-     */
-    public function contacts(): HasMany
-    {
-        return $this->hasMany(Contact::class);
-    }
 
     /** Get the deals for the company.
      *

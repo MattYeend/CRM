@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Company;
-use App\Models\Contact;
 use App\Models\Deal;
 use App\Models\Note;
 use App\Models\Task;
@@ -26,7 +25,6 @@ class NoteFactory extends Factory
     {
         $models = [
             'company' => Company::class,
-            'contact' => Contact::class,
             'deal' => Deal::class,
             'task' => Task::class,
             'user' => User::class,

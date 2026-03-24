@@ -40,7 +40,6 @@ const usersOptions = ref<{ id: number; name: string }[]>([])
 
 const typeApiMap: Record<string, string> = {
     company: 'companies',
-    contact: 'contacts',
     deal: 'deals',
     task: 'tasks',
     user: 'users',

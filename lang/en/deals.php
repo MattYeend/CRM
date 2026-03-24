@@ -28,7 +28,6 @@ return [
     'value' => 'Value',
     'currency' => 'Currency',
     'close_date' => 'Close Date',
-    'is_test' => 'Test Information',
     'meta' => 'Meta Information',
     'created_by' => 'Created By',
     'created_at' => 'Created At',

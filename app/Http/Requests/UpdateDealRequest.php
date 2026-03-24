@@ -53,28 +53,23 @@ class UpdateDealRequest extends FormRequest
     private function relationshipBaseRules(): array
     {
         return array_merge(
-            $this->companyAndContactRelationshipRules(),
+            $this->companyRelationshipRules(),
             $this->ownerRelationshipRules(),
             $this->pipelineAndStagesRelationshipRules(),
         );
     }
     /**
-     * Company and Contact relationship rules
+     * Company relationship rules
      *
      * @return array
      */
-    private function companyAndContactRelationshipRules(): array
+    private function companyRelationshipRules(): array
     {
         return [
             'company_id' => [
                 'nullable',
                 'integer',
                 Rule::exists('companies', 'id'),
-            ],
-            'contact_id' => [
-                'nullable',
-                'integer',
-                Rule::exists('contacts', 'id'),
             ],
         ];
     }

@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('number')->unique();
             $table->foreignId('company_id')->nullable()->constrained('companies')->nullOnDelete();
-            $table->foreignId('contact_id')->nullable()->constrained('contacts')->nullOnDelete();
             $table->date('issue_date')->nullable();
             $table->date('due_date')->nullable();
             $table->enum('status', ['draft','sent','paid','overdue','cancelled'])->default('draft');

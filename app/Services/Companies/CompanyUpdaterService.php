@@ -8,7 +8,7 @@ use App\Models\Company;
 class CompanyUpdaterService
 {
     /**
-     * Update the contact using request data.
+     * Update the company using request data.
      *
      * @param UpdateCompanyRequest $request
      *

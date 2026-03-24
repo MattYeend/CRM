@@ -81,7 +81,6 @@ test('show returns the company with relationships loaded', function () {
         'postal_code',
         'country',
         'meta',
-        'contacts',
         'deals',
         'invoices',
         'attachments'
@@ -99,6 +98,8 @@ test('store creates a company with valid payload and returns 201', function () {
         'region' => 'Testshire',
         'postal_code' => 'TST123',
         'country' => 'UK',
+        'contact_first_name' => 'First name',
+        'contact_last_name' => 'Last Name',
         'meta' => ['notes' => 'Important client'],
     ];
 

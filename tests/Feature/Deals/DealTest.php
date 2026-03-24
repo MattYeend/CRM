@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Company;
-use App\Models\Contact;
 use App\Models\Deal;
 use App\Models\Permission;
 use App\Models\Product;
@@ -51,12 +50,10 @@ beforeEach(function () {
 test('index returns paginated deals with relations and filters', function () {
     $owner = User::factory()->create();
     $company = Company::factory()->create();
-    $contact = Contact::factory()->create(['company_id' => $company->id]);
 
     Deal::factory()->count(12)->create([
         'owner_id' => $owner->id,
         'company_id' => $company->id,
-        'contact_id' => $contact->id,
         'status' => 'open',
     ]);
 
@@ -83,7 +80,6 @@ test('show returns a deal with relations loaded', function () {
         'value',
         'currency',
         'company' => [],
-        'contact' => [],
         'owner' => [],
         'pipeline' => [],
         'stage' => [],
@@ -95,13 +91,11 @@ test('show returns a deal with relations loaded', function () {
 
 test('store creates a new deal and returns 201', function () {
     $company = Company::factory()->create();
-    $contact = Contact::factory()->create(['company_id' => $company->id]);
     $owner = User::factory()->create();
 
     $payload = [
         'title' => 'New Deal',
         'company_id' => $company->id,
-        'contact_id' => $contact->id,
         'owner_id' => $owner->id,
         'status' => 'open',
         'value' => 1000,

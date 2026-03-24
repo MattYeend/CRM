@@ -83,30 +83,6 @@ class Lead extends Model
     }
 
     /**
-     * Convert the lead to a contact.
-     *
-     * @return Contact
-     */
-    public function convertToContact(): Contact
-    {
-        $contact = new Contact([
-            'company_id' => null,
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
-            'email' => $this->email,
-            'phone' => $this->phone,
-            'job_title' => null,
-            'meta' => $this->meta,
-            'created_by' => $this->created_by,
-            'updated_by' => $this->updated_by,
-        ]);
-
-        $contact->save();
-
-        return $contact;
-    }
-
-    /**
      * Convert the lead to a deal.
      *
      * @return Deal
@@ -115,7 +91,6 @@ class Lead extends Model
     {
         $deal = new Deal([
             'company_id' => null,
-            'contact_id' => null,
             'owner_id' => $this->owner_id,
             'pipeline_id' => null,
             'close_date' => null,

@@ -22,6 +22,10 @@ return new class extends Migration
             $table->string('region')->nullable();
             $table->string('postal_code')->nullable();
             $table->string('country')->nullable();
+            $table->string('contact_first_name')->nullable();
+            $table->string('contact_last_name')->nullable();
+            $table->string('contact_email')->nullable();
+            $table->string('contact_phone')->nullable();
             $table->boolean('is_test')->default(false);
             $table->json('meta')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();

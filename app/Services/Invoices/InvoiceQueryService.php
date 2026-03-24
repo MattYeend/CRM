@@ -34,7 +34,6 @@ class InvoiceQueryService
 
         $query = Invoice::with(
             'company',
-            'contact',
             'items',
         );
 
@@ -55,7 +54,6 @@ class InvoiceQueryService
     {
         return $invoice->load(
             'company',
-            'contact',
             'items',
         );
     }

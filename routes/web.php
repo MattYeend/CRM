@@ -46,7 +46,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'learnings',
                 'deals' => fn ($q) => $q->with([
                     'company',
-                    'contact',
                     'pipeline',
                     'stage',
                 ]),

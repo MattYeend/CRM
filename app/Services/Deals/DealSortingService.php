@@ -14,7 +14,6 @@ class DealSortingService
         'id',
         'title',
         'company_id',
-        'contact_id',
         'owner_id',
         'pipeline_id',
         'stage_id',

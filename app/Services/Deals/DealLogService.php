@@ -141,7 +141,6 @@ class DealLogService
             'id' => $deal->id,
             'title' => $deal->title,
             'company_id' => $deal->company_id,
-            'contact_id' => $deal->contact_id,
             'owner_id' => $deal->owner_id,
             'pipeline_id' => $deal->pipeline_id,
             'stage_id' => $deal->stage_id,

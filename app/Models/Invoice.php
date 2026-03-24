@@ -38,7 +38,6 @@ class Invoice extends Model
     protected $fillable = [
         'number',
         'company_id',
-        'contact_id',
         'issue_date',
         'due_date',
         'status',
@@ -82,16 +81,6 @@ class Invoice extends Model
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
-    }
-
-    /**
-     * Get the contact that owns the invoice.
-     *
-     * @return BelongsTo
-     */
-    public function contact(): BelongsTo
-    {
-        return $this->belongsTo(Contact::class);
     }
 
     /**

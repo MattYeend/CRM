@@ -26,14 +26,12 @@ class Attachment extends Model
      * Constants
      */
     public const ATTACHABLE_COMPANY = Company::class;
-    public const ATTACHABLE_CONTACT = Contact::class;
     public const ATTACHABLE_DEAL = Deal::class;
     public const ATTACHABLE_TASK = Task::class;
     public const ATTACHABLE_USER = User::class;
 
     public const ATTACHABLE_TYPES = [
         self::ATTACHABLE_COMPANY,
-        self::ATTACHABLE_CONTACT,
         self::ATTACHABLE_DEAL,
         self::ATTACHABLE_TASK,
         self::ATTACHABLE_USER,
@@ -78,7 +76,7 @@ class Attachment extends Model
     ];
 
     /**
-     * Get the parent attachable model (contact, deal, etc.).
+     * Get the parent attachable model (company, deal, etc.).
      *
      * @return MorphTo
      */
