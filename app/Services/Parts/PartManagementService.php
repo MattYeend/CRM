@@ -27,7 +27,7 @@ class PartManagementService
      *
      * @param StorePartRequest $request
      *
-     * @return Lead
+     * @return Part
      */
     public function store(StorePartRequest $request): Part
     {
