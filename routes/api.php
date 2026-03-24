@@ -13,6 +13,7 @@ use App\Http\Controllers\LearningController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\OrderCheckoutController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PartController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PipelineController;
 use App\Http\Controllers\PipelineStageController;
@@ -511,4 +512,22 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
         '/orders/{order}/checkout',
         [OrderCheckoutController::class, 'checkout']
     )->name('orders.checkout');
+
+    /**
+     * ----------------------------------------------------------
+     * ------------------------ Parts --------------------------
+     * ----------------------------------------------------------
+     */
+    Route::apiResource('parts', PartController::class)
+        ->names([
+            'index' => 'api.parts.index',
+            'store' => 'api.parts.store',
+            'show' => 'api.parts.show',
+            'update' => 'api.parts.update',
+            'destroy' => 'api.parts.destroy',
+        ]);
+    Route::post(
+        'parts/{id}/restore',
+        [PartController::class, 'restore']
+    )->name('api.parts.restore');
 });

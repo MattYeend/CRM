@@ -199,6 +199,13 @@ class Log extends Model
     public const ACTION_TASK_REOPENED = 142;
     public const ACTION_TASK_VIEWED = 143;
 
+    // Parts
+    public const ACTION_PART_CREATED = 144;
+    public const ACTION_PART_UPDATED = 145;
+    public const ACTION_PART_DELETED = 146;
+    public const ACTION_PART_RESTORED = 147;
+    public const ACTION_PART_VIEWED = 148;
+
     // New Logging Actions should go here to be reviewed
     // by the development team for future releases.
     // Ensure to update the documentation accordingly.
