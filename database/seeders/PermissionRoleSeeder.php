@@ -137,6 +137,13 @@ class PermissionRoleSeeder extends Seeder
             'orders.products.remove',
             'orders.products.restore',
 
+            'parts.view.all',
+            'parts.view.own',
+            'parts.create',
+            'parts.update.any',
+            'parts.delete.any',
+            'parts.restore.any',
+
             'permissions.view.all',
             'permissions.view.own',
             'permissions.create',
@@ -309,8 +316,15 @@ class PermissionRoleSeeder extends Seeder
             'orders.delete.own',
             'orders.restore.own',
 
+            'parts.view.all',
+            'parts.view.own',
+            'parts.create',
+            'parts.update.own',
+            'parts.delete.own',
+            'parts.restore.own',
+
             'permissions.view.own',
-    
+
             'pipelines.view.all',
             'pipelines.view.own',
             'pipelines.create',

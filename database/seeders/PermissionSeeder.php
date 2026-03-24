@@ -165,6 +165,17 @@ class PermissionSeeder extends Seeder
             ['name' => 'orders.products.remove', 'label' => 'Remove products from orders'],
             ['name' => 'orders.products.restore', 'label' => 'Restore products on orders'],
 
+            // Parts
+            ['name' => 'parts.view.all', 'label' => 'View parts'],
+            ['name' => 'parts.view.own', 'label' => 'View own parts'],
+            ['name' => 'parts.create', 'label' => 'Create parts'],
+            ['name' => 'parts.update.any', 'label' => 'Update any parts'],
+            ['name' => 'parts.update.own', 'label' => 'Update own parts'],
+            ['name' => 'parts.delete.any', 'label' => 'Delete any parts'],
+            ['name' => 'parts.delete.own', 'label' => 'Delete own parts'],
+            ['name' => 'parts.restore.any', 'label' => 'Restore any parts'],
+            ['name' => 'parts.restore.own', 'label' => 'Restore own parts'],
+    
             // Permissions
             ['name' => 'permissions.view.all', 'label' => 'View permissions'],
             ['name' => 'permissions.view.own', 'label' => 'View own permissions'],
