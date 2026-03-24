@@ -1,11 +1,66 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/vue-starter-kit",
+    "name": "mattyeend/crm",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "A full-featured CRM/ERP built with Laravel 12, Inertia.js, and Vue.",
     "keywords": [
         "laravel",
-        "framework"
+        "framework",
+        "crm",
+        "erp",
+        "customer relationship manager",
+        "enterprise resource planning",
+        "laravel 12",
+        "policies",
+        "services",
+        "saas",
+        "invoicing",
+        "companies",
+        "contacts",
+        "quoting",
+        "pipelines",
+        "orders",
+        "activities",
+        "attachments",
+        "deals",
+        "leads",
+        "learning",
+        "blogs",
+        "notes",
+        "permissions",
+        "products",
+        "parts",
+        "suppliers",
+        "roles",
+        "tasks",
+        "users"
+    ],
+    "authors": [
+        {
+            "name": "Matthew Yeend",
+            "email": "mail@mattyeend.co.uk",
+            "homepage": "http://mattyeend.co.uk",
+            "role": "Developer"
+        }
+    ],
+    "homepage": "https://github.com/mattyeend/crm",
+    "support": {
+        "issues": "https://github.com/mattyeend/crm/issues",
+        "source": "https://github.com/mattyeend/crm"
+    },
+    "funding": [
+        {
+            "type": "github",
+            "url": "https://github.com/MattYeend"
+        },
+        {
+            "type": "github",
+            "url": "https://github.com/MatthewYeend"
+        },
+        {
+            "type": "custom",
+            "url": "https://buymeacoffee.com/mattyeend"
+        }
     ],
     "license": "MIT",
     "require": {
