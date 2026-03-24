@@ -155,7 +155,7 @@ class PartController extends Controller
         return response()->json(null, 204);
     }
 
-     /**
+    /**
      * Restore the specified resource from storage.
      *
      * @param int $id
