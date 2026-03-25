@@ -25,7 +25,13 @@ class PartCategorySeeder extends Seeder
                 'description' => "Parts in the {$parent['name']} category.",
             ]);
 
-            PartCategory::factory()->count(3)->withParent($category->id)->create();
+            PartCategory::factory()
+                ->count(10)
+                ->withParent($category->id)
+                ->state([
+                    'description' => "Parts in the {$parent['name']} category.",
+                ])
+                ->create();
         }
     }
 }

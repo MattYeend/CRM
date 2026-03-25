@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\PartCategory;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -18,12 +19,13 @@ class PartCategoryFactory extends Factory
      */
     public function definition(): array
     {
-        $name = $this->faker->unique()->words(2, true);
+        $name = fake()->unique()->words(2, true);
         return [
             'parent_id' => null,
             'name' => ucfirst($name),
             'slug' => Str::slug($name),
-            'description' => $this->faker->sentence(),
+            'description' => fake()->sentence(),
+            'created_by' => User::inRandomOrder()->first()?->id ?? User::factory()->create()->id,
         ];;
     }
 

@@ -38,6 +38,14 @@ class DatabaseSeeder extends Seeder
             TaskSeeder::class,
             ActivitySeeder::class,
             AttachmentSeeder::class,
+            PartCategorySeeder::class,
+            SupplierSeeder::class,
+            PartSeeder::class,
+            PartSupplierSeeder::class,
+            // PartImageSeeder::class,
+            // PartStockMovementSeeder::class,
+            // PartSerialNumberSeeder::class,
+            // BillOfMaterialSeeder::class,
         ]);
     }
 }

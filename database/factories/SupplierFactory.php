@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Supplier;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,21 +19,22 @@ class SupplierFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->company(),
-            'code' => strtoupper($this->faker->unique()->lexify('SUP-????')),
-            'email' => $this->faker->companyEmail(),
-            'phone' => $this->faker->phoneNumber(),
-            'website' => $this->faker->url(),
-            'address_line_1'  => $this->faker->streetAddress(),
-            'city' => $this->faker->city(),
-            'postcode' => $this->faker->postcode(),
+            'name' => fake()->company(),
+            'code' => strtoupper(fake()->unique()->lexify('SUP-????')),
+            'email' => fake()->companyEmail(),
+            'phone' => fake()->phoneNumber(),
+            'website' => fake()->url(),
+            'address_line_1'  => fake()->streetAddress(),
+            'city' => fake()->city(),
+            'postcode' => fake()->postcode(),
             'country' => 'GB',
             'currency' => 'GBP',
-            'payment_terms' => $this->faker->randomElement(['NET30', 'NET60', 'NET90']),
-            'contact_name' => $this->faker->name(),
-            'contact_email' => $this->faker->email(),
-            'contact_phone' => $this->faker->phoneNumber(),
+            'payment_terms' => fake()->randomElement(['NET30', 'NET60', 'NET90']),
+            'contact_name' => fake()->name(),
+            'contact_email' => fake()->email(),
+            'contact_phone' => fake()->phoneNumber(),
             'is_active' => true,
+            'created_by' => User::inRandomOrder()->first()?->id ?? User::factory()->create()->id,
         ];
     }
 

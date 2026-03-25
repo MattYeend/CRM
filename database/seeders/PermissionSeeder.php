@@ -166,15 +166,15 @@ class PermissionSeeder extends Seeder
             ['name' => 'parts.restore.own', 'label' => 'Restore own parts'],
 
             // Part Categories
-            ['name' => 'part caterogies.view.all', 'label' => 'View part caterogies'],
-            ['name' => 'part caterogies.view.own', 'label' => 'View own part caterogies'],
-            ['name' => 'part caterogies.create', 'label' => 'Create part caterogies'],
-            ['name' => 'part caterogies.update.any', 'label' => 'Update any part caterogies'],
-            ['name' => 'part caterogies.update.own', 'label' => 'Update own part caterogies'],
-            ['name' => 'part caterogies.delete.any', 'label' => 'Delete any part caterogies'],
-            ['name' => 'part caterogies.delete.own', 'label' => 'Delete own part caterogies'],
-            ['name' => 'part caterogies.restore.any', 'label' => 'Restore any part caterogies'],
-            ['name' => 'part caterogies.restore.own', 'label' => 'Restore own part caterogies'],
+            ['name' => 'partCategories.view.all', 'label' => 'View part caterogies'],
+            ['name' => 'partCategories.view.own', 'label' => 'View own part caterogies'],
+            ['name' => 'partCategories.create', 'label' => 'Create part caterogies'],
+            ['name' => 'partCategories.update.any', 'label' => 'Update any part caterogies'],
+            ['name' => 'partCategories.update.own', 'label' => 'Update own part caterogies'],
+            ['name' => 'partCategories.delete.any', 'label' => 'Delete any part caterogies'],
+            ['name' => 'partCategories.delete.own', 'label' => 'Delete own part caterogies'],
+            ['name' => 'partCategories.restore.any', 'label' => 'Restore any part caterogies'],
+            ['name' => 'partCategories.restore.own', 'label' => 'Restore own part caterogies'],
     
             // Permissions
             ['name' => 'permissions.view.all', 'label' => 'View permissions'],
