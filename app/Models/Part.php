@@ -75,10 +75,10 @@ class Part extends Model
         return $this->belongsTo(Product::class);
     }
 
-    // public function category(): BelongsTo
-    // {
-    //     return $this->belongsTo(PartCategory::class);
-    // }
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(PartCategory::class);
+    }
 
     public function primarySupplier(): BelongsTo
     {

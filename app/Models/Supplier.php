@@ -93,10 +93,10 @@ class Supplier extends Model
      *
      * @return HasMany
      */
-    // public function partSuppliers(): HasMany
-    // {
-    //     return $this->hasMany(PartSupplier::class);
-    // }
+    public function partSuppliers(): HasMany
+    {
+        return $this->hasMany(PartSupplier::class);
+    }
 
     /**
      * Get the user who created the task.
