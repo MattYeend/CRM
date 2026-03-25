@@ -19,6 +19,7 @@ use App\Http\Controllers\PipelineStageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -501,9 +502,9 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
     )->name('orders.checkout');
 
     /**
-     * ----------------------------------------------------------
-     * ------------------------ Parts --------------------------
-     * ----------------------------------------------------------
+     * -----------------------------------------------------------
+     * -------------------------- Parts --------------------------
+     * -----------------------------------------------------------
      */
     Route::apiResource('parts', PartController::class)
         ->names([
@@ -517,4 +518,22 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
         'parts/{id}/restore',
         [PartController::class, 'restore']
     )->name('api.parts.restore');
+
+    /**
+     * --------------------------------------------------------------
+     * -------------------------- Suppliers --------------------------
+     * --------------------------------------------------------------
+     */
+    Route::apiResource('suppliers', SupplierController::class)
+        ->names([
+            'index' => 'api.suppliers.index',
+            'store' => 'api.suppliers.store',
+            'show' => 'api.suppliers.show',
+            'update' => 'api.suppliers.update',
+            'destroy' => 'api.suppliers.destroy',
+        ]);
+    Route::post(
+        'suppliers/{id}/restore',
+        [SupplierController::class, 'restore']
+    )->name('api.suppliers.restore');
 });

@@ -26,7 +26,7 @@ class PartSupplier extends Pivot
      * @var array<string, string>
      */
     protected $casts = [
-        'unit_cost'    => 'decimal:2',
+        'unit_cost' => 'decimal:2',
         'is_preferred' => 'boolean',
     ];
 

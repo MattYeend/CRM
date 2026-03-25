@@ -89,10 +89,10 @@ class Part extends Model
     {
         return $this->belongsToMany(Supplier::class, 'part_suppliers')
             ->withPivot([
-                    'supplier_sku',
-                    'unit_cost',
-                    'lead_time_days',
-                    'is_preferred'
+                'supplier_sku',
+                'unit_cost',
+                'lead_time_days',
+                'is_preferred',
             ])
             ->withTimestamps();
     }
@@ -115,7 +115,6 @@ class Part extends Model
             ->wherePivot('is_preferred', true)
             ->withTimestamps();
     }
-
 
     // public function images(): HasMany
     // {
