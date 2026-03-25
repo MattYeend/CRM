@@ -12,6 +12,7 @@ use App\Http\Controllers\LearningController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\OrderCheckoutController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PartCategoryController;
 use App\Http\Controllers\PartController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PipelineController;
@@ -520,9 +521,9 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
     )->name('api.parts.restore');
 
     /**
-     * --------------------------------------------------------------
+     * ---------------------------------------------------------------
      * -------------------------- Suppliers --------------------------
-     * --------------------------------------------------------------
+     * ---------------------------------------------------------------
      */
     Route::apiResource('suppliers', SupplierController::class)
         ->names([
@@ -536,4 +537,22 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
         'suppliers/{id}/restore',
         [SupplierController::class, 'restore']
     )->name('api.suppliers.restore');
+
+    /**
+     * -------------------------------------------------------------
+     * ---------------------- Part Categories ----------------------
+     * -------------------------------------------------------------
+     */
+    Route::apiResource('partCategories', PartCategoryController::class)
+        ->names([
+            'index' => 'api.partCategories.index',
+            'store' => 'api.partCategories.store',
+            'show' => 'api.partCategories.show',
+            'update' => 'api.partCategories.update',
+            'destroy' => 'api.partCategories.destroy',
+        ]);
+    Route::post(
+        'partCategories/{id}/restore',
+        [PartCategoryController::class, 'restore']
+    )->name('api.partCategories.restore');
 });
