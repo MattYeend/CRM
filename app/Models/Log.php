@@ -199,6 +199,13 @@ class Log extends Model
     public const ACTION_PART_RESTORED = 142;
     public const ACTION_PART_VIEWED = 143;
 
+    // Suppliers
+    public const ACTION_SUPPLIER_CREATED = 144;
+    public const ACTION_SUPPLIER_UPDATED = 145;
+    public const ACTION_SUPPLIER_DELETED = 146;
+    public const ACTION_SUPPLIER_RESTORED = 147;
+    public const ACTION_SUPPLIER_VIEWED = 148;
+
     // New Logging Actions should go here to be reviewed
     // by the development team for future releases.
     // Ensure to update the documentation accordingly.
