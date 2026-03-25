@@ -80,22 +80,22 @@ class Part extends Model
     //     return $this->belongsTo(PartCategory::class);
     // }
 
-    // public function primarySupplier(): BelongsTo
-    // {
-    //     return $this->belongsTo(Supplier::class, 'supplier_id');
-    // }
+    public function primarySupplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class, 'supplier_id');
+    }
 
-    // public function suppliers(): BelongsToMany
-    // {
-    //     return $this->belongsToMany(Supplier::class, 'part_suppliers')
-    //         ->withPivot([
-    //                 'supplier_sku',
-    //                 'unit_cost',
-    //                 'lead_time_days',
-    //                 'is_preferred'
-    //         ])
-    //         ->withTimestamps();
-    // }
+    public function suppliers(): BelongsToMany
+    {
+        return $this->belongsToMany(Supplier::class, 'part_suppliers')
+            ->withPivot([
+                    'supplier_sku',
+                    'unit_cost',
+                    'lead_time_days',
+                    'is_preferred'
+            ])
+            ->withTimestamps();
+    }
 
     // public function images(): HasMany
     // {

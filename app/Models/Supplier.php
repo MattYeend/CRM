@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Supplier extends Model
 {
-    /** 
-     * @use HasFactory<\Database\Factories\SupplierFactory> 
+    /**
+     * @use HasFactory<\Database\Factories\SupplierFactory>
      * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
      * @use HasTestPrefix<\App\Traits\HasTestPrefix>
      */
@@ -55,7 +55,7 @@ class Supplier extends Model
         'deleted_at',
         'restored_at',
     ];
-    
+
     /**
      * Get the attributes that should be cast.
      *
@@ -66,7 +66,7 @@ class Supplier extends Model
         'is_test' => 'boolean',
         'meta' => 'array',
     ];
-    
+
     /**
      * Get the parts the belong to the supplier
      *
@@ -75,10 +75,15 @@ class Supplier extends Model
     public function parts(): BelongsToMany
     {
         return $this->belongsToMany(Part::class, 'part_suppliers')
-            ->withPivot(['supplier_sku', 'unit_cost', 'lead_time_days', 'is_preferred'])
+            ->withPivot([
+                'supplier_sku',
+                'unit_cost',
+                'lead_time_days',
+                'is_preferred',
+            ])
             ->withTimestamps();
     }
-    
+
     /**
      * Get the part supplier of the supplier
      *
@@ -128,8 +133,8 @@ class Supplier extends Model
     {
         return $this->belongsTo(User::class, 'restored_by');
     }
-    
-    /** 
+
+    /**
      * Scope out if the supplier is active
      */
     public function scopeActive($query)
