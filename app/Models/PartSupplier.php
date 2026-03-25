@@ -15,9 +15,22 @@ class PartSupplier extends Pivot
      * @var array<int, string>
      */
     protected $fillable = [
-        'part_id', 'supplier_id',
-        'supplier_sku', 'unit_cost',
-        'lead_time_days', 'is_preferred',
+        'part_id',
+        'supplier_id',
+        'supplier_sku',
+        'unit_cost',
+        'lead_time_days',
+        'is_preferred',
+        'is_test',
+        'meta',
+        'created_by',
+        'updated_by',
+        'deleted_by',
+        'restored_by',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'restored_at',
     ];
 
     /**
@@ -28,6 +41,12 @@ class PartSupplier extends Pivot
     protected $casts = [
         'unit_cost' => 'decimal:2',
         'is_preferred' => 'boolean',
+        'is_test' => 'boolean',
+        'meta' => 'array',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+        'restored_at' => 'datetime',
     ];
 
     /**
