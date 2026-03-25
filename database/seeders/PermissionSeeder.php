@@ -251,6 +251,17 @@ class PermissionSeeder extends Seeder
             ['name' => 'settings.view', 'label' => 'View settings'],
             ['name' => 'settings.manage', 'label' => 'Manage settings'],
 
+            // Suppliers
+            ['name' => 'suppliers.view.all', 'label' => 'View suppliers'],
+            ['name' => 'suppliers.view.own', 'label' => 'View own suppliers'],
+            ['name' => 'suppliers.create', 'label' => 'Create suppliers'],
+            ['name' => 'suppliers.update.any', 'label' => 'Update any suppliers'],
+            ['name' => 'suppliers.update.own', 'label' => 'Update own suppliers'],
+            ['name' => 'suppliers.delete.any', 'label' => 'Delete any suppliers'],
+            ['name' => 'suppliers.delete.own', 'label' => 'Delete own suppliers'],
+            ['name' => 'suppliers.restore.any', 'label' => 'Restore any suppliers'],
+            ['name' => 'suppliers.restore.own', 'label' => 'Restore own suppliers'],
+
             // Users
             ['name' => 'users.view.all', 'label' => 'View users'],
             ['name' => 'users.view.own', 'label' => 'View own user'],

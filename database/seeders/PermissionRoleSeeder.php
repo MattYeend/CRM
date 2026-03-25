@@ -194,6 +194,13 @@ class PermissionRoleSeeder extends Seeder
 
             'roles.view.all',
 
+            'suppliers.view.all',
+            'suppliers.view.own',
+            'suppliers.create',
+            'suppliers.update.any',
+            'suppliers.delete.any',
+            'suppliers.restore.any',
+
             'users.view.all',
             'users.view.own',
             'users.create',
@@ -349,6 +356,13 @@ class PermissionRoleSeeder extends Seeder
 
             'reports.view',
             'roles.view.own',
+
+            'suppliers.view.all',
+            'suppliers.view.own',
+            'suppliers.create',
+            'suppliers.update.own',
+            'suppliers.delete.own',
+            'suppliers.restore.own',
 
             'users.view.all',
             'users.view.own',
