@@ -97,6 +97,26 @@ class Part extends Model
             ->withTimestamps();
     }
 
+    /**
+     * Get the preferred supplier via the pivot table.
+     *
+     * @return BelongsToMany
+     */
+    public function preferredSupplier(): BelongsToMany
+    {
+        return $this->belongsToMany(Supplier::class, 'part_suppliers')
+            ->using(PartSupplier::class)
+            ->withPivot([
+                'supplier_sku',
+                'unit_cost',
+                'lead_time_days',
+                'is_preferred',
+            ])
+            ->wherePivot('is_preferred', true)
+            ->withTimestamps();
+    }
+
+
     // public function images(): HasMany
     // {
     //     return $this->hasMany(PartImage::class)->orderBy('sort_order');

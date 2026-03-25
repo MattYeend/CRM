@@ -65,6 +65,10 @@ class Supplier extends Model
         'is_active' => 'boolean',
         'is_test' => 'boolean',
         'meta' => 'array',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+        'restored_at' => 'datetime',
     ];
 
     /**
