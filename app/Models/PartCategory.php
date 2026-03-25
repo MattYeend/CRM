@@ -19,7 +19,7 @@ class PartCategory extends Model
     use HasFactory,
         SoftDeletes,
         HasTestPrefix;
-    
+
     /**
      * The attributes that are mass assignable.
      *
