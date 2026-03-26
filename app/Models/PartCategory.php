@@ -56,21 +56,45 @@ class PartCategory extends Model
         'restored_at' => 'datetime',
     ];
 
+   /**
+     * Get the parent category of this category.
+     *
+     * @return BelongsTo<PartCategory, PartCategory>
+     */
     public function parent(): BelongsTo
     {
         return $this->belongsTo(PartCategory::class, 'parent_id');
     }
 
+    /**
+     * Get the child categories belonging to this category.
+     *
+     * @return HasMany<PartCategory>
+     */
     public function children(): HasMany
     {
         return $this->hasMany(PartCategory::class, 'parent_id');
     }
 
+    /**
+     * Get the parts belonging to this category.
+     *
+     * @return HasMany<Part>
+     */
     public function parts(): HasMany
     {
         return $this->hasMany(Part::class, 'category_id');
     }
 
+    /**
+     * Bootstrap the model and its traits.
+     *
+     * Registers model event listeners to automatically generate a URL-friendly
+     * slug from the category name on creation, and regenerate it if the name
+     * is changed during an update.
+     *
+     * @return void
+     */
     protected static function boot(): void
     {
         parent::boot();
