@@ -56,10 +56,10 @@ class PartCategory extends Model
         'restored_at' => 'datetime',
     ];
 
-   /**
+    /**
      * Get the parent category of this category.
      *
-     * @return BelongsTo<PartCategory, PartCategory>
+     * @return BelongsTo<PartCategory,PartCategory>
      */
     public function parent(): BelongsTo
     {

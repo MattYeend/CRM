@@ -3,13 +3,13 @@
 namespace App\Models;
 
 use App\Traits\HasTestPrefix;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Builder;
 
 class Part extends Model
 {
@@ -251,6 +251,7 @@ class Part extends Model
      * Compares quantity against reorder_point.
      *
      * @param Builder $query
+     *
      * @return Builder
      */
     public function scopeLowStock($query)
@@ -262,6 +263,7 @@ class Part extends Model
      * Scope a query to parts that are out of stock.
      *
      * @param Builder $query
+     *
      * @return Builder
      */
     public function scopeOutOfStock($query)

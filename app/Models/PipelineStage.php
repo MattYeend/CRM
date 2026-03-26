@@ -234,7 +234,8 @@ class PipelineStage extends Model
     }
 
     /**
-     * Get the pipeline stage name, applies the test prefix when the pipeline stage is marked as a test.
+     * Get the pipeline stage name, applies the test prefix when the
+     * pipeline stage is marked as a test.
      *
      * @param  string|null  $value  The raw pipeline stage name from
      * the database.

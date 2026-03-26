@@ -171,7 +171,8 @@ class Pipeline extends Model
     }
 
     /**
-     * Get the pipeline name, applies the test prefix when the pipeline is marked as a test.
+     * Get the pipeline name, applies the test prefix when the pipeline is
+     * marked as a test.
      *
      * @param  string|null  $value  The raw pipeline name from the database.
      *

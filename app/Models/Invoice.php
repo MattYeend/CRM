@@ -220,7 +220,8 @@ class Invoice extends Model
     }
 
     /**
-     * Get the invoice number, applies the test prefix when the invoice is marked as a test.
+     * Get the invoice number, applies the test prefix when the invoice is
+     * marked as a test.
      *
      * @param  string|null  $value  The raw invoice number from the database.
      *

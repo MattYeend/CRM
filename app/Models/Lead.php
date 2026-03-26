@@ -190,7 +190,8 @@ class Lead extends Model
     }
 
     /**
-     * Get the lead title, applies the test prefix when the lead is marked as a test.
+     * Get the lead title, applies the test prefix when the lead is
+     * marked as a test.
      *
      * @param  string|null  $value  The raw lead title from the database.
      *

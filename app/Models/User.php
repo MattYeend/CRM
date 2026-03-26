@@ -301,7 +301,8 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the user name, applies the test prefix when the user is marked as a test.
+     * Get the user name, applies the test prefix when the user is marked
+     * as a test.
      *
      * @param  string|null  $value  The raw user title from the database.
      *

@@ -217,7 +217,8 @@ class Deal extends Model
     }
 
     /**
-     * Get the deal title, applies the test prefix when the deal is marked as a test.
+     * Get the deal title, applies the test prefix when the deal is
+     * marked as a test.
      *
      * @param  string|null  $value  The raw title from the database.
      *

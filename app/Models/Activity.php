@@ -22,29 +22,31 @@ class Activity extends Model
         HasTestPrefix;
 
     /**
-     * The fully-qualified class name used as the subject type for Company activities.
+     * The fully-qualified class name used as the subject type for Company
+     * activities.
      */
     public const ACTIVITY_COMPANY = Company::class;
 
     /**
-     * The fully-qualified class name used as the subject type for Deal activities.
+     * The fully-qualified class name used as the subject type for Deal
+     * activities.
      */
     public const ACTIVITY_DEAL = Deal::class;
 
     /**
-     * The fully-qualified class name used as the subject type for Task activities.
+     * The fully-qualified class name used as the subject type for Task
+     * activities.
      */
     public const ACTIVITY_TASK = Task::class;
 
     /**
-     * The fully-qualified class name used as the subject type for User activities.
+     * The fully-qualified class name used as the subject type for User
+     * activities.
      */
     public const ACTIVITY_USER = User::class;
 
     /**
      * All valid subject types that an activity can be associated with.
-     *
-     * @var array<int,class-string<Model>>
      */
     public const ACTIVITY_TYPES = [
         self::ACTIVITY_COMPANY,
@@ -102,7 +104,8 @@ class Activity extends Model
     /**
      * Get the polymorphic subject model this activity belongs to.
      *
-     * The subject may be a Company, Deal, Task, or User as defined in ACTIVITY_TYPES.
+     * The subject may be a Company, Deal, Task, or User as defined
+     * in ACTIVITY_TYPES.
      *
      * @return MorphTo<Model,Activity>
      */

@@ -23,29 +23,31 @@ class Attachment extends Model
         HasTestPrefix;
 
     /**
-     * The fully-qualified class name used as the attachment type for Company attachments.
+     * The fully-qualified class name used as the attachment type for Company
+     * attachments.
      */
     public const ATTACHABLE_COMPANY = Company::class;
 
     /**
-     * The fully-qualified class name used as the attachment type for Deal attachments.
+     * The fully-qualified class name used as the attachment type for Deal
+     * attachments.
      */
     public const ATTACHABLE_DEAL = Deal::class;
 
     /**
-     * The fully-qualified class name used as the attachment type for Task attachments.
+     * The fully-qualified class name used as the attachment type for Task
+     * attachments.
      */
     public const ATTACHABLE_TASK = Task::class;
 
     /**
-     * The fully-qualified class name used as the attachment type for User attachments.
+     * The fully-qualified class name used as the attachment type for User
+     * attachments.
      */
     public const ATTACHABLE_USER = User::class;
 
     /**
      * All valid attachable types that an attachment can be associated with.
-     *
-     * @var array<int, class-string<Model>>
      */
     public const ATTACHABLE_TYPES = [
         self::ATTACHABLE_COMPANY,
@@ -95,7 +97,8 @@ class Attachment extends Model
     /**
      * Get the polymorphic attachable model this attachment belongs to.
      *
-     * The attachment may be a Company, Deal, Task, or User as defined in ATTACHMENT_TYPES.
+     * The attachment may be a Company, Deal, Task, or User as defined
+     * in ATTACHMENT_TYPES.
      *
      * @return MorphTo<Model,Attachment>
      */

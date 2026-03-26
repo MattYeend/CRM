@@ -191,7 +191,8 @@ class Product extends Model
     }
 
     /**
-     * Get the product name, applies the test prefix when the product is marked as a test.
+     * Get the product name, applies the test prefix when the product is
+     * marked as a test.
      *
      * @param  string|null  $value  The raw product name from the database.
      *

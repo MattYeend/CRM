@@ -53,29 +53,31 @@ class Task extends Model
     public const PRIORITY_HIGH = 'high';
 
     /**
-     * The fully-qualified class name used as the taskabl type for Company attachments.
+     * The fully-qualified class name used as the taskabl type for Company
+     * attachments.
      */
     public const TASKABLE_COMPANY = Company::class;
 
     /**
-     * The fully-qualified class name used as the taskable type for Deal attachments.
+     * The fully-qualified class name used as the taskable type for Deal
+     * attachments.
      */
     public const TASKABLE_DEAL = Deal::class;
 
     /**
-     * The fully-qualified class name used as the taskable type for Task attachments.
+     * The fully-qualified class name used as the taskable type for Task
+     * attachments.
      */
     public const TASKABLE_TASK = Task::class;
 
     /**
-     * The fully-qualified class name used as the taskable type for User attachments.
+     * The fully-qualified class name used as the taskable type for User
+     * attachments.
      */
     public const TASKABLE_USER = User::class;
 
     /**
      * All valid taskable types that an attachment can be associated with.
-     *
-     * @var array<int, class-string<Model>>
      */
     public const TASKABLE_TYPES = [
         self::TASKABLE_COMPANY,
@@ -133,7 +135,8 @@ class Task extends Model
     /**
      * Get the polymorphic attachable model this taskable belongs to.
      *
-     * The taskable may be a Company, Deal, Task, or User as defined in TASKABLE_TYPES.
+     * The taskable may be a Company, Deal, Task, or User as defined
+     * in TASKABLE_TYPES.
      *
      * @return MorphTo<Model,Taskable>
      */
@@ -293,7 +296,8 @@ class Task extends Model
     }
 
     /**
-     * Get the task title, applies the test prefix when the task is marked as a test.
+     * Get the task title, applies the test prefix when the task is marked
+     * as a test.
      *
      * @param  string|null  $value  The raw task title from the database.
      *

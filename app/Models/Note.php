@@ -21,30 +21,32 @@ class Note extends Model
         SoftDeletes,
         HasTestPrefix;
 
-     /**
-     * The fully-qualified class name used as the notable type for Company activities.
+    /**
+     * The fully-qualified class name used as the notable type for Company
+     * activities.
      */
     public const NOTABLE_COMPANY = Company::class;
 
     /**
-     * The fully-qualified class name used as the notable type for Deal activities.
+     * The fully-qualified class name used as the notable type for Deal
+     * activities.
      */
     public const NOTABLE_DEAL = Deal::class;
 
     /**
-     * The fully-qualified class name used as the subject type for Task activities.
+     * The fully-qualified class name used as the subject type for Task
+     * activities.
      */
     public const NOTABLE_TASK = Task::class;
 
     /**
-     * The fully-qualified class name used as the subject type for User activities.
+     * The fully-qualified class name used as the subject type for User
+     * activities.
      */
     public const NOTABLE_USER = User::class;
 
     /**
      * All valid notable types that an activity can be associated with.
-     *
-     * @var array<int, class-string<Model>>
      */
     public const NOTABLE_TYPES = [
         self::NOTABLE_COMPANY,
@@ -91,7 +93,8 @@ class Note extends Model
     /**
      * Get the polymorphic notable model this note belongs to.
      *
-     * The note may be a Company, Deal, Task, or User as defined in NOTABLE_TYPES.
+     * The note may be a Company, Deal, Task, or User as defined
+     * in NOTABLE_TYPES.
      *
      * @return MorphTo<Notable>
      */
@@ -181,7 +184,8 @@ class Note extends Model
     }
 
     /**
-     * Get the note type, applies the test prefix when the note is marked as a test.
+     * Get the note type, applies the test prefix when the note is marked
+     * as a test.
      *
      * @param  string|null  $value  The raw note type from the database.
      *

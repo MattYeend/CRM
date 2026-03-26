@@ -30,7 +30,7 @@ class Order extends Model
      * Represents an order that has been paid.
      */
     public const STATUS_PAID = 'paid';
-    
+
     /**
      * Represents an order that has failed.
      */

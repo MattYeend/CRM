@@ -169,7 +169,8 @@ class InvoiceItem extends Model
     }
 
     /**
-     * Get the invoice description, pplies the test prefix when the invoice item is marked as a test.
+     * Get the invoice description, pplies the test prefix when the
+     * invoice item is marked as a test.
      *
      * @param  string|null  $value  The raw invoice item description
      * from the database.

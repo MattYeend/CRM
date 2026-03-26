@@ -58,8 +58,6 @@ class JobTitle extends Model
 
     /**
      * All C-Suite level job titles.
-     *
-     * @var array<int, string>
      */
     public const GROUP_C_SUITE = [
         self::TITLE_CEO,
@@ -76,8 +74,6 @@ class JobTitle extends Model
 
     /**
      * All executive level job titles.
-     *
-     * @var array<int, string>
      */
     public const GROUP_EXECUTIVE = [
         self::TITLE_PRES,
@@ -91,10 +87,8 @@ class JobTitle extends Model
 
     /**
      * All director level job titles.
-     *
-     * @var array<int, string>
      */
-        public const GROUP_DIRS = [
+    public const GROUP_DIRS = [
         self::TITLE_MD,
         self::TITLE_DIR,
         self::TITLE_SR_DIR,
