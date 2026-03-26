@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class LearningUser extends Pivot
 {
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'learning_user';
 
     /**

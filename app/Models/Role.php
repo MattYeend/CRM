@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Role extends Model
 {
+    /**
+     * @use HasFactory<\Database\Factories\RoleFactory>
+     */
     use HasFactory;
 
     /**
@@ -30,9 +33,12 @@ class Role extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array<int,string>
      */
-    protected $fillable = ['name', 'label'];
+    protected $fillable = [
+        'name',
+        'label',
+    ];
 
     /**
      * The users that belong to the role.

@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class NoteUser extends Pivot
 {
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'note_user';
 
     /**

@@ -12,6 +12,11 @@ class DealProduct extends Pivot
      */
     use SoftDeletes;
 
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'deal_products';
 
     /**

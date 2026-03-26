@@ -11,6 +11,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Permission extends Model
 {
+    /**
+     * @use HasFactory<\Database\Factories\PermissionFactory>
+     * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
+     */
     use HasFactory, SoftDeletes;
 
     /**

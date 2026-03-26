@@ -7,14 +7,22 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class QuoteProduct extends Pivot
 {
+    /**
+     * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
+     */
     use SoftDeletes;
 
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'quote_products';
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array<int,string>
      */
     protected $fillable = [
         'quote_id',
@@ -34,7 +42,7 @@ class QuoteProduct extends Pivot
     /**
      * The attributes that should be cast.
      *
-     * @var array<string, string>
+     * @var array<string,string>
      */
     protected $casts = [
         'is_test' => 'boolean',

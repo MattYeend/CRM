@@ -24,7 +24,7 @@ class Supplier extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array<int,string>
      */
     protected $fillable = [
         'name',
@@ -59,7 +59,7 @@ class Supplier extends Model
     /**
      * Get the attributes that should be cast.
      *
-     * @return array<string, string>
+     * @return array<string,string>
      */
     protected $casts = [
         'is_active' => 'boolean',

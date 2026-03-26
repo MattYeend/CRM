@@ -7,8 +7,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OrderProduct extends Pivot
 {
+    /**
+     * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
+     */
     use SoftDeletes;
 
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'order_products';
 
     /**

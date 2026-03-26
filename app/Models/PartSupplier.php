@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class PartSupplier extends Pivot
 {
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'part_suppliers';
 
     /**

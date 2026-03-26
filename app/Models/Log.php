@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 
 class Log extends Model
@@ -237,7 +238,7 @@ class Log extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array<int,string>
      */
     protected $fillable = [
         'action_id',
@@ -249,7 +250,7 @@ class Log extends Model
     /**
      * The attributes that should be cast.
      *
-     * @var array<string, string>
+     * @var array<string,string>
      */
     protected $casts = [
         'data' => 'array',
@@ -258,9 +259,9 @@ class Log extends Model
     /**
      * Get the user who performed the action.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo<User,Log>
      */
-    public function loggedInUser()
+    public function loggedInUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'logged_in_user_id');
     }
@@ -268,9 +269,9 @@ class Log extends Model
     /**
      * Get the user related to the action, if applicable.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo<User,Log>
      */
-    public function relatedToUser()
+    public function relatedToUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'related_to_user_id');
     }
@@ -279,9 +280,12 @@ class Log extends Model
      * Log an action.
      *
      * @param int $action The action constant.
+     *
      * @param array|null $data Additional data related to the action.
+     *
      * @param int|null $logged_in_user_id The ID of the user performing
      * the action.
+     *
      * @param int|null $related_to_user_id The ID of the user related
      * to the action.
      */
