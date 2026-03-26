@@ -175,7 +175,18 @@ class PermissionSeeder extends Seeder
             ['name' => 'partCategories.delete.own', 'label' => 'Delete own part caterogies'],
             ['name' => 'partCategories.restore.any', 'label' => 'Restore any part caterogies'],
             ['name' => 'partCategories.restore.own', 'label' => 'Restore own part caterogies'],
-    
+
+            // Part Images
+            ['name' => 'partImages.view.all', 'label' => 'View part images'],
+            ['name' => 'partImages.view.own', 'label' => 'View own part images'],
+            ['name' => 'partImages.create', 'label' => 'Create part images'],
+            ['name' => 'partImages.update.any', 'label' => 'Update any part images'],
+            ['name' => 'partImages.update.own', 'label' => 'Update own part images'],
+            ['name' => 'partImages.delete.any', 'label' => 'Delete any part images'],
+            ['name' => 'partImages.delete.own', 'label' => 'Delete own part images'],
+            ['name' => 'partImages.restore.any', 'label' => 'Restore any part images'],
+            ['name' => 'partImages.restore.own', 'label' => 'Restore own part images'],
+
             // Permissions
             ['name' => 'permissions.view.all', 'label' => 'View permissions'],
             ['name' => 'permissions.view.own', 'label' => 'View own permissions'],

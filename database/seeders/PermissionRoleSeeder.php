@@ -144,6 +144,13 @@ class PermissionRoleSeeder extends Seeder
             'partCategories.delete.any',
             'partCategories.restore.any',
 
+            'partImages.view.all',
+            'partImages.view.own',
+            'partImages.create',
+            'partImages.update.any',
+            'partImages.delete.any',
+            'partImages.restore.any',
+
             'permissions.view.all',
             'permissions.view.own',
             'permissions.create',
@@ -329,6 +336,13 @@ class PermissionRoleSeeder extends Seeder
             'partCategories.update.own',
             'partCategories.delete.own',
             'partCategories.restore.own',
+
+            'partImages.view.all',
+            'partImages.view.own',
+            'partImages.create',
+            'partImages.update.own',
+            'partImages.delete.own',
+            'partImages.restore.own',
 
             'permissions.view.own',
 
