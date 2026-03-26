@@ -25,7 +25,7 @@ class QuoteLogService
         Quote $quote
     ): array {
         $data = $this->baseQuoteData($quote) + [
-            'created_at' => $quote->created_at,
+            'created_at' => now(),
             'created_by' => $user->name,
         ];
 
@@ -55,7 +55,7 @@ class QuoteLogService
         Quote $quote
     ): array {
         $data = $this->baseQuoteData($quote) + [
-            'updated_at' => $quote->updated_at,
+            'updated_at' => now(),
             'updated_by' => $user->name,
         ];
 
@@ -85,7 +85,7 @@ class QuoteLogService
         Quote $quote
     ): array {
         $data = $this->baseQuoteData($quote) + [
-            'deleted_at' => $quote->deleted_at,
+            'deleted_at' => now(),
             'deleted_by' => $user->name,
         ];
 

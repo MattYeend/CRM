@@ -25,7 +25,7 @@ class PartCategoryLogService
         PartCategory $partCategory
     ): array {
         $data = $this->basePartCategoryData($partCategory) + [
-            'created_at' => $partCategory->created_at,
+            'created_at' => now(),
             'created_by' => $user->name,
         ];
 
@@ -55,7 +55,7 @@ class PartCategoryLogService
         PartCategory $partCategory
     ): array {
         $data = $this->basePartCategoryData($partCategory) + [
-            'updated_at' => $partCategory->updated_at,
+            'updated_at' => now(),
             'updated_by' => $user->name,
         ];
 
@@ -85,7 +85,7 @@ class PartCategoryLogService
         PartCategory $partCategory
     ): array {
         $data = $this->basePartCategoryData($partCategory) + [
-            'deleted_at' => $partCategory->deleted_at,
+            'deleted_at' => now(),
             'deleted_by' => $user->name,
         ];
 

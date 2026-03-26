@@ -25,7 +25,7 @@ class NoteLogService
         Note $note
     ): array {
         $data = $this->baseNoteData($note) + [
-            'created_at' => $note->created_at,
+            'created_at' => now(),
             'created_by' => $user->name,
         ];
 
@@ -55,7 +55,7 @@ class NoteLogService
         Note $note
     ): array {
         $data = $this->baseNoteData($note) + [
-            'updated_at' => $note->updated_at,
+            'updated_at' => now(),
             'updated_by' => $user->name,
         ];
 
@@ -85,7 +85,7 @@ class NoteLogService
         Note $note
     ): array {
         $data = $this->baseNoteData($note) + [
-            'deleted_at' => $note->deleted_at,
+            'deleted_at' => now(),
             'deleted_by' => $user->name,
         ];
 

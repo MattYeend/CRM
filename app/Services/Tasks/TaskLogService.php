@@ -25,7 +25,7 @@ class TaskLogService
         Task $task
     ): array {
         $data = $this->baseTaskData($task) + [
-            'created_at' => $task->created_at,
+            'created_at' => now(),
             'created_by' => $user->name,
         ];
 
@@ -55,7 +55,7 @@ class TaskLogService
         Task $task
     ): array {
         $data = $this->baseTaskData($task) + [
-            'updated_at' => $task->updated_at,
+            'updated_at' => now(),
             'updated_by' => $user->name,
         ];
 
@@ -85,7 +85,7 @@ class TaskLogService
         Task $task
     ): array {
         $data = $this->baseTaskData($task) + [
-            'deleted_at' => $task->deleted_at,
+            'deleted_at' => now(),
             'deleted_by' => $user->name,
         ];
 

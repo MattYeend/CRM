@@ -25,7 +25,7 @@ class PermissionLogService
         Permission $permission
     ): array {
         $data = $this->basePermissionData($permission) + [
-            'created_at' => $permission->created_at,
+            'created_at' => now(),
             'created_by' => $user->name,
         ];
 
@@ -55,7 +55,7 @@ class PermissionLogService
         Permission $permission
     ): array {
         $data = $this->basePermissionData($permission) + [
-            'updated_at' => $permission->updated_at,
+            'updated_at' => now(),
             'updated_by' => $user->name,
         ];
 

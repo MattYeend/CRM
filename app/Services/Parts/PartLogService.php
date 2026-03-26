@@ -25,7 +25,7 @@ class PartLogService
         Part $part
     ): array {
         $data = $this->basePartData($part) + [
-            'created_at' => $part->created_at,
+            'created_at' => now(),
             'created_by' => $user->name,
         ];
 
@@ -55,7 +55,7 @@ class PartLogService
         Part $part
     ): array {
         $data = $this->basePartData($part) + [
-            'updated_at' => $part->updated_at,
+            'updated_at' => now(),
             'updated_by' => $user->name,
         ];
 
@@ -85,7 +85,7 @@ class PartLogService
         Part $part
     ): array {
         $data = $this->basePartData($part) + [
-            'deleted_at' => $part->deleted_at,
+            'deleted_at' => now(),
             'deleted_by' => $user->name,
         ];
 

@@ -25,7 +25,7 @@ class InvoiceItemLogService
         InvoiceItem $invoiceItem
     ): array {
         $data = $this->baseInvoiceItemData($invoiceItem, $user) + [
-            'created_at' => $invoiceItem->created_at,
+            'created_at' => now(),
             'created_by' => $user->name,
         ];
 
@@ -55,7 +55,7 @@ class InvoiceItemLogService
         InvoiceItem $invoiceItem
     ): array {
         $data = $this->baseInvoiceItemData($invoiceItem, $user) + [
-            'updated_at' => $invoiceItem->updated_at,
+            'updated_at' => now(),
             'updated_by' => $user->name,
         ];
 

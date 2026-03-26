@@ -25,7 +25,7 @@ class LearningLogService
         Learning $learning
     ): array {
         $data = $this->baseLearningData($learning) + [
-            'created_at' => $learning->created_at,
+            'created_at' => now(),
             'created_by' => $user->name,
         ];
 
@@ -85,7 +85,7 @@ class LearningLogService
         Learning $learning
     ): array {
         $data = $this->baseLearningData($learning) + [
-            'deleted_at' => $learning->deleted_at,
+            'deleted_at' => now(),
             'deleted_by' => $user->name,
         ];
 

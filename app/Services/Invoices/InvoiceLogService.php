@@ -25,7 +25,7 @@ class InvoiceLogService
         Invoice $invoice
     ): array {
         $data = $this->baseInvoiceData($invoice) + [
-            'created_at' => $invoice->created_at,
+            'created_at' => now(),
             'created_by' => $user->name,
         ];
 
@@ -85,7 +85,7 @@ class InvoiceLogService
         Invoice $invoice
     ): array {
         $data = $this->baseInvoiceData($invoice) + [
-            'deleted_at' => $invoice->deleted_at,
+            'deleted_at' => now(),
             'deleted_by' => $user->name,
         ];
 

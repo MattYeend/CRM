@@ -25,7 +25,7 @@ class PartImageLogService
         PartImage $partImage
     ): array {
         $data = $this->basePartImageData($partImage) + [
-            'created_at' => $partImage->created_at,
+            'created_at' => now(),
             'created_by' => $user->name,
         ];
 
@@ -55,7 +55,7 @@ class PartImageLogService
         PartImage $partImage
     ): array {
         $data = $this->basePartImageData($partImage) + [
-            'updated_at' => $partImage->updated_at,
+            'updated_at' => now(),
             'updated_by' => $user->name,
         ];
 
@@ -85,7 +85,7 @@ class PartImageLogService
         PartImage $partImage
     ): array {
         $data = $this->basePartImageData($partImage) + [
-            'deleted_at' => $partImage->deleted_at,
+            'deleted_at' => now(),
             'deleted_by' => $user->name,
         ];
 

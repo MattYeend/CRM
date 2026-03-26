@@ -25,7 +25,7 @@ class UserLogService
         User $user
     ): array {
         $data = $this->baseUserData($user) + [
-            'created_at' => $user->created_at,
+            'created_at' => now(),
             'created_by' => $actor?->name,
         ];
 
@@ -56,7 +56,7 @@ class UserLogService
         User $user
     ): array {
         $data = $this->baseUserData($user) + [
-            'updated_at' => $user->updated_at,
+            'updated_at' => now(),
             'updated_by' => $actor?->name,
         ];
 
@@ -87,7 +87,7 @@ class UserLogService
         User $user
     ): array {
         $data = $this->baseUserData($user) + [
-            'deleted_at' => $user->deleted_at,
+            'deleted_at' => now(),
             'deleted_by' => $actor?->name,
         ];
 

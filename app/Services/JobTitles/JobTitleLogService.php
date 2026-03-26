@@ -25,7 +25,7 @@ class JobTitleLogService
         JobTitle $jobTitle
     ): array {
         $data = $this->baseJobTitleData($jobTitle) + [
-            'created_at' => $jobTitle->created_at,
+            'created_at' => now(),
             'created_by' => $user->name,
         ];
 
@@ -55,7 +55,7 @@ class JobTitleLogService
         JobTitle $jobTitle
     ): array {
         $data = $this->baseJobTitleData($jobTitle) + [
-            'updated_at' => $jobTitle->updated_at,
+            'updated_at' => now(),
             'updated_by' => $user->name,
         ];
 
@@ -85,7 +85,7 @@ class JobTitleLogService
         JobTitle $jobTitle
     ): array {
         $data = $this->baseJobTitleData($jobTitle) + [
-            'deleted_at' => $jobTitle->deleted_at,
+            'deleted_at' => now(),
             'deleted_by' => $user->name,
         ];
 

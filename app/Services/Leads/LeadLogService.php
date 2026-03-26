@@ -25,7 +25,7 @@ class LeadLogService
         Lead $lead
     ): array {
         $data = $this->baseLeadData($lead) + [
-            'created_at' => $lead->created_at,
+            'created_at' => now(),
             'created_by' => $user->name,
         ];
 
@@ -55,7 +55,7 @@ class LeadLogService
         Lead $lead
     ): array {
         $data = $this->baseLeadData($lead) + [
-            'updated_at' => $lead->updated_at,
+            'updated_at' => now(),
             'updated_by' => $user->name,
         ];
 
@@ -85,7 +85,7 @@ class LeadLogService
         Lead $lead
     ): array {
         $data = $this->baseLeadData($lead) + [
-            'deleted_at' => $lead->deleted_at,
+            'deleted_at' => now(),
             'deleted_by' => $user->name,
         ];
 

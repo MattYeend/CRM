@@ -25,7 +25,7 @@ class RoleLogService
         Role $role
     ): array {
         $data = $this->baseRoleData($role) + [
-            'created_at' => $role->created_at,
+            'created_at' => now(),
             'created_by' => $user->name,
         ];
 
@@ -55,7 +55,7 @@ class RoleLogService
         Role $role
     ): array {
         $data = $this->baseRoleData($role) + [
-            'updated_at' => $role->updated_at,
+            'updated_at' => now(),
             'updated_by' => $user->name,
         ];
 

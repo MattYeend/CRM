@@ -25,7 +25,7 @@ class CompanyLogService
         Company $company
     ): array {
         $data = $this->baseCompanyData($company) + [
-            'created_at' => $company->created_at,
+            'created_at' => now(),
             'created_by' => $user->name,
         ];
 
@@ -55,7 +55,7 @@ class CompanyLogService
         Company $company
     ): array {
         $data = $this->baseCompanyData($company) + [
-            'updated_at' => $company->updated_at,
+            'updated_at' => now(),
             'updated_by' => $user->name,
         ];
 
@@ -85,7 +85,7 @@ class CompanyLogService
         Company $company
     ): array {
         $data = $this->baseCompanyData($company) + [
-            'deleted_at' => $company->deleted_at,
+            'deleted_at' => now(),
             'deleted_by' => $user->name,
         ];
 

@@ -25,7 +25,7 @@ class ProductLogService
         Product $product
     ): array {
         $data = $this->baseProductData($product) + [
-            'created_at' => $product->created_at,
+            'created_at' => now(),
             'created_by' => $user->name,
         ];
 
@@ -55,7 +55,7 @@ class ProductLogService
         Product $product
     ): array {
         $data = $this->baseProductData($product) + [
-            'updated_at' => $product->updated_at,
+            'updated_at' => now(),
             'updated_by' => $user->name,
         ];
 
@@ -85,7 +85,7 @@ class ProductLogService
         Product $product
     ): array {
         $data = $this->baseProductData($product) + [
-            'deleted_at' => $product->deleted_at,
+            'deleted_at' => now(),
             'deleted_by' => $user->name,
         ];
 

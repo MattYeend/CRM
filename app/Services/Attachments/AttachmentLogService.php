@@ -25,7 +25,7 @@ class AttachmentLogService
         Attachment $attachment
     ): array {
         $data = $this->baseAttachmentData($attachment) + [
-            'created_at' => $attachment->created_at,
+            'created_at' => now(),
             'created_by' => $user->name,
         ];
 

@@ -25,7 +25,7 @@ class SupplierLogService
         Supplier $supplier
     ): array {
         $data = $this->baseSupplierData($supplier) + [
-            'created_at' => $supplier->created_at,
+            'created_at' => now(),
             'created_by' => $user->name,
         ];
 
@@ -55,7 +55,7 @@ class SupplierLogService
         Supplier $supplier
     ): array {
         $data = $this->baseSupplierData($supplier) + [
-            'updated_at' => $supplier->updated_at,
+            'updated_at' => now(),
             'updated_by' => $user->name,
         ];
 
@@ -85,7 +85,7 @@ class SupplierLogService
         Supplier $supplier
     ): array {
         $data = $this->baseSupplierData($supplier) + [
-            'deleted_at' => $supplier->deleted_at,
+            'deleted_at' => now(),
             'deleted_by' => $user->name,
         ];
 

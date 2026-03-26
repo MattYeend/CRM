@@ -25,7 +25,7 @@ class PipelineStageLogService
         PipelineStage $pipelineStage
     ): array {
         $data = $this->basePipelineStageData($pipelineStage) + [
-            'created_at' => $pipelineStage->created_at,
+            'created_at' => now(),
             'created_by' => $user->name,
         ];
 
@@ -55,7 +55,7 @@ class PipelineStageLogService
         PipelineStage $pipelineStage
     ): array {
         $data = $this->basePipelineStageData($pipelineStage) + [
-            'updated_at' => $pipelineStage->updated_at,
+            'updated_at' => now(),
             'updated_by' => $user->name,
         ];
 
