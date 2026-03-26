@@ -7,6 +7,7 @@ use App\Models\Deal;
 use App\Models\Order;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
@@ -56,15 +57,15 @@ class AppServiceProvider extends ServiceProvider
     protected function preventDestructiveCommands()
     {
         $destructiveCommands = [
-            'migrate:fresh',    // Drops all tables
-            'migrate:reset',    // Rolls back all migrations
+            'migrate:fresh', // Drops all tables
+            'migrate:reset', // Rolls back all migrations
             'migrate:rollback', // Rolls back a batch of migrations
-            'db:wipe',          // Drops all databases
+            'db:wipe', // Drops all databases
         ];
 
         foreach ($destructiveCommands as $command) {
             Artisan::command($command, function () use ($command) {
-                /** @var \Illuminate\Console\Command $this */
+                /** @var Command $this */
                 $this->error(
                     "This '{$command}' command is disabled in this 
                         environment for safety."
