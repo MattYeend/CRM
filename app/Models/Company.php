@@ -68,7 +68,7 @@ class Company extends Model
 
     /** Get the deals for the company.
      *
-     * @return HasMany
+     * @return HasMany<Deal>
      */
     public function deals(): HasMany
     {
@@ -78,7 +78,7 @@ class Company extends Model
     /**
      * Get the invoices for the company.
      *
-     * @return HasMany
+     * @return HasMany<Invoice>
      */
     public function invoices(): HasMany
     {
@@ -88,7 +88,7 @@ class Company extends Model
     /**
      * Get all of the companies attachments.
      *
-     * @return MorphMany
+     * @return MorphMany<Attachment>
      */
     public function attachments(): MorphMany
     {
@@ -98,7 +98,7 @@ class Company extends Model
     /**
      * Get all of the companies activities.
      *
-     * @return MorphMany
+     * @return MorphMany<Activity>
      */
     public function activities(): MorphMany
     {
@@ -108,7 +108,7 @@ class Company extends Model
     /**
      * Get all of the companies tasks.
      *
-     * @return MorphMany
+     * @return MorphMany<Task>
      */
     public function tasks(): MorphMany
     {
@@ -118,7 +118,7 @@ class Company extends Model
     /**
      * Get all of the companies notes.
      *
-     * @return MorphMany
+     * @return MorphMany<Note>
      */
     public function notes(): MorphMany
     {
@@ -128,7 +128,7 @@ class Company extends Model
     /**
      * Get the user that created the company.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Company>
      */
     public function creator(): BelongsTo
     {
@@ -138,7 +138,7 @@ class Company extends Model
     /**
      * Get the user that updated the company.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Company>
      */
     public function updater(): BelongsTo
     {
@@ -148,7 +148,7 @@ class Company extends Model
     /**
      * Get the user that deleted the company.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Company>
      */
     public function deleter(): BelongsTo
     {
@@ -158,7 +158,7 @@ class Company extends Model
     /**
      * Get the user that restored the company.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Company>
      */
     public function restorer(): BelongsTo
     {
@@ -166,9 +166,7 @@ class Company extends Model
     }
 
     /**
-     * Get the companies title.
-     *
-     * Applies the test prefix when the company is marked as a test.
+     * Get the company name, applying the test prefix when marked as a test.
      *
      * @param  string|null  $value  The raw title from the database.
      *

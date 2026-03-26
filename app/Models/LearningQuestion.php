@@ -30,7 +30,7 @@ class LearningQuestion extends Model
     /**
      * The learning this question belongs to.
      *
-     * @return BelongsTo
+     * @return BelongsTo<Learning,LearningQuestion>
      */
     public function learning(): BelongsTo
     {
@@ -40,7 +40,7 @@ class LearningQuestion extends Model
     /**
      * The answers for this question.
      *
-     * @return HasMany
+     * @return HasMany<LearningAnswer>
      */
     public function answers(): HasMany
     {
@@ -50,7 +50,7 @@ class LearningQuestion extends Model
     /**
      * Get the correct answer(s) for this question.
      *
-     * @return HasMany
+     * @return HasMany<LearningAnswer>
      */
     public function correctAnswers(): HasMany
     {

@@ -23,13 +23,31 @@ class Attachment extends Model
         HasTestPrefix;
 
     /**
-     * Constants
+     * The fully-qualified class name used as the attachment type for Company attachments.
      */
     public const ATTACHABLE_COMPANY = Company::class;
+
+    /**
+     * The fully-qualified class name used as the attachment type for Deal attachments.
+     */
     public const ATTACHABLE_DEAL = Deal::class;
+
+    /**
+     * The fully-qualified class name used as the attachment type for Task attachments.
+     */
+
     public const ATTACHABLE_TASK = Task::class;
+
+    /**
+     * The fully-qualified class name used as the attachment type for User attachments.
+     */
     public const ATTACHABLE_USER = User::class;
 
+    /**
+     * All valid subject types that an attachment can be associated with.
+     *
+     * @var array<int, class-string<Model>>
+     */
     public const ATTACHABLE_TYPES = [
         self::ATTACHABLE_COMPANY,
         self::ATTACHABLE_DEAL,
@@ -76,9 +94,11 @@ class Attachment extends Model
     ];
 
     /**
-     * Get the parent attachable model (company, deal, etc.).
+     * Get the polymorphic attachable model this attachment belongs to.
      *
-     * @return MorphTo
+     * The attachment may be a Company, Deal, Task, or User as defined in ATTACHMENT_TYPES.
+     *
+     * @return MorphTo<Model,Attachment>
      */
     public function attachable(): MorphTo
     {
@@ -88,7 +108,7 @@ class Attachment extends Model
     /**
      * Get the user who uploaded the attachment.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Attachment>
      */
     public function uploader(): BelongsTo
     {
@@ -144,7 +164,7 @@ class Attachment extends Model
     /**
      * Get the user that created the attachment.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Attachment>
      */
     public function creator(): BelongsTo
     {
@@ -154,7 +174,7 @@ class Attachment extends Model
     /**
      * Get the user that updated the attachment.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Attachment>
      */
     public function updater(): BelongsTo
     {
@@ -164,7 +184,7 @@ class Attachment extends Model
     /**
      * Get the user that deleted the attachment.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Attachment>
      */
     public function deleter(): BelongsTo
     {
@@ -174,7 +194,7 @@ class Attachment extends Model
     /**
      * Get the user that restored the attachment.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Attachment>
      */
     public function restorer(): BelongsTo
     {
@@ -184,7 +204,7 @@ class Attachment extends Model
     /**
      * Get all of the attactment activities.
      *
-     * @return MorphMany
+     * @return MorphMany<Activity>
      */
     public function activities(): MorphMany
     {
@@ -194,7 +214,7 @@ class Attachment extends Model
     /**
      * Get all of the attactment tasks.
      *
-     * @return MorphMany
+     * @return MorphMany<Task>
      */
     public function tasks(): MorphMany
     {
@@ -204,7 +224,7 @@ class Attachment extends Model
     /**
      * Get all of the attachment notes.
      *
-     * @return MorphMany
+     * @return MorphMany<Note>
      */
     public function notes(): MorphMany
     {
@@ -212,9 +232,9 @@ class Attachment extends Model
     }
 
     /**
-     * Get the attachment name.
+     * Get the attachment name, applying the test prefix when marked as a test.
      *
-     * Applies the test prefix when the attachment is marked as a test.
+     * @param  string|null  $value  The raw name value from the database.
      *
      * @return string
      */

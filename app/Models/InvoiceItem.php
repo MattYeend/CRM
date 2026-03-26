@@ -61,7 +61,7 @@ class InvoiceItem extends Model
     /**
      * Get the invoice that owns the invoice item.
      *
-     * @return BelongsTo
+     * @return BelongsTo<Invoice,InvoiceItem>
      */
     public function invoice(): BelongsTo
     {
@@ -71,7 +71,7 @@ class InvoiceItem extends Model
     /**
      * Get the product that owns the invoice item.
      *
-     * @return BelongsTo
+     * @return BelongsTo<Product,InvoiceItem>
      */
     public function product(): BelongsTo
     {
@@ -91,7 +91,7 @@ class InvoiceItem extends Model
     /**
      * Get the user that created the invoice item.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,InvioceItem>
      */
     public function creator(): BelongsTo
     {
@@ -101,7 +101,7 @@ class InvoiceItem extends Model
     /**
      * Get the user that updated the invoice item.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,InvioceItem>
      */
     public function updater(): BelongsTo
     {
@@ -111,7 +111,7 @@ class InvoiceItem extends Model
     /**
      * Get the user that deleted the invoice item.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,InvioceItem>
      */
     public function deleter(): BelongsTo
     {
@@ -121,7 +121,7 @@ class InvoiceItem extends Model
     /**
      * Get the user that restored the invoice item.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,InvioceItem>
      */
     public function restorer(): BelongsTo
     {
@@ -131,7 +131,7 @@ class InvoiceItem extends Model
     /**
      * Get all of the invoice item attachments.
      *
-     * @return MorphMany
+     * @return MorphMany<Attachment>
      */
     public function attachments(): MorphMany
     {
@@ -141,7 +141,7 @@ class InvoiceItem extends Model
     /**
      * Get all of the invoice item activities.
      *
-     * @return MorphMany
+     * @return MorphMany<Activity>
      */
     public function activities(): MorphMany
     {
@@ -151,7 +151,7 @@ class InvoiceItem extends Model
     /**
      * Get all of the invoice item tasks.
      *
-     * @return MorphMany
+     * @return MorphMany<Task>
      */
     public function tasks(): MorphMany
     {
@@ -161,7 +161,7 @@ class InvoiceItem extends Model
     /**
      * Get all of the invoice item notes.
      *
-     * @return MorphMany
+     * @return MorphMany<Note>
      */
     public function notes(): MorphMany
     {
@@ -169,9 +169,7 @@ class InvoiceItem extends Model
     }
 
     /**
-     * Get the invoice description.
-     *
-     * Applies the test prefix when the invoice item is marked as a test.
+     * Get the invoice description, pplies the test prefix when the invoice item is marked as a test.
      *
      * @param  string|null  $value  The raw invoice item description
      * from the database.

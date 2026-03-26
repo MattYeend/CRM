@@ -22,11 +22,23 @@ class Deal extends Model
         HasTestPrefix;
 
     /**
-     * Constants
+     * Represents an open deal still in progress.
      */
     public const STATUS_OPEN = 'open';
+
+    /**
+     * Represents a deal that has been successfully closed.
+     */
     public const STATUS_WON = 'won';
+
+    /**
+     * Represents a deal that was unsuccessful.
+     */
     public const STATUS_LOST = 'lost';
+
+    /**
+     * Represents a deal that has been archived.
+     */
     public const STATUS_ARCHIVED = 'archived';
 
     /**
@@ -74,7 +86,7 @@ class Deal extends Model
     /**
      * Get the company that owns the deal.
      *
-     * @return BelongsTo
+     * @return BelongsTo<Company,Deal>
      */
     public function company(): BelongsTo
     {
@@ -84,7 +96,7 @@ class Deal extends Model
     /**
      * Get the owner (user) that owns the deal.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Deal>
      */
     public function owner(): BelongsTo
     {
@@ -94,7 +106,7 @@ class Deal extends Model
     /**
      * Get the pipeline that owns the deal.
      *
-     * @return BelongsTo
+     * @return BelongsTo<Pipeline,Deal>
      */
     public function pipeline(): BelongsTo
     {
@@ -104,7 +116,7 @@ class Deal extends Model
     /**
      * Get the stage that owns the deal.
      *
-     * @return BelongsTo
+     * @return BelongsTo<PipelineStage,Deal>
      */
     public function stage(): BelongsTo
     {
@@ -114,7 +126,7 @@ class Deal extends Model
     /**
      * Get the tasks for the deal.
      *
-     * @return MorphMany
+     * @return MorphMany<Task>
      */
     public function tasks(): MorphMany
     {
@@ -124,7 +136,7 @@ class Deal extends Model
     /**
      * Get the notes for the deal.
      *
-     * @return MorphMany
+     * @return MorphMany<Note>
      */
     public function notes(): MorphMany
     {
@@ -134,7 +146,7 @@ class Deal extends Model
     /**
      * Get the attachments for the deal.
      *
-     * @return MorphMany
+     * @return MorphMany<Attachment>
      */
     public function attachments(): MorphMany
     {
@@ -144,7 +156,7 @@ class Deal extends Model
     /**
      * Get the activities for the deal.
      *
-     * @return MorphMany
+     * @return MorphMany<Activity>
      */
     public function activities(): MorphMany
     {
@@ -154,7 +166,7 @@ class Deal extends Model
     /**
      * Get the user that created the deal.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Deal>
      */
     public function creator(): BelongsTo
     {
@@ -164,7 +176,7 @@ class Deal extends Model
     /**
      * Get the user that updated the deal.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Deal>
      */
     public function updater(): BelongsTo
     {
@@ -174,7 +186,7 @@ class Deal extends Model
     /**
      * Get the user that deleted the deal.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Deal>
      */
     public function deleter(): BelongsTo
     {
@@ -184,7 +196,7 @@ class Deal extends Model
     /**
      * Get the user that restored the deal.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Deal>
      */
     public function restorer(): BelongsTo
     {
@@ -194,7 +206,7 @@ class Deal extends Model
     /**
      * Get the product for the deal.
      *
-     * @return BelongsToMany
+     * @return BelongsToMany<Product>
      */
     public function products(): BelongsToMany
     {
@@ -205,9 +217,7 @@ class Deal extends Model
     }
 
     /**
-     * Get the deal title.
-     *
-     * Applies the test prefix when the deal is marked as a test.
+     * Get the deal title, applies the test prefix when the deal is marked as a test.
      *
      * @param  string|null  $value  The raw title from the database.
      *

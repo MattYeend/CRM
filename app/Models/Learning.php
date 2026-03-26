@@ -24,9 +24,13 @@ class Learning extends Model
         HasTestPrefix;
 
     /**
-     * Contants
+     * Represents a learning that has been completed.
      */
     public const COMPLETE = 'complete';
+
+    /**
+     * Represents a learning that is yet to be completed.
+     */
     public const INCOMPLETE = 'incomplete';
 
     protected $fillable = [
@@ -61,7 +65,7 @@ class Learning extends Model
     /**
      * Get the questions of the learning.
      *
-     * @return HasMany
+     * @return HasMany<LearningQuestion>
      */
     public function questions(): HasMany
     {
@@ -71,7 +75,7 @@ class Learning extends Model
     /**
      * Get the user that created the learning.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Learning>
      */
     public function creator(): BelongsTo
     {
@@ -81,7 +85,7 @@ class Learning extends Model
     /**
      * Get the user that last updated the learning.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Learning>
      */
     public function updater(): BelongsTo
     {
@@ -91,7 +95,7 @@ class Learning extends Model
     /**
      * Get the user that deleted the learning.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Learning>
      */
     public function deleter(): BelongsTo
     {
@@ -101,7 +105,7 @@ class Learning extends Model
     /**
      * Get the user that restored the learning.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Learning>
      */
     public function restorer(): BelongsTo
     {
@@ -111,7 +115,7 @@ class Learning extends Model
     /**
      * Get the user that completed the learning.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Learning>
      */
     public function completer(): BelongsTo
     {
@@ -121,7 +125,7 @@ class Learning extends Model
     /**
      * The users that are assigned to this learning.
      *
-     * @return BelongsToMany
+     * @return BelongsToMany<User,LearningUser>
      */
     public function users(): BelongsToMany
     {
@@ -137,7 +141,7 @@ class Learning extends Model
     /**
      * Get all of the learning attachments.
      *
-     * @return MorphMany
+     * @return MorphMany<Attachment>
      */
     public function attachments(): MorphMany
     {
@@ -147,7 +151,7 @@ class Learning extends Model
     /**
      * Get all of the learning activities.
      *
-     * @return MorphMany
+     * @return MorphMany<Activity>
      */
     public function activities(): MorphMany
     {
@@ -157,7 +161,7 @@ class Learning extends Model
     /**
      * Get all of the learning tasks.
      *
-     * @return MorphMany
+     * @return MorphMany<Task>
      */
     public function tasks(): MorphMany
     {
@@ -167,7 +171,7 @@ class Learning extends Model
     /**
      * Get all of the learning notes.
      *
-     * @return MorphMany
+     * @return MorphMany<Note>
      */
     public function notes(): MorphMany
     {

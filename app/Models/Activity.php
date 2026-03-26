@@ -22,13 +22,30 @@ class Activity extends Model
         HasTestPrefix;
 
     /**
-     * Constants
+     * The fully-qualified class name used as the subject type for Company activities.
      */
     public const ACTIVITY_COMPANY = Company::class;
+
+    /**
+     * The fully-qualified class name used as the subject type for Deal activities.
+     */
     public const ACTIVITY_DEAL = Deal::class;
+
+    /**
+     * The fully-qualified class name used as the subject type for Task activities.
+     */
     public const ACTIVITY_TASK = Task::class;
+
+    /**
+     * The fully-qualified class name used as the subject type for User activities.
+     */
     public const ACTIVITY_USER = User::class;
 
+    /**
+     * All valid subject types that an activity can be associated with.
+     *
+     * @var array<int, class-string<Model>>
+     */
     public const ACTIVITY_TYPES = [
         self::ACTIVITY_COMPANY,
         self::ACTIVITY_DEAL,
@@ -75,7 +92,7 @@ class Activity extends Model
     /**
      * Get the user that owns the activity.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User>
      */
     public function user(): BelongsTo
     {
@@ -83,9 +100,11 @@ class Activity extends Model
     }
 
     /**
-     * Get the owning subject model.
+     * Get the polymorphic subject model this activity belongs to.
      *
-     * @return MorphTo
+     * The subject may be a Company, Deal, Task, or User as defined in ACTIVITY_TYPES.
+     *
+     * @return MorphTo<Model,Activity>
      */
     public function subject(): MorphTo
     {
@@ -95,7 +114,7 @@ class Activity extends Model
     /**
      * Get the user that created the activity.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Activity>
      */
     public function creator(): BelongsTo
     {
@@ -105,7 +124,7 @@ class Activity extends Model
     /**
      * Get the user that updated the activity.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Activity>
      */
     public function updater(): BelongsTo
     {
@@ -115,7 +134,7 @@ class Activity extends Model
     /**
      * Get the user that deleted the activity.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Activity>
      */
     public function deleter(): BelongsTo
     {
@@ -125,7 +144,7 @@ class Activity extends Model
     /**
      * Get the user that restored the activity.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Activity>
      */
     public function restorer(): BelongsTo
     {
@@ -133,9 +152,9 @@ class Activity extends Model
     }
 
     /**
-     * Get all of the activies attachments.
+     * Get all attachments associated with the activity.
      *
-     * @return MorphMany
+     * @return MorphMany<Attachment>
      */
     public function attachments(): MorphMany
     {
@@ -143,9 +162,9 @@ class Activity extends Model
     }
 
     /**
-     * Get all of the activy tasks.
+     * Get all tasks associated with the activity.
      *
-     * @return MorphMany
+     * @return MorphMany<Task>
      */
     public function tasks(): MorphMany
     {
@@ -153,9 +172,9 @@ class Activity extends Model
     }
 
     /**
-     * Get all of the activity notes.
+     * Get all notes associated with the activity.
      *
-     * @return MorphMany
+     * @return MorphMany<Note>
      */
     public function notes(): MorphMany
     {
@@ -163,9 +182,9 @@ class Activity extends Model
     }
 
     /**
-     * Get the activity type.
+     * Get the activity type, applying the test prefix when marked as a test.
      *
-     * Applies the test prefix when the activity is marked as a test.
+     * @param  string|null  $value  The raw type value from the database.
      *
      * @return string
      */
@@ -175,7 +194,9 @@ class Activity extends Model
     }
 
     /**
-     * Get the user name.
+     * Get the name of the user that owns the activity.
+     *
+     * Returns null if no user is associated.
      *
      * @return string
      */

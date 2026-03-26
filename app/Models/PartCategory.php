@@ -87,6 +87,46 @@ class PartCategory extends Model
     }
 
     /**
+     * Get the user that created the permission.
+     *
+     * @return BelongsTo<User>
+     */
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Get the user that last updated the permission.
+     *
+     * @return BelongsTo<User>
+     */
+    public function updater(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    /**
+     * Get the user that deleted the permission.
+     *
+     * @return BelongsTo<User>
+     */
+    public function deleter(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
+    }
+
+    /**
+     * Get the user that restored the permission.
+     *
+     * @return BelongsTo<User>
+     */
+    public function restorer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'restored_by');
+    }
+
+    /**
      * Bootstrap the model and its traits.
      *
      * Registers model event listeners to automatically generate a URL-friendly

@@ -21,14 +21,31 @@ class Note extends Model
         SoftDeletes,
         HasTestPrefix;
 
-    /**
-     * Constants
+     /**
+     * The fully-qualified class name used as the notable type for Company activities.
      */
     public const NOTABLE_COMPANY = Company::class;
+
+    /**
+     * The fully-qualified class name used as the notable type for Deal activities.
+     */
     public const NOTABLE_DEAL = Deal::class;
+
+    /**
+     * The fully-qualified class name used as the subject type for Task activities.
+     */
     public const NOTABLE_TASK = Task::class;
+
+    /**
+     * The fully-qualified class name used as the subject type for User activities.
+     */
     public const NOTABLE_USER = User::class;
 
+    /**
+     * All valid notable types that an activity can be associated with.
+     *
+     * @var array<int, class-string<Model>>
+     */
     public const NOTABLE_TYPES = [
         self::NOTABLE_COMPANY,
         self::NOTABLE_DEAL,
@@ -72,9 +89,11 @@ class Note extends Model
     ];
 
     /**
-     * Get the owning notable model.
+     * Get the polymorphic notable model this note belongs to.
      *
-     * @return MorphTo
+     * The note may be a Company, Deal, Task, or User as defined in NOTABLE_TYPES.
+     *
+     * @return MorphTo<Notable>
      */
     public function notable(): MorphTo
     {
@@ -84,7 +103,7 @@ class Note extends Model
     /**
      * Get the user that owns the note.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Note>
      */
     public function user(): BelongsTo
     {
@@ -94,7 +113,7 @@ class Note extends Model
     /**
      * Get the user that created the note.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Note>
      */
     public function creator(): BelongsTo
     {
@@ -104,7 +123,7 @@ class Note extends Model
     /**
      * Get the user that last updated the note.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Note>
      */
     public function updater(): BelongsTo
     {
@@ -114,7 +133,7 @@ class Note extends Model
     /**
      * Get the user that deleted the note.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Note>
      */
     public function deleter(): BelongsTo
     {
@@ -124,7 +143,7 @@ class Note extends Model
     /**
      * Get the user that restored the note.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Note>
      */
     public function restorer(): BelongsTo
     {
@@ -134,7 +153,7 @@ class Note extends Model
     /**
      * Get all of the note attachments.
      *
-     * @return MorphMany
+     * @return MorphMany<Attachment>
      */
     public function attachments(): MorphMany
     {
@@ -144,7 +163,7 @@ class Note extends Model
     /**
      * Get all of the note activities.
      *
-     * @return MorphMany
+     * @return MorphMany<Activity>
      */
     public function activities(): MorphMany
     {
@@ -154,7 +173,7 @@ class Note extends Model
     /**
      * Get all of the note tasks.
      *
-     * @return MorphMany
+     * @return MorphMany<Task>
      */
     public function tasks(): MorphMany
     {
@@ -162,9 +181,7 @@ class Note extends Model
     }
 
     /**
-     * Get the note type.
-     *
-     * Applies the test prefix when the note is marked as a test.
+     * Get the note type, applies the test prefix when the note is marked as a test.
      *
      * @param  string|null  $value  The raw note type from the database.
      *

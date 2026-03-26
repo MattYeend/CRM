@@ -28,7 +28,7 @@ class LearningAnswer extends Model
     /**
      * The question this answer belongs to.
      *
-     * @return BelongsTo
+     * @return BelongsTo<LearningQuestion,LearningAnswer>
      */
     public function question(): BelongsTo
     {

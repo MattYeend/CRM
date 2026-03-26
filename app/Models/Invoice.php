@@ -22,12 +22,28 @@ class Invoice extends Model
         HasTestPrefix;
 
     /**
-     * Constants
+     * Represents an invoice that has not yet been sent.
      */
     public const STATUS_DRAFT = 'draft';
+
+    /**
+     * Represents an invoice that has been sent to the company.
+     */
     public const STATUS_SENT = 'sent';
+
+    /**
+     * Represents an invoice that has been fully paid.
+     */
     public const STATUS_PAID = 'paid';
+
+    /**
+     * Represents an invoice whose due date has passed without payment.
+     */
     public const STATUS_OVERDUE = 'overdue';
+
+    /**
+     * Represents an invoice that has been cancelled.
+     */
     public const STATUS_CANCELLED = 'cancelled';
 
     /**
@@ -76,7 +92,7 @@ class Invoice extends Model
     /**
      * Get the company that owns the invoice.
      *
-     * @return BelongsTo
+     * @return BelongsTo<Company,Invoice>
      */
     public function company(): BelongsTo
     {
@@ -86,7 +102,7 @@ class Invoice extends Model
     /**
      * Get the items for the invoice.
      *
-     * @return HasMany
+     * @return HasMany<InvoiceItem>
      */
     public function items(): HasMany
     {
@@ -96,7 +112,7 @@ class Invoice extends Model
     /**
      * Get the user who created the invoice.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Invoice>
      */
     public function creator(): BelongsTo
     {
@@ -106,7 +122,7 @@ class Invoice extends Model
     /**
      * Get the user who updated the invoice.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Invoice>
      */
     public function updater(): BelongsTo
     {
@@ -116,7 +132,7 @@ class Invoice extends Model
     /**
      * Get the user who deleted the invoice.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Invoice>
      */
     public function deleter(): BelongsTo
     {
@@ -126,7 +142,7 @@ class Invoice extends Model
     /**
      * Get the user that restored the invoice.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Invoice>
      */
     public function restorer(): BelongsTo
     {
@@ -136,7 +152,7 @@ class Invoice extends Model
     /**
      * Get all of the invoice attachments.
      *
-     * @return MorphMany
+     * @return MorphMany<Attachment>
      */
     public function attachments(): MorphMany
     {
@@ -146,7 +162,7 @@ class Invoice extends Model
     /**
      * Get all of the invoice activities.
      *
-     * @return MorphMany
+     * @return MorphMany<Activity>
      */
     public function activities(): MorphMany
     {
@@ -156,7 +172,7 @@ class Invoice extends Model
     /**
      * Get all of the invoice tasks.
      *
-     * @return MorphMany
+     * @return MorphMany<Task>
      */
     public function tasks(): MorphMany
     {
@@ -166,7 +182,7 @@ class Invoice extends Model
     /**
      * Get all of the invoice notes.
      *
-     * @return MorphMany
+     * @return MorphMany<Note>
      */
     public function notes(): MorphMany
     {
@@ -174,7 +190,7 @@ class Invoice extends Model
     }
 
     /**
-     * See if the invoice is overdue.
+     * Determine whether the invoice is overdue.
      *
      * @return bool
      */
@@ -184,7 +200,7 @@ class Invoice extends Model
     }
 
     /**
-     * See if the invoice is paid.
+     * Determine whether the invoice is paid.
      *
      * @return bool
      */
@@ -194,7 +210,7 @@ class Invoice extends Model
     }
 
     /**
-     * See if the invoice is draft.
+     * Determine whether the invoice is draft.
      *
      * @return bool
      */
@@ -204,9 +220,7 @@ class Invoice extends Model
     }
 
     /**
-     * Get the invoice number.
-     *
-     * Applies the test prefix when the invoice is marked as a test.
+     * Get the invoice number, applies the test prefix when the invoice is marked as a test.
      *
      * @param  string|null  $value  The raw invoice number from the database.
      *

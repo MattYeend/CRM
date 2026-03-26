@@ -21,7 +21,7 @@ class JobTitle extends Model
         HasTestPrefix;
 
     /**
-     * Constants
+     * C-Suite title constants.
      */
     public const TITLE_CEO = 'Chief Executive Officer';
     public const TITLE_CTO = 'Chief Technology Officer';
@@ -34,6 +34,9 @@ class JobTitle extends Model
     public const TITLE_CSO = 'Chief Strategy Officer';
     public const TITLE_CHRO = 'Chief Human Resources Officer';
 
+    /**
+     * Executive title constants.
+     */
     public const TITLE_PRES = 'President';
     public const TITLE_VP = 'Vice President';
     public const TITLE_EVP = 'Executive Vice President';
@@ -42,6 +45,9 @@ class JobTitle extends Model
     public const TITLE_DIR = 'Director';
     public const TITLE_SR_DIR = 'Senior Director';
 
+    /**
+     * Director title constants.
+     */
     public const TITLE_TECH_DIR = 'Technical Director';
     public const TITLE_SALES_DIR = 'Sales Director';
     public const TITLE_MKT_DIR = 'Marketing Director';
@@ -50,6 +56,11 @@ class JobTitle extends Model
     public const TITLE_OPS_DIR = 'Operations Director';
     public const TITLE_SUPPORT_DIR = 'Support Director';
 
+    /**
+     * All C-Suite level job titles.
+     *
+     * @var array<int, string>
+     */
     public const GROUP_C_SUITE = [
         self::TITLE_CEO,
         self::TITLE_CTO,
@@ -63,6 +74,11 @@ class JobTitle extends Model
         self::TITLE_CHRO,
     ];
 
+    /**
+     * All executive level job titles.
+     *
+     * @var array<int, string>
+     */
     public const GROUP_EXECUTIVE = [
         self::TITLE_PRES,
         self::TITLE_VP,
@@ -73,7 +89,12 @@ class JobTitle extends Model
         self::TITLE_SR_DIR,
     ];
 
-    public const GROUP_DIRS = [
+    /**
+     * All director level job titles.
+     *
+     * @var array<int, string>
+     */
+        public const GROUP_DIRS = [
         self::TITLE_MD,
         self::TITLE_DIR,
         self::TITLE_SR_DIR,
@@ -122,9 +143,9 @@ class JobTitle extends Model
     ];
 
     /**
-     * Get the user that created the lead.
+     * Get the user that created the job title.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,JobTitle>
      */
     public function creator(): BelongsTo
     {
@@ -132,9 +153,9 @@ class JobTitle extends Model
     }
 
     /**
-     * Get the user that updated the lead.
+     * Get the user that updated the job title.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,JobTitle>
      */
     public function updater(): BelongsTo
     {
@@ -142,9 +163,9 @@ class JobTitle extends Model
     }
 
     /**
-     * Get the user that deleted the lead.
+     * Get the user that deleted the job title.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,JobTitle>
      */
     public function deleter(): BelongsTo
     {
@@ -152,9 +173,9 @@ class JobTitle extends Model
     }
 
     /**
-     * Get the user that restored the lead.
+     * Get the user that restored the job title.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,JobTitle>
      */
     public function restorer(): BelongsTo
     {
@@ -164,7 +185,7 @@ class JobTitle extends Model
     /**
      * Get the users that have the job title
      *
-     * @return HasMany
+     * @return HasMany<User>
      */
     public function users(): HasMany
     {
@@ -172,11 +193,9 @@ class JobTitle extends Model
     }
 
     /**
-     * Get the job title title.
+     * Get the job title, applying the test prefix when marked as a test.
      *
-     * Applies the test prefix when the job title is marked as a test.
-     *
-     * @param  string|null  $value  The raw job title title from the database.
+     * @param  string|null  $value  The raw title value from the database.
      *
      * @return string
      */

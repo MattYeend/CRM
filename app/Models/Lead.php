@@ -65,7 +65,7 @@ class Lead extends Model
     /**
      * The owner of the lead.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Lead>
      */
     public function owner(): BelongsTo
     {
@@ -75,7 +75,7 @@ class Lead extends Model
     /**
      * The user assigned to the lead.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Lead>
      */
     public function assignedTo(): BelongsTo
     {
@@ -84,6 +84,10 @@ class Lead extends Model
 
     /**
      * Convert the lead to a deal.
+     *
+     * Creates and persists a new Deal record seeded with the lead's owner
+     * and meta data. Pipeline, company, and close date are left unset
+     * for the caller to populate as needed.
      *
      * @return Deal
      */
@@ -108,7 +112,7 @@ class Lead extends Model
     /**
      * Get the user that created the lead.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Lead>
      */
     public function creator(): BelongsTo
     {
@@ -118,7 +122,7 @@ class Lead extends Model
     /**
      * Get the user that updated the lead.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Lead>
      */
     public function updater(): BelongsTo
     {
@@ -128,7 +132,7 @@ class Lead extends Model
     /**
      * Get the user that deleted the lead.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Lead>
      */
     public function deleter(): BelongsTo
     {
@@ -138,7 +142,7 @@ class Lead extends Model
     /**
      * Get the user that restored the lead.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Lead>
      */
     public function restorer(): BelongsTo
     {
@@ -148,7 +152,7 @@ class Lead extends Model
     /**
      * Get all of the lead attachments.
      *
-     * @return MorphMany
+     * @return MorphMany<Attachment>
      */
     public function attachments(): MorphMany
     {
@@ -158,7 +162,7 @@ class Lead extends Model
     /**
      * Get all of the lead activities.
      *
-     * @return MorphMany
+     * @return MorphMany<Activity>
      */
     public function activities(): MorphMany
     {
@@ -168,7 +172,7 @@ class Lead extends Model
     /**
      * Get all of the lead tasks.
      *
-     * @return MorphMany
+     * @return MorphMany<Task>
      */
     public function tasks(): MorphMany
     {
@@ -178,7 +182,7 @@ class Lead extends Model
     /**
      * Get all of the lead notes.
      *
-     * @return MorphMany
+     * @return MorphMany<Note>
      */
     public function notes(): MorphMany
     {
@@ -186,9 +190,7 @@ class Lead extends Model
     }
 
     /**
-     * Get the lead title.
-     *
-     * Applies the test prefix when the lead is marked as a test.
+     * Get the lead title, applies the test prefix when the lead is marked as a test.
      *
      * @param  string|null  $value  The raw lead title from the database.
      *
