@@ -47,6 +47,11 @@ beforeEach(function () {
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Index ---------------------------
+ * -------------------------------------------------------------
+ */
 test('index returns paginated invoice items with relations', function () {
     $invoice = Invoice::factory()->create();
     $product = Product::factory()->create();
@@ -69,6 +74,11 @@ test('index returns paginated invoice items with relations', function () {
     }
 });
 
+/**
+ * ----------------------------------------------------------
+ * -------------------------- Show --------------------------
+ * ----------------------------------------------------------
+ */
 test('show returns an invoice item with relations loaded', function () {
     $invoice = Invoice::factory()->create();
     $product = Product::factory()->create();
@@ -96,6 +106,11 @@ test('show returns an invoice item with relations loaded', function () {
     ]);
 });
 
+/**
+ * ---------------------------------------------------------
+ * ------------------------- Store -------------------------
+ * ---------------------------------------------------------
+ */
 test('store creates a new invoice item and returns 201', function () {
     $invoice = Invoice::factory()->create();
     $product = Product::factory()->create();
@@ -121,6 +136,11 @@ test('store creates a new invoice item and returns 201', function () {
     $this->assertDatabaseHas('invoice_items', ['description' => 'Test Item']);
 });
 
+/**
+ * ----------------------------------------------------------
+ * ------------------------- Update -------------------------
+ * ----------------------------------------------------------
+ */
 test('update modifies an existing invoice item', function () {
     $invoice = Invoice::factory()->create();
     $product = Product::factory()->create();
@@ -156,6 +176,11 @@ test('update modifies an existing invoice item', function () {
     ]);
 });
 
+/**
+ * -----------------------------------------------------------
+ * ------------------------- Destroy -------------------------
+ * -----------------------------------------------------------
+ */
 test('destroy deletes an invoice item', function () {
     $invoice = Invoice::factory()->create();
     $product = Product::factory()->create();
@@ -171,6 +196,11 @@ test('destroy deletes an invoice item', function () {
     $this->assertSoftDeleted('invoice_items', ['id' => $invoiceItem->id]);
 });
 
+/**
+ * -----------------------------------------------------------
+ * ------------------------- Restore -------------------------
+ * -----------------------------------------------------------
+ */
 test('restore deleted invoice item', function () {
     $invoice = Invoice::factory()->create();
     $product = Product::factory()->create();

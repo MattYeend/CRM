@@ -20,19 +20,31 @@ beforeEach(function () {
         'part_categories.restore.any',
     ];
 
+    // Create permissions in DB
     $permissionModels = collect($permissions)
         ->map(fn($name) => Permission::firstOrCreate(['name' => $name]));
 
+    // Create admin role and attach permissions
     $role = Role::factory()->create(['name' => 'admin']);
     $role->permissions()->sync($permissionModels->pluck('id'));
 
-    $this->auth->update(['role_id' => $role->id]);
+    // Attach role to the user
+    $this->auth->update([
+        'role_id' => $role->id
+    ]);
 
+    // Authenticate the user
     $this->actingAs($this->auth, 'sanctum');
 
+    // Disable throttling for tests
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Index ---------------------------
+ * -------------------------------------------------------------
+ */
 test('index returns paginated part categories', function () {
     PartCategory::factory()->count(12)->create();
 
@@ -61,6 +73,11 @@ test('index returns 403 when user lacks permission', function () {
     $response->assertStatus(403);
 });
 
+/**
+ * --------------------------------------------------------------
+ * ---------------------------- Show ----------------------------
+ * --------------------------------------------------------------
+ */
 test('show returns a single part category', function () {
     $category = PartCategory::factory()->create();
 
@@ -87,7 +104,11 @@ test('show returns 403 when user lacks permission', function () {
     $response->assertStatus(403);
 });
 
-
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Store ---------------------------
+ * -------------------------------------------------------------
+ */
 test('store creates a new part category and returns 201', function () {
     $payload = [
         'name' => 'Engine Parts',
@@ -168,8 +189,8 @@ test('store returns 422 when slug contains invalid characters', function () {
 
 test('store returns 422 when parent_id does not exist', function () {
     $payload = [
-        'name'      => 'Orphan Category',
-        'slug'      => 'orphan-category',
+        'name' => 'Orphan Category',
+        'slug' => 'orphan-category',
         'parent_id' => 999999,
     ];
 
@@ -188,6 +209,11 @@ test('store returns 403 when user lacks permission', function () {
     $response->assertStatus(403);
 });
 
+/**
+ * ------------------------------------------------------------
+ * -------------------------- Update --------------------------
+ * ------------------------------------------------------------
+ */
 test('update modifies an existing part category', function () {
     $category = PartCategory::factory()->create(['name' => 'Old Name']);
 
@@ -253,6 +279,11 @@ test('update returns 403 when user lacks permission', function () {
     $response->assertStatus(403);
 });
 
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Destroy --------------------------
+ * -------------------------------------------------------------
+ */
 test('destroy soft deletes a part category and returns 204', function () {
     $category = PartCategory::factory()->create();
 
@@ -278,6 +309,11 @@ test('destroy returns 403 when user lacks permission', function () {
     $response->assertStatus(403);
 });
 
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Restore --------------------------
+ * -------------------------------------------------------------
+ */
 test('restore recovers a soft deleted part category', function () {
     $category = PartCategory::factory()->create(['created_by' => $this->auth->id]);
     $category->delete();

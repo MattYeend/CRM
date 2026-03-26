@@ -41,6 +41,11 @@ beforeEach(function () {
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Index ---------------------------
+ * -------------------------------------------------------------
+ */
 test('index returns paginated tasks with relations', function () {
     $assignee = User::factory()->create();
     $creator = User::factory()->create();
@@ -66,6 +71,11 @@ test('index returns paginated tasks with relations', function () {
     $this->assertArrayHasKey('taskable', $first);
 });
 
+/**
+ * --------------------------------------------------------------
+ * ---------------------------- Show ----------------------------
+ * --------------------------------------------------------------
+ */
 test('show returns a task with assignee, creator and taskable loaded', function () {
     $assignee = User::factory()->create();
     $creator = User::factory()->create();
@@ -97,6 +107,11 @@ test('show returns a task with assignee, creator and taskable loaded', function 
     ]);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Store ---------------------------
+ * -------------------------------------------------------------
+ */
 test('store creates a task, handles polymorphic assignment and returns 201', function () {
     $assignee = User::factory()->create();
     $creator = User::factory()->create();
@@ -124,6 +139,11 @@ test('store creates a task, handles polymorphic assignment and returns 201', fun
     $response->assertJsonStructure(['taskable' => []]);
 });
 
+/**
+ * --------------------------------------------------------------
+ * --------------------------- Update ---------------------------
+ * --------------------------------------------------------------
+ */
 test('update modifies an existing task and returns updated resource', function () {
     $assignee = User::factory()->create();
     $creator = User::factory()->create();
@@ -152,6 +172,11 @@ test('update modifies an existing task and returns updated resource', function (
     $this->assertDatabaseHas('tasks', ['id' => $task->id, 'title' => 'New title', 'status' => 'completed']);
 });
 
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Destroy --------------------------
+ * -------------------------------------------------------------
+ */
 test('destroy deletes the task', function () {
     $taskable = Deal::factory()->create();
 
@@ -167,6 +192,11 @@ test('destroy deletes the task', function () {
     $this->assertSoftDeleted('tasks', ['id' => $task->id]);
 });
 
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Restore --------------------------
+ * -------------------------------------------------------------
+ */
 test('restore deleted tasks', function () {
     $assignee = User::factory()->create();
     $creator = $this->auth;

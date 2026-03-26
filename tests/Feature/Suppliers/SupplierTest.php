@@ -42,6 +42,11 @@ beforeEach(function () {
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Index ---------------------------
+ * -------------------------------------------------------------
+ */
 test('index returns paginated suppliers', function () {
     Supplier::factory()->count(12)->create();
 
@@ -109,6 +114,11 @@ test('show returns a single supplier', function () {
     ]);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Show ---------------------------
+ * -------------------------------------------------------------
+ */
 test('show returns 404 for non-existent supplier', function () {
     $response = $this->getJson(route('api.suppliers.show', 999999));
 
@@ -117,7 +127,7 @@ test('show returns 404 for non-existent supplier', function () {
 
 test('show returns 403 when user lacks permission', function () {
     $supplier = Supplier::factory()->create();
-    $user     = User::factory()->create();
+    $user = User::factory()->create();
     $this->actingAs($user, 'sanctum');
 
     $response = $this->getJson(route('api.suppliers.show', $supplier));
@@ -125,6 +135,11 @@ test('show returns 403 when user lacks permission', function () {
     $response->assertStatus(403);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Store ---------------------------
+ * -------------------------------------------------------------
+ */
 test('store creates a new supplier and returns 201', function () {
     $payload = [
         'name' => 'Test Supplier Ltd',
@@ -215,6 +230,11 @@ test('store sets created_by to the authenticated user', function () {
     ]);
 });
 
+/**
+ * --------------------------------------------------------------
+ * --------------------------- Update ---------------------------
+ * --------------------------------------------------------------
+ */
 test('update modifies an existing supplier', function () {
     $supplier = Supplier::factory()->create([
         'name' => 'Old Supplier Name',
@@ -287,6 +307,11 @@ test('update sets updated_by to the authenticated user', function () {
     ]);
 });
 
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Destroy --------------------------
+ * -------------------------------------------------------------
+ */
 test('destroy soft deletes a supplier and returns 204', function () {
     $supplier = Supplier::factory()->create();
 
@@ -323,6 +348,11 @@ test('destroy sets deleted_by to the authenticated user', function () {
     ]);
 });
 
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Restore --------------------------
+ * -------------------------------------------------------------
+ */
 test('restore recovers a soft deleted supplier', function () {
     $supplier = Supplier::factory()->create(['created_by' => $this->auth->id]);
     $supplier->delete();

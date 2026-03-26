@@ -35,8 +35,12 @@ beforeEach(function () {
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Index ---------------------------
+ * -------------------------------------------------------------
+ */
 test('index returns paginated roles with user_count and permissions', function () {
-    // Create some permissions and roles
     $permission = Permission::factory()->create();
     Role::factory()->count(12)->create()->each(function ($role) use ($permission) {
         $role->permissions()->attach($permission);
@@ -56,6 +60,11 @@ test('index returns paginated roles with user_count and permissions', function (
     $this->assertArrayHasKey('users_count', $first);
 });
 
+/**
+ * --------------------------------------------------------------
+ * ---------------------------- Show ----------------------------
+ * --------------------------------------------------------------
+ */
 test('show returns a role with permissions and users', function () {
     $permission = Permission::factory()->create();
     $role = Role::factory()->create();

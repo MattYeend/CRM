@@ -26,23 +26,32 @@ beforeEach(function () {
         'quotes.products.restore',
     ];
 
+    // Create permissions in DB
     $permissionModels = collect($permissions)
-        ->map(fn ($name) => Permission::firstOrCreate(['name' => $name]));
+        ->map(fn($name) => Permission::firstOrCreate(['name' => $name]));
 
+    // Create admin role and attach permissions
     $role = Role::factory()->create(['name' => 'admin']);
     $role->permissions()->sync($permissionModels->pluck('id'));
 
+    // Attach role to the user
     $this->auth->update([
         'role_id' => $role->id
     ]);
 
+    // Authenticate the user
     $this->actingAs($this->auth, 'sanctum');
 
+    // Disable throttling for tests
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Index ---------------------------
+ * -------------------------------------------------------------
+ */
 test('index returns paginated quotes with relations', function () {
-
     $deal = Deal::factory()->create();
 
     Quote::factory()->count(12)->create([
@@ -63,8 +72,12 @@ test('index returns paginated quotes with relations', function () {
     $this->assertArrayHasKey('creator', $first);
 });
 
+/**
+ * --------------------------------------------------------------
+ * ---------------------------- Show ----------------------------
+ * --------------------------------------------------------------
+ */
 test('show returns a quote with deal and creator loaded', function () {
-
     $deal = Deal::factory()->create();
 
     $quote = Quote::factory()->create([
@@ -94,8 +107,12 @@ test('show returns a quote with deal and creator loaded', function () {
     ]);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Store ---------------------------
+ * -------------------------------------------------------------
+ */
 test('store creates a quote and returns 201', function () {
-
     $deal = Deal::factory()->create();
 
     $payload = [
@@ -122,8 +139,12 @@ test('store creates a quote and returns 201', function () {
     ]);
 });
 
+/**
+ * --------------------------------------------------------------
+ * --------------------------- Update ---------------------------
+ * --------------------------------------------------------------
+ */
 test('update modifies an existing quote', function () {
-
     $deal = Deal::factory()->create();
 
     $quote = Quote::factory()->create([
@@ -156,8 +177,12 @@ test('update modifies an existing quote', function () {
     ]);
 });
 
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Destroy --------------------------
+ * -------------------------------------------------------------
+ */
 test('destroy deletes the quote', function () {
-
     $deal = Deal::factory()->create();
 
     $quote = Quote::factory()->create([
@@ -173,8 +198,12 @@ test('destroy deletes the quote', function () {
     ]);
 });
 
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Restore --------------------------
+ * -------------------------------------------------------------
+ */
 test('restore deleted quotes', function () {
-
     $deal = Deal::factory()->create();
 
     $quote = Quote::factory()->create([
@@ -202,8 +231,12 @@ test('restore deleted quotes', function () {
     ]);
 });
 
+/**
+ * --------------------------------------------------------------
+ * -------------------------- Products --------------------------
+ * --------------------------------------------------------------
+ */
 test('add products to a quote', function () {
-
     $quote = Quote::factory()->create();
     $product = Product::factory()->create();
 
@@ -234,7 +267,6 @@ test('add products to a quote', function () {
 });
 
 test('update products on a quote', function () {
-
     $quote = Quote::factory()->create();
     $product = Product::factory()->create();
 
@@ -264,7 +296,6 @@ test('update products on a quote', function () {
 });
 
 test('remove a product from a quote', function () {
-
     $quote = Quote::factory()->create();
     $product = Product::factory()->create();
 
@@ -290,7 +321,6 @@ test('remove a product from a quote', function () {
 });
 
 test('restore a previously removed product on a quote', function () {
-
     $quote = Quote::factory()->create();
     $product = Product::factory()->create();
 

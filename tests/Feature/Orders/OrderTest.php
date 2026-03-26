@@ -49,8 +49,12 @@ beforeEach(function () {
 });
 
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Index ---------------------------
+ * -------------------------------------------------------------
+ */
 test('index returns paginated orders', function () {
-
     Order::factory()->count(12)->create();
 
     $response = $this->getJson(route('api.orders.index', ['per_page' => 5]));
@@ -62,8 +66,12 @@ test('index returns paginated orders', function () {
 });
 
 
+/**
+ * --------------------------------------------------------------
+ * ---------------------------- Show ----------------------------
+ * --------------------------------------------------------------
+ */
 test('show returns a single order', function () {
-
     $order = Order::factory()->create();
 
     $response = $this->getJson(route('api.orders.show', $order));
@@ -89,9 +97,12 @@ test('show returns a single order', function () {
     ]);
 });
 
-
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Store ---------------------------
+ * -------------------------------------------------------------
+ */
 test('store creates a new order and returns 201', function () {
-
     $user = User::factory()->create();
     $deal = Deal::factory()->create();
 
@@ -121,9 +132,7 @@ test('store creates a new order and returns 201', function () {
     ]);
 });
 
-
 test('store returns validation error when required fields missing', function () {
-
     $payload = [
         'currency' => 'USD'
     ];
@@ -135,9 +144,12 @@ test('store returns validation error when required fields missing', function () 
     $response->assertJsonValidationErrors('amount');
 });
 
-
+/**
+ * --------------------------------------------------------------
+ * --------------------------- Update ---------------------------
+ * --------------------------------------------------------------
+ */
 test('update modifies an existing order', function () {
-
     $order = Order::factory()->create([
         'amount' => 50,
         'currency' => 'USD',
@@ -163,9 +175,12 @@ test('update modifies an existing order', function () {
     ]);
 });
 
-
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Destroy --------------------------
+ * -------------------------------------------------------------
+ */
 test('destroy deletes the order', function () {
-
     $order = Order::factory()->create();
 
     $response = $this->deleteJson(route('api.orders.destroy', $order));
@@ -177,9 +192,12 @@ test('destroy deletes the order', function () {
     ]);
 });
 
-
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Restore --------------------------
+ * -------------------------------------------------------------
+ */
 test('restore deleted order', function () {
-
     $order = Order::factory()->create([
         'created_by' => $this->auth->id,
     ]);
@@ -204,8 +222,12 @@ test('restore deleted order', function () {
     ]);
 });
 
+/**
+ * --------------------------------------------------------------
+ * -------------------------- Products --------------------------
+ * --------------------------------------------------------------
+ */
 test('add products to an order', function () {
-
     $order = Order::factory()->create();
     $product = Product::factory()->create();
 
@@ -236,7 +258,6 @@ test('add products to an order', function () {
 });
 
 test('update products on an order', function () {
-
     $order = Order::factory()->create();
     $product = Product::factory()->create();
 
@@ -266,7 +287,6 @@ test('update products on an order', function () {
 });
 
 test('remove a product from an order', function () {
-
     $order = Order::factory()->create();
     $product = Product::factory()->create();
 
@@ -292,7 +312,6 @@ test('remove a product from an order', function () {
 });
 
 test('restore a previously removed product on an order', function () {
-
     $order = Order::factory()->create();
     $product = Product::factory()->create();
 

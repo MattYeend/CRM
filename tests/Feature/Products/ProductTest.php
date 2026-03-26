@@ -55,6 +55,11 @@ beforeEach(function () {
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Index ---------------------------
+ * -------------------------------------------------------------
+ */
 test('index returns paginated products', function () {
     // Ensure factory creates valid products
     Product::factory()->count(12)->create();
@@ -68,6 +73,11 @@ test('index returns paginated products', function () {
     $this->assertCount(5, $response->json('data'));
 });
 
+/**
+ * --------------------------------------------------------------
+ * ---------------------------- Show ----------------------------
+ * --------------------------------------------------------------
+ */
 test('show returns a single product', function () {
     $product = Product::factory()->create();
 
@@ -117,6 +127,11 @@ test('store returns validation error when required fields missing', function () 
     $response->assertJsonValidationErrors('name');
 });
 
+/**
+ * --------------------------------------------------------------
+ * --------------------------- Update ---------------------------
+ * --------------------------------------------------------------
+ */
 test('update modifies an existing product', function () {
     $product = Product::factory()->create([
         'name' => 'Old Product',
@@ -136,6 +151,11 @@ test('update modifies an existing product', function () {
     $this->assertDatabaseHas('products', ['id' => $product->id, 'name' => 'Updated Product']);
 });
 
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Destroy --------------------------
+ * -------------------------------------------------------------
+ */
 test('destroy deletes the product', function () {
     $product = Product::factory()->create();
 
@@ -146,6 +166,11 @@ test('destroy deletes the product', function () {
     $this->assertSoftDeleted('products', ['id' => $product->id]);
 });
 
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Restore --------------------------
+ * -------------------------------------------------------------
+ */
 test('restore deleted product', function () {
     $product = Product::factory()->create(['created_by' => $this->auth->id]);
 
@@ -172,8 +197,11 @@ test('restore deleted product', function () {
     ]);
 });
 
-// ---------------------- Orders ----------------------
-
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Orders ---------------------------
+ * -------------------------------------------------------------
+ */
 test('add orders to a product', function () {
     $product = Product::factory()->create();
     $order = Order::factory()->create();
@@ -258,8 +286,11 @@ test('restore a previously removed order on a product', function () {
     ]);
 });
 
-// ---------------------- Quotes ----------------------
-
+/**
+ * --------------------------------------------------------------
+ * --------------------------- Quotes ---------------------------
+ * --------------------------------------------------------------
+ */
 test('add quotes to a product', function () {
     $product = Product::factory()->create();
     $quote = Quote::factory()->create();
@@ -335,8 +366,11 @@ test('restore a previously removed quote on a product', function () {
     ]);
 });
 
-// ---------------------- Deals ----------------------
-
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Deals ---------------------------
+ * -------------------------------------------------------------
+ */
 test('add deals to a product', function () {
     $product = Product::factory()->create();
     $deal = Deal::factory()->create();

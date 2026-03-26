@@ -47,6 +47,11 @@ beforeEach(function () {
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Index ---------------------------
+ * -------------------------------------------------------------
+ */
 test('index returns paginated deals with relations and filters', function () {
     $owner = User::factory()->create();
     $company = Company::factory()->create();
@@ -65,6 +70,11 @@ test('index returns paginated deals with relations and filters', function () {
     $this->assertCount(5, $response->json('data'));
 });
 
+/**
+ * ----------------------------------------------------------
+ * -------------------------- Show --------------------------
+ * ----------------------------------------------------------
+ */
 test('show returns a deal with relations loaded', function () {
     $deal = Deal::factory()->create();
 
@@ -89,6 +99,11 @@ test('show returns a deal with relations loaded', function () {
     ]);
 });
 
+/**
+ * ---------------------------------------------------------
+ * ------------------------- Store -------------------------
+ * ---------------------------------------------------------
+ */
 test('store creates a new deal and returns 201', function () {
     $company = Company::factory()->create();
     $owner = User::factory()->create();
@@ -110,6 +125,11 @@ test('store creates a new deal and returns 201', function () {
     $this->assertDatabaseHas('deals', ['title' => 'New Deal', 'owner_id' => $owner->id]);
 });
 
+/**
+ * ----------------------------------------------------------
+ * ------------------------- Update -------------------------
+ * ----------------------------------------------------------
+ */
 test('update modifies an existing deal', function () {
     $deal = Deal::factory()->create(['title' => 'Old Deal']);
 
@@ -126,6 +146,11 @@ test('update modifies an existing deal', function () {
     $this->assertDatabaseHas('deals', ['id' => $deal->id, 'title' => 'Updated Deal', 'status' => 'won']);
 });
 
+/**
+ * -----------------------------------------------------------
+ * ------------------------- Destroy -------------------------
+ * -----------------------------------------------------------
+ */
 test('destroy deletes the deal', function () {
     $deal = Deal::factory()->create();
 
@@ -141,6 +166,11 @@ test('destroy deletes the deal', function () {
     }
 });
 
+/**
+ * -----------------------------------------------------------
+ * ------------------------- Restore -------------------------
+ * -----------------------------------------------------------
+ */
 test('restore recovers a soft-deleted deal', function () {
     $deal = Deal::factory()->create();
     $deal->delete();
@@ -153,7 +183,11 @@ test('restore recovers a soft-deleted deal', function () {
     $this->assertDatabaseHas('deals', ['id' => $deal->id, 'deleted_at' => null]);
 });
 
-
+/**
+ * ------------------------------------------------------------
+ * ------------------------- Products -------------------------
+ * ------------------------------------------------------------
+ */
 test('add products to a deal', function () {
 
     $deal = Deal::factory()->create();

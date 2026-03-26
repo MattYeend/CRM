@@ -46,6 +46,11 @@ beforeEach(function () {
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Index ---------------------------
+ * -------------------------------------------------------------
+ */
 test('index returns paginated invoices with relations', function () {
     $company = Company::factory()->create();
     Invoice::factory()->count(12)->create(['company_id' => $company->id]);
@@ -57,6 +62,11 @@ test('index returns paginated invoices with relations', function () {
     $this->assertCount(5, $response->json('data'));
 });
 
+/**
+ * ------------------------------------------------------------
+ * --------------------------- Show ---------------------------
+ * ------------------------------------------------------------
+ */
 test('show returns an invoice with relations loaded', function () {
     $invoice = Invoice::factory()->create();
 
@@ -75,6 +85,11 @@ test('show returns an invoice with relations loaded', function () {
     ]);
 });
 
+/**
+ * ---------------------------------------------------------
+ * ------------------------- Store -------------------------
+ * ---------------------------------------------------------
+ */
 test('store creates a new invoice and returns 201', function () {
     $company = Company::factory()->create();
 
@@ -96,6 +111,11 @@ test('store creates a new invoice and returns 201', function () {
     $this->assertDatabaseHas('invoices', ['number' => 'INV-1001', 'created_by' => $this->auth->id]);
 });
 
+/**
+ * ----------------------------------------------------------
+ * ------------------------- Update -------------------------
+ * ----------------------------------------------------------
+ */
 test('update modifies an existing invoice', function () {
     $invoice = Invoice::factory()->create(['number' => 'INV-2000', 'status' => 'draft']);
 
@@ -111,6 +131,11 @@ test('update modifies an existing invoice', function () {
     $this->assertDatabaseHas('invoices', ['id' => $invoice->id, 'number' => 'INV-2001', 'status' => 'sent']);
 });
 
+/**
+ * -----------------------------------------------------------
+ * ------------------------- Destroy -------------------------
+ * -----------------------------------------------------------
+ */
 test('destroy deletes an invoice', function () {
     $invoice = Invoice::factory()->create();
 
@@ -122,6 +147,11 @@ test('destroy deletes an invoice', function () {
     $this->assertSoftDeleted('invoices', ['id' => $invoice->id]);
 });
 
+/**
+ * -----------------------------------------------------------
+ * ------------------------- Restore -------------------------
+ * -----------------------------------------------------------
+ */
 test('restore deleted invoice', function () {
     $invoice = Invoice::factory()->create();
     $invoice->delete();

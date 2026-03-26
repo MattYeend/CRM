@@ -21,19 +21,31 @@ beforeEach(function () {
         'part_images.restore.any',
     ];
 
+    // Create permissions in DB
     $permissionModels = collect($permissions)
         ->map(fn($name) => Permission::firstOrCreate(['name' => $name]));
 
+    // Create admin role and attach permissions
     $role = Role::factory()->create(['name' => 'admin']);
     $role->permissions()->sync($permissionModels->pluck('id'));
 
-    $this->auth->update(['role_id' => $role->id]);
+    // Attach role to the user
+    $this->auth->update([
+        'role_id' => $role->id
+    ]);
 
+    // Authenticate the user
     $this->actingAs($this->auth, 'sanctum');
 
+    // Disable throttling for tests
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Index ---------------------------
+ * -------------------------------------------------------------
+ */
 test('index returns paginated part images', function () {
     PartImage::factory()->count(12)->create();
 
@@ -62,6 +74,11 @@ test('index returns 403 when user lacks permission', function () {
     $response->assertStatus(403);
 });
 
+/**
+ * ------------------------------------------------------------
+ * --------------------------- Show ---------------------------
+ * ------------------------------------------------------------
+ */
 test('show returns a single part image', function () {
     $partImage = PartImage::factory()->create();
 
@@ -88,6 +105,11 @@ test('show returns 403 when user lacks permission', function () {
     $response->assertStatus(403);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Store ---------------------------
+ * -------------------------------------------------------------
+ */
 test('store creates a new part image and returns 201', function () {
     $part = Part::factory()->create();
 
@@ -147,6 +169,11 @@ test('store returns 403 when user lacks permission', function () {
     $response->assertStatus(403);
 });
 
+/**
+ * --------------------------------------------------------------
+ * --------------------------- Update ---------------------------
+ * --------------------------------------------------------------
+ */
 test('update modifies an existing part image', function () {
     $partImage = PartImage::factory()->create(['is_primary' => false, 'order' => 1]);
 
@@ -200,6 +227,11 @@ test('update returns 403 when user lacks permission', function () {
     $response->assertStatus(403);
 });
 
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Destroy --------------------------
+ * -------------------------------------------------------------
+ */
 test('destroy soft deletes a part image and returns 204', function () {
     $partImage = PartImage::factory()->create();
 
@@ -225,6 +257,11 @@ test('destroy returns 403 when user lacks permission', function () {
     $response->assertStatus(403);
 });
 
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Restore --------------------------
+ * -------------------------------------------------------------
+ */
 test('restore recovers a soft deleted part image', function () {
     $partImage = PartImage::factory()->create(['created_by' => $this->auth->id]);
     $partImage->delete();

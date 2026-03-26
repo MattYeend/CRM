@@ -23,6 +23,7 @@ beforeEach(function () {
         'jobTitles.restore.any',
     ];
 
+    // Create permissions in DB
     $permissionModels = collect($permissions)
         ->map(fn($name) => Permission::firstOrCreate(['name' => $name]));
 
@@ -30,18 +31,23 @@ beforeEach(function () {
     $role = Role::factory()->create(['name' => 'admin']);
     $role->permissions()->sync($permissionModels->pluck('id'));
 
-    // Attach role to user
+    // Attach role to the user
     $this->auth->update([
         'role_id' => $role->id
     ]);
 
-    // Authenticate user
+    // Authenticate the user
     $this->actingAs($this->auth, 'sanctum');
 
-    // Disable throttling
+    // Disable throttling for tests
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
+/**
+ * -----------------------------------------------------------
+ * -------------------------- Index --------------------------
+ * -----------------------------------------------------------
+ */
 test('index returns paginated job titles', function () {
     JobTitle::factory()->count(12)->create([
         'created_by' => $this->auth->id,
@@ -54,6 +60,11 @@ test('index returns paginated job titles', function () {
     $this->assertCount(5, $response->json('data'));
 });
 
+/**
+ * ------------------------------------------------------------
+ * --------------------------- Show ---------------------------
+ * ------------------------------------------------------------
+ */
 test('show returns a job title', function () {
     $jobTitle = JobTitle::factory()->create([
         'created_by' => $this->auth->id,
@@ -74,6 +85,11 @@ test('show returns a job title', function () {
     ]);
 });
 
+/**
+ * -----------------------------------------------------------
+ * -------------------------- Store --------------------------
+ * -----------------------------------------------------------
+ */
 test('store creates a new job title', function () {
     $payload = [
         'title' => 'Test Title',
@@ -90,6 +106,11 @@ test('store creates a new job title', function () {
     $this->assertDatabaseHas('job_titles', ['title' => 'Test Title']);
 });
 
+/**
+ * ------------------------------------------------------------
+ * -------------------------- Update --------------------------
+ * ------------------------------------------------------------
+ */
 test('update modifies an existing job title', function () {
     $jobTitle = JobTitle::factory()->create([
         'created_by' => $this->auth->id,
@@ -112,6 +133,11 @@ test('update modifies an existing job title', function () {
     $this->assertDatabaseHas('job_titles', ['id' => $jobTitle->id, 'title' => 'Updated Title']);
 });
 
+/**
+ * -----------------------------------------------------------
+ * ------------------------- Destroy -------------------------
+ * -----------------------------------------------------------
+ */
 test('destroy deletes a job title', function () {
     $jobTitle = JobTitle::factory()->create([
         'created_by' => $this->auth->id,
@@ -123,6 +149,11 @@ test('destroy deletes a job title', function () {
     $this->assertSoftDeleted('job_titles', ['id' => $jobTitle->id]);
 });
 
+/**
+ * -----------------------------------------------------------
+ * ------------------------- Restore -------------------------
+ * -----------------------------------------------------------
+ */
 test('restore deleted job title', function () {
     $jobTitle = JobTitle::factory()->create([
         'created_by' => $this->auth->id,

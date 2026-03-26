@@ -21,21 +21,31 @@ beforeEach(function () {
         'companies.restore.any',
     ];
 
+    // Create permissions in DB
     $permissionModels = collect($permissions)
         ->map(fn($name) => Permission::firstOrCreate(['name' => $name]));
 
+    // Create admin role and attach permissions
     $role = Role::factory()->create(['name' => 'admin']);
     $role->permissions()->sync($permissionModels->pluck('id'));
 
+    // Attach role to the user
     $this->auth->update([
         'role_id' => $role->id
     ]);
 
+    // Authenticate the user
     $this->actingAs($this->auth, 'sanctum');
 
+    // Disable throttling for tests
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Index ---------------------------
+ * -------------------------------------------------------------
+ */
 test('index returns paginated companies and respects per_page query', function () {
     Company::factory()->count(15)->create();
 
@@ -60,6 +70,11 @@ test('index filters companies by q query parameter (search by name)', function (
     $this->assertStringContainsString('Beta', $data[0]['name']);
 });
 
+/**
+ * --------------------------------------------------------------
+ * ---------------------------- Show ----------------------------
+ * --------------------------------------------------------------
+ */
 test('show returns the company with relationships loaded', function () {
     $company = Company::factory()->create();
 
@@ -87,6 +102,11 @@ test('show returns the company with relationships loaded', function () {
     ]);
 });
 
+/**
+ * -----------------------------------------------------------
+ * -------------------------- Store --------------------------
+ * -----------------------------------------------------------
+ */
 test('store creates a company with valid payload and returns 201', function () {
     $payload = [
         'name' => 'NewCo Ltd',
@@ -122,6 +142,11 @@ test('store returns 422 when required fields are missing', function () {
     $response->assertJsonValidationErrors('name');
 });
 
+/**
+ * ----------------------------------------------------------
+ * ------------------------- Update -------------------------
+ * ----------------------------------------------------------
+ */
 test('update modifies allowed fields and returns the updated company', function () {
     $company = Company::factory()->create([
         'name' => 'Old Name Ltd',
@@ -145,6 +170,11 @@ test('update modifies allowed fields and returns the updated company', function 
     ]);
 });
 
+/**
+ * -----------------------------------------------------------
+ * ------------------------- Destroy -------------------------
+ * -----------------------------------------------------------
+ */
 test('destroy soft deletes the company and returns 204', function () {
     $company = Company::factory()->create();
 
@@ -155,6 +185,11 @@ test('destroy soft deletes the company and returns 204', function () {
     $this->assertSoftDeleted('companies', ['id' => $company->id]);
 });
 
+/**
+ * -----------------------------------------------------------
+ * ------------------------- Restore -------------------------
+ * -----------------------------------------------------------
+ */
 test('restore brings back a soft-deleted company', function () {
     $company = Company::factory()->create();
     $company->delete();

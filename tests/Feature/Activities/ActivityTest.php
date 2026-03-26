@@ -20,20 +20,31 @@ beforeEach(function () {
         'activities.restore.any',
     ];
     
-    $permissionModels = collect($permissions)->map(fn($name) => Permission::firstOrCreate(['name' => $name]));
+    // Create permissions in DB
+    $permissionModels = collect($permissions)
+        ->map(fn($name) => Permission::firstOrCreate(['name' => $name]));
 
+    // Create admin role and attach permissions
     $role = Role::factory()->create(['name' => 'admin']);
     $role->permissions()->sync($permissionModels->pluck('id'));
 
+    // Attach role to the user
     $this->auth->update([
         'role_id' => $role->id
     ]);
 
+    // Authenticate the user
     $this->actingAs($this->auth, 'sanctum');
+
+    // Disable throttling for tests
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
-
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Index ---------------------------
+ * -------------------------------------------------------------
+ */
 test('index returns paginated activities and respects per_page query', function () {
     $subject = User::factory()->create();
 
@@ -54,6 +65,11 @@ test('index returns paginated activities and respects per_page query', function 
     $this->assertEquals(15, $response->json('total'));
 });
 
+/**
+ * ------------------------------------------------------------
+ * --------------------------- Show ---------------------------
+ * ------------------------------------------------------------
+ */
 test('show returns the activity with user and subject relationships loaded', function () {
     $user = User::factory()->create();
     $subject = User::factory()->create();
@@ -88,6 +104,11 @@ test('show returns the activity with user and subject relationships loaded', fun
     ]);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Store ---------------------------
+ * -------------------------------------------------------------
+ */
 test('store creates an activity with valid payload and returns 201', function () {
     $user = User::factory()->create();
 
@@ -121,6 +142,11 @@ test('store returns 422 when required fields are missing', function () {
     $response->assertJsonValidationErrors('type');
 });
 
+/**
+ * ----------------------------------------------------------
+ * ------------------------- Update -------------------------
+ * ----------------------------------------------------------
+ */
 test('update modifies allowed fields and returns the updated activity', function () {
     $subject = User::factory()->create();
 
@@ -151,6 +177,11 @@ test('update modifies allowed fields and returns the updated activity', function
     ]);
 });
 
+/**
+ * ---------------------------------------------------------
+ * ------------------------ Destroy ------------------------
+ * ---------------------------------------------------------
+ */
 test('destroy deletes the activity and returns 204', function () {
     $subject = User::factory()->create();
 
@@ -169,6 +200,12 @@ test('destroy deletes the activity and returns 204', function () {
     ]);
 });
 
+
+/**
+ * ---------------------------------------------------------
+ * ------------------------ Restore ------------------------
+ * ---------------------------------------------------------
+ */
 test('restore deleted activity', function () {
     $subject = User::factory()->create();
 

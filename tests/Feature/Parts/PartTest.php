@@ -41,6 +41,11 @@ beforeEach(function () {
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Index ---------------------------
+ * -------------------------------------------------------------
+ */
 test('index returns paginated parts', function () {
     Part::factory()->count(12)->create();
 
@@ -69,6 +74,11 @@ test('index returns 403 when user lacks permission', function () {
     $response->assertStatus(403);
 });
 
+/**
+ * --------------------------------------------------------------
+ * ---------------------------- Show ----------------------------
+ * --------------------------------------------------------------
+ */
 test('show returns a single part', function () {
     $part = Part::factory()->create();
 
@@ -105,20 +115,25 @@ test('show returns 403 when user lacks permission', function () {
     $response->assertStatus(403);
 });
 
-
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Store ---------------------------
+ * -------------------------------------------------------------
+ */
 test('store creates a new part and returns 201', function () {
     $product = Product::factory()->create();
 
     $payload = [
         'product_id'  => $product->id,
-        'sku'         => 'SKU-TEST-001',
-        'name'        => 'Test Part',
+        'sku' => 'SKU-TEST-001',
+        'name' => 'Test Part',
         'description' => 'A part created during test',
-        'price'       => 49.99,
-        'currency'    => 'GBP',
-        'quantity'    => 10,
-        'type'        => 'spare_part',
-        'status'      => 'active',
+        'price' => 49.99,
+        'currency' => 'GBP',
+        'quantity' => 10,
+        'type' => 'spare_part',
+        'status' => 'active',
+        'unit_of_measure' => 'each',
     ];
 
     $response = $this->postJson(route('api.parts.store'), $payload);
@@ -141,11 +156,11 @@ test('store returns 422 when sku is not unique', function () {
     $product = Product::factory()->create();
 
     $payload = [
-        'product_id'  => $product->id,
-        'sku'         => 'SKU-DUPE-001',
-        'name'        => 'Duplicate Part',
+        'product_id' => $product->id,
+        'sku' => 'SKU-DUPE-001',
+        'name' => 'Duplicate Part',
         'description' => 'Should fail',
-        'price'       => 10.00,
+        'price' => 10.00,
     ];
 
     $response = $this->postJson(route('api.parts.store'), $payload);
@@ -163,6 +178,11 @@ test('store returns 403 when user lacks permission', function () {
     $response->assertStatus(403);
 });
 
+/**
+ * ------------------------------------------------------------
+ * -------------------------- Update --------------------------
+ * ------------------------------------------------------------
+ */
 test('update modifies an existing part', function () {
     $part = Part::factory()->create([
         'name'  => 'Old Part Name',
@@ -170,8 +190,8 @@ test('update modifies an existing part', function () {
     ]);
 
     $payload = [
-        'name'     => 'Updated Part Name',
-        'price'    => 29.99,
+        'name' => 'Updated Part Name',
+        'price' => 29.99,
         'quantity' => 5,
     ];
 
@@ -198,6 +218,11 @@ test('update returns 403 when user lacks permission', function () {
     $response->assertStatus(403);
 });
 
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Destroy --------------------------
+ * -------------------------------------------------------------
+ */
 test('destroy soft deletes a part and returns 204', function () {
     $part = Part::factory()->create();
 
@@ -223,6 +248,11 @@ test('destroy returns 403 when user lacks permission', function () {
     $response->assertStatus(403);
 });
 
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Restore --------------------------
+ * -------------------------------------------------------------
+ */
 test('restore recovers a soft deleted part', function () {
     $part = Part::factory()->create(['created_by' => $this->auth->id]);
     $part->delete();

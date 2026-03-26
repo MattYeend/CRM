@@ -42,6 +42,11 @@ beforeEach(function () {
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Index ---------------------------
+ * -------------------------------------------------------------
+ */
 test('index returns paginated notes with relations', function () {
     $notable = Deal::factory()->create();
     Note::factory()->count(12)->create([
@@ -57,6 +62,11 @@ test('index returns paginated notes with relations', function () {
     $this->assertCount(5, $response->json('data'));
 });
 
+/**
+ * --------------------------------------------------------------
+ * ---------------------------- Show ----------------------------
+ * --------------------------------------------------------------
+ */
 test('show returns a note with user and notable loaded', function () {
     $notable = Deal::factory()->create();
     $note = Note::factory()->create([
@@ -79,6 +89,11 @@ test('show returns a note with user and notable loaded', function () {
     ]);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Store ---------------------------
+ * -------------------------------------------------------------
+ */
 test('store creates a new note and returns 201', function () {
     $notable = Deal::factory()->create();
 
@@ -97,6 +112,11 @@ test('store creates a new note and returns 201', function () {
     $this->assertDatabaseHas('notes', ['body' => 'This is a test note']);
 });
 
+/**
+ * --------------------------------------------------------------
+ * --------------------------- Update ---------------------------
+ * --------------------------------------------------------------
+ */
 test('update modifies an existing note', function () {
     $notable = Deal::factory()->create();
     $note = Note::factory()->create([
@@ -118,6 +138,11 @@ test('update modifies an existing note', function () {
     $this->assertDatabaseHas('notes', ['id' => $note->id, 'body' => 'Updated note']);
 });
 
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Destroy --------------------------
+ * -------------------------------------------------------------
+ */
 test('destroy deletes a note', function () {
     $notable = Deal::factory()->create();
     $note = Note::factory()->create([
@@ -132,6 +157,11 @@ test('destroy deletes a note', function () {
     $this->assertSoftDeleted('notes', ['id' => $note->id]);
 });
 
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Restore --------------------------
+ * -------------------------------------------------------------
+ */
 test('restore deleted note', function () {
     $notable = Deal::factory()->create();
     $note = Note::factory()->create([
@@ -142,7 +172,6 @@ test('restore deleted note', function () {
 
     $note->delete();
 
-    // Ensure it's soft deleted first
     $this->assertSoftDeleted('notes', ['id' => $note->id]);
 
     $response = $this->postJson(route('api.notes.restore', $note->id));

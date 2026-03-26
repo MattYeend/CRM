@@ -39,6 +39,11 @@ beforeEach(function () {
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Index ---------------------------
+ * -------------------------------------------------------------
+ */
 test('index returns paginated permissions with roles', function () {
     $role = Role::factory()->create();
     Permission::factory()->count(12)->create()->each(function ($permission) use ($role) {
@@ -55,6 +60,11 @@ test('index returns paginated permissions with roles', function () {
     $this->assertArrayHasKey('roles', $response->json('data')[0]);
 });
 
+/**
+ * --------------------------------------------------------------
+ * ---------------------------- Show ----------------------------
+ * --------------------------------------------------------------
+ */
 test('show returns a permission with roles', function () {
     $role = Role::factory()->create();
     $permission = Permission::factory()->create();
@@ -72,6 +82,11 @@ test('show returns a permission with roles', function () {
     ]);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Store ---------------------------
+ * -------------------------------------------------------------
+ */
 test('store creates a new permission', function () {
     $payload = [
         'name' => 'view_reports',
@@ -85,6 +100,11 @@ test('store creates a new permission', function () {
     $this->assertDatabaseHas('permissions', $payload);
 });
 
+/**
+ * ------------------------------------------------------------
+ * -------------------------- Update --------------------------
+ * ------------------------------------------------------------
+ */
 test('update modifies an existing permission', function () {
     $permission = Permission::factory()->create([
         'name' => 'edit_users',
@@ -103,6 +123,11 @@ test('update modifies an existing permission', function () {
     $this->assertDatabaseHas('permissions', $payload);
 });
 
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Destroy --------------------------
+ * -------------------------------------------------------------
+ */
 test('destroy deletes a permission and detaches roles', function () {
     $role = Role::factory()->create();
     $permission = Permission::factory()->create();
@@ -120,6 +145,11 @@ test('destroy deletes a permission and detaches roles', function () {
     ]);
 });
 
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Restore --------------------------
+ * -------------------------------------------------------------
+ */
 test('restore deleted permission', function () {
     $permission = Permission::factory()->create([
         'name' => 'Test Name',

@@ -47,6 +47,11 @@ beforeEach(function () {
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Index ---------------------------
+ * -------------------------------------------------------------
+ */
 test('index calls query service and returns list', function () {
     $users = collect([
         ['id' => 10, 'name' => 'Alice', 'email' => 'alice@example.test']
@@ -73,6 +78,11 @@ test('index calls query service and returns list', function () {
     $response->assertJsonFragment(['name' => 'Alice', 'email' => 'alice@example.test']);
 });
 
+/**
+ * --------------------------------------------------------------
+ * ---------------------------- Show ----------------------------
+ * --------------------------------------------------------------
+ */
 test('show calls query service and returns single user', function () {
     $user = User::factory()->create(['name' => 'Bob', 'email' => 'bob@example.test']);
 
@@ -103,6 +113,11 @@ test('show calls query service and returns single user', function () {
     $response->assertJsonStructure(['id', 'name', 'email', 'role']);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Store ---------------------------
+ * -------------------------------------------------------------
+ */
 test('store calls management service and returns 201 with user', function () {
     $managementMock = Mockery::mock(UserManagementService::class);
 
@@ -133,6 +148,11 @@ test('store calls management service and returns 201 with user', function () {
     $response->assertJsonFragment(['id' => 123, 'name' => 'New User', 'email' => 'new@example.test']);
 });
 
+/**
+ * --------------------------------------------------------------
+ * --------------------------- Update ---------------------------
+ * --------------------------------------------------------------
+ */
 test('update calls management service and returns updated user', function () {
     $existing = User::factory()->create();
 
@@ -162,6 +182,11 @@ test('update calls management service and returns updated user', function () {
     $response->assertJsonFragment(['id' => $existing->id, 'name' => 'Updated Name']);
 });
 
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Destroy --------------------------
+ * -------------------------------------------------------------
+ */
 test('destroy calls management service and returns 204', function () {
     $existing = User::factory()->create();
 
@@ -180,6 +205,11 @@ test('destroy calls management service and returns 204', function () {
     $response->assertStatus(204);
 });
 
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Restore --------------------------
+ * -------------------------------------------------------------
+ */
 test('restore calls management service and returns restored user', function () {
     $user = User::factory()->create([
         'id' => 77,

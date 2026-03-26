@@ -35,7 +35,7 @@ class PartFactory extends Factory
         $maxStock = $reorderPt + fake()->numberBetween(50, 200);
 
         return [
-            'product_id' => Product::inRandomOrder()->first()?->id,
+            'product_id' => Product::inRandomOrder()->first()?->id ?? Product::factory()->create()->id,
             'category_id' => fake()->boolean(70) ? PartCategory::inRandomOrder()->first()?->id : null,
             'supplier_id' => fake()->boolean(80) ? Supplier::inRandomOrder()->first()?->id : null,
 

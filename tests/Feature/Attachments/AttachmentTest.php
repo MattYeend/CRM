@@ -45,6 +45,11 @@ beforeEach(function () {
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Index ---------------------------
+ * -------------------------------------------------------------
+ */
 test('index returns paginated attachments and respects per_page query', function () {
     // create uploader user and attachments — ensure attachable_type/id are present to satisfy NOT NULL constraints
     $uploader = User::factory()->create();
@@ -62,6 +67,11 @@ test('index returns paginated attachments and respects per_page query', function
     $this->assertCount(5, $response->json('data'));
 });
 
+/**
+ * ----------------------------------------------------------
+ * -------------------------- Show --------------------------
+ * ----------------------------------------------------------
+ */
 test('show returns the attachment with uploader relationship loaded', function () {
     $uploader = User::factory()->create();
 
@@ -89,6 +99,11 @@ test('show returns the attachment with uploader relationship loaded', function (
     ]);
 });
 
+/**
+ * ---------------------------------------------------------
+ * ------------------------- Store -------------------------
+ * ---------------------------------------------------------
+ */
 test('store saves uploaded file, creates attachment and calls attacher', function () {
     Storage::fake('public');
 
@@ -112,7 +127,6 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
         'attachable_id' => $this->auth->id,
     ]);
 
-    // Ensure the file exists on the fake disk so later assertExists will pass
     Storage::disk('public')->put($fakePath, 'fake-pdf-content');
 
     // Mock AttachmentService::storeFile to return the prepared attachment
@@ -122,7 +136,6 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
         ->andReturn($returnedAttachment);
     $this->app->instance(AttachmentFileService::class, $serviceMock);
 
-    // Create a fake file to upload (the mock ignores the contents but controller still expects file)
     $file = UploadedFile::fake()->create('document.pdf', 120, 'application/pdf');
 
     $payload = [
@@ -136,11 +149,9 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
 
     $response->assertStatus(201);
 
-    // Response should include filename and uploader
     $response->assertJsonFragment(['filename' => 'document.pdf']);
     $response->assertJsonStructure(['uploader' => ['id', 'name', 'email']]);
 
-    // DB has the attachment record (created by the factory above)
     $this->assertDatabaseHas('attachments', [
         'filename' => 'document.pdf',
         'uploaded_by' => $this->auth->id,
@@ -151,6 +162,11 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
     Storage::disk('public')->assertExists($returnedAttachment->path);
 });
 
+/**
+ * -----------------------------------------------------------
+ * ------------------------- Destroy -------------------------
+ * -----------------------------------------------------------
+ */
 test('destroy deletes file from disk (if present) and deletes the model', function () {
     Storage::fake('public');
 
@@ -179,6 +195,11 @@ test('destroy deletes file from disk (if present) and deletes the model', functi
     $this->assertSoftDeleted('attachments', ['id' => $attachment->id]);
 });
 
+/**
+ * -----------------------------------------------------------
+ * ------------------------- Restore -------------------------
+ * -----------------------------------------------------------
+ */
 test('restore deleted attachment', function () {
     Storage::fake('public');
 

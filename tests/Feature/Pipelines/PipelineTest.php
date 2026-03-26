@@ -46,6 +46,11 @@ beforeEach(function () {
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Index ---------------------------
+ * -------------------------------------------------------------
+ */
 test('index returns paginated pipelines with stages relation', function () {
     // create pipelines and attach stages so the relation is present
     Pipeline::factory()->count(8)->create()->each(function ($pipeline) {
@@ -65,6 +70,11 @@ test('index returns paginated pipelines with stages relation', function () {
     $this->assertArrayHasKey('stages', $response->json('data')[0]);
 });
 
+/**
+ * -------------------------------------------------------------
+ * ---------------------------- Show ----------------------------
+ * -------------------------------------------------------------
+ */
 test('show returns a pipeline with stages loaded', function () {
     $pipeline = Pipeline::factory()->create();
     $stage = PipelineStage::factory()->create(['pipeline_id' => $pipeline->id]);
@@ -82,6 +92,11 @@ test('show returns a pipeline with stages loaded', function () {
     ]);
 });
 
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Store ---------------------------
+ * -------------------------------------------------------------
+ */
 test('store creates a new pipeline and returns 201', function () {
     $payload = [
         'name' => 'Sales Pipeline',
@@ -96,6 +111,11 @@ test('store creates a new pipeline and returns 201', function () {
     $this->assertDatabaseHas('pipelines', ['name' => 'Sales Pipeline']);
 });
 
+/**
+ * --------------------------------------------------------------
+ * --------------------------- Update ---------------------------
+ * --------------------------------------------------------------
+ */
 test('update modifies an existing pipeline', function () {
     $pipeline = Pipeline::factory()->create(['name' => 'Old Name', 'description' => 'Old desc']);
 
@@ -112,6 +132,11 @@ test('update modifies an existing pipeline', function () {
     $this->assertDatabaseHas('pipelines', ['id' => $pipeline->id, 'name' => 'New Pipeline Name']);
 });
 
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Destroy --------------------------
+ * -------------------------------------------------------------
+ */
 test('destroy deletes the pipeline', function () {
     $pipeline = Pipeline::factory()->create();
 
@@ -121,26 +146,24 @@ test('destroy deletes the pipeline', function () {
     $this->assertSoftDeleted('pipelines', ['id' => $pipeline->id]);
 });
 
+/**
+ * -------------------------------------------------------------
+ * -------------------------- Restore --------------------------
+ * -------------------------------------------------------------
+ */
 test('restore deleted pipeline', function () {
     $pipeline = Pipeline::factory()->create(['created_by' => $this->auth->id]);
-
-    // Soft delete the model
     $pipeline->delete();
 
-    // Ensure it is soft deleted
     $this->assertSoftDeleted('pipelines', ['id' => $pipeline->id]);
 
-    // Call restore route
     $response = $this->postJson(route('api.pipelines.restore', $pipeline->id));
-
     $response->assertStatus(200);
 
-    // Assert JSON response includes restored model
     $response->assertJsonFragment([
         'id' => $pipeline->id,
     ]);
 
-    // Assert database no longer has deleted_at
     $this->assertDatabaseHas('pipelines', [
         'id' => $pipeline->id,
         'deleted_at' => null,

@@ -32,6 +32,9 @@ use App\Policies\LeadPolicy;
 use App\Models\Learning;
 use App\Policies\LearningPolicy;
 use App\Models\Note;
+use App\Models\Part;
+use App\Models\PartCategory;
+use App\Models\PartImage;
 use App\Policies\NotePolicy;
 use App\Models\Permission;
 use App\Policies\PermissionPolicy;
@@ -44,10 +47,14 @@ use App\Policies\ProductPolicy;
 use App\Models\Quote;
 use App\Policies\QuotePolicy;
 use App\Models\Role;
+use App\Models\Supplier;
 use App\Policies\RolePolicy;
 use App\Models\Task;
 use App\Policies\TaskPolicy;
 use App\Models\User;
+use App\Policies\PartImagePolicy;
+use App\Policies\PartPolicy;
+use App\Policies\SupplierPolicy;
 use App\Policies\UserPolicy;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -154,12 +161,16 @@ return Application::configure(basePath: dirname(__DIR__))
         Gate::policy(Lead::class, LeadPolicy::class);
         Gate::policy(Learning::class, LearningPolicy::class);
         Gate::policy(Note::class, NotePolicy::class);
+        Gate::policy(Part::class, PartPolicy::class);
+        Gate::policy(PartCategory::class, PartCategory::class);
+        Gate::policy(PartImage::class, PartImagePolicy::class);
         Gate::policy(Permission::class, PermissionPolicy::class);
         Gate::policy(Pipeline::class, PipelinePolicy::class);
         Gate::policy(PipelineStage::class, PipelineStagePolicy::class);
         Gate::policy(Product::class, ProductPolicy::class);
         Gate::policy(Quote::class, QuotePolicy::class);
         Gate::policy(Role::class, RolePolicy::class);
+        Gate::policy(Supplier::class, SupplierPolicy::class);
         Gate::policy(Task::class, TaskPolicy::class);
         Gate::policy(User::class, UserPolicy::class);
     })

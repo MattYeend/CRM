@@ -40,6 +40,11 @@ beforeEach(function () {
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
+/**
+ * -----------------------------------------------------------
+ * -------------------------- Index --------------------------
+ * -----------------------------------------------------------
+ */
 test('index returns paginated leads with filters', function () {
     $owner = User::factory()->create();
 
@@ -59,6 +64,11 @@ test('index returns paginated leads with filters', function () {
     $this->assertCount(5, $response->json('data'));
 });
 
+/**
+ * ------------------------------------------------------------
+ * --------------------------- Show ---------------------------
+ * ------------------------------------------------------------
+ */
 test('show returns a lead with relations loaded', function () {
     $owner = User::factory()->create();
     $assignedTo = User::factory()->create();
@@ -93,6 +103,11 @@ test('show returns a lead with relations loaded', function () {
     ]);
 });
 
+/**
+ * -----------------------------------------------------------
+ * -------------------------- Store --------------------------
+ * -----------------------------------------------------------
+ */
 test('store creates a new lead and returns 201', function () {
     $owner = User::factory()->create();
     $assignedTo = User::factory()->create();
@@ -121,6 +136,11 @@ test('store creates a new lead and returns 201', function () {
     ]);
 });
 
+/**
+ * ------------------------------------------------------------
+ * -------------------------- Update --------------------------
+ * ------------------------------------------------------------
+ */
 test('update modifies an existing lead', function () {
     $lead = Lead::factory()->create(['title' => 'Old Lead']);
 
@@ -146,6 +166,11 @@ test('update modifies an existing lead', function () {
     ]);
 });
 
+/**
+ * -----------------------------------------------------------
+ * ------------------------- Destroy -------------------------
+ * -----------------------------------------------------------
+ */
 test('destroy soft deletes the lead', function () {
     $lead = Lead::factory()->create();
 
@@ -160,6 +185,11 @@ test('destroy soft deletes the lead', function () {
     }
 });
 
+/**
+ * -----------------------------------------------------------
+ * ------------------------- Restore -------------------------
+ * -----------------------------------------------------------
+ */
 test('restore recovers a soft deleted lead', function () {
     $lead = Lead::factory()->create();
     $lead->delete();

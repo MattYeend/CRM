@@ -22,21 +22,31 @@ beforeEach(function () {
         'learnings.restore.any',
     ];
 
+    // Create permissions in DB
     $permissionModels = collect($permissions)
         ->map(fn($name) => Permission::firstOrCreate(['name' => $name]));
 
+    // Create admin role and attach permissions
     $role = Role::factory()->create(['name' => 'admin']);
     $role->permissions()->sync($permissionModels->pluck('id'));
 
+    // Attach role to the user
     $this->auth->update([
         'role_id' => $role->id
     ]);
 
+    // Authenticate the user
     $this->actingAs($this->auth, 'sanctum');
 
+    // Disable throttling for tests
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
+/**
+ * -----------------------------------------------------------
+ * -------------------------- Index --------------------------
+ * -----------------------------------------------------------
+ */
 test('user can list learnings', function () {
     $learnings = Learning::factory()->count(3)->create([
         'created_by' => $this->auth->id,
@@ -53,6 +63,11 @@ test('user can list learnings', function () {
     ]);
 });
 
+/**
+ * -----------------------------------------------------------
+ * -------------------------- Store --------------------------
+ * -----------------------------------------------------------
+ */
 test('user can create a learning', function () {
     $response = $this->postJson('/api/learnings', [
         'title' => 'Learn Laravel Policies',
@@ -137,6 +152,11 @@ test('creating a learning question requires at least one correct answer', functi
     $response->assertUnprocessable();
 });
 
+/**
+ * -----------------------------------------------------------
+ * -------------------------- Show ---------------------------
+ * -----------------------------------------------------------
+ */
 test('user can view a single learning', function () {
     $learning = Learning::factory()->create([
         'created_by' => $this->auth->id,
@@ -151,6 +171,11 @@ test('user can view a single learning', function () {
     ]);
 });
 
+/**
+ * -----------------------------------------------------------
+ * ------------------------- Update --------------------------
+ * -----------------------------------------------------------
+ */
 test('user can update a learning', function () {
     $learning = Learning::factory()->create([
         'created_by' => $this->auth->id,
@@ -237,6 +262,11 @@ test('updating a learning replaces existing questions and answers', function () 
     ]);
 });
 
+/**
+ * -----------------------------------------------------------
+ * ----------------------- Completion ------------------------
+ * -----------------------------------------------------------
+ */
 test('user can mark a learning as completed', function () {
     $learning = Learning::factory()->create(['created_by' => $this->auth->id]);
     $learning->users()->attach($this->auth->id, ['is_complete' => false]);
@@ -268,6 +298,11 @@ test('user can mark a learning as incomplete', function () {
     expect($pivot->completed_at)->toBeNull();
 });
 
+/**
+ * -----------------------------------------------------------
+ * ------------------------- Destroy -------------------------
+ * -----------------------------------------------------------
+ */
 test('user can delete a learning', function () {
     $learning = Learning::factory()->create(['created_by' => $this->auth->id]);
     $learning->users()->attach($this->auth->id);
@@ -302,6 +337,11 @@ test('deleting a learning also deletes its questions and answers', function () {
     $this->assertDatabaseMissing('learning_answers', ['id' => $answer->id]);
 });
 
+/**
+ * -----------------------------------------------------------
+ * ------------------------- Restore -------------------------
+ * -----------------------------------------------------------
+ */
 test('restore deleted learning', function () {
     $learning = Learning::factory()->create(['created_by' => $this->auth->id]);
     $learning->delete();
