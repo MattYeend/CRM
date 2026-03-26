@@ -213,6 +213,13 @@ class Log extends Model
     public const ACTION_PART_CATEGORY_RESTORED = 152;
     public const ACTION_PART_CATEGORY_VIEWED = 153;
 
+    // Part Images
+    public const ACTION_PART_IMAGE_CREATED = 154;
+    public const ACTION_PART_IMAGE_UPDATED = 155;
+    public const ACTION_PART_IMAGE_DELETED = 156;
+    public const ACTION_PART_IMAGE_RESTORED = 157;
+    public const ACTION_PART_IMAGE_VIEWED = 158;
+
     // New Logging Actions should go here to be reviewed
     // by the development team for future releases.
     // Ensure to update the documentation accordingly.
