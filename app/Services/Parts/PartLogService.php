@@ -176,7 +176,7 @@ class PartLogService
             'product_id' => $part->product_id,
             'category_id' => $part->category_id,
             'supplier_id' => $part->supplier_id,
-            'category' => $part->whenLoaded('category', fn () => [
+            'category' => $part->relationLoaded('category', fn () => [
                 'id' => $part->category->id,
                 'name' => $part->category->name,
                 'slug' => $part->category->slug,

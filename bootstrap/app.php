@@ -52,6 +52,7 @@ use App\Policies\RolePolicy;
 use App\Models\Task;
 use App\Policies\TaskPolicy;
 use App\Models\User;
+use App\Policies\PartCategoryPolicy;
 use App\Policies\PartImagePolicy;
 use App\Policies\PartPolicy;
 use App\Policies\SupplierPolicy;
@@ -162,7 +163,7 @@ return Application::configure(basePath: dirname(__DIR__))
         Gate::policy(Learning::class, LearningPolicy::class);
         Gate::policy(Note::class, NotePolicy::class);
         Gate::policy(Part::class, PartPolicy::class);
-        Gate::policy(PartCategory::class, PartCategory::class);
+        Gate::policy(PartCategory::class, PartCategoryPolicy::class);
         Gate::policy(PartImage::class, PartImagePolicy::class);
         Gate::policy(Permission::class, PermissionPolicy::class);
         Gate::policy(Pipeline::class, PipelinePolicy::class);

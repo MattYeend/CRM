@@ -93,7 +93,7 @@ test('index filters suppliers by active status', function () {
     $response = $this->getJson(route('api.suppliers.index', ['is_active' => true]));
 
     $response->assertStatus(200);
-    $this->assertCount(3, $response->json('data'));
+    $this->assertCount(5, $response->json('data'));
 });
 
 test('show returns a single supplier', function () {

@@ -23,21 +23,22 @@ beforeEach(function () {
 
     // Create permissions in DB
     $permissionModels = collect($permissions)
-        ->map(fn($name) => Permission::firstOrCreate(['name' => $name]));
+        ->map(fn ($name) => Permission::firstOrCreate(['name' => $name]));
 
-    // Create admin role and attach permissions
+    // Create admin role
     $role = Role::factory()->create(['name' => 'admin']);
+
     $role->permissions()->sync($permissionModels->pluck('id'));
 
-    // Attach role to the user
+    // Assign role to user
     $this->auth->update([
         'role_id' => $role->id
     ]);
 
-    // Authenticate the user
+    // Authenticate user
     $this->actingAs($this->auth, 'sanctum');
 
-    // Disable throttling for tests
+    // Disable rate limiting
     $this->withoutMiddleware(ThrottleRequests::class);
 });
 
@@ -191,14 +192,14 @@ test('update modifies an existing part', function () {
 
     $payload = [
         'name' => 'Updated Part Name',
-        'price' => 29.99,
+        'price' => '29.99',
         'quantity' => 5,
     ];
 
     $response = $this->putJson(route('api.parts.update', $part), $payload);
 
     $response->assertStatus(200);
-    $response->assertJsonFragment(['name' => 'Updated Part Name', 'price' => 29.99]);
+    $response->assertJsonFragment(['name' => 'Updated Part Name', 'price' => '29.99']);
     $this->assertDatabaseHas('parts', ['id' => $part->id, 'name' => 'Updated Part Name']);
 });
 

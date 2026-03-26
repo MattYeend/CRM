@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('part_images', function (Blueprint $table) {
             $table->id();
             $table->foreignId('part_id')->constrained()->cascadeOnDelete();
-            $table->string('path');
+            $table->string('image');
             $table->string('alt')->nullable();
             $table->boolean('is_primary')->default(false);
             $table->unsignedInteger('sort_order')->default(0);

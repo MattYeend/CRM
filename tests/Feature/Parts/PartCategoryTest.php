@@ -13,11 +13,11 @@ beforeEach(function () {
     $this->auth = User::factory()->create();
 
     $permissions = [
-        'part_categories.view.all',
-        'part_categories.create',
-        'part_categories.update.any',
-        'part_categories.delete.any',
-        'part_categories.restore.any',
+        'partCategories.view.all',
+        'partCategories.create',
+        'partCategories.update.any',
+        'partCategories.delete.any',
+        'partCategories.restore.any',
     ];
 
     // Create permissions in DB

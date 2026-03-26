@@ -21,7 +21,7 @@ class PartImageFactory extends Factory
     {
         return [
             'part_id' => Part::factory(),
-            'path' => 'parts/' . $this->faker->uuid() . '.jpg',
+            'image' => 'parts/' . $this->faker->uuid() . '.jpg',
             'alt' => $this->faker->words(3, true),
             'is_primary' => false,
             'sort_order' => $this->faker->numberBetween(0, 10),

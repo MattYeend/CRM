@@ -7,6 +7,8 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Http\UploadedFile;
+
 
 uses(RefreshDatabase::class);
 
@@ -14,11 +16,11 @@ beforeEach(function () {
     $this->auth = User::factory()->create();
 
     $permissions = [
-        'part_images.view.all',
-        'part_images.create',
-        'part_images.update.any',
-        'part_images.delete.any',
-        'part_images.restore.any',
+        'partImages.view.all',
+        'partImages.create',
+        'partImages.update.any',
+        'partImages.delete.any',
+        'partImages.restore.any',
     ];
 
     // Create permissions in DB
@@ -86,7 +88,7 @@ test('show returns a single part image', function () {
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $partImage->id]);
-    $response->assertJsonStructure(['id', 'part_id', 'url', 'order', 'is_primary']);
+    $response->assertJsonStructure(['id', 'part_id', 'image', 'sort_order', 'is_primary']);
 });
 
 test('show returns 404 for non-existent part image', function () {
@@ -115,8 +117,8 @@ test('store creates a new part image and returns 201', function () {
 
     $payload = [
         'part_id' => $part->id,
-        'url' => 'https://example.com/images/part-image.jpg',
-        'order' => 1,
+        'image' => UploadedFile::fake()->image('part-image.jpg'),
+        'sort_order' => 1,
         'is_primary' => true,
     ];
 
@@ -124,20 +126,20 @@ test('store creates a new part image and returns 201', function () {
 
     $response->assertStatus(201);
     $response->assertJsonFragment(['part_id' => $part->id, 'is_primary' => true]);
-    $this->assertDatabaseHas('part_images', ['part_id' => $part->id, 'url' => 'https://example.com/images/part-image.jpg']);
+    $this->assertDatabaseHas('part_images', ['part_id' => $part->id, 'image' => UploadedFile::fake()->image('part-image.jpg')]);
 });
 
 test('store returns 422 when required fields are missing', function () {
     $response = $this->postJson(route('api.partImages.store'), []);
 
     $response->assertStatus(422);
-    $response->assertJsonValidationErrors(['part_id', 'url']);
+    $response->assertJsonValidationErrors(['part_id', 'image']);
 });
 
 test('store returns 422 when part_id does not exist', function () {
     $payload = [
         'part_id' => 999999,
-        'url' => 'https://example.com/images/part-image.jpg',
+        'image' => UploadedFile::fake()->image('part-image.jpg'),
     ];
 
     $response = $this->postJson(route('api.partImages.store'), $payload);
@@ -151,13 +153,13 @@ test('store returns 422 when url is not a valid url', function () {
 
     $payload = [
         'part_id' => $part->id,
-        'url' => 'not-a-valid-url',
+        'image' => 'not-a-valid-url',
     ];
 
     $response = $this->postJson(route('api.partImages.store'), $payload);
 
     $response->assertStatus(422);
-    $response->assertJsonValidationErrors('url');
+    $response->assertJsonValidationErrors('image');
 });
 
 test('store returns 403 when user lacks permission', function () {
@@ -175,44 +177,44 @@ test('store returns 403 when user lacks permission', function () {
  * --------------------------------------------------------------
  */
 test('update modifies an existing part image', function () {
-    $partImage = PartImage::factory()->create(['is_primary' => false, 'order' => 1]);
+    $partImage = PartImage::factory()->create(['is_primary' => false, 'sort_order' => 1]);
 
     $payload = [
         'is_primary' => true,
-        'order' => 2,
+        'sort_order' => 2,
     ];
 
     $response = $this->putJson(route('api.partImages.update', $partImage), $payload);
 
     $response->assertStatus(200);
-    $response->assertJsonFragment(['is_primary' => true, 'order' => 2]);
-    $this->assertDatabaseHas('part_images', ['id' => $partImage->id, 'is_primary' => true, 'order' => 2]);
+    $response->assertJsonFragment(['is_primary' => true, 'sort_order' => 2]);
+    $this->assertDatabaseHas('part_images', ['id' => $partImage->id, 'is_primary' => true, 'sort_order' => 2]);
 });
 
 test('update allows saving without changing url', function () {
-    $partImage = PartImage::factory()->create(['order' => 1]);
+    $partImage = PartImage::factory()->create(['sort_order' => 1]);
 
-    $payload = ['order' => 3];
+    $payload = ['sort_order' => 3];
 
     $response = $this->putJson(route('api.partImages.update', $partImage), $payload);
 
     $response->assertStatus(200);
-    $this->assertDatabaseHas('part_images', ['id' => $partImage->id, 'order' => 3]);
+    $this->assertDatabaseHas('part_images', ['id' => $partImage->id, 'sort_order' => 3]);
 });
 
 test('update returns 422 when url is invalid', function () {
     $partImage = PartImage::factory()->create();
 
     $response = $this->putJson(route('api.partImages.update', $partImage), [
-        'url' => 'not-a-valid-url',
+        'image' => 'not-a-valid-url',
     ]);
 
     $response->assertStatus(422);
-    $response->assertJsonValidationErrors('url');
+    $response->assertJsonValidationErrors('image');
 });
 
 test('update returns 404 for non-existent part image', function () {
-    $response = $this->putJson(route('api.partImages.update', 999999), ['order' => 1]);
+    $response = $this->putJson(route('api.partImages.update', 999999), ['sort_order' => 1]);
 
     $response->assertStatus(404);
 });
@@ -222,7 +224,7 @@ test('update returns 403 when user lacks permission', function () {
     $user = User::factory()->create();
     $this->actingAs($user, 'sanctum');
 
-    $response = $this->putJson(route('api.partImages.update', $partImage), ['order' => 1]);
+    $response = $this->putJson(route('api.partImages.update', $partImage), ['sort_order' => 1]);
 
     $response->assertStatus(403);
 });

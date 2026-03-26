@@ -23,7 +23,7 @@ class PartImage extends Model
      */
     protected $fillable = [
         'part_id',
-        'path',
+        'image',
         'alt',
         'is_primary',
         'sort_order',
