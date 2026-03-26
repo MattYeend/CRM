@@ -95,6 +95,8 @@ class InvoiceItemPolicy
      *
      * @param User $user
      *
+     * @param InvoiceItem $invoiceItem
+     *
      * @return bool
      */
     public function delete(User $user, InvoiceItem $invoiceItem): bool

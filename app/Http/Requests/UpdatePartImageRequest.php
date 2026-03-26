@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdatePartImageRequest extends FormRequest
 {
@@ -12,7 +12,9 @@ class UpdatePartImageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        $partImage = $this->route('partImage');
+
+        return $this->user()->can('update', $partImage);
     }
 
     /**
@@ -22,8 +24,17 @@ class UpdatePartImageRequest extends FormRequest
      */
     public function rules(): array
     {
+        $partImage = $this->route('partImage');
         return [
-            //
+            'image' => [
+                'sometimes', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120',
+                Rule::unique('partImages', 'image')->ignore($partImage),
+            ],
+            'alt' => 'nullable|string|max:255',
+            'is_primary' => 'boolean',
+            'sort_order' => 'integer|min:0',
+            'is_test' => 'boolean',
+            'meta' => 'nullable|array',
         ];
     }
 }

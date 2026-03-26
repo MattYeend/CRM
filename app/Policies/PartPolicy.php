@@ -55,7 +55,7 @@ class PartPolicy
             $user,
             $part,
             'parts.view.all',
-            'partss.view.own'
+            'parts.view.own'
         );
     }
 
@@ -76,7 +76,7 @@ class PartPolicy
      *
      * @param User $user
      *
-     * @param Note $note
+     * @param Part $part
      *
      * @return bool
      */
@@ -95,7 +95,7 @@ class PartPolicy
      *
      * @param User $user
      *
-     * @param Note $note
+     * @param Part $part
      *
      * @return bool
      */
@@ -114,7 +114,7 @@ class PartPolicy
      *
      * @param User $user
      *
-     * @param Note $note
+     * @param Part $part
      *
      * @return bool
      */
@@ -123,8 +123,8 @@ class PartPolicy
         return $this->anyOrOwn(
             $user,
             $part,
-            'parts.delete.any',
-            'parts.delete.own'
+            'parts.restore.any',
+            'parts.restore.own'
         );
     }
 }
