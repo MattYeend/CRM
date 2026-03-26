@@ -151,15 +151,15 @@ class Part extends Model
             ->withTimestamps();
     }
 
-    // public function images(): HasMany
-    // {
-    //     return $this->hasMany(PartImage::class)->orderBy('sort_order');
-    // }
+    public function images(): HasMany
+    {
+        return $this->hasMany(PartImage::class)->orderBy('sort_order');
+    }
 
-    // public function primaryImage(): HasMany
-    // {
-    //     return $this->hasMany(PartImage::class)->where('is_primary', true);
-    // }
+    public function primaryImage(): HasMany
+    {
+        return $this->hasMany(PartImage::class)->where('is_primary', true);
+    }
 
     // public function stockMovements(): HasMany
     // {
