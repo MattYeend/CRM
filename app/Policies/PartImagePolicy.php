@@ -55,8 +55,8 @@ class PartImagePolicy
             $user,
             $partImage,
             'partImages.view.all',
-            'partImages.view.own'
-        );    
+            'partImages.view.own',
+        );
     }
 
     /**
@@ -86,7 +86,7 @@ class PartImagePolicy
             $user,
             $partImage,
             'partImages.update.any',
-            'partImages.update.own'
+            'partImages.update.own',
         );
     }
 
@@ -105,7 +105,7 @@ class PartImagePolicy
             $user,
             $partImage,
             'partImages.delete.any',
-            'partImages.delete.own'
+            'partImages.delete.own',
         );
     }
 
@@ -124,7 +124,7 @@ class PartImagePolicy
             $user,
             $partImage,
             'partImages.restore.any',
-            'partImages.restore.own'
+            'partImages.restore.own',
         );
     }
 }

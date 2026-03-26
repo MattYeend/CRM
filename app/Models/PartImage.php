@@ -55,6 +55,16 @@ class PartImage extends Model
     ];
 
     /**
+     * Get the part the image belongs to
+     *
+     * @return BelongsTo
+     */
+    public function part(): BelongsTo
+    {
+        return $this->belongsTo(Part::class);
+    }
+
+    /**
      * Booted function to make sure only one primary
      * image per part.
      */
@@ -68,15 +78,5 @@ class PartImage extends Model
                     ->update(['is_primary' => false]);
             }
         });
-    }
-
-    /**
-     * Get the part the image belongs to
-     *
-     * @return BelongsTo
-     */
-    public function part(): BelongsTo
-    {
-        return $this->belongsTo(Part::class);
     }
 }

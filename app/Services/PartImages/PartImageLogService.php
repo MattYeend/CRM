@@ -137,7 +137,7 @@ class PartImageLogService
      */
     protected function basePartImageData(PartImage $partImage): array
     {
-        return array(
+        return [
             'id' => $partImage->id,
             'part_id' => $partImage->part_id,
             'path' => $partImage->path,
@@ -146,6 +146,6 @@ class PartImageLogService
             'sort_order' => $partImage->sort_order,
             'is_test' => $partImage->is_test,
             'meta' => $partImage->meta,
-        );
+        ];
     }
 }

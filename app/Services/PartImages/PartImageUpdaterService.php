@@ -19,7 +19,7 @@ class PartImageUpdaterService
     public function update(
         UpdatePartImageRequest $request,
         PartImage $partImage
-    ): PartImage{
+    ): PartImage {
         $user = $request->user();
 
         $data = $request->validated();
