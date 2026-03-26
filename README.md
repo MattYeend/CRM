@@ -21,16 +21,21 @@ A Laravel 12 CRM system
         6. [Orders](#orders)
         7. [Invoices](#invoices)
         8. [Products](#products)
-        9. [Activities](#activities)
-        10. [Tasks](#tasks)
-        11. [Attachments](#attachments)
-        12. [Notes](#notes)
-        13. [Users, Roles, and Permissions](#users-roles-and-permissions)
+        9. [Parts](#parts)
+        10. [Part Images](#part-images)
+        11. [Part Categories](#part-categories)
+        12. [Suppliers](#suppliers)
+        13. [Part Suppliers (Pivot)](#part-suppliers-pivot)
+        14. [Activities](#activities)
+        15. [Tasks](#tasks)
+        16. [Attachments](#attachments)
+        17. [Notes](#notes)
+        18. [Users, Roles, and Permissions](#users-roles-and-permissions)
             1. [Users](#users)
             2. [Roles](#roles)
             3. [Permissions](#permissions)
-        14. [Are Activities and Tasks the Same?](#are-activities-and-tasks-the-same)
-        15. [Relationship Overview Diagram](#relationship-overview-diagram)
+        19. [Are Activities and Tasks the Same?](#are-activities-and-tasks-the-same)
+        20. [Relationship Overview Diagram](#relationship-overview-diagram)
 3. [How To Setup](#how-to-setup)
 4. [How To Contribute](#how-to-contribute)
     1. [Commit Conventions](#commit-conventions)
@@ -267,6 +272,203 @@ total
 timestamps
 ```
 
+### Parts
+`Part`
+Parts represent physical components, materials, or stock items. They sit on the ERP/inventory side of the system and are linked to a `Product`, a `PartCategory`, and one or more `Suppliers`.
+Key relationships:
+- `product_id` → `Product` (the parent product this part belongs to)
+- `category_id` → `PartCategory` (the part's classification)
+- `supplier_id` → `Supplier` (the primary/default supplier)
+- `suppliers` (many-to-many via `part_suppliers` — all suppliers that can provide this part)
+
+A part also has:
+
+Images (via `PartImage`)
+A preferred supplier (filtered via the `part_suppliers` pivot where `is_preferred = true`)
+
+Example: 
+```bash
+Part
+ ├─ belongsTo Product
+ ├─ belongsTo PartCategory (as category)
+ ├─ belongsTo Supplier (primarySupplier — via supplier_id)
+ ├─ belongsToMany Suppliers (via part_suppliers)
+ │    └─ pivot: supplier_sku, unit_cost, lead_time_days, is_preferred
+ ├─ hasMany PartImages (images — ordered by sort_order)
+ └─ hasMany PartImages (primaryImage — where is_primary = true)
+```
+
+Notable fields:
+```bash
+sku # Internal stock-keeping unit
+part_number # Manufacturer or supplier part number
+barcode
+brand / manufacturer
+type / status
+unit_of_measure
+height / width / length / weight / volume
+colour / material
+price / cost_price / currency
+tax_rate / tax_code / discount_percentage
+quantity
+min_stock_level / max_stock_level
+reorder_point / reorder_quantity
+lead_time_days
+warehouse_location / bin_location
+is_active
+is_purchasable / is_sellable / is_manufactured
+is_serialised / is_batch_tracked
+```
+
+Built-in scopes:
+```bash
+Part::active()       # where is_active = true
+Part::lowStock()     # where quantity <= reorder_point
+Part::outOfStock()   # where quantity = 0
+```
+
+Built-in helpers:
+```bash
+$part->isLowStock()        # bool
+$part->isOutOfStock()      # bool
+$part->marginPercentage()  # float|null — (price - cost_price) / price * 100
+```
+
+### Part Images
+`PartImage`
+Part images store one or more images associated with a part.
+
+Key relationships:
+- `part_id → Part`
+
+```bash
+PartImage
+   └─ belongsTo Part
+```
+
+Notable fields:
+```bash
+part_id
+path         # File path or storage URL of the image
+alt          # Alt text for accessibility
+is_primary   # Boolean — flags the main display image
+sort_order   # Controls display order (parts are ordered by this)
+```
+Enforced constraint: only one image per part may have `is_primary = true`. When a new primary image is saved, all other images for that part are automatically set to `is_primary = false` via a model `saving` event.
+
+From the Part model's perspective:
+```bash
+Part
+ ├─ hasMany PartImages (images — ordered by sort_order)
+ └─ hasMany PartImages (primaryImage — where is_primary = true)
+```
+
+### Part Categories
+`PartCategory`
+Part categories allow parts to be organised into a hierarchical taxonomy. Categories can be nested — a category can have a parent category and many child categories.
+
+Key relationships:
+- `parent_id → PartCategory` (self-referential — the parent category)
+- `children → PartCategory` (self-referential — subcategories)
+- `parts → Part`
+
+```bash
+PartCategory
+ ├─ belongsTo PartCategory (parent)
+ ├─ hasMany PartCategories (children)
+ └─ hasMany Parts
+```
+Notable fields:
+```bash
+parent_id    # Nullable — null means a top-level category
+name
+slug         # Auto-generated from name on create; regenerated on name change
+description
+```
+
+The `slug` is automatically generated from name using `Str::slug()` via model boot events. If the name is updated, the slug regenerates automatically.
+Example hierarchy:
+```bash
+Electronics                  # parent_id = null (top-level)
+ ├─ Resistors                # parent_id = Electronics.id
+ ├─ Capacitors               # parent_id = Electronics.id
+ └─ Connectors               # parent_id = Electronics.id
+      ├─ PCB Connectors      # parent_id = Connectors.id
+      └─ Panel Mount         # parent_id = Connectors.id
+```
+
+### Suppliers
+`Supplier`
+
+Suppliers represent external companies or individuals that provide parts. They hold full contact, address, and commercial details.
+
+Key relationships:
+- `parts` (many-to-many via `part_suppliers`)
+- `partSuppliers` (direct access to pivot records via `PartSupplier`)
+
+```bash
+Supplier
+ ├─ belongsToMany Parts (via part_suppliers)
+ │    └─ pivot: supplier_sku, unit_cost, lead_time_days, is_preferred
+ └─ hasMany PartSuppliers
+```
+
+Notable fields:
+```bash
+name / code
+email / phone / website
+address_line_1 / address_line_2 / city / county / postcode / country
+currency
+payment_terms
+tax_number
+contact_name / contact_email / contact_phone
+is_active
+notes
+```
+
+Built-in scope:
+```bash
+Supplier::active()   # where is_active = true
+```
+The name attribute is filtered through the `HasTestPrefix` trait — test suppliers are automatically prefixed when `is_test = true`.
+
+### Part Suppliers (Pivot)
+`PartSupplier`
+The `part_suppliers` pivot table links parts to suppliers and stores supplier-specific pricing and ordering information for each part-supplier combination. It extends Laravel's `Pivot` class rather than a standard `Model`.
+
+```bash
+part_suppliers
+ ├─ part_id
+ ├─ supplier_id
+ ├─ supplier_sku       # The supplier's own SKU/reference for this part
+ ├─ unit_cost          # Cost from this supplier (decimal:2)
+ ├─ lead_time_days     # Delivery lead time from this supplier
+ └─ is_preferred       # Boolean — marks this as the preferred supplier for the part
+```
+
+The `PartSupplier` pivot is used explicitly when marking preferred suppliers:
+```bash
+Part::preferredSupplier()
+   └─ belongsToMany Suppliers via part_suppliers
+        └─ wherePivot('is_preferred', true)
+```
+
+Relationships on the pivot:
+```bash
+PartSupplier
+ ├─ belongsTo Part
+ └─ belongsTo Supplier
+```
+
+A part may have one primary supplier (set directly via `supplier_id` on the `parts` table) and many additional suppliers via the pivot, of which one can be flagged as `is_preferred`.
+Full supplier relationship summary for a part:
+```bash
+Part
+ ├─ primarySupplier()    → belongsTo Supplier (via supplier_id — quick default)
+ ├─ suppliers()          → belongsToMany Supplier (all via part_suppliers pivot)
+ └─ preferredSupplier()  → belongsToMany Supplier (pivot where is_preferred = true)
+```
+
 ### Activities
 `Activity`
 
@@ -492,6 +694,21 @@ Order
 
 Invoice
  └─ InvoiceItems
+
+PartCategory
+ ├─ parent PartCategory (self-referential)
+ └─ children PartCategories (self-referential)
+
+Supplier
+ └─ belongsToMany Parts (via part_suppliers)
+
+Part
+ ├─ belongsTo Product
+ ├─ belongsTo PartCategory
+ ├─ belongsTo Supplier (primarySupplier)
+ ├─ belongsToMany Suppliers (via part_suppliers)
+ │    └─ PartSupplier pivot: supplier_sku, unit_cost, lead_time_days, is_preferred
+ └─ hasMany PartImages
 ```
 
 ---
@@ -612,12 +829,12 @@ The `main` and `develop` branches are protected and should never be pushed to di
 
 | Command | Description |
 | --- | --- |
-| `php artisan make:model modelName -mcr` | Create a model, migration, and resource controller |
-| `php artisan make:model modelName -a` or `php artisan make:model modelName --all` | Create a model, migration, factory, seeder, controller, resource, request(s) |
-| `php artisan make:model modelName` | Create a model |
-| `php artisan make:controller controllerName` | Create a controller |
-| `php artisan make:controller controllerName --resource` | Create a resource controller |
-| `php artisan make:migration migration_name` | Create a migration |
+| `php artisan make:model ModelName -mcr` | Create a model, migration, and resource controller |
+| `php artisan make:model ModelName -a` or `php artisan make:model ModelName --all` | Create a model, migration, factory, seeder, controller, resource, request(s) |
+| `php artisan make:model ModelName` | Create a model |
+| `php artisan make:controller ControllerName` | Create a controller |
+| `php artisan make:controller ControllerName --resource` | Create a resource controller |
+| `php artisan make:migration migration_name_table` | Create a migration |
 | `php artisan make:seeder SeederName` | Create a seeder |
 | `php artisan make:factory FactoryName` | Create a factory |
 | `php artisan make:request RequestName` | Creates a form request for validation |
@@ -625,7 +842,9 @@ The `main` and `develop` branches are protected and should never be pushed to di
 | `php artisan make:listener ListenerName` | Creates a listener class |
 | `php artisan make:job JobName` | Creates a queued job |
 | `php artisan make:rule RuleName` | Createa a new rule |
+| `php artisan make:test TestName` | Create a new test |
 
+For further CLI commands, visit <a href="https://artisan.page/">here</a>
 --- 
 
 ## Specific CLI Commands
