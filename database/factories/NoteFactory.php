@@ -29,24 +29,17 @@ class NoteFactory extends Factory
             'task' => Task::class,
             'user' => User::class,
         ];
-
-        $alias = fake()->randomElement(array_keys($models));
-        $modelClass = $models[$alias];
-
-        $notable = $modelClass::inRandomOrder()->first();
-
-        if (! $notable) {
-            return [
-                'user_id' => null,
-                'notable_type' => $alias,
-                'notable_id' => null,
-                'body' => null,
-                'is_test' => true,
-                'meta' => [],
-                'created_by' => null,
-            ];
+    
+        $available = array_filter($models, fn($class) => $class::exists());
+    
+        if (empty($available)) {
+            throw new \RuntimeException('No notable models have records. Run related seeders first.');
         }
-
+    
+        $alias = fake()->randomElement(array_keys($available));
+        $modelClass = $available[$alias];
+        $notable = $modelClass::inRandomOrder()->first();
+    
         return [
             'user_id' => User::inRandomOrder()->first()?->id ?? User::factory()->create()->id,
             'notable_type' => $alias,

@@ -12,10 +12,6 @@ class NoteSeeder extends Seeder
      */
     public function run(): void
     {
-        Note::factory(50)->make()->each(function ($note) {
-            if ($note->notable_id) {
-                $note->save();
-            }
-        });
+        Note::factory(50)->create();
     }
 }

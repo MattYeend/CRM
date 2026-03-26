@@ -15,7 +15,7 @@ class PartImageSeeder extends Seeder
     {
         Part::all()->each(function (Part $part) {
             PartImage::factory()->primary()->create(['part_id' => $part->id]);
-            PartImage::factory()->count(35)->create(['part_id' => $part->id]);
+            PartImage::factory()->count(4)->create(['part_id' => $part->id]);
         });
     }
 }
