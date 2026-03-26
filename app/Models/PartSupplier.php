@@ -12,7 +12,7 @@ class PartSupplier extends Pivot
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array<int,string>
      */
     protected $fillable = [
         'part_id',
@@ -36,7 +36,7 @@ class PartSupplier extends Pivot
     /**
      * The attributes that should be cast.
      *
-     * @var array<string, string>
+     * @var array<string,string>
      */
     protected $casts = [
         'unit_cost' => 'decimal:2',
@@ -52,7 +52,7 @@ class PartSupplier extends Pivot
     /**
      * Part the supplier belongs to
      *
-     * @return BelongsTo
+     * @return BelongsTo<Part,PartSupplier>
      */
     public function part(): BelongsTo
     {
@@ -62,7 +62,7 @@ class PartSupplier extends Pivot
     /**
      * Supplier the part belongs to
      *
-     * @return BelongsTo
+     * @return BelongsTo<Supplier,PartSupplier>
      */
     public function supplier(): BelongsTo
     {

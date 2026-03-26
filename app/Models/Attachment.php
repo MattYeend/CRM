@@ -35,7 +35,6 @@ class Attachment extends Model
     /**
      * The fully-qualified class name used as the attachment type for Task attachments.
      */
-
     public const ATTACHABLE_TASK = Task::class;
 
     /**
@@ -44,7 +43,7 @@ class Attachment extends Model
     public const ATTACHABLE_USER = User::class;
 
     /**
-     * All valid subject types that an attachment can be associated with.
+     * All valid attachable types that an attachment can be associated with.
      *
      * @var array<int, class-string<Model>>
      */
@@ -58,7 +57,7 @@ class Attachment extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array<int,string>
      */
     protected $fillable = [
         'filename',
@@ -82,7 +81,7 @@ class Attachment extends Model
     /**
      * The attributes that should be cast.
      *
-     * @var array<string, string>
+     * @var array<string,string>
      */
     protected $casts = [
         'is_test' => 'boolean',

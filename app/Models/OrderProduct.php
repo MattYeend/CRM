@@ -14,7 +14,7 @@ class OrderProduct extends Pivot
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array<int,string>
      */
     protected $fillable = [
         'order_id',
@@ -34,7 +34,7 @@ class OrderProduct extends Pivot
     /**
      * The attributes that should be cast.
      *
-     * @var array<string, string>
+     * @var array<string,string>
      */
     protected $casts = [
         'is_test' => 'boolean',

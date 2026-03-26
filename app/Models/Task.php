@@ -23,20 +23,60 @@ class Task extends Model
         HasTestPrefix;
 
     /**
-     * Constants
+     * Represents a task that is pending.
      */
     public const STATUS_PENDING = 'pending';
+
+    /**
+     * Represents a task that has been complete.
+     */
     public const STATUS_COMPLETED = 'completed';
+
+    /**
+     * Represents a task that has been cancelled.
+     */
     public const STATUS_CANCELLED = 'cancelled';
+
+    /**
+     * Represents a task that is a low priority.
+     */
     public const PRIORITY_LOW = 'low';
+
+    /**
+     * Represents a task that is a medium priority.
+     */
     public const PRIORITY_MEDIUM = 'medium';
+
+    /**
+     * Represents a task that is a high priority.
+     */
     public const PRIORITY_HIGH = 'high';
 
+    /**
+     * The fully-qualified class name used as the taskabl type for Company attachments.
+     */
     public const TASKABLE_COMPANY = Company::class;
+
+    /**
+     * The fully-qualified class name used as the taskable type for Deal attachments.
+     */
     public const TASKABLE_DEAL = Deal::class;
+
+    /**
+     * The fully-qualified class name used as the taskable type for Task attachments.
+     */
     public const TASKABLE_TASK = Task::class;
+
+    /**
+     * The fully-qualified class name used as the taskable type for User attachments.
+     */
     public const TASKABLE_USER = User::class;
 
+    /**
+     * All valid taskable types that an attachment can be associated with.
+     *
+     * @var array<int, class-string<Model>>
+     */
     public const TASKABLE_TYPES = [
         self::TASKABLE_COMPANY,
         self::TASKABLE_DEAL,
@@ -88,7 +128,14 @@ class Task extends Model
     /**
      * Get the parent taskable model (deal, , company, etc.).
      *
-     * @return MorphTo
+     * @return MorphTo<
+     */
+    /**
+     * Get the polymorphic attachable model this taskable belongs to.
+     *
+     * The taskable may be a Company, Deal, Task, or User as defined in TASKABLE_TYPES.
+     *
+     * @return MorphTo<Model,Taskable>
      */
     public function taskable(): MorphTo
     {
@@ -98,7 +145,7 @@ class Task extends Model
     /**
      * Get the user assigned to the task.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Task>
      */
     public function assignee(): BelongsTo
     {
@@ -108,7 +155,7 @@ class Task extends Model
     /**
      * Get the user who created the task.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Task>
      */
     public function creator(): BelongsTo
     {
@@ -118,7 +165,7 @@ class Task extends Model
     /**
      * Get the user who last updated the task.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Task>
      */
     public function updater(): BelongsTo
     {
@@ -128,7 +175,7 @@ class Task extends Model
     /**
      * Get the user who deleted the task.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Task>
      */
     public function deleter(): BelongsTo
     {
@@ -138,7 +185,7 @@ class Task extends Model
     /**
      * Get the user that restored the task.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Task>
      */
     public function restorer(): BelongsTo
     {
@@ -148,7 +195,7 @@ class Task extends Model
     /**
      * Get all of the tasks attachments.
      *
-     * @return MorphMany
+     * @return MorphMany<Attachment>
      */
     public function attachments(): MorphMany
     {
@@ -158,7 +205,7 @@ class Task extends Model
     /**
      * Get all of the tasks activities.
      *
-     * @return MorphMany
+     * @return MorphMany<Activity>
      */
     public function activities(): MorphMany
     {
@@ -166,19 +213,9 @@ class Task extends Model
     }
 
     /**
-     * Get all of the tasks tasks.
-     *
-     * @return MorphMany
-     */
-    public function tasks(): MorphMany
-    {
-        return $this->morphMany(Task::class, 'taskable');
-    }
-
-    /**
      * Get all of the tasks notes.
      *
-     * @return MorphMany
+     * @return MorphMany<Note>
      */
     public function notes(): MorphMany
     {
@@ -256,9 +293,7 @@ class Task extends Model
     }
 
     /**
-     * Get the task title.
-     *
-     * Applies the test prefix when the task is marked as a test.
+     * Get the task title, applies the test prefix when the task is marked as a test.
      *
      * @param  string|null  $value  The raw task title from the database.
      *

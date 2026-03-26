@@ -19,7 +19,7 @@ class PartImage extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array<int,string>
      */
     protected $fillable = [
         'part_id',
@@ -42,7 +42,7 @@ class PartImage extends Model
     /**
      * The attributes that should be cast.
      *
-     * @var array<string, string>
+     * @var array<string,string>
      */
     protected $casts = [
         'is_primary' => 'boolean',
@@ -57,7 +57,7 @@ class PartImage extends Model
     /**
      * Get the part the image belongs to
      *
-     * @return BelongsTo
+     * @return BelongsTo<Part,PartImage>
      */
     public function part(): BelongsTo
     {
@@ -67,6 +67,8 @@ class PartImage extends Model
     /**
      * Booted function to make sure only one primary
      * image per part.
+     *
+     * @return void
      */
     protected static function booted(): void
     {

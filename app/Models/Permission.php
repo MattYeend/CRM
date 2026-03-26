@@ -16,7 +16,7 @@ class Permission extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array<int,string>
      */
     protected $fillable = [
         'name',
@@ -34,7 +34,7 @@ class Permission extends Model
     /**
      * The attributes that should be cast.
      *
-     * @var array<string, string>
+     * @var array<string,string>
      */
     protected $casts = [
         'created_at' => 'datetime',
@@ -46,7 +46,7 @@ class Permission extends Model
     /**
      * The roles that belong to the permission.
      *
-     * @return BelongsToMany
+     * @return BelongsToMany<Role>
      */
     public function roles(): BelongsToMany
     {
@@ -56,7 +56,7 @@ class Permission extends Model
     /**
      * Get all of the permission attachments.
      *
-     * @return MorphMany
+     * @return MorphMany<Attachments>
      */
     public function attachments(): MorphMany
     {
@@ -66,7 +66,7 @@ class Permission extends Model
     /**
      * Get all of the permission activities.
      *
-     * @return MorphMany
+     * @return MorphMany<Activity>
      */
     public function activities(): MorphMany
     {
@@ -76,7 +76,7 @@ class Permission extends Model
     /**
      * Get all of the permission tasks.
      *
-     * @return MorphMany
+     * @return MorphMany<Task>
      */
     public function tasks(): MorphMany
     {
@@ -86,7 +86,7 @@ class Permission extends Model
     /**
      * Get all of the permission notes.
      *
-     * @return MorphMany
+     * @return MorphMany<Note>
      */
     public function notes(): MorphMany
     {
@@ -134,7 +134,7 @@ class Permission extends Model
     /**
      * Get the user that created the permission.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Permission>
      */
     public function creator(): BelongsTo
     {
@@ -144,7 +144,7 @@ class Permission extends Model
     /**
      * Get the user that last updated the permission.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Permission>
      */
     public function updater(): BelongsTo
     {
@@ -154,7 +154,7 @@ class Permission extends Model
     /**
      * Get the user that deleted the permission.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Permission>
      */
     public function deleter(): BelongsTo
     {
@@ -164,7 +164,7 @@ class Permission extends Model
     /**
      * Get the user that restored the permission.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Permission>
      */
     public function restorer(): BelongsTo
     {

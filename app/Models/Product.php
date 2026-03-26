@@ -64,7 +64,7 @@ class Product extends Model
     /**
      * Get the invoice items for the product.
      *
-     * @return HasMany
+     * @return HasMany<InvoiceItem>
      */
     public function invoiceItems(): HasMany
     {
@@ -74,7 +74,7 @@ class Product extends Model
     /**
      * Get the user that created the product.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Product>
      */
     public function creator(): BelongsTo
     {
@@ -84,7 +84,7 @@ class Product extends Model
     /**
      * Get the user that updated the product.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Product>
      */
     public function updater(): BelongsTo
     {
@@ -94,7 +94,7 @@ class Product extends Model
     /**
      * Get the user that deleted the product.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Product>
      */
     public function deleter(): BelongsTo
     {
@@ -104,7 +104,7 @@ class Product extends Model
     /**
      * Get the user that restored the product.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Product>
      */
     public function restorer(): BelongsTo
     {
@@ -114,7 +114,7 @@ class Product extends Model
     /**
      * Get all of the product attachments.
      *
-     * @return MorphMany
+     * @return MorphMany<Attachment>
      */
     public function attachments(): MorphMany
     {
@@ -124,7 +124,7 @@ class Product extends Model
     /**
      * Get all of the product activities.
      *
-     * @return MorphMany
+     * @return MorphMany<Activity>
      */
     public function activities(): MorphMany
     {
@@ -134,7 +134,7 @@ class Product extends Model
     /**
      * Get all of the product tasks.
      *
-     * @return MorphMany
+     * @return MorphMany<Task>
      */
     public function tasks(): MorphMany
     {
@@ -144,7 +144,7 @@ class Product extends Model
     /**
      * Get all of the product notes.
      *
-     * @return MorphMany
+     * @return MorphMany<Note>
      */
     public function notes(): MorphMany
     {
@@ -154,7 +154,7 @@ class Product extends Model
     /**
      * Get the deals for the product.
      *
-     * @return BelongsToMany
+     * @return BelongsToMany<Deal>
      */
     public function deals()
     {
@@ -167,7 +167,7 @@ class Product extends Model
     /**
      * Get the quotes for the product.
      *
-     * @return BelongsToMany
+     * @return BelongsToMany<Quote>
      */
     public function quotes()
     {
@@ -180,7 +180,7 @@ class Product extends Model
     /**
      * Get the orders for the product.
      *
-     * @return BelongsToMany
+     * @return BelongsToMany<Order>
      */
     public function orders()
     {
@@ -191,9 +191,7 @@ class Product extends Model
     }
 
     /**
-     * Get the product name.
-     *
-     * Applies the test prefix when the product is marked as a test.
+     * Get the product name, applies the test prefix when the product is marked as a test.
      *
      * @param  string|null  $value  The raw product name from the database.
      *

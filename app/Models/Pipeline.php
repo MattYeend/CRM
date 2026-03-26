@@ -25,7 +25,7 @@ class Pipeline extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array<int,string>
      */
     protected $fillable = [
         'name',
@@ -46,7 +46,7 @@ class Pipeline extends Model
     /**
      * The attributes that should be cast.
      *
-     * @var array<string, string>
+     * @var array<string,string>
      */
     protected $casts = [
         'is_default' => 'boolean',
@@ -61,7 +61,7 @@ class Pipeline extends Model
     /**
      * Get the stages for the pipeline.
      *
-     * @return HasMany
+     * @return HasMany<PipelineStage>
      */
     public function stages(): HasMany
     {
@@ -71,7 +71,7 @@ class Pipeline extends Model
     /**
      * Get the deals for the pipeline.
      *
-     * @return HasMany
+     * @return HasMany<Deal>
      */
     public function deals(): HasMany
     {
@@ -93,7 +93,7 @@ class Pipeline extends Model
     /**
      * Get the user that created the pipeline.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Pipeline>
      */
     public function creator(): BelongsTo
     {
@@ -103,7 +103,7 @@ class Pipeline extends Model
     /**
      * Get the user that updated the pipeline.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Pipeline>
      */
     public function updater(): BelongsTo
     {
@@ -113,7 +113,7 @@ class Pipeline extends Model
     /**
      * Get the user that deleted the pipeline.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Pipeline>
      */
     public function deleter(): BelongsTo
     {
@@ -123,7 +123,7 @@ class Pipeline extends Model
     /**
      * Get the user that restored the pipeline.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Pipeline>
      */
     public function restorer(): BelongsTo
     {
@@ -133,7 +133,7 @@ class Pipeline extends Model
     /**
      * Get all of the pipeline attachments.
      *
-     * @return MorphMany
+     * @return MorphMany<Attachment>
      */
     public function attachments(): MorphMany
     {
@@ -143,7 +143,7 @@ class Pipeline extends Model
     /**
      * Get all of the pipeline activities.
      *
-     * @return MorphMany
+     * @return MorphMany<Activity>
      */
     public function activities(): MorphMany
     {
@@ -153,7 +153,7 @@ class Pipeline extends Model
     /**
      * Get all of the pipeline tasks.
      *
-     * @return MorphMany
+     * @return MorphMany<Task>
      */
     public function tasks(): MorphMany
     {
@@ -163,7 +163,7 @@ class Pipeline extends Model
     /**
      * Get all of the pipeline notes.
      *
-     * @return MorphMany
+     * @return MorphMany<Note>
      */
     public function notes(): MorphMany
     {
@@ -171,9 +171,7 @@ class Pipeline extends Model
     }
 
     /**
-     * Get the pipeline name.
-     *
-     * Applies the test prefix when the pipeline is marked as a test.
+     * Get the pipeline name, applies the test prefix when the pipeline is marked as a test.
      *
      * @param  string|null  $value  The raw pipeline name from the database.
      *

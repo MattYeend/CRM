@@ -23,20 +23,44 @@ class PipelineStage extends Model
         HasTestPrefix;
 
     /**
-     * Constants
+     * Represents an open stage still in progress.
      */
     public const TYPE_OPEN = 'open';
+
+    /**
+     * Represents a won stage.
+     */
     public const TYPE_WON = 'won';
+
+    /**
+     * Represents an lost stage.
+     */
     public const TYPE_LOST = 'lost';
+
+    /**
+     * Represents if a stage is won.
+     */
     public const IS_WON_STAGE = true;
+
+    /**
+     * Represents if a stage is not won.
+     */
     public const NOT_WON_STAGE = false;
+
+    /**
+     * Represents if a stage is lost.
+     */
     public const IS_LOST_STAGE = true;
+
+    /**
+     * Represents if a stage is not lost.
+     */
     public const NOT_LOST_STAGE = false;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array<int,string>
      */
     protected $fillable = [
         'pipeline_id',
@@ -59,7 +83,7 @@ class PipelineStage extends Model
     /**
      * The attributes that should be cast.
      *
-     * @var array<string, string>
+     * @var array<string,string>
      */
     protected $casts = [
         'is_won_stage' => 'boolean',
@@ -75,7 +99,7 @@ class PipelineStage extends Model
     /**
      * Get the pipeline that owns the stage.
      *
-     * @return BelongsTo
+     * @return BelongsTo<Pipeline,PipelineStage>
      */
     public function pipeline(): BelongsTo
     {
@@ -85,7 +109,7 @@ class PipelineStage extends Model
     /**
      * Get the deals for the stage.
      *
-     * @return HasMany
+     * @return HasMany<Deal>
      */
     public function deals(): HasMany
     {
@@ -132,7 +156,7 @@ class PipelineStage extends Model
     /**
      * Get the user that created the stage.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,PipelineStage>
      */
     public function creator(): BelongsTo
     {
@@ -142,7 +166,7 @@ class PipelineStage extends Model
     /**
      * Get the user that updated the stage.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,PipelineStage>
      */
     public function updater(): BelongsTo
     {
@@ -152,7 +176,7 @@ class PipelineStage extends Model
     /**
      * Get the user that deleted the stage.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,PipelineStage>
      */
     public function deleter(): BelongsTo
     {
@@ -162,7 +186,7 @@ class PipelineStage extends Model
     /**
      * Get the user that restored the stage.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,PipelineStage>
      */
     public function restorer(): BelongsTo
     {
@@ -172,7 +196,7 @@ class PipelineStage extends Model
     /**
      * Get all of the pipeline stages attachments.
      *
-     * @return MorphMany
+     * @return MorphMany<Attachment
      */
     public function attachments(): MorphMany
     {
@@ -182,7 +206,7 @@ class PipelineStage extends Model
     /**
      * Get all of the pipeline stages activities.
      *
-     * @return MorphMany
+     * @return MorphMany<Activity>
      */
     public function activities(): MorphMany
     {
@@ -192,7 +216,7 @@ class PipelineStage extends Model
     /**
      * Get all of the pipeline stages tasks.
      *
-     * @return MorphMany
+     * @return MorphMany<Task>
      */
     public function tasks(): MorphMany
     {
@@ -202,7 +226,7 @@ class PipelineStage extends Model
     /**
      * Get all of the pipeline stages notes.
      *
-     * @return MorphMany
+     * @return MorphMany<Note>
      */
     public function notes(): MorphMany
     {
@@ -210,9 +234,7 @@ class PipelineStage extends Model
     }
 
     /**
-     * Get the pipeline stage name.
-     *
-     * Applies the test prefix when the pipeline stage is marked as a test.
+     * Get the pipeline stage name, applies the test prefix when the pipeline stage is marked as a test.
      *
      * @param  string|null  $value  The raw pipeline stage name from
      * the database.

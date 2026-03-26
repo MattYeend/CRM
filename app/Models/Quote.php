@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasTestPrefix;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,8 +11,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Quote extends Model
 {
-    /** @use HasFactory<\Database\Factories\QuoteFactory> */
-    use HasFactory, SoftDeletes;
+    /**
+     * @use HasFactory<\Database\Factories\QuoteFactory>
+     * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
+     * @use HasTestPrefix<\App\Traits\HasTestPrefix>
+     */
+    use HasFactory,
+        SoftDeletes,
+        HasTestPrefix;
 
     /**
      * The attributes that are mass assignable.
@@ -54,7 +61,7 @@ class Quote extends Model
     /**
      * Deal the quote belongs to.
      *
-     * @return BelongsTo
+     * @return BelongsTo<Deal,Quote>
      */
     public function deal(): BelongsTo
     {
@@ -64,7 +71,7 @@ class Quote extends Model
     /**
      * Get the user that created the product deal.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Quote>
      */
     public function creator(): BelongsTo
     {
@@ -74,7 +81,7 @@ class Quote extends Model
     /**
      * Get the user that updated the product deal.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Quote>
      */
     public function updater(): BelongsTo
     {
@@ -84,7 +91,7 @@ class Quote extends Model
     /**
      * Get the user that deleted the product deal.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Quote>
      */
     public function deleter(): BelongsTo
     {
@@ -94,7 +101,7 @@ class Quote extends Model
     /**
      * Get the user that restored the product deal.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Quote>
      */
     public function restorer(): BelongsTo
     {
@@ -104,7 +111,7 @@ class Quote extends Model
     /**
      * Get the product for the quote.
      *
-     * @return BelongToMany
+     * @return BelongToMany<Product>
      */
     public function products(): BelongsToMany
     {

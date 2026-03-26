@@ -81,7 +81,7 @@ class User extends Authenticatable
     /**
      * Get the attributes that should be cast.
      *
-     * @return array<string, string>
+     * @return array<string,string>
      */
     protected $casts = [
         'permissions' => 'array',
@@ -99,7 +99,7 @@ class User extends Authenticatable
     /**
      * The roles that belong to the user.
      *
-     * @return BelongsTo
+     * @return BelongsTo<Role,User>
      */
     public function role(): BelongsTo
     {
@@ -151,7 +151,7 @@ class User extends Authenticatable
     /**
      * Get all permissions for the user, caching the result for 60 minutes.
      *
-     * @return array<int, string>
+     * @return array<int,string>
      */
     public function getAllPermissions(): array
     {
@@ -207,7 +207,7 @@ class User extends Authenticatable
     /**
      * The deals owned by the user.
      *
-     * @return HasMany
+     * @return HasMany<Deal>
      */
     public function deals(): HasMany
     {
@@ -217,7 +217,7 @@ class User extends Authenticatable
     /**
      * The tasks assigned to the user.
      *
-     * @return HasMany
+     * @return HasMany<Task>
      */
     public function tasks(): HasMany
     {
@@ -227,7 +227,7 @@ class User extends Authenticatable
     /**
      * Get notes with the user id.
      *
-     * @return HasMany
+     * @return HasMany<Note>
      */
     public function notes(): HasMany
     {
@@ -237,7 +237,7 @@ class User extends Authenticatable
     /**
      * The learnings belonging to the user.
      *
-     * @return BelongsToMany
+     * @return BelongsToMany<Learning>
      */
     public function learnings(): BelongsToMany
     {
@@ -253,7 +253,7 @@ class User extends Authenticatable
     /**
      * Get all of the user attachments.
      *
-     * @return MorphMany
+     * @return MorphMany<Attachment>
      */
     public function attachment(): MorphMany
     {
@@ -263,7 +263,7 @@ class User extends Authenticatable
     /**
      * Get all of the user activities.
      *
-     * @return MorphMany
+     * @return MorphMany<Activity>
      */
     public function activity(): MorphMany
     {
@@ -273,7 +273,7 @@ class User extends Authenticatable
     /**
      * Get all of the user tasks.
      *
-     * @return MorphMany
+     * @return MorphMany<Task>
      */
     public function tasking(): MorphMany
     {
@@ -283,7 +283,7 @@ class User extends Authenticatable
     /**
      * Get all of the user notes.
      *
-     * @return MorphMany
+     * @return MorphMany<Note>
      */
     public function note(): MorphMany
     {
@@ -293,7 +293,7 @@ class User extends Authenticatable
     /**
      * Get the job title of the user
      *
-     * @return BelongsTo
+     * @return BelongsTo<JobTitle,User>
      */
     public function jobTitle(): BelongsTo
     {
@@ -301,9 +301,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the user name.
-     *
-     * Applies the test prefix when the user is marked as a test.
+     * Get the user name, applies the test prefix when the user is marked as a test.
      *
      * @param  string|null  $value  The raw user title from the database.
      *

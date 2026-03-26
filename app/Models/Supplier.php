@@ -74,7 +74,7 @@ class Supplier extends Model
     /**
      * Get the parts the belong to the supplier
      *
-     * @return BelongsToMany
+     * @return BelongsToMany<Part>
      */
     public function parts(): BelongsToMany
     {
@@ -91,7 +91,7 @@ class Supplier extends Model
     /**
      * Get the part supplier of the supplier
      *
-     * @return HasMany
+     * @return HasMany<PartSupplier>
      */
     public function partSuppliers(): HasMany
     {
@@ -101,7 +101,7 @@ class Supplier extends Model
     /**
      * Get the user who created the task.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Supplier>
      */
     public function creator(): BelongsTo
     {
@@ -111,7 +111,7 @@ class Supplier extends Model
     /**
      * Get the user who last updated the task.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Supplier>
      */
     public function updater(): BelongsTo
     {
@@ -121,7 +121,7 @@ class Supplier extends Model
     /**
      * Get the user who deleted the task.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Supplier>
      */
     public function deleter(): BelongsTo
     {
@@ -131,7 +131,7 @@ class Supplier extends Model
     /**
      * Get the user that restored the task.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User,Supplier>
      */
     public function restorer(): BelongsTo
     {

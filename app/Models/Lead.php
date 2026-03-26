@@ -23,7 +23,7 @@ class Lead extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array<int,string>
      */
     protected $fillable = [
         'title',
@@ -50,7 +50,7 @@ class Lead extends Model
     /**
      * The attributes that should be cast to native types.
      *
-     * @var array<string, string>
+     * @var array<string,string>
      */
     protected $casts = [
         'is_test' => 'boolean',

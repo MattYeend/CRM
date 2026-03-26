@@ -13,10 +13,18 @@ class Role extends Model
     use HasFactory;
 
     /**
-     * Constants for predefined roles.
+     * User role.
      */
     public const ROLE_USER = 1;
+
+    /**
+     * Admin role.
+     */
     public const ROLE_ADMIN = 2;
+
+    /**
+     * Super Admin role.
+     */
     public const ROLE_SUPER_ADMIN = 3;
 
     /**
@@ -29,7 +37,7 @@ class Role extends Model
     /**
      * The users that belong to the role.
      *
-     * @return HasMany
+     * @return HasMany<User>
      */
     public function users(): HasMany
     {
@@ -39,7 +47,7 @@ class Role extends Model
     /**
      * The permissions that belong to the role.
      *
-     * @return BelongsToMany
+     * @return BelongsToMany<Permission>
      */
     public function permissions(): BelongsToMany
     {
@@ -49,7 +57,7 @@ class Role extends Model
     /**
      * Get all of the role attachments.
      *
-     * @return MorphMany
+     * @return MorphMany<Attachment>
      */
     public function attachments(): MorphMany
     {
@@ -59,7 +67,7 @@ class Role extends Model
     /**
      * Get all of the role activities.
      *
-     * @return MorphMany
+     * @return MorphMany<Activity>
      */
     public function activities(): MorphMany
     {
@@ -69,7 +77,7 @@ class Role extends Model
     /**
      * Get all of the role tasks.
      *
-     * @return MorphMany
+     * @return MorphMany<Task>
      */
     public function tasks(): MorphMany
     {
@@ -79,7 +87,7 @@ class Role extends Model
     /**
      * Get all of the role notes.
      *
-     * @return MorphMany
+     * @return MorphMany<Note>
      */
     public function notes(): MorphMany
     {
