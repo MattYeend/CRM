@@ -44,13 +44,6 @@ class StorePartCategoryRequest extends FormRequest
                 'max:255',
                 Rule::unique('part_categories', 'name'),
             ],
-            'slug' => [
-                'required',
-                'string',
-                'max:255',
-                'alpha_dash',
-                Rule::unique('part_categories', 'slug'),
-            ],
         ];
     }
 

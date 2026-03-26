@@ -39,7 +39,7 @@ class UpdatePartCategoryRequest extends FormRequest
     {
         return array_merge(
             $this->parentRules(),
-            $this->nameAndSlugRules(),
+            $this->nameRules(),
         );
     }
 
@@ -61,11 +61,11 @@ class UpdatePartCategoryRequest extends FormRequest
         ];
     }
     /**
-     * Name and slug rules
+     * Name rules
      *
      * @return array
      */
-    private function nameAndSlugRules(): array
+    private function nameRules(): array
     {
         $partCategory = $this->route('partCategory');
 
@@ -75,14 +75,6 @@ class UpdatePartCategoryRequest extends FormRequest
                 'string',
                 'max:255',
                 Rule::unique('part_categories', 'name')
-                    ->ignore($partCategory),
-            ],
-            'slug' => [
-                'sometimes',
-                'string',
-                'max:255',
-                'alpha_dash',
-                Rule::unique('part_categories', 'slug')
                     ->ignore($partCategory),
             ],
         ];

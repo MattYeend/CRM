@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class PartCategory extends Model
 {
@@ -28,7 +29,6 @@ class PartCategory extends Model
     protected $fillable = [
         'parent_id',
         'name',
-        'slug',
         'description',
         'is_test',
         'meta',
@@ -69,5 +69,20 @@ class PartCategory extends Model
     public function parts(): HasMany
     {
         return $this->hasMany(Part::class, 'category_id');
+    }
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function (PartCategory $partCategory) {
+            $partCategory->slug = Str::slug($partCategory->name);
+        });
+
+        static::updating(function (PartCategory $partCategory) {
+            if ($partCategory->isDirty('name')) {
+                $partCategory->slug = Str::slug($partCategory->name);
+            }
+        });
     }
 }

@@ -23,7 +23,6 @@ class PartCategoryFactory extends Factory
         return [
             'parent_id' => null,
             'name' => ucfirst($name),
-            'slug' => Str::slug($name),
             'description' => fake()->sentence(),
             'created_by' => User::inRandomOrder()->first()?->id ?? User::factory()->create()->id,
         ];;
