@@ -25,7 +25,7 @@ class PartSupplierSeeder extends Seeder
                     'unit_cost' => fake()->randomFloat(2, 1, 100),
                     'lead_time_days' => fake()->numberBetween(1, 30),
                     'is_preferred' => fake()->boolean(20),
-                    'is_test' => false,
+                    'is_test' => true,
                     'meta' => json_encode(['notes' => fake()->sentence()]),
                     'created_by' => 1,
                     'updated_by' => 1,
