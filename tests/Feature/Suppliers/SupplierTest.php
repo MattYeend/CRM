@@ -87,6 +87,26 @@ test('index filters suppliers by active status', function () {
     $this->assertCount(5, $response->json('data'));
 });
 
+test('index returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.suppliers.index'));
+
+    $response->assertStatus(403);
+});
+
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Show ---------------------------
+ * -------------------------------------------------------------
+ */
 test('show returns a single supplier', function () {
     $supplier = Supplier::factory()->create();
 
@@ -105,11 +125,22 @@ test('show returns a single supplier', function () {
     ]);
 });
 
-/**
- * -------------------------------------------------------------
- * --------------------------- Show ---------------------------
- * -------------------------------------------------------------
- */
+test('show returns 403 when user lacks permission', function () {
+    $supplier = Supplier::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.suppliers.show', $supplier->id));
+
+    $response->assertStatus(403);
+});
+
 test('show returns 404 for non-existent supplier', function () {
     $response = $this->getJson(route('api.suppliers.show', 999999));
 
@@ -142,6 +173,35 @@ test('store creates a new supplier and returns 201', function () {
         'name' => 'Test Supplier Ltd',
         'code' => 'SUP-TEST-001',
     ]);
+});
+
+test('store sets created_by to the authenticated user', function () {
+    $payload = [
+        'name' => 'Audited Supplier',
+    ];
+
+    $this->postJson(route('api.suppliers.store'), $payload);
+
+    $this->assertDatabaseHas('suppliers', [
+        'name' => 'Audited Supplier',
+        'created_by' => $this->auth->id,
+    ]);
+});
+
+test('store returns 403 when user lacks permission', function () {
+    $supplier = Supplier::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.suppliers.store', $supplier->id));
+
+    $response->assertStatus(403);
 });
 
 test('store returns 422 when required fields are missing', function () {
@@ -189,19 +249,6 @@ test('store returns 422 when website is invalid', function () {
     $response->assertJsonValidationErrors('website');
 });
 
-test('store sets created_by to the authenticated user', function () {
-    $payload = [
-        'name' => 'Audited Supplier',
-    ];
-
-    $this->postJson(route('api.suppliers.store'), $payload);
-
-    $this->assertDatabaseHas('suppliers', [
-        'name' => 'Audited Supplier',
-        'created_by' => $this->auth->id,
-    ]);
-});
-
 /**
  * --------------------------------------------------------------
  * --------------------------- Update ---------------------------
@@ -229,24 +276,6 @@ test('update modifies an existing supplier', function () {
     ]);
 });
 
-test('update returns 404 for non-existent supplier', function () {
-    $response = $this->putJson(route('api.suppliers.update', 999999), ['name' => 'Ghost']);
-
-    $response->assertStatus(404);
-});
-
-test('update returns 422 when code is not unique to another supplier', function () {
-    Supplier::factory()->create(['code' => 'SUP-TAKEN-001']);
-    $supplier = Supplier::factory()->create(['code' => 'SUP-OWN-001']);
-
-    $response = $this->putJson(route('api.suppliers.update', $supplier), [
-        'code' => 'SUP-TAKEN-001',
-    ]);
-
-    $response->assertStatus(422);
-    $response->assertJsonValidationErrors('code');
-});
-
 test('update allows supplier to keep its own code', function () {
     $supplier = Supplier::factory()->create(['code' => 'SUP-OWN-001']);
 
@@ -269,6 +298,40 @@ test('update sets updated_by to the authenticated user', function () {
     ]);
 });
 
+test('update returns 403 when user lacks permission', function () {
+    $supplier = Supplier::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.suppliers.update', $supplier->id));
+
+    $response->assertStatus(403);
+});
+
+test('update returns 404 for non-existent supplier', function () {
+    $response = $this->putJson(route('api.suppliers.update', 999999), ['name' => 'Ghost']);
+
+    $response->assertStatus(404);
+});
+
+test('update returns 422 when code is not unique to another supplier', function () {
+    Supplier::factory()->create(['code' => 'SUP-TAKEN-001']);
+    $supplier = Supplier::factory()->create(['code' => 'SUP-OWN-001']);
+
+    $response = $this->putJson(route('api.suppliers.update', $supplier), [
+        'code' => 'SUP-TAKEN-001',
+    ]);
+
+    $response->assertStatus(422);
+    $response->assertJsonValidationErrors('code');
+});
+
 /**
  * -------------------------------------------------------------
  * -------------------------- Destroy --------------------------
@@ -283,12 +346,6 @@ test('destroy soft deletes a supplier and returns 204', function () {
     $this->assertSoftDeleted('suppliers', ['id' => $supplier->id]);
 });
 
-test('destroy returns 404 for non-existent supplier', function () {
-    $response = $this->deleteJson(route('api.suppliers.destroy', 999999));
-
-    $response->assertStatus(404);
-});
-
 test('destroy sets deleted_by to the authenticated user', function () {
     $supplier = Supplier::factory()->create();
 
@@ -298,6 +355,28 @@ test('destroy sets deleted_by to the authenticated user', function () {
         'id' => $supplier->id,
         'deleted_by' => $this->auth->id,
     ]);
+});
+
+test('destroy returns 403 when user lacks permission', function () {
+    $supplier = Supplier::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.suppliers.destroy', $supplier->id));
+
+    $response->assertStatus(403);
+});
+
+test('destroy returns 404 for non-existent supplier', function () {
+    $response = $this->deleteJson(route('api.suppliers.destroy', 999999));
+
+    $response->assertStatus(404);
 });
 
 /**
@@ -318,6 +397,34 @@ test('restore recovers a soft deleted supplier', function () {
     $this->assertDatabaseHas('suppliers', ['id' => $supplier->id, 'deleted_at' => null]);
 });
 
+test('restore sets restored_by to the authenticated user', function () {
+    $supplier = Supplier::factory()->create(['created_by' => $this->auth->id]);
+    $supplier->delete();
+
+    $this->postJson(route('api.suppliers.restore', $supplier->id));
+
+    $this->assertDatabaseHas('suppliers', [
+        'id' => $supplier->id,
+        'restored_by' => $this->auth->id,
+    ]);
+});
+
+test('restore returns 403 when user lacks permission', function () {
+    $supplier = Supplier::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->postJson(route('api.suppliers.restore', $supplier->id));
+
+    $response->assertStatus(403);
+});
+
 test('restore returns 404 for non-existent supplier', function () {
     $response = $this->postJson(route('api.suppliers.restore', 999999));
 
@@ -330,16 +437,4 @@ test('restore returns 404 when supplier is not deleted', function () {
     $response = $this->postJson(route('api.suppliers.restore', $supplier->id));
 
     $response->assertStatus(404);
-});
-
-test('restore sets restored_by to the authenticated user', function () {
-    $supplier = Supplier::factory()->create(['created_by' => $this->auth->id]);
-    $supplier->delete();
-
-    $this->postJson(route('api.suppliers.restore', $supplier->id));
-
-    $this->assertDatabaseHas('suppliers', [
-        'id' => $supplier->id,
-        'restored_by' => $this->auth->id,
-    ]);
 });

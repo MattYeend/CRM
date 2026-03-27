@@ -56,6 +56,7 @@ test('index returns paginated tasks with relations', function () {
         'created_by' => $creator->id,
         'taskable_type' => Deal::class,
         'taskable_id' => $taskable->id,
+        'created_by' => $this->auth->id,
     ]);
 
     $response = $this->getJson(route('api.tasks.index', ['per_page' => 5]));
@@ -69,6 +70,39 @@ test('index returns paginated tasks with relations', function () {
     $this->assertArrayHasKey('assignee', $first);
     $this->assertArrayHasKey('creator', $first);
     $this->assertArrayHasKey('taskable', $first);
+});
+
+test('index returns all tasks when no pagination specified', function () {
+    $assignee = User::factory()->create();
+    $creator = User::factory()->create();
+    $taskable = Deal::factory()->create();
+
+    Task::factory()->count(3)->create([
+        'assigned_to' => $assignee->id,
+        'created_by' => $creator->id,
+        'taskable_type' => Deal::class,
+        'taskable_id' => $taskable->id,
+        'created_by' => $this->auth->id,
+    ]);
+    $response = $this->getJson(route('api.tasks.index'));
+
+    $response->assertStatus(200);
+    $this->assertCount(3, $response->json('data'));
+});
+
+test('index returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.tasks.index'));
+
+    $response->assertStatus(403);
 });
 
 /**
@@ -107,6 +141,38 @@ test('show returns a task with assignee, creator and taskable loaded', function 
     ]);
 });
 
+test('show returns 403 when user lacks permission', function () {
+    $assignee = User::factory()->create();
+    $creator = User::factory()->create();
+    $taskable = Deal::factory()->create();
+
+    $task = Task::factory()->create([
+        'assigned_to' => $assignee->id,
+        'created_by' => $creator->id,
+        'taskable_type' => Deal::class,
+        'taskable_id' => $taskable->id,
+        'created_by' => $this->auth->id,
+    ]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.tasks.show', $task->id));
+
+    $response->assertStatus(403);
+});
+
+test('show returns 404 for non-existent task', function () {
+    $response = $this->getJson(route('api.tasks.show', 999999));
+
+    $response->assertStatus(404);
+});
+
 /**
  * -------------------------------------------------------------
  * --------------------------- Store ---------------------------
@@ -139,6 +205,32 @@ test('store creates a task, handles polymorphic assignment and returns 201', fun
     $response->assertJsonStructure(['taskable' => []]);
 });
 
+test('store returns 403 when user lacks permission', function () {
+    $assignee = User::factory()->create();
+    $creator = User::factory()->create();
+    $taskable = Deal::factory()->create();
+
+    $task = Task::factory()->create([
+        'assigned_to' => $assignee->id,
+        'created_by' => $creator->id,
+        'taskable_type' => Deal::class,
+        'taskable_id' => $taskable->id,
+        'created_by' => $this->auth->id,
+    ]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.tasks.store', $task->id));
+
+    $response->assertStatus(403);
+});
+
 /**
  * --------------------------------------------------------------
  * --------------------------- Update ---------------------------
@@ -157,6 +249,7 @@ test('update modifies an existing task and returns updated resource', function (
         'taskable_id' => $taskable->id,
         'priority' => 'low',
         'status' => 'pending',
+        'created_by' => $this->auth->id,
     ]);
 
     $payload = [
@@ -172,6 +265,38 @@ test('update modifies an existing task and returns updated resource', function (
     $this->assertDatabaseHas('tasks', ['id' => $task->id, 'title' => 'New title', 'status' => 'completed']);
 });
 
+test('update returns 403 when user lacks permission', function () {
+    $assignee = User::factory()->create();
+    $creator = User::factory()->create();
+    $taskable = Deal::factory()->create();
+
+    $task = Task::factory()->create([
+        'assigned_to' => $assignee->id,
+        'created_by' => $creator->id,
+        'taskable_type' => Deal::class,
+        'taskable_id' => $taskable->id,
+        'created_by' => $this->auth->id,
+    ]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.tasks.update', $task->id));
+
+    $response->assertStatus(403);
+});
+
+test('update returns 404 for non-existent task', function () {
+    $response = $this->putJson(route('api.tasks.update', 999999), ['name' => 'Ghost']);
+
+    $response->assertStatus(404);
+});
+
 /**
  * -------------------------------------------------------------
  * -------------------------- Destroy --------------------------
@@ -183,6 +308,7 @@ test('destroy deletes the task', function () {
     $task = Task::factory()->create([
         'taskable_type' => Deal::class,
         'taskable_id' => $taskable->id,
+        'created_by' => $this->auth->id
     ]);
 
     $response = $this->deleteJson(route('api.tasks.destroy', $task));
@@ -192,6 +318,34 @@ test('destroy deletes the task', function () {
     $this->assertSoftDeleted('tasks', ['id' => $task->id]);
 });
 
+
+test('destroy returns 403 when user lacks permission', function () {
+    $taskable = Deal::factory()->create();
+
+    $task = Task::factory()->create([
+        'taskable_type' => Deal::class,
+        'taskable_id' => $taskable->id,
+        'created_by' => $this->auth->id,
+    ]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.tasks.destroy', $task->id));
+
+    $response->assertStatus(403);
+});
+
+test('destroy returns 404 for non-existent task', function () {
+    $response = $this->deleteJson(route('api.tasks.destroy', 999999));
+
+    $response->assertStatus(404);
+});
 /**
  * -------------------------------------------------------------
  * -------------------------- Restore --------------------------
@@ -207,6 +361,7 @@ test('restore deleted tasks', function () {
         'assigned_to' => $assignee->id,
         'taskable_type' => Deal::class,
         'taskable_id' => $taskable->id,
+        'created_by' => $this->auth->id,
     ]);
 
     $task->delete();
@@ -226,4 +381,54 @@ test('restore deleted tasks', function () {
         'deleted_at' => null,
     ]);
 
+});
+
+test('restore returns 403 when user lacks permission', function () {
+    $assignee = User::factory()->create();
+    $creator = $this->auth;
+    $taskable = Deal::factory()->create();
+
+    $task = Task::factory()->create([
+        'created_by' => $creator->id,
+        'assigned_to' => $assignee->id,
+        'taskable_type' => Deal::class,
+        'taskable_id' => $taskable->id,
+        'created_by' => $this->auth->id,
+    ]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->postJson(route('api.tasks.restore', $task->id));
+
+    $response->assertStatus(403);
+});
+
+test('restore returns 404 for non-existent task', function () {
+    $response = $this->postJson(route('api.tasks.restore', 999999));
+
+    $response->assertStatus(404);
+});
+
+test('restore returns 404 when task is not deleted', function () {
+    $assignee = User::factory()->create();
+    $creator = $this->auth;
+    $taskable = Deal::factory()->create();
+
+    $task = Task::factory()->create([
+        'created_by' => $creator->id,
+        'assigned_to' => $assignee->id,
+        'taskable_type' => Deal::class,
+        'taskable_id' => $taskable->id,
+        'created_by' => $this->auth->id,
+    ]);
+
+    $response = $this->postJson(route('api.tasks.restore', $task->id));
+
+    $response->assertStatus(404);
 });

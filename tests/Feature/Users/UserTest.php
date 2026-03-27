@@ -78,6 +78,30 @@ test('index calls query service and returns list', function () {
     $response->assertJsonFragment(['name' => 'Alice', 'email' => 'alice@example.test']);
 });
 
+test('index returns all users when no pagination specified', function () {
+    User::factory()->count(3)->create();
+
+    $response = $this->getJson(route('api.users.index'));
+
+    $response->assertStatus(200);
+    $this->assertCount(4, $response->json('data'));
+});
+
+test('index returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.users.index'));
+
+    $response->assertStatus(403);
+});
+
 /**
  * --------------------------------------------------------------
  * ---------------------------- Show ----------------------------
@@ -111,6 +135,28 @@ test('show calls query service and returns single user', function () {
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $user->id, 'name' => 'Bob']);
     $response->assertJsonStructure(['id', 'name', 'email', 'role']);
+});
+
+test('show returns 403 when user lacks permission', function () {
+    $showUser = User::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.users.show', $showUser->id));
+
+    $response->assertStatus(403);
+});
+
+test('show returns 404 for non-existent user', function () {
+    $response = $this->getJson(route('api.users.show', 999999));
+
+    $response->assertStatus(404);
 });
 
 /**
@@ -148,6 +194,22 @@ test('store calls management service and returns 201 with user', function () {
     $response->assertJsonFragment(['id' => 123, 'name' => 'New User', 'email' => 'new@example.test']);
 });
 
+test('store returns 403 when user lacks permission', function () {
+    $showUser = User::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.users.store', $showUser->id));
+
+    $response->assertStatus(403);
+});
+
 /**
  * --------------------------------------------------------------
  * --------------------------- Update ---------------------------
@@ -182,6 +244,28 @@ test('update calls management service and returns updated user', function () {
     $response->assertJsonFragment(['id' => $existing->id, 'name' => 'Updated Name']);
 });
 
+test('update returns 403 when user lacks permission', function () {
+    $showUser = User::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.users.update', $showUser->id));
+
+    $response->assertStatus(403);
+});
+
+test('update returns 404 for non-existent user', function () {
+    $response = $this->putJson(route('api.users.update', 999999), ['name' => 'Ghost']);
+
+    $response->assertStatus(404);
+});
+
 /**
  * -------------------------------------------------------------
  * -------------------------- Destroy --------------------------
@@ -203,6 +287,28 @@ test('destroy calls management service and returns 204', function () {
     $response = $this->deleteJson(route('api.users.destroy', $existing));
 
     $response->assertStatus(204);
+});
+
+test('destroy returns 403 when user lacks permission', function () {
+    $showUser = User::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.users.destroy', $showUser->id));
+
+    $response->assertStatus(403);
+});
+
+test('destroy returns 404 for non-existent user', function () {
+    $response = $this->deleteJson(route('api.users.destroy', 999999));
+
+    $response->assertStatus(404);
 });
 
 /**
@@ -231,4 +337,34 @@ test('restore calls management service and returns restored user', function () {
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => 77, 'name' => 'Restored']);
+});
+
+test('restore returns 403 when user lacks permission', function () {
+    $showUser = User::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->postJson(route('api.users.restore', $showUser->id));
+
+    $response->assertStatus(403);
+});
+
+test('restore returns 404 for non-existent user', function () {
+    $response = $this->postJson(route('api.users.restore', 999999));
+
+    $response->assertStatus(404);
+});
+
+test('restore returns 404 when user is not deleted', function () {
+    $user = User::factory()->create();
+
+    $response = $this->postJson(route('api.users.restore', $user->id));
+
+    $response->assertStatus(404);
 });

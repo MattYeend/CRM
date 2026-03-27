@@ -72,6 +72,30 @@ test('index returns paginated quotes with relations', function () {
     $this->assertArrayHasKey('creator', $first);
 });
 
+test('index returns all quotes when no pagination specified', function () {
+    Quote::factory()->count(3)->create();
+
+    $response = $this->getJson(route('api.quotes.index'));
+
+    $response->assertStatus(200);
+    $this->assertCount(3, $response->json('data'));
+});
+
+test('index returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.quotes.index'));
+
+    $response->assertStatus(403);
+});
+
 /**
  * --------------------------------------------------------------
  * ---------------------------- Show ----------------------------
@@ -107,6 +131,28 @@ test('show returns a quote with deal and creator loaded', function () {
     ]);
 });
 
+test('show returns 403 when user lacks permission', function () {
+    $quote = Quote::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.quotes.show', $quote->id));
+
+    $response->assertStatus(403);
+});
+
+test('show returns 404 for non-existent quote', function () {
+    $response = $this->getJson(route('api.quotes.show', 999999));
+
+    $response->assertStatus(404);
+});
+
 /**
  * -------------------------------------------------------------
  * --------------------------- Store ---------------------------
@@ -137,6 +183,22 @@ test('store creates a quote and returns 201', function () {
         'deal_id' => $deal->id,
         'currency' => 'GBP',
     ]);
+});
+
+test('store returns 403 when user lacks permission', function () {
+    $quote = Quote::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.quotes.store', $quote->id));
+
+    $response->assertStatus(403);
 });
 
 /**
@@ -177,6 +239,28 @@ test('update modifies an existing quote', function () {
     ]);
 });
 
+test('update returns 403 when user lacks permission', function () {
+    $quote = Quote::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.quotes.update', $quote->id));
+
+    $response->assertStatus(403);
+});
+
+test('update returns 404 for non-existent quote', function () {
+    $response = $this->putJson(route('api.quotes.update', 999999), ['name' => 'Ghost']);
+
+    $response->assertStatus(404);
+});
+
 /**
  * -------------------------------------------------------------
  * -------------------------- Destroy --------------------------
@@ -196,6 +280,28 @@ test('destroy deletes the quote', function () {
     $this->assertSoftDeleted('quotes', [
         'id' => $quote->id,
     ]);
+});
+
+test('destroy returns 403 when user lacks permission', function () {
+    $quote = Quote::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.quotes.destroy', $quote->id));
+
+    $response->assertStatus(403);
+});
+
+test('destroy returns 404 for non-existent quote', function () {
+    $response = $this->deleteJson(route('api.quotes.destroy', 999999));
+
+    $response->assertStatus(404);
 });
 
 /**
@@ -229,6 +335,36 @@ test('restore deleted quotes', function () {
         'id' => $quote->id,
         'deleted_at' => null,
     ]);
+});
+
+test('restore returns 403 when user lacks permission', function () {
+    $quote = Quote::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->postJson(route('api.quotes.restore', $quote->id));
+
+    $response->assertStatus(403);
+});
+
+test('restore returns 404 for non-existent quote', function () {
+    $response = $this->postJson(route('api.quotes.restore', 999999));
+
+    $response->assertStatus(404);
+});
+
+test('restore returns 404 when quote is not deleted', function () {
+    $quote = Quote::factory()->create();
+
+    $response = $this->postJson(route('api.quotes.restore', $quote->id));
+
+    $response->assertStatus(404);
 });
 
 /**

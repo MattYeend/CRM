@@ -64,6 +64,21 @@ test('index returns all part categories when no pagination specified', function 
     $this->assertCount(3, $response->json('data'));
 });
 
+test('index returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.partCategories.index'));
+
+    $response->assertStatus(403);
+});
+
 /**
  * --------------------------------------------------------------
  * ---------------------------- Show ----------------------------
@@ -78,6 +93,23 @@ test('show returns a single part category', function () {
     $response->assertJsonFragment(['id' => $category->id, 'name' => $category->name]);
     $response->assertJsonStructure(['id', 'name', 'slug', 'description', 'is_test', 'parent_id']);
 });
+
+test('show returns 403 when user lacks permission', function () {
+    $partCategory = PartCategory::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.partCategories.show', $partCategory->id));
+
+    $response->assertStatus(403);
+});
+
 
 test('show returns 404 for non-existent part category', function () {
     $response = $this->getJson(route('api.partCategories.show', 999999));
@@ -119,6 +151,22 @@ test('store creates a child part category under a parent', function () {
     $response->assertStatus(201);
     $response->assertJsonFragment(['parent_id' => $parent->id]);
     $this->assertDatabaseHas('part_categories', ['parent_id' => $parent->id, 'slug' => 'child-category']);
+});
+
+test('store returns 403 when user lacks permission', function () {
+    $partCategory = PartCategory::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.partCategories.store', $partCategory->id));
+
+    $response->assertStatus(403);
 });
 
 test('store returns 422 when required fields are missing', function () {
@@ -185,6 +233,28 @@ test('update allows saving without changing name or slug', function () {
     $this->assertDatabaseHas('part_categories', ['id' => $category->id, 'name' => 'Stable Name']);
 });
 
+test('update returns 403 when user lacks permission', function () {
+    $partCategory = PartCategory::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.partCategories.update', $partCategory->id));
+
+    $response->assertStatus(403);
+});
+
+test('update returns 404 for non-existent part category', function () {
+    $response = $this->putJson(route('api.partCategories.update', 999999), ['name' => 'Ghost']);
+
+    $response->assertStatus(404);
+});
+
 test('update returns 422 when name conflicts with another category', function () {
     PartCategory::factory()->create(['name' => 'Taken Name']);
     $category = PartCategory::factory()->create(['name' => 'My Category']);
@@ -208,12 +278,6 @@ test('update returns 422 when parent_id is set to itself', function () {
     $response->assertJsonValidationErrors('parent_id');
 });
 
-test('update returns 404 for non-existent part category', function () {
-    $response = $this->putJson(route('api.partCategories.update', 999999), ['name' => 'Ghost']);
-
-    $response->assertStatus(404);
-});
-
 /**
  * -------------------------------------------------------------
  * -------------------------- Destroy --------------------------
@@ -226,6 +290,22 @@ test('destroy soft deletes a part category and returns 204', function () {
 
     $response->assertStatus(204);
     $this->assertSoftDeleted('part_categories', ['id' => $category->id]);
+});
+
+test('destroy returns 403 when user lacks permission', function () {
+    $partCategory = PartCategory::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.partCategories.destroy', $partCategory->id));
+
+    $response->assertStatus(403);
 });
 
 test('destroy returns 404 for non-existent part category', function () {
@@ -250,6 +330,22 @@ test('restore recovers a soft deleted part category', function () {
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $category->id]);
     $this->assertDatabaseHas('part_categories', ['id' => $category->id, 'deleted_at' => null]);
+});
+
+test('restore returns 403 when user lacks permission', function () {
+    $partCategory = PartCategory::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->postJson(route('api.partCategories.restore', $partCategory->id));
+
+    $response->assertStatus(403);
 });
 
 test('restore returns 404 for non-existent part category', function () {
