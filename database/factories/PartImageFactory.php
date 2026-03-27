@@ -21,10 +21,10 @@ class PartImageFactory extends Factory
     {
         return [
             'part_id' => Part::factory(),
-            'image' => 'parts/' . $this->faker->uuid() . '.jpg',
-            'alt' => $this->faker->words(3, true),
+            'image' => 'parts/' . fake()->uuid() . '.jpg',
+            'alt' => fake()->words(3, true),
             'is_primary' => false,
-            'sort_order' => $this->faker->numberBetween(0, 10),
+            'sort_order' => fake()->numberBetween(0, 10),
             'is_test' => true,
             'created_by' => User::inRandomOrder()->first()?->id ?? User::factory()->create()->id,
             'created_at' => now(),

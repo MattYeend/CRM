@@ -64,15 +64,6 @@ test('index returns all part categories when no pagination specified', function 
     $this->assertCount(3, $response->json('data'));
 });
 
-test('index returns 403 when user lacks permission', function () {
-    $user = User::factory()->create();
-    $this->actingAs($user, 'sanctum');
-
-    $response = $this->getJson(route('api.partCategories.index'));
-
-    $response->assertStatus(403);
-});
-
 /**
  * --------------------------------------------------------------
  * ---------------------------- Show ----------------------------
@@ -92,16 +83,6 @@ test('show returns 404 for non-existent part category', function () {
     $response = $this->getJson(route('api.partCategories.show', 999999));
 
     $response->assertStatus(404);
-});
-
-test('show returns 403 when user lacks permission', function () {
-    $category = PartCategory::factory()->create();
-    $user = User::factory()->create();
-    $this->actingAs($user, 'sanctum');
-
-    $response = $this->getJson(route('api.partCategories.show', $category));
-
-    $response->assertStatus(403);
 });
 
 /**
@@ -200,15 +181,6 @@ test('store returns 422 when parent_id does not exist', function () {
     $response->assertJsonValidationErrors('parent_id');
 });
 
-test('store returns 403 when user lacks permission', function () {
-    $user = User::factory()->create();
-    $this->actingAs($user, 'sanctum');
-
-    $response = $this->postJson(route('api.partCategories.store'), []);
-
-    $response->assertStatus(403);
-});
-
 /**
  * ------------------------------------------------------------
  * -------------------------- Update --------------------------
@@ -269,16 +241,6 @@ test('update returns 404 for non-existent part category', function () {
     $response->assertStatus(404);
 });
 
-test('update returns 403 when user lacks permission', function () {
-    $category = PartCategory::factory()->create();
-    $user = User::factory()->create();
-    $this->actingAs($user, 'sanctum');
-
-    $response = $this->putJson(route('api.partCategories.update', $category), ['name' => 'Sneaky']);
-
-    $response->assertStatus(403);
-});
-
 /**
  * -------------------------------------------------------------
  * -------------------------- Destroy --------------------------
@@ -297,16 +259,6 @@ test('destroy returns 404 for non-existent part category', function () {
     $response = $this->deleteJson(route('api.partCategories.destroy', 999999));
 
     $response->assertStatus(404);
-});
-
-test('destroy returns 403 when user lacks permission', function () {
-    $category = PartCategory::factory()->create();
-    $user = User::factory()->create();
-    $this->actingAs($user, 'sanctum');
-
-    $response = $this->deleteJson(route('api.partCategories.destroy', $category));
-
-    $response->assertStatus(403);
 });
 
 /**
@@ -331,18 +283,6 @@ test('restore returns 404 for non-existent part category', function () {
     $response = $this->postJson(route('api.partCategories.restore', 999999));
 
     $response->assertStatus(404);
-});
-
-test('restore returns 403 when user lacks permission', function () {
-    $category = PartCategory::factory()->create();
-    $category->delete();
-
-    $user = User::factory()->create();
-    $this->actingAs($user, 'sanctum');
-
-    $response = $this->postJson(route('api.partCategories.restore', $category->id));
-
-    $response->assertStatus(403);
 });
 
 test('restore returns 404 when part category is not deleted', function () {

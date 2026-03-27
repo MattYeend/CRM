@@ -56,8 +56,9 @@ class UpdatePartCategoryRequest extends FormRequest
         return [
             'parent_id' => [
                 'nullable',
+                'integer',
                 'exists:part_categories,id',
-                Rule::notIn([$partCategory]),
+                Rule::notIn([$partCategory->id]),
             ],
         ];
     }

@@ -18,7 +18,10 @@ class PartImageCreatorService
     {
         $user = $request->user();
         $data = $request->validated();
-
+        $data['image'] = $request->file('image')->store(
+            'part-images',
+            'public'
+        );
         $data['created_by'] = $user->id;
         $data['created_at'] = now();
 

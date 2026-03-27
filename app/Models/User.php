@@ -155,6 +155,10 @@ class User extends Authenticatable
      */
     public function getAllPermissions(): array
     {
+        if (app()->environment('testing')) {
+            return $this->permissions()->toArray();
+        }
+
         return Cache::remember(
             "user_permissions_{$this->id}",
             60,
@@ -311,5 +315,18 @@ class User extends Authenticatable
     public function getNameAttribute($value): string
     {
         return $this->prefixTest($value);
+    }
+
+    protected static function booted(): void
+    {
+        static::created(function (User $user) {
+            $user->clearPermissionCache();
+        });
+
+        static::updated(function (User $user) {
+            if ($user->wasChanged('role_id')) {
+                $user->clearPermissionCache();
+            }
+        });
     }
 }

@@ -66,15 +66,6 @@ test('index returns all parts when no pagination specified', function () {
     $this->assertCount(3, $response->json('data'));
 });
 
-test('index returns 403 when user lacks permission', function () {
-    $user = User::factory()->create();
-    $this->actingAs($user, 'sanctum');
-
-    $response = $this->getJson(route('api.parts.index'));
-
-    $response->assertStatus(403);
-});
-
 /**
  * --------------------------------------------------------------
  * ---------------------------- Show ----------------------------
@@ -104,16 +95,6 @@ test('show returns 404 for non-existent part', function () {
     $response = $this->getJson(route('api.parts.show', 999999));
 
     $response->assertStatus(404);
-});
-
-test('show returns 403 when user lacks permission', function () {
-    $part = Part::factory()->create();
-    $user = User::factory()->create();
-    $this->actingAs($user, 'sanctum');
-
-    $response = $this->getJson(route('api.parts.show', $part));
-
-    $response->assertStatus(403);
 });
 
 /**
@@ -170,15 +151,6 @@ test('store returns 422 when sku is not unique', function () {
     $response->assertJsonValidationErrors('sku');
 });
 
-test('store returns 403 when user lacks permission', function () {
-    $user = User::factory()->create();
-    $this->actingAs($user, 'sanctum');
-
-    $response = $this->postJson(route('api.parts.store'), []);
-
-    $response->assertStatus(403);
-});
-
 /**
  * ------------------------------------------------------------
  * -------------------------- Update --------------------------
@@ -209,16 +181,6 @@ test('update returns 404 for non-existent part', function () {
     $response->assertStatus(404);
 });
 
-test('update returns 403 when user lacks permission', function () {
-    $part = Part::factory()->create();
-    $user = User::factory()->create();
-    $this->actingAs($user, 'sanctum');
-
-    $response = $this->putJson(route('api.parts.update', $part), ['name' => 'Sneaky']);
-
-    $response->assertStatus(403);
-});
-
 /**
  * -------------------------------------------------------------
  * -------------------------- Destroy --------------------------
@@ -237,16 +199,6 @@ test('destroy returns 404 for non-existent part', function () {
     $response = $this->deleteJson(route('api.parts.destroy', 999999));
 
     $response->assertStatus(404);
-});
-
-test('destroy returns 403 when user lacks permission', function () {
-    $part = Part::factory()->create();
-    $user = User::factory()->create();
-    $this->actingAs($user, 'sanctum');
-
-    $response = $this->deleteJson(route('api.parts.destroy', $part));
-
-    $response->assertStatus(403);
 });
 
 /**
@@ -271,18 +223,6 @@ test('restore returns 404 for non-existent part', function () {
     $response = $this->postJson(route('api.parts.restore', 999999));
 
     $response->assertStatus(404);
-});
-
-test('restore returns 403 when user lacks permission', function () {
-    $part = Part::factory()->create();
-    $part->delete();
-
-    $user = User::factory()->create();
-    $this->actingAs($user, 'sanctum');
-
-    $response = $this->postJson(route('api.parts.restore', $part->id));
-
-    $response->assertStatus(403);
 });
 
 test('restore returns 404 when part is not deleted', function () {

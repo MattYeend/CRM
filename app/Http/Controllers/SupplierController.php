@@ -165,7 +165,13 @@ class SupplierController extends Controller
     public function restore(int $id): JsonResponse
     {
         $supplier = Supplier::withTrashed()->findOrFail($id);
+
         $this->authorize('restore', $supplier);
+        
+        if (! $supplier->trashed()) {
+            abort(404);
+        }
+
         $this->management->restore((int) $id);
 
         $user = auth()->user();

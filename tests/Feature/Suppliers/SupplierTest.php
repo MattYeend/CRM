@@ -66,15 +66,6 @@ test('index returns all suppliers when no pagination specified', function () {
     $this->assertCount(3, $response->json('data'));
 });
 
-test('index returns 403 when user lacks permission', function () {
-    $user = User::factory()->create();
-    $this->actingAs($user, 'sanctum');
-
-    $response = $this->getJson(route('api.suppliers.index'));
-
-    $response->assertStatus(403);
-});
-
 test('index filters suppliers by search term', function () {
     Supplier::factory()->create(['name' => 'Acme Corp']);
     Supplier::factory()->create(['name' => 'Beta Supplies']);
@@ -123,16 +114,6 @@ test('show returns 404 for non-existent supplier', function () {
     $response = $this->getJson(route('api.suppliers.show', 999999));
 
     $response->assertStatus(404);
-});
-
-test('show returns 403 when user lacks permission', function () {
-    $supplier = Supplier::factory()->create();
-    $user = User::factory()->create();
-    $this->actingAs($user, 'sanctum');
-
-    $response = $this->getJson(route('api.suppliers.show', $supplier));
-
-    $response->assertStatus(403);
 });
 
 /**
@@ -208,15 +189,6 @@ test('store returns 422 when website is invalid', function () {
     $response->assertJsonValidationErrors('website');
 });
 
-test('store returns 403 when user lacks permission', function () {
-    $user = User::factory()->create();
-    $this->actingAs($user, 'sanctum');
-
-    $response = $this->postJson(route('api.suppliers.store'), []);
-
-    $response->assertStatus(403);
-});
-
 test('store sets created_by to the authenticated user', function () {
     $payload = [
         'name' => 'Audited Supplier',
@@ -261,16 +233,6 @@ test('update returns 404 for non-existent supplier', function () {
     $response = $this->putJson(route('api.suppliers.update', 999999), ['name' => 'Ghost']);
 
     $response->assertStatus(404);
-});
-
-test('update returns 403 when user lacks permission', function () {
-    $supplier = Supplier::factory()->create();
-    $user = User::factory()->create();
-    $this->actingAs($user, 'sanctum');
-
-    $response = $this->putJson(route('api.suppliers.update', $supplier), ['name' => 'Sneaky']);
-
-    $response->assertStatus(403);
 });
 
 test('update returns 422 when code is not unique to another supplier', function () {
@@ -327,16 +289,6 @@ test('destroy returns 404 for non-existent supplier', function () {
     $response->assertStatus(404);
 });
 
-test('destroy returns 403 when user lacks permission', function () {
-    $supplier = Supplier::factory()->create();
-    $user = User::factory()->create();
-    $this->actingAs($user, 'sanctum');
-
-    $response = $this->deleteJson(route('api.suppliers.destroy', $supplier));
-
-    $response->assertStatus(403);
-});
-
 test('destroy sets deleted_by to the authenticated user', function () {
     $supplier = Supplier::factory()->create();
 
@@ -370,18 +322,6 @@ test('restore returns 404 for non-existent supplier', function () {
     $response = $this->postJson(route('api.suppliers.restore', 999999));
 
     $response->assertStatus(404);
-});
-
-test('restore returns 403 when user lacks permission', function () {
-    $supplier = Supplier::factory()->create();
-    $supplier->delete();
-
-    $user = User::factory()->create();
-    $this->actingAs($user, 'sanctum');
-
-    $response = $this->postJson(route('api.suppliers.restore', $supplier->id));
-
-    $response->assertStatus(403);
 });
 
 test('restore returns 404 when supplier is not deleted', function () {

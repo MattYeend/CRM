@@ -8,12 +8,15 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class SupplierQueryService
 {
+    private SupplierSearchService $search;
     private SupplierSortingService $sorting;
     private SupplierTrashFilterService $trashFilter;
     public function __construct(
+        SupplierSearchService $search,
         SupplierSortingService $sorting,
         SupplierTrashFilterService $trashFilter,
     ) {
+        $this->search = $search;
         $this->sorting = $sorting;
         $this->trashFilter = $trashFilter;
     }
@@ -37,6 +40,7 @@ class SupplierQueryService
             'partSuppliers',
         );
 
+        $this->search->applySearch($query, $request);
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
