@@ -187,6 +187,11 @@ class PermissionSeeder extends Seeder
             ['name' => 'partImages.restore.any', 'label' => 'Restore any part images'],
             ['name' => 'partImages.restore.own', 'label' => 'Restore own part images'],
 
+            // Part Stock Movements
+            ['name' => 'partStockMovements.view.all', 'label' => 'View part images'],
+            ['name' => 'partStockMovements.view.own', 'label' => 'View own part images'],
+            ['name' => 'partStockMovements.create', 'label' => 'Create part images'],
+
             // Permissions
             ['name' => 'permissions.view.all', 'label' => 'View permissions'],
             ['name' => 'permissions.view.own', 'label' => 'View own permissions'],

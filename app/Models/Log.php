@@ -221,6 +221,10 @@ class Log extends Model
     public const ACTION_PART_IMAGE_RESTORED = 157;
     public const ACTION_PART_IMAGE_VIEWED = 158;
 
+    // Part Stock Movement
+    public const ACTION_PART_STOCK_MOVEMENT_CREATED = 159;
+    public const ACTION_PART_STOCK_MOVEMENT_VIEWED = 160;
+
     // New Logging Actions should go here to be reviewed
     // by the development team for future releases.
     // Ensure to update the documentation accordingly.

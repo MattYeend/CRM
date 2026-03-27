@@ -151,6 +151,10 @@ class PermissionRoleSeeder extends Seeder
             'partImages.delete.any',
             'partImages.restore.any',
 
+            'partStockMovements.view.all',
+            'partStockMovements.view.own',
+            'partStockMovements.create',
+
             'permissions.view.all',
             'permissions.view.own',
             'permissions.create',
@@ -343,6 +347,10 @@ class PermissionRoleSeeder extends Seeder
             'partImages.update.own',
             'partImages.delete.own',
             'partImages.restore.own',
+
+            'partStockMovements.view.all',
+            'partStockMovements.view.own',
+            'partStockMovements.create',
 
             'permissions.view.own',
 

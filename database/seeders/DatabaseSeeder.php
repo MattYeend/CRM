@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
             PartSeeder::class,
             PartSupplierSeeder::class,
             PartImageSeeder::class,
-            // PartStockMovementSeeder::class,
+            PartStockMovementSeeder::class,
             // PartSerialNumberSeeder::class,
             // BillOfMaterialSeeder::class,
         ]);

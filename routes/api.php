@@ -15,6 +15,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PartCategoryController;
 use App\Http\Controllers\PartController;
 use App\Http\Controllers\PartImageController;
+use App\Http\Controllers\PartStockMovementController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PipelineController;
 use App\Http\Controllers\PipelineStageController;
@@ -574,4 +575,24 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
         'partImages/{id}/restore',
         [PartImageController::class, 'restore']
     )->name('api.partImages.restore');
+
+    /**
+     * -------------------------------------------------------------
+     * ------------------------ Part Images ------------------------
+     * -------------------------------------------------------------
+     */
+    Route::get(
+        'parts/{part}/stock-movements',
+        [PartStockMovementController::class, 'index']
+    )->name('api.partStockMovements.index');
+
+    Route::post(
+        'parts/{part}/stock-movements',
+        [PartStockMovementController::class, 'store']
+    )->name('api.partStockMovements.store');
+
+    Route::get(
+        'parts/{part}/stock-movements/{partStockMovement}',
+        [PartStockMovementController::class, 'show']
+    )->name('api.partStockMovements.show');
 });
