@@ -63,6 +63,71 @@ test('user can list learnings', function () {
     ]);
 });
 
+test('index returns all learnings when no pagination specified', function () {
+    Learning::factory()->count(3)->create();
+
+    $response = $this->getJson(route('api.learnings.index'));
+
+    $response->assertStatus(200);
+    $this->assertCount(3, $response->json('data'));
+});
+
+test('index returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.learnings.index'));
+
+    $response->assertStatus(403);
+});
+
+/**
+ * -----------------------------------------------------------
+ * -------------------------- Show ---------------------------
+ * -----------------------------------------------------------
+ */
+test('user can view a single learning', function () {
+    $learning = Learning::factory()->create([
+        'created_by' => $this->auth->id,
+    ]);
+    $learning->users()->attach($this->auth->id);
+
+    $response = $this->getJson("/api/learnings/{$learning->id}");
+
+    $response->assertOk()->assertJsonFragment([
+        'id' => $learning->id,
+        'title' => $learning->title,
+    ]);
+});
+
+test('show returns 403 when user lacks permission', function () {
+    $learning = Learning::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.learnings.show', $learning->id));
+
+    $response->assertStatus(403);
+});
+
+test('show returns 404 for non-existent learning', function () {
+    $response = $this->getJson(route('api.learnings.show', 999999));
+
+    $response->assertStatus(404);
+});
+
 /**
  * -----------------------------------------------------------
  * -------------------------- Store --------------------------
@@ -152,23 +217,20 @@ test('creating a learning question requires at least one correct answer', functi
     $response->assertUnprocessable();
 });
 
-/**
- * -----------------------------------------------------------
- * -------------------------- Show ---------------------------
- * -----------------------------------------------------------
- */
-test('user can view a single learning', function () {
-    $learning = Learning::factory()->create([
-        'created_by' => $this->auth->id,
-    ]);
-    $learning->users()->attach($this->auth->id);
+test('store returns 403 when user lacks permission', function () {
+    $learning = Learning::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
 
-    $response = $this->getJson("/api/learnings/{$learning->id}");
-
-    $response->assertOk()->assertJsonFragment([
-        'id' => $learning->id,
-        'title' => $learning->title,
+    $user->update([
+        'role_id' => $role->id
     ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.learnings.store', $learning->id));
+
+    $response->assertStatus(403);
 });
 
 /**
@@ -262,6 +324,28 @@ test('updating a learning replaces existing questions and answers', function () 
     ]);
 });
 
+test('update returns 403 when user lacks permission', function () {
+    $learning = Learning::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.learnings.update', $learning->id));
+
+    $response->assertStatus(403);
+});
+
+test('update returns 404 for non-existent learning', function () {
+    $response = $this->putJson(route('api.learnings.update', 999999), ['name' => 'Ghost']);
+
+    $response->assertStatus(404);
+});
+
 /**
  * -----------------------------------------------------------
  * ----------------------- Completion ------------------------
@@ -337,6 +421,28 @@ test('deleting a learning also deletes its questions and answers', function () {
     $this->assertDatabaseMissing('learning_answers', ['id' => $answer->id]);
 });
 
+test('destroy returns 403 when user lacks permission', function () {
+    $learning = Learning::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.learnings.destroy', $learning->id));
+
+    $response->assertStatus(403);
+});
+
+test('destroy returns 404 for non-existent learning', function () {
+    $response = $this->deleteJson(route('api.learnings.destroy', 999999));
+
+    $response->assertStatus(404);
+});
+
 /**
  * -----------------------------------------------------------
  * ------------------------- Restore -------------------------
@@ -357,4 +463,34 @@ test('restore deleted learning', function () {
         'id' => $learning->id,
         'deleted_at' => null,
     ]);
+});
+
+test('restore returns 403 when user lacks permission', function () {
+    $learning = Learning::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->postJson(route('api.learnings.restore', $learning->id));
+
+    $response->assertStatus(403);
+});
+
+test('restore returns 404 for non-existent learning', function () {
+    $response = $this->postJson(route('api.learnings.restore', 999999));
+
+    $response->assertStatus(404);
+});
+
+test('restore returns 404 when learning is not deleted', function () {
+    $learning = Learning::factory()->create();
+
+    $response = $this->postJson(route('api.learnings.restore', $learning->id));
+
+    $response->assertStatus(404);
 });

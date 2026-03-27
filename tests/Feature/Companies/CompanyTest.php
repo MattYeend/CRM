@@ -70,6 +70,30 @@ test('index filters companies by q query parameter (search by name)', function (
     $this->assertStringContainsString('Beta', $data[0]['name']);
 });
 
+test('index returns all companies when no pagination specified', function () {
+    Company::factory()->count(3)->create();
+
+    $response = $this->getJson(route('api.companies.index'));
+
+    $response->assertStatus(200);
+    $this->assertCount(3, $response->json('data'));
+});
+
+test('index returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.companies.index'));
+
+    $response->assertStatus(403);
+});
+
 /**
  * --------------------------------------------------------------
  * ---------------------------- Show ----------------------------
@@ -102,6 +126,28 @@ test('show returns the company with relationships loaded', function () {
     ]);
 });
 
+test('show returns 403 when user lacks permission', function () {
+    $company = Company::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.companies.show', $company->id));
+
+    $response->assertStatus(403);
+});
+
+test('show returns 404 for non-existent company', function () {
+    $response = $this->getJson(route('api.companies.show', 999999));
+
+    $response->assertStatus(404);
+});
+
 /**
  * -----------------------------------------------------------
  * -------------------------- Store --------------------------
@@ -129,6 +175,22 @@ test('store creates a company with valid payload and returns 201', function () {
     $response->assertJsonFragment(['name' => 'NewCo Ltd', 'industry' => 'Software']);
 
     $this->assertDatabaseHas('companies', ['name' => 'NewCo Ltd', 'website' => 'https://newco.example']);
+});
+
+test('store returns 403 when user lacks permission', function () {
+    $company = Company::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.companies.store', $company->id));
+
+    $response->assertStatus(403);
 });
 
 test('store returns 422 when required fields are missing', function () {
@@ -170,6 +232,28 @@ test('update modifies allowed fields and returns the updated company', function 
     ]);
 });
 
+test('update returns 403 when user lacks permission', function () {
+    $company = Company::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.companies.update', $company->id));
+
+    $response->assertStatus(403);
+});
+
+test('update returns 404 for non-existent company', function () {
+    $response = $this->putJson(route('api.companies.update', 999999), ['name' => 'Ghost']);
+
+    $response->assertStatus(404);
+});
+
 /**
  * -----------------------------------------------------------
  * ------------------------- Destroy -------------------------
@@ -183,6 +267,28 @@ test('destroy soft deletes the company and returns 204', function () {
     $response->assertStatus(204);
 
     $this->assertSoftDeleted('companies', ['id' => $company->id]);
+});
+
+test('destroy returns 403 when user lacks permission', function () {
+    $company = Company::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.companies.destroy', $company->id));
+
+    $response->assertStatus(403);
+});
+
+test('destroy returns 404 for non-existent company', function () {
+    $response = $this->deleteJson(route('api.companies.destroy', 999999));
+
+    $response->assertStatus(404);
 });
 
 /**
@@ -203,4 +309,34 @@ test('restore brings back a soft-deleted company', function () {
     $response->assertJsonFragment(['id' => $company->id]);
 
     $this->assertDatabaseHas('companies', ['id' => $company->id, 'name' => $company->name]);
+});
+
+test('restore returns 403 when user lacks permission', function () {
+    $company = Company::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->postJson(route('api.companies.restore', $company->id));
+
+    $response->assertStatus(403);
+});
+
+test('restore returns 404 for non-existent company', function () {
+    $response = $this->postJson(route('api.companies.restore', 999999));
+
+    $response->assertStatus(404);
+});
+
+test('restore returns 404 when company is not deleted', function () {
+    $company = Company::factory()->create();
+
+    $response = $this->postJson(route('api.companies.restore', $company->id));
+
+    $response->assertStatus(404);
 });

@@ -92,6 +92,8 @@ class ProductController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', Product::class);
+
         $product = $this->query->list($request);
 
         return response()->json($product);

@@ -74,6 +74,36 @@ test('index returns paginated invoice items with relations', function () {
     }
 });
 
+test('index returns all invoiceItems when no pagination specified', function () {
+    $invoice = Invoice::factory()->create();
+    $product = Product::factory()->create();
+    InvoiceItem::factory()->create([
+        'invoice_id'  => $invoice->id,
+        'product_id'  => $product->id,
+        'created_by'  => $this->auth->id,
+    ]);
+
+    $response = $this->getJson(route('api.invoiceItems.index'));
+
+    $response->assertStatus(200);
+    $this->assertCount(1, $response->json('data'));
+});
+
+test('index returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.invoiceItems.index'));
+
+    $response->assertStatus(403);
+});
+
 /**
  * ----------------------------------------------------------
  * -------------------------- Show --------------------------
@@ -106,6 +136,34 @@ test('show returns an invoice item with relations loaded', function () {
     ]);
 });
 
+test('show returns 403 when user lacks permission', function () {
+    $invoice = Invoice::factory()->create();
+    $product = Product::factory()->create();
+    $invoiceItem = InvoiceItem::factory()->create([
+        'invoice_id'  => $invoice->id,
+        'product_id'  => $product->id,
+        'created_by'  => $this->auth->id,
+    ]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.invoiceItems.show', $invoiceItem->id));
+
+    $response->assertStatus(403);
+});
+
+test('show returns 404 for non-existent invoiceItem', function () {
+    $response = $this->getJson(route('api.invoiceItems.show', 999999));
+
+    $response->assertStatus(404);
+});
+
 /**
  * ---------------------------------------------------------
  * ------------------------- Store -------------------------
@@ -134,6 +192,28 @@ test('store creates a new invoice item and returns 201', function () {
     ]);
 
     $this->assertDatabaseHas('invoice_items', ['description' => 'Test Item']);
+});
+
+test('store returns 403 when user lacks permission', function () {
+    $invoice = Invoice::factory()->create();
+    $product = Product::factory()->create();
+    $invoiceItem = InvoiceItem::factory()->create([
+        'invoice_id'  => $invoice->id,
+        'product_id'  => $product->id,
+        'created_by'  => $this->auth->id,
+    ]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.invoiceItems.store', $invoiceItem->id));
+
+    $response->assertStatus(403);
 });
 
 /**
@@ -176,6 +256,34 @@ test('update modifies an existing invoice item', function () {
     ]);
 });
 
+test('update returns 403 when user lacks permission', function () {
+    $invoice = Invoice::factory()->create();
+    $product = Product::factory()->create();
+    $invoiceItem = InvoiceItem::factory()->create([
+        'invoice_id'  => $invoice->id,
+        'product_id'  => $product->id,
+        'created_by'  => $this->auth->id,
+    ]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.invoiceItems.update', $invoiceItem->id));
+
+    $response->assertStatus(403);
+});
+
+test('update returns 404 for non-existent invoiceItem', function () {
+    $response = $this->putJson(route('api.invoiceItems.update', 999999), ['name' => 'Ghost']);
+
+    $response->assertStatus(404);
+});
+
 /**
  * -----------------------------------------------------------
  * ------------------------- Destroy -------------------------
@@ -194,6 +302,34 @@ test('destroy deletes an invoice item', function () {
 
     $response->assertStatus(204);
     $this->assertSoftDeleted('invoice_items', ['id' => $invoiceItem->id]);
+});
+
+test('destroy returns 403 when user lacks permission', function () {
+    $invoice = Invoice::factory()->create();
+    $product = Product::factory()->create();
+    $invoiceItem = InvoiceItem::factory()->create([
+        'invoice_id'  => $invoice->id,
+        'product_id'  => $product->id,
+        'created_by'  => $this->auth->id,
+    ]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.invoiceItems.destroy', $invoiceItem->id));
+
+    $response->assertStatus(403);
+});
+
+test('destroy returns 404 for non-existent invoiceItem', function () {
+    $response = $this->deleteJson(route('api.invoiceItems.destroy', 999999));
+
+    $response->assertStatus(404);
 });
 
 /**
@@ -223,4 +359,45 @@ test('restore deleted invoice item', function () {
     $this->assertNotSoftDeleted('invoice_items', [
         'id' => $invoiceItem->id,
     ]);
+});
+
+test('restore returns 403 when user lacks permission', function () {
+    $invoice = Invoice::factory()->create();
+    $product = Product::factory()->create();
+    $invoiceItem = InvoiceItem::factory()->create([
+        'invoice_id'  => $invoice->id,
+        'product_id'  => $product->id,
+        'created_by'  => $this->auth->id,
+    ]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->postJson(route('api.invoiceItems.restore', $invoiceItem->id));
+
+    $response->assertStatus(403);
+});
+
+test('restore returns 404 for non-existent invoiceItem', function () {
+    $response = $this->postJson(route('api.invoiceItems.restore', 999999));
+
+    $response->assertStatus(404);
+});
+
+test('restore returns 404 when invoiceItem is not deleted', function () {
+    $invoice = Invoice::factory()->create();
+    $product = Product::factory()->create();
+    $invoiceItem = InvoiceItem::factory()->create([
+        'invoice_id'  => $invoice->id,
+        'product_id'  => $product->id,
+        'created_by'  => $this->auth->id,
+    ]);
+    $response = $this->postJson(route('api.invoiceItems.restore', $invoiceItem->id));
+
+    $response->assertStatus(404);
 });

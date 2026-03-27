@@ -313,6 +313,16 @@ class User extends Authenticatable
         return $this->prefixTest($value);
     }
 
+    /**
+     * The "booted" method of the model.
+     *
+     * This method is called once the model is booted and allows you to
+     * define model event callbacks. Here, it attaches callbacks to the
+     * "created" and "updated" events to clear the user's permission cache
+     * whenever a User model is created or updated.
+     *
+     * @return void
+     */
     protected static function booted(): void
     {
         static::created(function (User $user) {
@@ -320,9 +330,7 @@ class User extends Authenticatable
         });
 
         static::updated(function (User $user) {
-            if ($user->wasChanged('role_id')) {
-                $user->clearPermissionCache();
-            }
+            $user->clearPermissionCache();
         });
     }
 }

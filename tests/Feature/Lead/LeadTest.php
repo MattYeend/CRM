@@ -64,6 +64,30 @@ test('index returns paginated leads with filters', function () {
     $this->assertCount(5, $response->json('data'));
 });
 
+test('index returns all leads when no pagination specified', function () {
+    Lead::factory()->count(3)->create();
+
+    $response = $this->getJson(route('api.leads.index'));
+
+    $response->assertStatus(200);
+    $this->assertCount(3, $response->json('data'));
+});
+
+test('index returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.leads.index'));
+
+    $response->assertStatus(403);
+});
+
 /**
  * ------------------------------------------------------------
  * --------------------------- Show ---------------------------
@@ -103,6 +127,28 @@ test('show returns a lead with relations loaded', function () {
     ]);
 });
 
+test('show returns 403 when user lacks permission', function () {
+    $lead = Lead::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.leads.show', $lead->id));
+
+    $response->assertStatus(403);
+});
+
+test('show returns 404 for non-existent lead', function () {
+    $response = $this->getJson(route('api.leads.show', 999999));
+
+    $response->assertStatus(404);
+});
+
 /**
  * -----------------------------------------------------------
  * -------------------------- Store --------------------------
@@ -136,6 +182,22 @@ test('store creates a new lead and returns 201', function () {
     ]);
 });
 
+test('store returns 403 when user lacks permission', function () {
+    $lead = Lead::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.leads.store', $lead->id));
+
+    $response->assertStatus(403);
+});
+
 /**
  * ------------------------------------------------------------
  * -------------------------- Update --------------------------
@@ -166,6 +228,28 @@ test('update modifies an existing lead', function () {
     ]);
 });
 
+test('update returns 403 when user lacks permission', function () {
+    $lead = Lead::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.leads.update', $lead->id));
+
+    $response->assertStatus(403);
+});
+
+test('update returns 404 for non-existent lead', function () {
+    $response = $this->putJson(route('api.leads.update', 999999), ['name' => 'Ghost']);
+
+    $response->assertStatus(404);
+});
+
 /**
  * -----------------------------------------------------------
  * ------------------------- Destroy -------------------------
@@ -183,6 +267,28 @@ test('destroy soft deletes the lead', function () {
     } else {
         $this->assertDatabaseMissing('leads', ['id' => $lead->id]);
     }
+});
+
+test('destroy returns 403 when user lacks permission', function () {
+    $lead = Lead::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.leads.destroy', $lead->id));
+
+    $response->assertStatus(403);
+});
+
+test('destroy returns 404 for non-existent lead', function () {
+    $response = $this->deleteJson(route('api.leads.destroy', 999999));
+
+    $response->assertStatus(404);
 });
 
 /**
@@ -203,4 +309,34 @@ test('restore recovers a soft deleted lead', function () {
         'id' => $lead->id,
         'deleted_at' => null,
     ]);
+});
+
+test('restore returns 403 when user lacks permission', function () {
+    $lead = Lead::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->postJson(route('api.leads.restore', $lead->id));
+
+    $response->assertStatus(403);
+});
+
+test('restore returns 404 for non-existent lead', function () {
+    $response = $this->postJson(route('api.leads.restore', 999999));
+
+    $response->assertStatus(404);
+});
+
+test('restore returns 404 when lead is not deleted', function () {
+    $lead = Lead::factory()->create();
+
+    $response = $this->postJson(route('api.leads.restore', $lead->id));
+
+    $response->assertStatus(404);
 });

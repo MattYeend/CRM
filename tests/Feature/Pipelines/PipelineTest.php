@@ -70,6 +70,30 @@ test('index returns paginated pipelines with stages relation', function () {
     $this->assertArrayHasKey('stages', $response->json('data')[0]);
 });
 
+test('index returns all pipelines when no pagination specified', function () {
+    Pipeline::factory()->count(3)->create();
+
+    $response = $this->getJson(route('api.pipelines.index'));
+
+    $response->assertStatus(200);
+    $this->assertCount(3, $response->json('data'));
+});
+
+test('index returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.pipelines.index'));
+
+    $response->assertStatus(403);
+});
+
 /**
  * -------------------------------------------------------------
  * ---------------------------- Show ----------------------------
@@ -92,6 +116,28 @@ test('show returns a pipeline with stages loaded', function () {
     ]);
 });
 
+test('show returns 403 when user lacks permission', function () {
+    $pipeline = Pipeline::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.pipelines.show', $pipeline->id));
+
+    $response->assertStatus(403);
+});
+
+test('show returns 404 for non-existent pipeline', function () {
+    $response = $this->getJson(route('api.pipelines.show', 999999));
+
+    $response->assertStatus(404);
+});
+
 /**
  * -------------------------------------------------------------
  * --------------------------- Store ---------------------------
@@ -109,6 +155,22 @@ test('store creates a new pipeline and returns 201', function () {
     $response->assertStatus(201);
     $response->assertJsonFragment(['name' => 'Sales Pipeline', 'description' => 'Pipeline for outbound sales']);
     $this->assertDatabaseHas('pipelines', ['name' => 'Sales Pipeline']);
+});
+
+test('store returns 403 when user lacks permission', function () {
+    $pipeline = Pipeline::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.pipelines.store', $pipeline->id));
+
+    $response->assertStatus(403);
 });
 
 /**
@@ -132,6 +194,28 @@ test('update modifies an existing pipeline', function () {
     $this->assertDatabaseHas('pipelines', ['id' => $pipeline->id, 'name' => 'New Pipeline Name']);
 });
 
+test('update returns 403 when user lacks permission', function () {
+    $pipeline = Pipeline::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.pipelines.update', $pipeline->id));
+
+    $response->assertStatus(403);
+});
+
+test('update returns 404 for non-existent pipeline', function () {
+    $response = $this->putJson(route('api.pipelines.update', 999999), ['name' => 'Ghost']);
+
+    $response->assertStatus(404);
+});
+
 /**
  * -------------------------------------------------------------
  * -------------------------- Destroy --------------------------
@@ -144,6 +228,28 @@ test('destroy deletes the pipeline', function () {
 
     $response->assertStatus(204);
     $this->assertSoftDeleted('pipelines', ['id' => $pipeline->id]);
+});
+
+test('destroy returns 403 when user lacks permission', function () {
+    $pipeline = Pipeline::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.pipelines.destroy', $pipeline->id));
+
+    $response->assertStatus(403);
+});
+
+test('destroy returns 404 for non-existent pipeline', function () {
+    $response = $this->deleteJson(route('api.pipelines.destroy', 999999));
+
+    $response->assertStatus(404);
 });
 
 /**
@@ -168,4 +274,35 @@ test('restore deleted pipeline', function () {
         'id' => $pipeline->id,
         'deleted_at' => null,
     ]);
+});
+
+
+test('restore returns 403 when user lacks permission', function () {
+    $pipeline = Pipeline::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->postJson(route('api.pipelines.restore', $pipeline->id));
+
+    $response->assertStatus(403);
+});
+
+test('restore returns 404 for non-existent pipeline', function () {
+    $response = $this->postJson(route('api.pipelines.restore', 999999));
+
+    $response->assertStatus(404);
+});
+
+test('restore returns 404 when pipeline is not deleted', function () {
+    $pipeline = Pipeline::factory()->create();
+
+    $response = $this->postJson(route('api.pipelines.restore', $pipeline->id));
+
+    $response->assertStatus(404);
 });

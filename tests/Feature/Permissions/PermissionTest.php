@@ -60,6 +60,30 @@ test('index returns paginated permissions with roles', function () {
     $this->assertArrayHasKey('roles', $response->json('data')[0]);
 });
 
+test('index returns all permissions when no pagination specified', function () {
+    Permission::factory()->count(3)->create();
+
+    $response = $this->getJson(route('api.permissions.index'));
+
+    $response->assertStatus(200);
+    $this->assertCount(8, $response->json('data'));
+});
+
+test('index returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.permissions.index'));
+
+    $response->assertStatus(403);
+});
+
 /**
  * --------------------------------------------------------------
  * ---------------------------- Show ----------------------------
@@ -82,6 +106,28 @@ test('show returns a permission with roles', function () {
     ]);
 });
 
+test('show returns 403 when user lacks permission', function () {
+    $permission = Permission::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.permissions.show', $permission->id));
+
+    $response->assertStatus(403);
+});
+
+test('show returns 404 for non-existent permission', function () {
+    $response = $this->getJson(route('api.permissions.show', 999999));
+
+    $response->assertStatus(404);
+});
+
 /**
  * -------------------------------------------------------------
  * --------------------------- Store ---------------------------
@@ -98,6 +144,22 @@ test('store creates a new permission', function () {
     $response->assertStatus(201);
     $response->assertJsonFragment($payload);
     $this->assertDatabaseHas('permissions', $payload);
+});
+
+test('store returns 403 when user lacks permission', function () {
+    $permission = Permission::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.permissions.store', $permission->id));
+
+    $response->assertStatus(403);
 });
 
 /**
@@ -123,6 +185,28 @@ test('update modifies an existing permission', function () {
     $this->assertDatabaseHas('permissions', $payload);
 });
 
+test('update returns 403 when user lacks permission', function () {
+    $permission = Permission::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.permissions.update', $permission->id));
+
+    $response->assertStatus(403);
+});
+
+test('update returns 404 for non-existent permission', function () {
+    $response = $this->putJson(route('api.permissions.update', 999999), ['name' => 'Ghost']);
+
+    $response->assertStatus(404);
+});
+
 /**
  * -------------------------------------------------------------
  * -------------------------- Destroy --------------------------
@@ -143,6 +227,28 @@ test('destroy deletes a permission and detaches roles', function () {
     $this->assertDatabaseMissing('permission_role', [
         'permission_id' => $permission->id
     ]);
+});
+
+test('destroy returns 403 when user lacks permission', function () {
+    $permission = Permission::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.permissions.destroy', $permission->id));
+
+    $response->assertStatus(403);
+});
+
+test('destroy returns 404 for non-existent permission', function () {
+    $response = $this->deleteJson(route('api.permissions.destroy', 999999));
+
+    $response->assertStatus(404);
 });
 
 /**
@@ -169,4 +275,34 @@ test('restore deleted permission', function () {
         'id' => $permission->id,
         'deleted_at' => null,
     ]);
+});
+
+test('restore returns 403 when user lacks permission', function () {
+    $permission = Permission::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->postJson(route('api.permissions.restore', $permission->id));
+
+    $response->assertStatus(403);
+});
+
+test('restore returns 404 for non-existent permission', function () {
+    $response = $this->postJson(route('api.permissions.restore', 999999));
+
+    $response->assertStatus(404);
+});
+
+test('restore returns 404 when permission is not deleted', function () {
+    $permission = Permission::factory()->create();
+
+    $response = $this->postJson(route('api.permissions.restore', $permission->id));
+
+    $response->assertStatus(404);
 });

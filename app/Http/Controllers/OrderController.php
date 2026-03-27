@@ -71,6 +71,8 @@ class OrderController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', Order::class);
+
         $order = $this->query->list($request);
 
         return response()->json($order);

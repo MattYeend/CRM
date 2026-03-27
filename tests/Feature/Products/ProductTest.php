@@ -73,6 +73,30 @@ test('index returns paginated products', function () {
     $this->assertCount(5, $response->json('data'));
 });
 
+test('index returns all products when no pagination specified', function () {
+    Product::factory()->count(3)->create();
+
+    $response = $this->getJson(route('api.products.index'));
+
+    $response->assertStatus(200);
+    $this->assertCount(3, $response->json('data'));
+});
+
+test('index returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.parts.index'));
+
+    $response->assertStatus(403);
+});
+
 /**
  * --------------------------------------------------------------
  * ---------------------------- Show ----------------------------
@@ -97,6 +121,33 @@ test('show returns a single product', function () {
     ]);
 });
 
+test('show returns 403 when user lacks permission', function () {
+    $product = Product::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.products.show', $product->id));
+
+    $response->assertStatus(403);
+});
+
+test('show returns 404 for non-existent product', function () {
+    $response = $this->getJson(route('api.products.show', 999999));
+
+    $response->assertStatus(404);
+});
+
+/**
+ * ---------------------------------------------------------------
+ * ---------------------------- Store ----------------------------
+ * ---------------------------------------------------------------
+ */
 test('store creates a new product and returns 201', function () {
     $payload = [
         'sku' => 'SKU-1234',
@@ -127,6 +178,25 @@ test('store returns validation error when required fields missing', function () 
     $response->assertJsonValidationErrors('name');
 });
 
+test('store returns 403 when user lacks permission', function () {
+    $product = Product::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->postJson(route('api.products.store'), [
+        'sku' => 'SKU-1234',
+        'name' => 'Test Product',
+        'price' => 50,
+    ]);
+
+    $response->assertStatus(403);
+});
 /**
  * --------------------------------------------------------------
  * --------------------------- Update ---------------------------
@@ -151,6 +221,28 @@ test('update modifies an existing product', function () {
     $this->assertDatabaseHas('products', ['id' => $product->id, 'name' => 'Updated Product']);
 });
 
+test('update returns 403 when user lacks permission', function () {
+    $product = Product::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.products.update', $product->id));
+
+    $response->assertStatus(403);
+});
+
+test('update returns 404 for non-existent product', function () {
+    $response = $this->putJson(route('api.products.update', 999999), ['name' => 'Ghost']);
+
+    $response->assertStatus(404);
+});
+
 /**
  * -------------------------------------------------------------
  * -------------------------- Destroy --------------------------
@@ -164,6 +256,28 @@ test('destroy deletes the product', function () {
     $response->assertStatus(204);
 
     $this->assertSoftDeleted('products', ['id' => $product->id]);
+});
+
+test('destroy returns 403 when user lacks permission', function () {
+    $product = Product::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.products.destroy', $product->id));
+
+    $response->assertStatus(403);
+});
+
+test('destroy returns 404 for non-existent product', function () {
+    $response = $this->deleteJson(route('api.products.destroy', 999999));
+
+    $response->assertStatus(404);
 });
 
 /**
@@ -195,6 +309,36 @@ test('restore deleted product', function () {
         'id' => $product->id,
         'deleted_at' => null,
     ]);
+});
+
+test('restore returns 403 when user lacks permission', function () {
+    $product = Product::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->postJson(route('api.products.restore', $product->id));
+
+    $response->assertStatus(403);
+});
+
+test('restore returns 404 for non-existent product', function () {
+    $response = $this->postJson(route('api.products.restore', 999999));
+
+    $response->assertStatus(404);
+});
+
+test('restore returns 404 when product is not deleted', function () {
+    $product = Product::factory()->create();
+
+    $response = $this->postJson(route('api.products.restore', $product->id));
+
+    $response->assertStatus(404);
 });
 
 /**

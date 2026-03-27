@@ -67,6 +67,30 @@ test('index returns paginated attachments and respects per_page query', function
     $this->assertCount(5, $response->json('data'));
 });
 
+test('index returns all attachments when no pagination specified', function () {
+    Attachment::factory()->count(3)->create();
+
+    $response = $this->getJson(route('api.attachments.index'));
+
+    $response->assertStatus(200);
+    $this->assertCount(3, $response->json('data'));
+});
+
+test('index returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.attachments.index'));
+
+    $response->assertStatus(403);
+});
+
 /**
  * ----------------------------------------------------------
  * -------------------------- Show --------------------------
@@ -98,6 +122,29 @@ test('show returns the attachment with uploader relationship loaded', function (
         'uploader' => ['id', 'name', 'email'],
     ]);
 });
+
+test('show returns 403 when user lacks permission', function () {
+    $attachment = Attachment::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.attachments.show', $attachment->id));
+
+    $response->assertStatus(403);
+});
+
+test('show returns 404 for non-existent attachment', function () {
+    $response = $this->getJson(route('api.attachments.show', 999999));
+
+    $response->assertStatus(404);
+});
+
 
 /**
  * ---------------------------------------------------------
@@ -162,6 +209,22 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
     Storage::disk('public')->assertExists($returnedAttachment->path);
 });
 
+test('store returns 403 when user lacks permission', function () {
+    $attachment = Attachment::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.attachments.store', $attachment->id));
+
+    $response->assertStatus(403);
+});
+
 /**
  * -----------------------------------------------------------
  * ------------------------- Destroy -------------------------
@@ -193,6 +256,28 @@ test('destroy deletes file from disk (if present) and deletes the model', functi
     // file should be gone and model deleted
     Storage::disk('public')->assertMissing($attachment->path);
     $this->assertSoftDeleted('attachments', ['id' => $attachment->id]);
+});
+
+test('destroy returns 403 when user lacks permission', function () {
+    $attachment = Attachment::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.attachments.destroy', $attachment->id));
+
+    $response->assertStatus(403);
+});
+
+test('destroy returns 404 for non-existent attachment', function () {
+    $response = $this->deleteJson(route('api.attachments.destroy', 999999));
+
+    $response->assertStatus(404);
 });
 
 /**
@@ -227,4 +312,34 @@ test('restore deleted attachment', function () {
     $this->assertNotSoftDeleted('attachments', [
         'id' => $attachment->id,
     ]);
+});
+
+test('restore returns 403 when user lacks permission', function () {
+    $attachment = Attachment::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->postJson(route('api.attachments.restore', $attachment->id));
+
+    $response->assertStatus(403);
+});
+
+test('restore returns 404 for non-existent attachment', function () {
+    $response = $this->postJson(route('api.attachments.restore', 999999));
+
+    $response->assertStatus(404);
+});
+
+test('restore returns 404 when attachment is not deleted', function () {
+    $attachment = Attachment::factory()->create();
+
+    $response = $this->postJson(route('api.attachments.restore', $attachment->id));
+
+    $response->assertStatus(404);
 });

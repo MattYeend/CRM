@@ -62,6 +62,30 @@ test('index returns paginated invoices with relations', function () {
     $this->assertCount(5, $response->json('data'));
 });
 
+test('index returns all invoices when no pagination specified', function () {
+    Invoice::factory()->count(3)->create();
+
+    $response = $this->getJson(route('api.invoices.index'));
+
+    $response->assertStatus(200);
+    $this->assertCount(3, $response->json('data'));
+});
+
+test('index returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.invoices.index'));
+
+    $response->assertStatus(403);
+});
+
 /**
  * ------------------------------------------------------------
  * --------------------------- Show ---------------------------
@@ -83,6 +107,28 @@ test('show returns an invoice with relations loaded', function () {
         'company' => [],
         'items' => [],
     ]);
+});
+
+test('show returns 403 when user lacks permission', function () {
+    $invoice = Invoice::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.invoices.show', $invoice->id));
+
+    $response->assertStatus(403);
+});
+
+test('show returns 404 for non-existent invoice', function () {
+    $response = $this->getJson(route('api.invoices.show', 999999));
+
+    $response->assertStatus(404);
 });
 
 /**
@@ -111,6 +157,22 @@ test('store creates a new invoice and returns 201', function () {
     $this->assertDatabaseHas('invoices', ['number' => 'INV-1001', 'created_by' => $this->auth->id]);
 });
 
+test('store returns 403 when user lacks permission', function () {
+    $invoice = Invoice::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.invoices.store', $invoice->id));
+
+    $response->assertStatus(403);
+});
+
 /**
  * ----------------------------------------------------------
  * ------------------------- Update -------------------------
@@ -131,6 +193,28 @@ test('update modifies an existing invoice', function () {
     $this->assertDatabaseHas('invoices', ['id' => $invoice->id, 'number' => 'INV-2001', 'status' => 'sent']);
 });
 
+test('update returns 403 when user lacks permission', function () {
+    $invoice = Invoice::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.invoices.update', $invoice->id));
+
+    $response->assertStatus(403);
+});
+
+test('update returns 404 for non-existent invoice', function () {
+    $response = $this->putJson(route('api.invoices.update', 999999), ['name' => 'Ghost']);
+
+    $response->assertStatus(404);
+});
+
 /**
  * -----------------------------------------------------------
  * ------------------------- Destroy -------------------------
@@ -145,6 +229,28 @@ test('destroy deletes an invoice', function () {
 
     // If soft deletes are used
     $this->assertSoftDeleted('invoices', ['id' => $invoice->id]);
+});
+
+test('destroy returns 403 when user lacks permission', function () {
+    $invoice = Invoice::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.invoices.destroy', $invoice->id));
+
+    $response->assertStatus(403);
+});
+
+test('destroy returns 404 for non-existent invoice', function () {
+    $response = $this->deleteJson(route('api.invoices.destroy', 999999));
+
+    $response->assertStatus(404);
 });
 
 /**
@@ -168,4 +274,35 @@ test('restore deleted invoice', function () {
     $this->assertDatabaseHas('invoices', [
         'id' => $invoice->id,
         'deleted_at' => null,
-    ]);});
+    ]);
+});
+
+test('restore returns 403 when user lacks permission', function () {
+    $invoice = Invoice::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->postJson(route('api.invoices.restore', $invoice->id));
+
+    $response->assertStatus(403);
+});
+
+test('restore returns 404 for non-existent invoice', function () {
+    $response = $this->postJson(route('api.invoices.restore', 999999));
+
+    $response->assertStatus(404);
+});
+
+test('restore returns 404 when invoice is not deleted', function () {
+    $invoice = Invoice::factory()->create();
+
+    $response = $this->postJson(route('api.invoices.restore', $invoice->id));
+
+    $response->assertStatus(404);
+});

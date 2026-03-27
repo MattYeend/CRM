@@ -67,6 +67,21 @@ test('index returns all part images when no pagination specified', function () {
     $this->assertCount(3, $response->json('data'));
 });
 
+test('index returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.partImages.index'));
+
+    $response->assertStatus(403);
+});
+
 /**
  * ------------------------------------------------------------
  * --------------------------- Show ---------------------------
@@ -80,6 +95,22 @@ test('show returns a single part image', function () {
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $partImage->id]);
     $response->assertJsonStructure(['id', 'part_id', 'image', 'sort_order', 'is_primary']);
+});
+
+test('show returns 403 when user lacks permission', function () {
+    $part = PartImage::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.partImages.show', $part->id));
+
+    $response->assertStatus(403);
 });
 
 test('show returns 404 for non-existent part image', function () {
@@ -117,6 +148,22 @@ test('store creates a new part image and returns 201', function () {
             'image' => $imagePath,
         ]
     );
+});
+
+test('store returns 403 when user lacks permission', function () {
+    $part = PartImage::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.partImages.store', $part->id));
+
+    $response->assertStatus(403);
 });
 
 test('store returns 422 when required fields are missing', function () {
@@ -157,7 +204,7 @@ test('store returns 422 when url is not a valid url', function () {
  * --------------------------- Update ---------------------------
  * --------------------------------------------------------------
  */
-test('update modifies an existing part image', function () {
+test('update modifies an existing partImage image', function () {
     $partImage = PartImage::factory()->create(['is_primary' => false, 'sort_order' => 1]);
 
     $payload = [
@@ -183,6 +230,28 @@ test('update allows saving without changing url', function () {
     $this->assertDatabaseHas('part_images', ['id' => $partImage->id, 'sort_order' => 3]);
 });
 
+test('update returns 403 when user lacks permission', function () {
+    $partImage = PartImage::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.partImages.update', $partImage->id));
+
+    $response->assertStatus(403);
+});
+
+test('update returns 404 for non-existent partImage image', function () {
+    $response = $this->putJson(route('api.partImages.update', 999999), ['sort_order' => 1]);
+
+    $response->assertStatus(404);
+});
+
 test('update returns 422 when url is invalid', function () {
     $partImage = PartImage::factory()->create();
 
@@ -194,18 +263,12 @@ test('update returns 422 when url is invalid', function () {
     $response->assertJsonValidationErrors('image');
 });
 
-test('update returns 404 for non-existent part image', function () {
-    $response = $this->putJson(route('api.partImages.update', 999999), ['sort_order' => 1]);
-
-    $response->assertStatus(404);
-});
-
 /**
  * -------------------------------------------------------------
  * -------------------------- Destroy --------------------------
  * -------------------------------------------------------------
  */
-test('destroy soft deletes a part image and returns 204', function () {
+test('destroy soft deletes a partImage image and returns 204', function () {
     $partImage = PartImage::factory()->create();
 
     $response = $this->deleteJson(route('api.partImages.destroy', $partImage));
@@ -214,7 +277,23 @@ test('destroy soft deletes a part image and returns 204', function () {
     $this->assertSoftDeleted('part_images', ['id' => $partImage->id]);
 });
 
-test('destroy returns 404 for non-existent part image', function () {
+test('destroy returns 403 when user lacks permission', function () {
+    $partImage = PartImage::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.partImages.destroy', $partImage->id));
+
+    $response->assertStatus(403);
+});
+
+test('destroy returns 404 for non-existent partImage image', function () {
     $response = $this->deleteJson(route('api.partImages.destroy', 999999));
 
     $response->assertStatus(404);
@@ -225,7 +304,7 @@ test('destroy returns 404 for non-existent part image', function () {
  * -------------------------- Restore --------------------------
  * -------------------------------------------------------------
  */
-test('restore recovers a soft deleted part image', function () {
+test('restore recovers a soft deleted partImage image', function () {
     $partImage = PartImage::factory()->create(['created_by' => $this->auth->id]);
     $partImage->delete();
 
@@ -236,6 +315,22 @@ test('restore recovers a soft deleted part image', function () {
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $partImage->id]);
     $this->assertDatabaseHas('part_images', ['id' => $partImage->id, 'deleted_at' => null]);
+});
+
+test('restore returns 403 when user lacks permission', function () {
+    $partImage = PartImage::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->postJson(route('api.partImages.restore', $partImage->id));
+
+    $response->assertStatus(403);
 });
 
 test('restore returns 404 for non-existent part image', function () {

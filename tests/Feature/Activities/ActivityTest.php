@@ -65,6 +65,35 @@ test('index returns paginated activities and respects per_page query', function 
     $this->assertEquals(15, $response->json('total'));
 });
 
+test('index returns all activities when no pagination specified', function () {
+    $subject = User::factory()->create();
+    Activity::factory()->count(3)->create([
+        'user_id' => $this->auth->id,
+        'subject_type' => User::class,
+        'subject_id' => $subject->id,
+    ]);
+
+    $response = $this->getJson(route('api.activities.index'));
+
+    $response->assertStatus(200);
+    $this->assertCount(3, $response->json('data'));
+});
+
+test('index returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.activities.index'));
+
+    $response->assertStatus(403);
+});
+
 /**
  * ------------------------------------------------------------
  * --------------------------- Show ---------------------------
@@ -104,6 +133,37 @@ test('show returns the activity with user and subject relationships loaded', fun
     ]);
 });
 
+test('show returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $subject = User::factory()->create();
+
+    $activity = Activity::factory()->create([
+        'user_id' => $user->id,
+        'subject_type' => 'user',
+        'subject_id' => $subject->id,
+        'type' => 'sample-type',
+        'description' => 'Sample description',
+    ]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.activities.show', $activity->id));
+
+    $response->assertStatus(403);
+});
+
+test('show returns 404 for non-existent activity', function () {
+    $response = $this->getJson(route('api.activities.show', 999999));
+
+    $response->assertStatus(404);
+});
+
 /**
  * -------------------------------------------------------------
  * --------------------------- Store ---------------------------
@@ -131,6 +191,31 @@ test('store creates an activity with valid payload and returns 201', function ()
         'type' => 'created-thing',
         'description' => 'Created an example thing',
     ]);
+});
+
+test('store returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $subject = User::factory()->create();
+
+    $activity = Activity::factory()->create([
+        'user_id' => $user->id,
+        'subject_type' => 'user',
+        'subject_id' => $subject->id,
+        'type' => 'sample-type',
+        'description' => 'Sample description',
+    ]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.activities.store', $activity->id));
+
+    $response->assertStatus(403);
 });
 
 test('store returns 422 when required fields are missing', function () {
@@ -177,6 +262,37 @@ test('update modifies allowed fields and returns the updated activity', function
     ]);
 });
 
+test('update returns 403 when user lacks permission', function () {
+    $subject = User::factory()->create();
+
+    $activity = Activity::factory()->create([
+        'user_id' => $this->auth->id,
+        'subject_type' => User::class,
+        'subject_id' => $subject->id,
+        'type' => 'old-type',
+        'description' => 'old description',
+        'meta' => ['a' => 1],
+    ]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.activities.update', $activity->id));
+
+    $response->assertStatus(403);
+});
+
+test('update returns 404 for non-existent activity', function () {
+    $response = $this->putJson(route('api.activities.update', 999999), ['name' => 'Ghost']);
+
+    $response->assertStatus(404);
+});
+
 /**
  * ---------------------------------------------------------
  * ------------------------ Destroy ------------------------
@@ -200,6 +316,33 @@ test('destroy deletes the activity and returns 204', function () {
     ]);
 });
 
+test('destroy returns 403 when user lacks permission', function () {
+    $subject = User::factory()->create();
+
+    $activity = Activity::factory()->create([
+        'user_id' => $this->auth->id,
+        'subject_type' => User::class,
+        'subject_id' => $subject->id,
+    ]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.activities.destroy', $activity->id));
+
+    $response->assertStatus(403);
+});
+
+test('destroy returns 404 for non-existent activity', function () {
+    $response = $this->deleteJson(route('api.activities.destroy', 999999));
+
+    $response->assertStatus(404);
+});
 
 /**
  * ---------------------------------------------------------
@@ -229,4 +372,45 @@ test('restore deleted activity', function () {
         'id' => $activity->id,
         'deleted_at' => null,
     ]);
+});
+
+test('restore returns 403 when user lacks permission', function () {
+    $subject = User::factory()->create();
+
+    $activity = Activity::factory()->create([
+        'user_id' => $this->auth->id,
+        'subject_type' => User::class,
+        'subject_id' => $subject->id,
+    ]);    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->postJson(route('api.activities.restore', $activity->id));
+
+    $response->assertStatus(403);
+});
+
+test('restore returns 404 for non-existent activity', function () {
+    $response = $this->postJson(route('api.activities.restore', 999999));
+
+    $response->assertStatus(404);
+});
+
+test('restore returns 404 when activity is not deleted', function () {
+    $subject = User::factory()->create();
+
+    $activity = Activity::factory()->create([
+        'user_id' => $this->auth->id,
+        'subject_type' => User::class,
+        'subject_id' => $subject->id,
+    ]);
+
+    $response = $this->postJson(route('api.activities.restore', $activity->id));
+
+    $response->assertStatus(404);
 });

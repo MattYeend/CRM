@@ -65,6 +65,29 @@ test('index returns paginated orders', function () {
     $this->assertCount(5, $response->json('data'));
 });
 
+test('index returns all orders when no pagination specified', function () {
+    Order::factory()->count(3)->create();
+
+    $response = $this->getJson(route('api.orders.index'));
+
+    $response->assertStatus(200);
+    $this->assertCount(3, $response->json('data'));
+});
+
+test('index returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.orders.index'));
+
+    $response->assertStatus(403);
+});
 
 /**
  * --------------------------------------------------------------
@@ -95,6 +118,28 @@ test('show returns a single order', function () {
         'charge_id',
         'meta',
     ]);
+});
+
+test('show returns 403 when user lacks permission', function () {
+    $order = Order::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.orders.show', $order->id));
+
+    $response->assertStatus(403);
+});
+
+test('show returns 404 for non-existent order', function () {
+    $response = $this->getJson(route('api.orders.show', 999999));
+
+    $response->assertStatus(404);
 });
 
 /**
@@ -144,6 +189,22 @@ test('store returns validation error when required fields missing', function () 
     $response->assertJsonValidationErrors('amount');
 });
 
+test('store returns 403 when user lacks permission', function () {
+    $order = Order::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.orders.store', $order->id));
+
+    $response->assertStatus(403);
+});
+
 /**
  * --------------------------------------------------------------
  * --------------------------- Update ---------------------------
@@ -175,6 +236,28 @@ test('update modifies an existing order', function () {
     ]);
 });
 
+test('update returns 403 when user lacks permission', function () {
+    $order = Order::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.orders.update', $order->id));
+
+    $response->assertStatus(403);
+});
+
+test('update returns 404 for non-existent order', function () {
+    $response = $this->putJson(route('api.orders.update', 999999), ['name' => 'Ghost']);
+
+    $response->assertStatus(404);
+});
+
 /**
  * -------------------------------------------------------------
  * -------------------------- Destroy --------------------------
@@ -190,6 +273,28 @@ test('destroy deletes the order', function () {
     $this->assertSoftDeleted('orders', [
         'id' => $order->id,
     ]);
+});
+
+test('destroy returns 403 when user lacks permission', function () {
+    $order = Order::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.orders.destroy', $order->id));
+
+    $response->assertStatus(403);
+});
+
+test('destroy returns 404 for non-existent order', function () {
+    $response = $this->deleteJson(route('api.orders.destroy', 999999));
+
+    $response->assertStatus(404);
 });
 
 /**
@@ -220,6 +325,36 @@ test('restore deleted order', function () {
         'id' => $order->id,
         'deleted_at' => null,
     ]);
+});
+
+test('restore returns 403 when user lacks permission', function () {
+    $order = Order::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->postJson(route('api.orders.restore', $order->id));
+
+    $response->assertStatus(403);
+});
+
+test('restore returns 404 for non-existent order', function () {
+    $response = $this->postJson(route('api.orders.restore', 999999));
+
+    $response->assertStatus(404);
+});
+
+test('restore returns 404 when order is not deleted', function () {
+    $order = Order::factory()->create();
+
+    $response = $this->postJson(route('api.orders.restore', $order->id));
+
+    $response->assertStatus(404);
 });
 
 /**

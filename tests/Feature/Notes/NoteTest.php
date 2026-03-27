@@ -62,6 +62,30 @@ test('index returns paginated notes with relations', function () {
     $this->assertCount(5, $response->json('data'));
 });
 
+test('index returns all notes when no pagination specified', function () {
+    Note::factory()->count(3)->create();
+
+    $response = $this->getJson(route('api.notes.index'));
+
+    $response->assertStatus(200);
+    $this->assertCount(3, $response->json('data'));
+});
+
+test('index returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.notes.index'));
+
+    $response->assertStatus(403);
+});
+
 /**
  * --------------------------------------------------------------
  * ---------------------------- Show ----------------------------
@@ -89,6 +113,28 @@ test('show returns a note with user and notable loaded', function () {
     ]);
 });
 
+test('show returns 403 when user lacks permission', function () {
+    $note = Note::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.notes.show', $note->id));
+
+    $response->assertStatus(403);
+});
+
+test('show returns 404 for non-existent note', function () {
+    $response = $this->getJson(route('api.notes.show', 999999));
+
+    $response->assertStatus(404);
+});
+
 /**
  * -------------------------------------------------------------
  * --------------------------- Store ---------------------------
@@ -110,6 +156,22 @@ test('store creates a new note and returns 201', function () {
     $response->assertStatus(201);
     $response->assertJsonFragment(['body' => 'This is a test note']);
     $this->assertDatabaseHas('notes', ['body' => 'This is a test note']);
+});
+
+test('store returns 403 when user lacks permission', function () {
+    $note = Note::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.notes.store', $note->id));
+
+    $response->assertStatus(403);
 });
 
 /**
@@ -138,6 +200,28 @@ test('update modifies an existing note', function () {
     $this->assertDatabaseHas('notes', ['id' => $note->id, 'body' => 'Updated note']);
 });
 
+test('update returns 403 when user lacks permission', function () {
+    $note = Note::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.notes.update', $note->id));
+
+    $response->assertStatus(403);
+});
+
+test('update returns 404 for non-existent note', function () {
+    $response = $this->putJson(route('api.notes.update', 999999), ['name' => 'Ghost']);
+
+    $response->assertStatus(404);
+});
+
 /**
  * -------------------------------------------------------------
  * -------------------------- Destroy --------------------------
@@ -155,6 +239,28 @@ test('destroy deletes a note', function () {
 
     $response->assertStatus(204);
     $this->assertSoftDeleted('notes', ['id' => $note->id]);
+});
+
+test('destroy returns 403 when user lacks permission', function () {
+    $note = Note::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.notes.destroy', $note->id));
+
+    $response->assertStatus(403);
+});
+
+test('destroy returns 404 for non-existent note', function () {
+    $response = $this->deleteJson(route('api.notes.destroy', 999999));
+
+    $response->assertStatus(404);
 });
 
 /**
@@ -183,4 +289,34 @@ test('restore deleted note', function () {
         'id' => $note->id,
         'deleted_at' => null,
     ]);
+});
+
+test('restore returns 403 when user lacks permission', function () {
+    $note = Note::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->postJson(route('api.notes.restore', $note->id));
+
+    $response->assertStatus(403);
+});
+
+test('restore returns 404 for non-existent note', function () {
+    $response = $this->postJson(route('api.notes.restore', 999999));
+
+    $response->assertStatus(404);
+});
+
+test('restore returns 404 when note is not deleted', function () {
+    $note = Note::factory()->create();
+
+    $response = $this->postJson(route('api.notes.restore', $note->id));
+
+    $response->assertStatus(404);
 });

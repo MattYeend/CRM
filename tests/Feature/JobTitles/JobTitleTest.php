@@ -60,6 +60,30 @@ test('index returns paginated job titles', function () {
     $this->assertCount(5, $response->json('data'));
 });
 
+test('index returns all job titles when no pagination specified', function () {
+    JobTitle::factory()->count(3)->create();
+
+    $response = $this->getJson(route('api.jobTitles.index'));
+
+    $response->assertStatus(200);
+    $this->assertCount(3, $response->json('data'));
+});
+
+test('index returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.jobTitles.index'));
+
+    $response->assertStatus(403);
+});
+
 /**
  * ------------------------------------------------------------
  * --------------------------- Show ---------------------------
@@ -85,6 +109,28 @@ test('show returns a job title', function () {
     ]);
 });
 
+test('show returns 403 when user lacks permission', function () {
+    $jobTitle = JobTitle::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.jobTitles.show', $jobTitle->id));
+
+    $response->assertStatus(403);
+});
+
+test('show returns 404 for non-existent job title', function () {
+    $response = $this->getJson(route('api.jobTitles.show', 999999));
+
+    $response->assertStatus(404);
+});
+
 /**
  * -----------------------------------------------------------
  * -------------------------- Store --------------------------
@@ -104,6 +150,22 @@ test('store creates a new job title', function () {
     $response->assertStatus(201);
     $response->assertJsonFragment(['title' => 'Test Title']);
     $this->assertDatabaseHas('job_titles', ['title' => 'Test Title']);
+});
+
+test('store returns 403 when user lacks permission', function () {
+    $jobTitle = JobTitle::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.jobTitles.store', $jobTitle->id));
+
+    $response->assertStatus(403);
 });
 
 /**
@@ -133,6 +195,28 @@ test('update modifies an existing job title', function () {
     $this->assertDatabaseHas('job_titles', ['id' => $jobTitle->id, 'title' => 'Updated Title']);
 });
 
+test('update returns 403 when user lacks permission', function () {
+    $jobTitle = JobTitle::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.jobTitles.update', $jobTitle->id));
+
+    $response->assertStatus(403);
+});
+
+test('update returns 404 for non-existent job title', function () {
+    $response = $this->putJson(route('api.jobTitles.update', 999999), ['name' => 'Ghost']);
+
+    $response->assertStatus(404);
+});
+
 /**
  * -----------------------------------------------------------
  * ------------------------- Destroy -------------------------
@@ -147,6 +231,28 @@ test('destroy deletes a job title', function () {
 
     $response->assertStatus(204);
     $this->assertSoftDeleted('job_titles', ['id' => $jobTitle->id]);
+});
+
+test('destroy returns 403 when user lacks permission', function () {
+    $jobTitle = JobTitle::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.jobTitles.destroy', $jobTitle->id));
+
+    $response->assertStatus(403);
+});
+
+test('destroy returns 404 for non-existent job title', function () {
+    $response = $this->deleteJson(route('api.jobTitles.destroy', 999999));
+
+    $response->assertStatus(404);
 });
 
 /**
@@ -171,4 +277,34 @@ test('restore deleted job title', function () {
         'id' => $jobTitle->id,
         'deleted_at' => null,
     ]);
+});
+
+test('restore returns 403 when user lacks permission', function () {
+    $jobTitle = JobTitle::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->postJson(route('api.jobTitles.restore', $jobTitle->id));
+
+    $response->assertStatus(403);
+});
+
+test('restore returns 404 for non-existent job title', function () {
+    $response = $this->postJson(route('api.jobTitles.restore', 999999));
+
+    $response->assertStatus(404);
+});
+
+test('restore returns 404 when job title is not deleted', function () {
+    $jobTitle = JobTitle::factory()->create();
+
+    $response = $this->postJson(route('api.jobTitles.restore', $jobTitle->id));
+
+    $response->assertStatus(404);
 });
