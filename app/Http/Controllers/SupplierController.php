@@ -167,7 +167,7 @@ class SupplierController extends Controller
         $supplier = Supplier::withTrashed()->findOrFail($id);
 
         $this->authorize('restore', $supplier);
-        
+
         if (! $supplier->trashed()) {
             abort(404);
         }

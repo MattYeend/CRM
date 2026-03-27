@@ -155,10 +155,6 @@ class User extends Authenticatable
      */
     public function getAllPermissions(): array
     {
-        if (app()->environment('testing')) {
-            return $this->permissions()->toArray();
-        }
-
         return Cache::remember(
             "user_permissions_{$this->id}",
             60,
