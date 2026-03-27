@@ -166,6 +166,11 @@ class NoteController extends Controller
     {
         $note = Note::withTrashed()->findOrFail($id);
         $this->authorize('restore', $note);
+
+        if (! $note->trashed()) {
+            abort(404);
+        }
+
         $this->management->restore((int) $id);
 
         $user = auth()->user();

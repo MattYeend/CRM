@@ -166,6 +166,11 @@ class InvoiceController extends Controller
     {
         $invoice = Invoice::withTrashed()->findOrFail($id);
         $this->authorize('restore', $invoice);
+
+        if (! $invoice->trashed()) {
+            abort(404);
+        }
+
         $this->management->restore((int) $id);
 
         $user = auth()->user();

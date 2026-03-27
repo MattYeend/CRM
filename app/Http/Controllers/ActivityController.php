@@ -176,6 +176,11 @@ class ActivityController extends Controller
     {
         $activity = Activity::withTrashed()->findOrFail($id);
         $this->authorize('restore', $activity);
+
+        if (! $activity->trashed()) {
+            abort(404);
+        }
+
         $this->management->restore((int) $id);
 
         $user = auth()->user();

@@ -220,6 +220,11 @@ class LearningController extends Controller
     {
         $learning = Learning::withTrashed()->findOrFail($id);
         $this->authorize('restore', $learning);
+
+        if (! $learning->trashed()) {
+            abort(404);
+        }
+
         $this->management->restore((int) $id);
 
         $user = auth()->user();

@@ -177,6 +177,11 @@ class DealController extends Controller
     {
         $deal = Deal::withTrashed()->findOrFail($id);
         $this->authorize('restore', $deal);
+
+        if (! $deal->trashed()) {
+            abort(404);
+        }
+
         $this->management->restore((int) $id);
 
         $user = auth()->user();

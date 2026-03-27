@@ -170,6 +170,11 @@ class UserController extends Controller
     {
         $user = User::withTrashed()->findOrFail($id);
         $this->authorize('restore', $user);
+
+        if (! $user->trashed()) {
+            abort(404);
+        }
+
         $user = $this->management->restore((int) $id);
 
         $auth = auth()->user();

@@ -196,6 +196,11 @@ class ProductController extends Controller
     {
         $product = Product::withTrashed()->findOrFail($id);
         $this->authorize('restore', $product);
+
+        if (! $product->trashed()) {
+            abort(404);
+        }
+
         $this->management->restore((int) $id);
 
         $user = auth()->user();

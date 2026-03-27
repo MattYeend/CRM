@@ -166,9 +166,11 @@ class PartImageController extends Controller
     {
         $partImage = PartImage::withTrashed()->findOrFail($id);
         $this->authorize('restore', $partImage);
+
         if (! $partImage->trashed()) {
             abort(404);
         }
+
         $this->management->restore((int) $id);
 
         $user = auth()->user();

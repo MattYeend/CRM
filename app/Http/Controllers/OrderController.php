@@ -175,6 +175,11 @@ class OrderController extends Controller
     {
         $order = Order::withTrashed()->findOrFail($id);
         $this->authorize('restore', $order);
+
+        if (! $order->trashed()) {
+            abort(404);
+        }
+
         $this->management->restore((int) $id);
 
         $user = auth()->user();
@@ -188,6 +193,15 @@ class OrderController extends Controller
         return response()->json($order);
     }
 
+    /**
+     * Add products to order
+     *
+     * @param Request $request
+     *
+     * @param Order $order
+     *
+     * @return JsonResponse
+     */
     public function addProducts(Request $request, Order $order): JsonResponse
     {
         $items = $request->input('products');
@@ -196,6 +210,15 @@ class OrderController extends Controller
         return response()->json(['message' => 'Products added to order']);
     }
 
+    /**
+     * Update products on an order
+     *
+     * @param Request $request
+     *
+     * @param Order $order
+     *
+     * @return JsonResponse
+     */
     public function updateProducts(Request $request, Order $order): JsonResponse
     {
         $items = $request->input('products');
@@ -204,6 +227,15 @@ class OrderController extends Controller
         return response()->json(['message' => 'Products updated for order']);
     }
 
+    /**
+     * Remove products from an order
+     *
+     * @param Request $request
+     *
+     * @param Order $order
+     *
+     * @return JsonResponse
+     */
     public function removeProduct(Order $order, Product $product): JsonResponse
     {
         $this->orderProductManagement->remove($order, $product->id);
@@ -211,6 +243,15 @@ class OrderController extends Controller
         return response()->json(['message' => 'Product removed from order']);
     }
 
+    /**
+     * Restore products to order
+     *
+     * @param Request $request
+     *
+     * @param Order $order
+     *
+     * @return JsonResponse
+     */
     public function restoreProduct(Order $order, Product $product): JsonResponse
     {
         $this->orderProductManagement->restore($order, $product->id);

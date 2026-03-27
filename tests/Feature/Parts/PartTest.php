@@ -66,6 +66,21 @@ test('index returns all parts when no pagination specified', function () {
     $this->assertCount(3, $response->json('data'));
 });
 
+test('index returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.parts.index'));
+
+    $response->assertStatus(403);
+});
+
 /**
  * --------------------------------------------------------------
  * ---------------------------- Show ----------------------------
@@ -95,6 +110,22 @@ test('show returns 404 for non-existent part', function () {
     $response = $this->getJson(route('api.parts.show', 999999));
 
     $response->assertStatus(404);
+});
+
+test('show returns 403 when user lacks permission', function () {
+    $part = Part::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.parts.show', $part->id));
+
+    $response->assertStatus(403);
 });
 
 /**
@@ -151,6 +182,22 @@ test('store returns 422 when sku is not unique', function () {
     $response->assertJsonValidationErrors('sku');
 });
 
+test('store returns 403 when user lacks permission', function () {
+    $part = Part::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.parts.store', $part->id));
+
+    $response->assertStatus(403);
+});
+
 /**
  * ------------------------------------------------------------
  * -------------------------- Update --------------------------
@@ -181,6 +228,22 @@ test('update returns 404 for non-existent part', function () {
     $response->assertStatus(404);
 });
 
+test('update returns 403 when user lacks permission', function () {
+    $part = Part::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.parts.update', $part->id));
+
+    $response->assertStatus(403);
+});
+
 /**
  * -------------------------------------------------------------
  * -------------------------- Destroy --------------------------
@@ -193,6 +256,22 @@ test('destroy soft deletes a part and returns 204', function () {
 
     $response->assertStatus(204);
     $this->assertSoftDeleted('parts', ['id' => $part->id]);
+});
+
+test('destroy returns 403 when user lacks permission', function () {
+    $part = Part::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.parts.destroy', $part->id));
+
+    $response->assertStatus(403);
 });
 
 test('destroy returns 404 for non-existent part', function () {
@@ -217,6 +296,22 @@ test('restore recovers a soft deleted part', function () {
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $part->id]);
     $this->assertDatabaseHas('parts', ['id' => $part->id, 'deleted_at' => null]);
+});
+
+test('restore returns 403 when user lacks permission', function () {
+    $part = Part::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->postJson(route('api.parts.restore', $part->id));
+
+    $response->assertStatus(403);
 });
 
 test('restore returns 404 for non-existent part', function () {

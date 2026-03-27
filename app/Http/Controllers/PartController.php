@@ -166,9 +166,11 @@ class PartController extends Controller
     {
         $part = Part::withTrashed()->findOrFail($id);
         $this->authorize('restore', $part);
+
         if (! $part->trashed()) {
             abort(404);
         }
+
         $this->management->restore((int) $id);
 
         $user = auth()->user();

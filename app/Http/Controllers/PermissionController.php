@@ -166,6 +166,11 @@ class PermissionController extends Controller
     {
         $permission = Permission::withTrashed()->findOrFail($id);
         $this->authorize('restore', $permission);
+
+        if (! $permission->trashed()) {
+            abort(404);
+        }
+
         $this->management->restore((int) $id);
 
         $user = auth()->user();

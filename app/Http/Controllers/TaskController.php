@@ -168,6 +168,11 @@ class TaskController extends Controller
     {
         $task = Task::withTrashed()->findOrFail($id);
         $this->authorize('restore', $task);
+
+        if (! $task->trashed()) {
+            abort(404);
+        }
+
         $this->management->restore((int) $id);
 
         $user = auth()->user();

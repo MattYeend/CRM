@@ -177,6 +177,11 @@ class QuoteController extends Controller
     {
         $quote = Quote::withTrashed()->findOrFail($id);
         $this->authorize('restore', $quote);
+
+        if (! $quote->trashed()) {
+            abort(404);
+        }
+
         $this->management->restore((int) $id);
 
         $user = auth()->user();
@@ -192,6 +197,12 @@ class QuoteController extends Controller
 
     /**
      * Attach products to a quote.
+     *
+     * @param Request $request
+     *
+     * @param Quote $quote
+     *
+     * @return Json Response
      */
     public function addProducts(Request $request, Quote $quote): JsonResponse
     {
@@ -203,6 +214,12 @@ class QuoteController extends Controller
 
     /**
      * Update products attached to a quote.
+     *
+     * @param Request $request
+     *
+     * @param Quote $quote
+     *
+     * @return Json Response
      */
     public function updateProducts(Request $request, Quote $quote): JsonResponse
     {
@@ -214,6 +231,12 @@ class QuoteController extends Controller
 
     /**
      * Remove a product from a quote.
+     *
+     * @param Request $request
+     *
+     * @param Quote $quote
+     *
+     * @return Json Response
      */
     public function removeProduct(Quote $quote, Product $product): JsonResponse
     {
@@ -224,6 +247,12 @@ class QuoteController extends Controller
 
     /**
      * Restore a product previously removed from a quote.
+     *
+     * @param Request $request
+     *
+     * @param Quote $quote
+     *
+     * @return Json Response
      */
     public function restoreProduct(Quote $quote, Product $product): JsonResponse
     {

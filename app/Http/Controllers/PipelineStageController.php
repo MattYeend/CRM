@@ -166,6 +166,11 @@ class PipelineStageController extends Controller
     {
         $pipelineStage = PipelineStage::withTrashed()->findOrFail($id);
         $this->authorize('restore', $pipelineStage);
+
+        if (! $pipelineStage->trashed()) {
+            abort(404);
+        }
+
         $this->management->restore((int) $id);
 
         $user = auth()->user();

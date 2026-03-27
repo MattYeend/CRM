@@ -173,6 +173,11 @@ class AttachmentController extends Controller
     {
         $attachment = Attachment::withTrashed()->findOrFail($id);
         $this->authorize('restore', $attachment);
+
+        if (! $attachment->trashed()) {
+            abort(404);
+        }
+
         $this->management->restore((int) $id);
 
         $user = auth()->user();

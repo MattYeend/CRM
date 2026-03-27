@@ -166,6 +166,11 @@ class JobTitleController extends Controller
     {
         $jobTitle = JobTitle::withTrashed()->findOrFail($id);
         $this->authorize('restore', $jobTitle);
+
+        if (! $jobTitle->trashed()) {
+            abort(404);
+        }
+
         $this->management->restore((int) $id);
 
         $user = auth()->user();

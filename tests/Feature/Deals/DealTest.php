@@ -62,12 +62,35 @@ test('index returns paginated deals with relations and filters', function () {
         'status' => 'open',
     ]);
 
-    $response = $this->actingAs($this->auth, 'sanctum')
-                     ->getJson(route('api.deals.index', ['per_page' => 5, 'status' => 'open', 'owner_id' => $owner->id]));
+    $response = $this->getJson(route('api.deals.index', ['per_page' => 5, 'status' => 'open', 'owner_id' => $owner->id]));
 
     $response->assertStatus(200);
     $response->assertJsonPath('per_page', 5);
     $this->assertCount(5, $response->json('data'));
+});
+
+test('index returns all deals when no pagination specified', function () {
+    Deal::factory()->count(3)->create();
+
+    $response = $this->getJson(route('api.deals.index'));
+
+    $response->assertStatus(200);
+    $this->assertCount(3, $response->json('data'));
+});
+
+test('index returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.deals.index'));
+
+    $response->assertStatus(403);
 });
 
 /**
@@ -78,8 +101,7 @@ test('index returns paginated deals with relations and filters', function () {
 test('show returns a deal with relations loaded', function () {
     $deal = Deal::factory()->create();
 
-    $response = $this->actingAs($this->auth, 'sanctum')
-                     ->getJson(route('api.deals.show', $deal));
+    $response = $this->getJson(route('api.deals.show', $deal));
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $deal->id]);
@@ -97,6 +119,28 @@ test('show returns a deal with relations loaded', function () {
         'tasks' => [],
         'attachments' => [],
     ]);
+});
+
+test('show returns 404 for non-existent deal', function () {
+    $response = $this->getJson(route('api.deals.show', 999999));
+
+    $response->assertStatus(404);
+});
+
+test('show returns 403 when user lacks permission', function () {
+    $deal = Deal::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.deals.show', $deal->id));
+
+    $response->assertStatus(403);
 });
 
 /**
@@ -117,12 +161,27 @@ test('store creates a new deal and returns 201', function () {
         'currency' => 'USD',
     ];
 
-    $response = $this->actingAs($this->auth, 'sanctum')
-                     ->postJson(route('api.deals.store'), $payload);
+    $response = $this->postJson(route('api.deals.store'), $payload);
 
     $response->assertStatus(201);
     $response->assertJsonFragment(['title' => 'New Deal', 'status' => 'open']);
     $this->assertDatabaseHas('deals', ['title' => 'New Deal', 'owner_id' => $owner->id]);
+});
+
+test('store returns 403 when user lacks permission', function () {
+    $deal = Deal::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.deals.store', $deal->id));
+
+    $response->assertStatus(403);
 });
 
 /**
@@ -138,12 +197,33 @@ test('update modifies an existing deal', function () {
         'status' => 'won',
     ];
 
-    $response = $this->actingAs($this->auth, 'sanctum')
-                     ->putJson(route('api.deals.update', $deal), $payload);
+    $response = $this->putJson(route('api.deals.update', $deal), $payload);
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['title' => 'Updated Deal', 'status' => 'won']);
     $this->assertDatabaseHas('deals', ['id' => $deal->id, 'title' => 'Updated Deal', 'status' => 'won']);
+});
+
+test('update returns 404 for non-existent deal', function () {
+    $response = $this->putJson(route('api.deals.update', 999999), ['title' => 'Ghost']);
+
+    $response->assertStatus(404);
+});
+
+test('update returns 403 when user lacks permission', function () {
+    $deal = Deal::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.deals.update', $deal->id));
+
+    $response->assertStatus(403);
 });
 
 /**
@@ -154,8 +234,7 @@ test('update modifies an existing deal', function () {
 test('destroy deletes the deal', function () {
     $deal = Deal::factory()->create();
 
-    $response = $this->actingAs($this->auth, 'sanctum')
-                     ->deleteJson(route('api.deals.destroy', $deal));
+    $response = $this->deleteJson(route('api.deals.destroy', $deal));
 
     $response->assertStatus(204);
 
@@ -164,6 +243,28 @@ test('destroy deletes the deal', function () {
     } else {
         $this->assertDatabaseMissing('deals', ['id' => $deal->id]);
     }
+});
+
+test('destroy returns 403 when user lacks permission', function () {
+    $deal = Deal::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.deals.destroy', $deal->id));
+
+    $response->assertStatus(403);
+});
+
+test('destroy returns 404 for non-existent deal', function () {
+    $response = $this->deleteJson(route('api.deals.destroy', 999999));
+
+    $response->assertStatus(404);
 });
 
 /**
@@ -181,6 +282,36 @@ test('restore recovers a soft-deleted deal', function () {
     $response->assertJsonFragment(['id' => $deal->id]);
 
     $this->assertDatabaseHas('deals', ['id' => $deal->id, 'deleted_at' => null]);
+});
+
+test('restore returns 403 when user lacks permission', function () {
+    $deal = Deal::factory()->create(['created_by' => $this->auth->id]);
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update([
+        'role_id' => $role->id
+    ]);
+
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->postJson(route('api.deals.restore', $deal->id));
+
+    $response->assertStatus(403);
+});
+
+test('restore returns 404 for non-existent deal', function () {
+    $response = $this->postJson(route('api.deals.restore', 999999));
+
+    $response->assertStatus(404);
+});
+
+test('restore returns 404 when deal is not deleted', function () {
+    $deal = Deal::factory()->create();
+
+    $response = $this->postJson(route('api.deals.restore', $deal->id));
+
+    $response->assertStatus(404);
 });
 
 /**

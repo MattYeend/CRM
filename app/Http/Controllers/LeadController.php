@@ -165,6 +165,11 @@ class LeadController extends Controller
     {
         $lead = Lead::withTrashed()->findOrFail($id);
         $this->authorize('restore', $lead);
+
+        if (! $lead->trashed()) {
+            abort(404);
+        }
+
         $this->management->restore((int) $id);
 
         $user = auth()->user();

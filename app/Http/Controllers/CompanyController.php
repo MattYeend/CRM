@@ -166,6 +166,11 @@ class CompanyController extends Controller
     {
         $company = Company::withTrashed()->findOrFail($id);
         $this->authorize('restore', $company);
+
+        if (! $company->trashed()) {
+            abort(404);
+        }
+
         $this->management->restore((int) $id);
 
         $user = auth()->user();

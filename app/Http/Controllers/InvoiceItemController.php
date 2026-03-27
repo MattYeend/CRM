@@ -166,6 +166,11 @@ class InvoiceItemController extends Controller
     {
         $invoiceItem = InvoiceItem::withTrashed()->findOrFail($id);
         $this->authorize('restore', $invoiceItem);
+
+        if (! $invoiceItem->trashed()) {
+            abort(404);
+        }
+
         $this->management->restore($id);
 
         $user = auth()->user();
