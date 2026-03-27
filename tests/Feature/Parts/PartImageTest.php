@@ -106,8 +106,17 @@ test('store creates a new part image and returns 201', function () {
     $response = $this->postJson(route('api.partImages.store'), $payload);
 
     $response->assertStatus(201);
+
+    $imagePath = $response->json('image');
+
     $response->assertJsonFragment(['part_id' => $part->id, 'is_primary' => true]);
-    $this->assertDatabaseHas('part_images', ['part_id' => $part->id, 'image' => UploadedFile::fake()->image('part-image.jpg')]);
+    $this->assertDatabaseHas(
+        'part_images',
+        [
+            'part_id' => $part->id,
+            'image' => $imagePath,
+        ]
+    );
 });
 
 test('store returns 422 when required fields are missing', function () {

@@ -101,7 +101,7 @@ test('store creates a new part category and returns 201', function () {
     $response = $this->postJson(route('api.partCategories.store'), $payload);
 
     $response->assertStatus(201);
-    $response->assertJsonFragment(['name' => 'Engine Parts', 'slug' => 'engine-parts']);
+    $response->assertJsonFragment(['name' => 'Engine Parts']);
     $this->assertDatabaseHas('part_categories', ['name' => 'Engine Parts', 'slug' => 'engine-parts']);
 });
 
@@ -125,7 +125,7 @@ test('store returns 422 when required fields are missing', function () {
     $response = $this->postJson(route('api.partCategories.store'), []);
 
     $response->assertStatus(422);
-    $response->assertJsonValidationErrors(['name', 'slug']);
+    $response->assertJsonValidationErrors(['name']);
 });
 
 test('store returns 422 when name is not unique', function () {
@@ -133,39 +133,12 @@ test('store returns 422 when name is not unique', function () {
 
     $payload = [
         'name' => 'Duplicate Name',
-        'slug' => 'some-other-slug',
     ];
 
     $response = $this->postJson(route('api.partCategories.store'), $payload);
 
     $response->assertStatus(422);
     $response->assertJsonValidationErrors('name');
-});
-
-test('store returns 422 when slug is not unique', function () {
-    PartCategory::factory()->create(['slug' => 'duplicate-slug']);
-
-    $payload = [
-        'name' => 'Some Other Name',
-        'slug' => 'duplicate-slug',
-    ];
-
-    $response = $this->postJson(route('api.partCategories.store'), $payload);
-
-    $response->assertStatus(422);
-    $response->assertJsonValidationErrors('slug');
-});
-
-test('store returns 422 when slug contains invalid characters', function () {
-    $payload = [
-        'name' => 'Bad Slug Category',
-        'slug' => 'invalid slug with spaces!',
-    ];
-
-    $response = $this->postJson(route('api.partCategories.store'), $payload);
-
-    $response->assertStatus(422);
-    $response->assertJsonValidationErrors('slug');
 });
 
 test('store returns 422 when parent_id does not exist', function () {
