@@ -62,18 +62,18 @@ return new class extends Migration
             $table->unsignedInteger('quantity')->default(0);
             $table->unsignedInteger('min_stock_level')->default(0);
             $table->unsignedInteger('max_stock_level')->nullable();
-            $table->unsignedInteger('reorder_point')->nullable();   // Stock level that triggers reorder
+            $table->unsignedInteger('reorder_point')->nullable(); // Stock level that triggers reorder
             $table->unsignedInteger('reorder_quantity')->nullable(); // Quantity to reorder
-            $table->unsignedInteger('lead_time_days')->nullable();   // Days to restock from supplier
-            $table->string('warehouse_location')->nullable();        // e.g. Warehouse A
-            $table->string('bin_location')->nullable();              // e.g. Shelf B3
+            $table->unsignedInteger('lead_time_days')->nullable(); // Days to restock from supplier
+            $table->string('warehouse_location')->nullable(); // e.g. Warehouse A
+            $table->string('bin_location')->nullable(); // e.g. Shelf B3
 
             // --- Feature Flags ---
             $table->boolean('is_active')->default(true);
             $table->boolean('is_purchasable')->default(true);
             $table->boolean('is_sellable')->default(true);
             $table->boolean('is_manufactured')->default(false); // Has a bill of materials
-            $table->boolean('is_serialised')->default(false);   // Track by serial number
+            $table->boolean('is_serialised')->default(false); // Track by serial number
             $table->boolean('is_batch_tracked')->default(false);// Track by batch/lot
             $table->boolean('is_test')->default(false);
 

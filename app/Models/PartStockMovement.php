@@ -67,7 +67,7 @@ class PartStockMovement extends Model
     ];
 
     /**
-     * Part the supplier belongs to.
+     * Part the movement belongs to.
      *
      * @return BelongsTo<Part,PartStockMovement>
      */

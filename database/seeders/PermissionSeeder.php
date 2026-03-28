@@ -192,6 +192,17 @@ class PermissionSeeder extends Seeder
             ['name' => 'partStockMovements.view.own', 'label' => 'View own part images'],
             ['name' => 'partStockMovements.create', 'label' => 'Create part images'],
 
+            // Part Serial Numbers
+            ['name' => 'partSerialNumbers.view.all', 'label' => 'View part images'],
+            ['name' => 'partSerialNumbers.view.own', 'label' => 'View own part images'],
+            ['name' => 'partSerialNumbers.create', 'label' => 'Create part images'],
+            ['name' => 'partSerialNumbers.update.any', 'label' => 'Update any part images'],
+            ['name' => 'partSerialNumbers.update.own', 'label' => 'Update own part images'],
+            ['name' => 'partSerialNumbers.delete.any', 'label' => 'Delete any part images'],
+            ['name' => 'partSerialNumbers.delete.own', 'label' => 'Delete own part images'],
+            ['name' => 'partSerialNumbers.restore.any', 'label' => 'Restore any part images'],
+            ['name' => 'partSerialNumbers.restore.own', 'label' => 'Restore own part images'],
+
             // Permissions
             ['name' => 'permissions.view.all', 'label' => 'View permissions'],
             ['name' => 'permissions.view.own', 'label' => 'View own permissions'],
