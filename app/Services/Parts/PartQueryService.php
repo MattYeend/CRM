@@ -37,6 +37,7 @@ class PartQueryService
             'category',
             'primarySupplier',
             'primaryImage',
+            'stockMovements',
         );
 
         $this->sorting->applySorting($query, $request);

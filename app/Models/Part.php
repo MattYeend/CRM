@@ -197,10 +197,10 @@ class Part extends Model
      *
      * @return HasMany<PartStockMovement>
      */
-    // public function stockMovements(): HasMany
-    // {
-    //     return $this->hasMany(PartStockMovement::class);
-    // }
+    public function stockMovements(): HasMany
+    {
+        return $this->hasMany(PartStockMovement::class);
+    }
 
     /**
      * Get all serial numbers associated with the part.
