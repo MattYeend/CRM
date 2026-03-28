@@ -225,6 +225,13 @@ class Log extends Model
     public const ACTION_PART_STOCK_MOVEMENT_CREATED = 159;
     public const ACTION_PART_STOCK_MOVEMENT_VIEWED = 160;
 
+    // Part Serial Numbers
+    public const ACTION_PART_SERIAL_NUMBER_CREATED = 161;
+    public const ACTION_PART_SERIAL_NUMBER_UPDATED = 162;
+    public const ACTION_PART_SERIAL_NUMBER_DELETED = 163;
+    public const ACTION_PART_SERIAL_NUMBER_RESTORED = 164;
+    public const ACTION_PART_SERIAL_NUMBER_VIEWED = 165;
+
     // New Logging Actions should go here to be reviewed
     // by the development team for future releases.
     // Ensure to update the documentation accordingly.

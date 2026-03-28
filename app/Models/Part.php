@@ -207,10 +207,10 @@ class Part extends Model
      *
      * @return HasMany<PartSerialNumber>
      */
-    // public function serialNumbers(): HasMany
-    // {
-    //     return $this->hasMany(PartSerialNumber::class);
-    // }
+    public function serialNumbers(): HasMany
+    {
+        return $this->hasMany(PartSerialNumber::class);
+    }
 
     /**
      * Get the bill of materials where this part is the parent (assembly).
