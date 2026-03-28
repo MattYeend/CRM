@@ -2,7 +2,7 @@
 
 namespace App\Services\PartSerialNumbers;
 
-class PartSerialDestructorService
+class PartSerialNumberLogService
 {
     public function __construct()
     {

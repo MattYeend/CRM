@@ -2,7 +2,7 @@
 
 namespace App\Services\PartSerialNumbers;
 
-class PartSerialTrashFilterService
+class PartSerialNumberTrashFilterService
 {
     public function __construct()
     {

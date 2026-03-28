@@ -2,7 +2,7 @@
 
 namespace App\Services\PartSerialNumbers;
 
-class PartSerialUpdaterService
+class PartSerialNumberDestructorService
 {
     public function __construct()
     {

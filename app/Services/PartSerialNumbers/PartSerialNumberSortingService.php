@@ -2,7 +2,7 @@
 
 namespace App\Services\PartSerialNumbers;
 
-class PartSerialManagementService
+class PartSerialNumberSortingService
 {
     public function __construct()
     {
