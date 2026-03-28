@@ -135,8 +135,9 @@ class PartSerialNumberLogService
      *
      * @return array The base data array.
      */
-    protected function basePartSerialNumberData(PartSerialNumber $partSerialNumber): array
-    {
+    protected function basePartSerialNumberData(
+        PartSerialNumber $partSerialNumber
+    ): array {
         return [
             'id' => $partSerialNumber->id,
             'part_id' => $partSerialNumber->part_id,

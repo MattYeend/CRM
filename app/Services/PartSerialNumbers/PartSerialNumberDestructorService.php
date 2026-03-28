@@ -6,7 +6,7 @@ use App\Models\PartSerialNumber;
 
 class PartSerialNumberDestructorService
 {
-/**
+    /**
      * Soft-delete a part serial number.
      *
      * @param PartSerialNumber $partSerialNumber

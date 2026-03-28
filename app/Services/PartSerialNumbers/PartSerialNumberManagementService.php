@@ -4,6 +4,7 @@ namespace App\Services\PartSerialNumbers;
 
 use App\Http\Requests\StorePartSerialNumberRequest;
 use App\Http\Requests\UpdatePartSerialNumberRequest;
+use App\Models\Part;
 use App\Models\PartSerialNumber;
 
 class PartSerialNumberManagementService
@@ -27,12 +28,15 @@ class PartSerialNumberManagementService
      *
      * @param StorePartSerialNumberRequest $request
      *
+     * @param Part $part
+     *
      * @return PartSerialNumber
      */
     public function store(
-        StorePartSerialNumberRequest $request
+        StorePartSerialNumberRequest $request,
+        Part $part
     ): PartSerialNumber {
-        return $this->creator->create($request);
+        return $this->creator->create($request, $part);
     }
 
     /**

@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use App\Traits\HasTestPrefix;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Builder;
 
 class PartSerialNumber extends Model
 {
@@ -25,23 +25,21 @@ class PartSerialNumber extends Model
 
     /** Part has been sold to a customer. */
     public const STATUS_SOLD = 'sold';
-    
+
     /** Part has been returned after a sale. */
     public const STATUS_RETURNED = 'returned';
-    
+
     /** Part has been written off and is no longer usable. */
     public const STATUS_SCRAPPED = 'scrapped';
-    
+
     /**
      * All valid status values.
-     *
-     * @var array<int, string>
      */
     public const STATUSES = [
         self::STATUS_IN_STOCK,
         self::STATUS_SOLD,
         self::STATUS_RETURNED,
-    ];    
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -64,7 +62,7 @@ class PartSerialNumber extends Model
         'created_at',
         'updated_at',
         'deleted_at',
-        'restored_at'
+        'restored_at',
     ];
 
     /**
@@ -106,7 +104,8 @@ class PartSerialNumber extends Model
     }
 
     /**
-     * Scope to in-stock serial numbers expiring within the given number of days.
+     * Scope to in-stock serial numbers expiring within the given
+     * number of days.
      *
      * @param  Builder<PartSerialNumber> $query
      *
@@ -134,10 +133,12 @@ class PartSerialNumber extends Model
     }
 
     /**
-     * Get the serial number, applies the test prefix when the part serial number
+     * Get the serial number, applies the test prefix when the part
+     * serial number
      * is marked as a test.
      *
-     * @param  string|null  $value  The raw part serial number from the database.
+     * @param  string|null  $value  The raw part serial number from the
+     * database.
      *
      * @return string
      */

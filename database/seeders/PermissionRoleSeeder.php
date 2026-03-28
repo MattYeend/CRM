@@ -156,7 +156,6 @@ class PermissionRoleSeeder extends Seeder
             'partStockMovements.create',
 
             'partSerialNumbers.view.all',
-            'partSerialNumbers.view.own',
             'partSerialNumbers.create',
             'partSerialNumbers.update.any',
             'partSerialNumbers.delete.any',
@@ -360,7 +359,6 @@ class PermissionRoleSeeder extends Seeder
             'partStockMovements.create',
 
             'partSerialNumbers.view.all',
-            'partSerialNumbers.view.own',
             'partSerialNumbers.create',
             'partSerialNumbers.update.own',
             'partSerialNumbers.delete.own',

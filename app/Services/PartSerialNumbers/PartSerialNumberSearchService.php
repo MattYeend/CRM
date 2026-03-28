@@ -1,30 +1,27 @@
 <?php
 
-namespace App\Services\Suppliers;
+namespace App\Services\PartSerialNumbers;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
-class SupplierSearchService
+class PartSerialNumberSearchService
 {
-    /** Apply search to the query.
+    /**
+     * Apply search to the query.
      *
      * @param Builder $query
-     *
      * @param Request $request
      *
-     * @return void
+     * @return Builder
      */
-    public function applySearch($query, Request $request): void
+    public function applySearch(Builder $query, Request $request): Builder
     {
-        $search = $request->query('search');
-
-        if ($search) {
-            $query->where(function ($q) use ($search) {
+        return $query
+            ->when($request->query('search'), function ($q, $search) {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('code', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%");
             });
-        }
     }
 }

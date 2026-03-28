@@ -15,6 +15,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PartCategoryController;
 use App\Http\Controllers\PartController;
 use App\Http\Controllers\PartImageController;
+use App\Http\Controllers\PartSerialNumberController;
 use App\Http\Controllers\PartStockMovementController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PipelineController;
@@ -595,4 +596,34 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
         'parts/{part}/stock-movements/{partStockMovement}',
         [PartStockMovementController::class, 'show']
     )->name('api.partStockMovements.show');
+
+    /**
+     * -------------------------------------------------------------
+     * ------------------- Part Serial Numbers --------------------
+     * -------------------------------------------------------------
+     */
+    Route::get(
+        'parts/{part}/serial-numbers',
+        [PartSerialNumberController::class, 'index']
+    )->name('api.partSerialNumbers.index');
+
+    Route::post(
+        'parts/{part}/serial-numbers',
+        [PartSerialNumberController::class, 'store']
+    )->name('api.partSerialNumbers.store');
+
+    Route::put(
+        'parts/{part}/serial-numbers/{serialNumber}',
+        [PartSerialNumberController::class, 'update']
+    )->name('api.partSerialNumbers.update');
+
+    Route::delete(
+        'parts/{part}/serial-numbers/{serialNumber}',
+        [PartSerialNumberController::class, 'destroy']
+    )->name('api.partSerialNumbers.destroy');
+
+    Route::post(
+        'parts/{part}/serial-numbers/{id}/restore',
+        [PartSerialNumberController::class, 'restore']
+    )->name('api.partSerialNumbers.restore');
 });

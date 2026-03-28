@@ -3,6 +3,7 @@
 namespace App\Services\PartSerialNumbers;
 
 use App\Http\Requests\StorePartSerialNumberRequest;
+use App\Models\Part;
 use App\Models\PartSerialNumber;
 
 class PartSerialNumberCreatorService
@@ -12,17 +13,19 @@ class PartSerialNumberCreatorService
      *
      * @param StorePartSerialNumberRequest $request
      *
+     * @param Part $part
+     *
      * @return PartSerialNumber
      */
     public function create(
-        StorePartSerialNumberRequest $request
+        StorePartSerialNumberRequest $request,
+        Part $part
     ): PartSerialNumber {
         $user = $request->user();
-        $data = $request->validated();
-
-        $data['created_by'] = $user->id;
-        $data['created_at'] = now();
-
-        return PartSerialNumber::create($data);
+        return $part->serialNumbers()->create([
+            ...$request->validated(),
+            'created_by' => $user->id,
+            'created_at' => now(),
+        ]);
     }
 }

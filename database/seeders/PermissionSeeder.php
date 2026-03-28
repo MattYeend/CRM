@@ -188,20 +188,19 @@ class PermissionSeeder extends Seeder
             ['name' => 'partImages.restore.own', 'label' => 'Restore own part images'],
 
             // Part Stock Movements
-            ['name' => 'partStockMovements.view.all', 'label' => 'View part images'],
-            ['name' => 'partStockMovements.view.own', 'label' => 'View own part images'],
-            ['name' => 'partStockMovements.create', 'label' => 'Create part images'],
+            ['name' => 'partStockMovements.view.all', 'label' => 'View part stock movements'],
+            ['name' => 'partStockMovements.view.own', 'label' => 'View own part stock movements'],
+            ['name' => 'partStockMovements.create', 'label' => 'Create part stock movements'],
 
             // Part Serial Numbers
-            ['name' => 'partSerialNumbers.view.all', 'label' => 'View part images'],
-            ['name' => 'partSerialNumbers.view.own', 'label' => 'View own part images'],
-            ['name' => 'partSerialNumbers.create', 'label' => 'Create part images'],
-            ['name' => 'partSerialNumbers.update.any', 'label' => 'Update any part images'],
-            ['name' => 'partSerialNumbers.update.own', 'label' => 'Update own part images'],
-            ['name' => 'partSerialNumbers.delete.any', 'label' => 'Delete any part images'],
-            ['name' => 'partSerialNumbers.delete.own', 'label' => 'Delete own part images'],
-            ['name' => 'partSerialNumbers.restore.any', 'label' => 'Restore any part images'],
-            ['name' => 'partSerialNumbers.restore.own', 'label' => 'Restore own part images'],
+            ['name' => 'partSerialNumbers.view.all', 'label' => 'View part serial numbers'],
+            ['name' => 'partSerialNumbers.create', 'label' => 'Create part serial numbers'],
+            ['name' => 'partSerialNumbers.update.any', 'label' => 'Update any part serial numbers'],
+            ['name' => 'partSerialNumbers.update.own', 'label' => 'Update own part serial numbers'],
+            ['name' => 'partSerialNumbers.delete.any', 'label' => 'Delete any part serial numbers'],
+            ['name' => 'partSerialNumbers.delete.own', 'label' => 'Delete own part serial numbers'],
+            ['name' => 'partSerialNumbers.restore.any', 'label' => 'Restore any part serial numbers'],
+            ['name' => 'partSerialNumbers.restore.own', 'label' => 'Restore own part serial numbers'],
 
             // Permissions
             ['name' => 'permissions.view.all', 'label' => 'View permissions'],
