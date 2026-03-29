@@ -27,11 +27,12 @@ class BillOfMaterialManagementService
      * Create a new BOM entry.
      *
      * @param StoreBillOfMaterialRequest $request
+     *
      * @param Part $part
      *
-     * @return array
+     * @return BillOfMaterial
      */
-    public function store(StoreBillOfMaterialRequest $request, Part $part): array
+    public function store(StoreBillOfMaterialRequest $request, Part $part): BillOfMaterial
     {
         return $this->creator->create($request, $part);
     }
@@ -40,6 +41,7 @@ class BillOfMaterialManagementService
      * Update an existing BOM entry.
      *
      * @param UpdateBillOfMaterialRequest $request
+     *
      * @param BillOfMaterial $billOfMaterial
      *
      * @return BillOfMaterial

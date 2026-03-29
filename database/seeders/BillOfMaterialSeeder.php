@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Part;
 use App\Models\BillOfMaterial;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class BillOfMaterialSeeder extends Seeder
@@ -27,6 +28,8 @@ class BillOfMaterialSeeder extends Seeder
                         [
                             'quantity' => rand(1, 10),
                             'unit_of_measure' => 'each',
+                            'is_test' => true,
+                            'created_by' => User::inRandomOrder()->first()?->id,
                         ]
                     );
                 });

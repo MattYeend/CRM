@@ -12,25 +12,27 @@ class BillOfMaterialCreatorService
      * Create a new BOM entry.
      *
      * @param StoreBillOfMaterialRequest $request
+     *
      * @param Part $part
      *
-     * @return array
+     * @return BillOfMaterial
      */
-    public function create(StoreBillOfMaterialRequest $request, Part $part): array
+    public function create(StoreBillOfMaterialRequest $request, Part $part): BillOfMaterial
     {
-        if (!$part->is_manufactured) {
-            return ['error' => 'This part is not manufactured.'];
+        if (! $part->is_manufactured) {
+            abort(422, 'This part is not manufactured.');
         }
 
         if ($request->child_part_id === $part->id) {
-            return ['error' => 'A part cannot contain itself.'];
+            abort(422, 'A part cannot contain itself.');
         }
 
-        $bom = BillOfMaterial::create([
+        $billOfMaterial = BillOfMaterial::create([
             ...$request->validated(),
             'parent_part_id' => $part->id,
         ]);
 
-        return ['bom' => $bom->load('childPart')];
+        return $billOfMaterial->load('childPart', 'parentPart');
     }
+
 }
