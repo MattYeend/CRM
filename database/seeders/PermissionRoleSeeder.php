@@ -52,6 +52,13 @@ class PermissionRoleSeeder extends Seeder
             'attachments.delete.any',
             'attachments.restore.any',
 
+            'billOfMaterials.view.all',
+            'billOfMaterials.create',
+            'billOfMaterials.update.any',
+            'billOfMaterials.upload.any',
+            'billOfMaterials.delete.any',
+            'billOfMaterials.restore.any',
+
             'companies.view.all',
             'companies.view.own',
             'companies.create',
@@ -266,12 +273,17 @@ class PermissionRoleSeeder extends Seeder
             'attachments.delete.own',
             'attachments.restore.own',
 
+            'billOfMaterials.view.all',
+            'billOfMaterials.create',
+            'billOfMaterials.update.own',
+            'billOfMaterials.delete.own',
+            'billOfMaterials.restore.own',
+
             'companies.view.all',
             'companies.view.own',
             'companies.create',
             'companies.update.own',
             'companies.delete.own',
-            'companies.restore.own',
             'companies.restore.own',
 
             'deals.view.all',

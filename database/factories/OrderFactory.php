@@ -26,7 +26,7 @@ class OrderFactory extends Factory
             'currency' => fake()->randomElement(['GBP', 'USD', 'EUR']),
             'status' => fake()->randomElement(['pending', 'paid', 'failed']),
             'payment_method' => fake()->optional()->randomElement(['card', 'paypal', 'stripe']),
-            'paid_at' => fake()->optional()->dateTimeBetween('-1 month', 'now'),
+            'paid_at' => fake()->optional()->dateTimeBetween('-1 month', 'now')?->format('Y-m-d H:i:s'),
             'payment_intent_id' => fake()->uuid(),
             'charge_id' => fake()->uuid(),
             'stripe_payment_intent' => fake()->uuid(),

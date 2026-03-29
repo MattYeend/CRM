@@ -38,6 +38,18 @@ class PermissionSeeder extends Seeder
             ['name' => 'attachments.restore.any', 'label' => 'Restore any attachments'],
             ['name' => 'attachments.restore.own', 'label' => 'Restore own attachments'],
 
+            // Bill Of Materials
+            ['name' => 'billOfMaterials.view.all', 'label' => 'View bill of materials'],
+            ['name' => 'billOfMaterials.create', 'label' => 'Create bill of materials'],
+            ['name' => 'billOfMaterials.update.any', 'label' => 'Update any bill of materials'],
+            ['name' => 'billOfMaterials.update.own', 'label' => 'Update own bill of materials'],
+            ['name' => 'billOfMaterials.upload.any', 'label' => 'Upload any bill of materials'],
+            ['name' => 'billOfMaterials.upload.own', 'label' => 'Upload own bill of materials'],
+            ['name' => 'billOfMaterials.delete.any', 'label' => 'Delete any bill of materials'],
+            ['name' => 'billOfMaterials.delete.own', 'label' => 'Delete own bill of materials'],
+            ['name' => 'billOfMaterials.restore.any', 'label' => 'Restore any bill of materials'],
+            ['name' => 'billOfMaterials.restore.own', 'label' => 'Restore own bill of materials'],
+
             // Companies
             ['name' => 'companies.view.all', 'label' => 'View companies'],
             ['name' => 'companies.view.own', 'label' => 'View own companies'],
