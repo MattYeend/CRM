@@ -48,7 +48,12 @@ class StoreProductRequest extends FormRequest
             'description' => 'nullable|string',
             'price' => 'nullable|numeric',
             'currency' => 'nullable|string|max:8',
-            'quantity' => 'nullable|integer',
+            'quantity' => 'nullable|integer|min:0',
+            'min_stock_level' => 'nullable|integer|min:0',
+            'max_stock_level' => 'nullable|integer|min:0',
+            'reorder_point' => 'nullable|integer|min:0',
+            'reorder_quantity' => 'nullable|integer|min:0',
+            'lead_time_days' => 'nullable|integer|min:0',
         ];
     }
 

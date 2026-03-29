@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-
 class Product extends Model
 {
     /**
@@ -230,7 +229,7 @@ class Product extends Model
      */
     public function isLowStock(): bool
     {
-        return $this->reorder_point !== null && $this->quantity <= $this->reorder_point;
+        return $this->reorder_point && $this->quantity <= $this->reorder_point;
     }
 
     /**
