@@ -6,7 +6,7 @@ use App\Models\Log;
 use App\Models\BillOfMaterial;
 use App\Models\User;
 
-class BillOfMaterialLogSerivce
+class BillOfMaterialLogService
 {
     /**
      * Log the creation of a Bill Of Material.

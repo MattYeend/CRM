@@ -6,7 +6,7 @@ use App\Models\Part;
 use App\Models\BillOfMaterial;
 use App\Http\Requests\StoreBillOfMaterialRequest;
 
-class BillOfMaterialCreatorSerivce
+class BillOfMaterialCreatorService
 {
     /**
      * Create a new BOM entry.

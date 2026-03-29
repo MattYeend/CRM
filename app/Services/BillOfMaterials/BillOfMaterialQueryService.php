@@ -7,7 +7,7 @@ use App\Models\BillOfMaterial;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class BillOfMaterialQuerySerivce
+class BillOfMaterialQueryService
 {
     private BillOfMaterialSortingService $sorting;
     private BillOfMaterialTrashFilterService $trashFilter;

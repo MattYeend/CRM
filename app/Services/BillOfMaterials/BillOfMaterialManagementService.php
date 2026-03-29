@@ -9,12 +9,12 @@ use App\Http\Requests\UpdateBillOfMaterialRequest;
 
 class BillOfMaterialManagementService
 {
-    private BillOfMaterialCreatorSerivce $creator;
+    private BillOfMaterialCreatorService $creator;
     private BillOfMaterialUpdaterService $updater;
     private BillOfMaterialDestructorService $destructor;
 
     public function __construct(
-        BillOfMaterialCreatorSerivce $creator,
+        BillOfMaterialCreatorService $creator,
         BillOfMaterialUpdaterService $updater,
         BillOfMaterialDestructorService $destructor,
     ) {
