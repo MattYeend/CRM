@@ -18,13 +18,12 @@ return new class extends Migration
             $table->string('supplier_sku')->nullable();
             $table->decimal('unit_cost', 10, 2)->nullable();
             $table->unsignedInteger('lead_time_days')->nullable();
+
             $table->boolean('is_preferred')->default(false);
             $table->boolean('is_test')->default(false);
 
-            // --- Meta ---
             $table->json('meta')->nullable();
 
-            // --- Audit ---
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();

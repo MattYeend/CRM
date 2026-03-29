@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('website')->nullable();
 
-            // Address
             $table->string('address_line_1')->nullable();
             $table->string('address_line_2')->nullable();
             $table->string('city')->nullable();
@@ -27,12 +26,10 @@ return new class extends Migration
             $table->string('postcode')->nullable();
             $table->string('country')->default('GB');
 
-            // Financial
             $table->string('currency', 3)->default('GBP');
             $table->string('payment_terms')->nullable();
             $table->string('tax_number')->nullable();
 
-            // Primary contact
             $table->string('contact_name')->nullable();
             $table->string('contact_email')->nullable();
             $table->string('contact_phone')->nullable();

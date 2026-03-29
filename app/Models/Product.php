@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasTestPrefix;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 class Product extends Model
 {
@@ -34,6 +36,11 @@ class Product extends Model
         'price',
         'currency',
         'quantity',
+        'min_stock_level',
+        'max_stock_level',
+        'reorder_point',
+        'reorder_quantity',
+        'lead_time_days',
         'is_test',
         'meta',
         'created_by',
@@ -188,6 +195,52 @@ class Product extends Model
             ->withPivot('quantity', 'price', 'meta', 'deleted_at')
             ->withTimestamps()
             ->using(OrderProduct::class);
+    }
+
+    /**
+     * Scope a query to products that are low on stock.
+     *
+     * Compares quantity against reorder_point.
+     *
+     * @param Builder $query
+     *
+     * @return Builder
+     */
+    public function scopeLowStock($query)
+    {
+        return $query->whereColumn('quantity', '<=', 'reorder_point');
+    }
+
+    /**
+     * Scope a query to products that are out of stock.
+     *
+     * @param Builder $query
+     *
+     * @return Builder
+     */
+    public function scopeOutOfStock($query)
+    {
+        return $query->where('quantity', 0);
+    }
+
+    /**
+     * Determine if the product is low on stock.
+     *
+     * @return bool
+     */
+    public function isLowStock(): bool
+    {
+        return $this->reorder_point !== null && $this->quantity <= $this->reorder_point;
+    }
+
+    /**
+     * Determine if the product is out of stock.
+     *
+     * @return bool
+     */
+    public function isOutOfStock(): bool
+    {
+        return $this->quantity === 0;
     }
 
     /**

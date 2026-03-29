@@ -21,10 +21,8 @@ return new class extends Migration
             $table->date('expires_at')->nullable();
             $table->boolean('is_test')->default(false);
 
-            // --- Meta ---
             $table->json('meta')->nullable();
 
-            // --- Audit ---
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();

@@ -17,10 +17,18 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->decimal('price', 15, 2)->default(0);
-            $table->string('currency', 8)->default('USD');
-            $table->integer('quantity')->default(0);
+            $table->string('currency', 8)->default('GBP');
+            $table->unsignedInteger('quantity')->default(0);
+            $table->unsignedInteger('min_stock_level')->default(0);
+            $table->unsignedInteger('max_stock_level')->nullable();
+            $table->unsignedInteger('reorder_point')->nullable(); // Stock level that triggers reorder
+            $table->unsignedInteger('reorder_quantity')->nullable(); // Quantity to reorder
+            $table->unsignedInteger('lead_time_days')->nullable(); // Days to restock from supplier
+    
             $table->boolean('is_test')->default(false);
+
             $table->json('meta')->nullable();
+
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();

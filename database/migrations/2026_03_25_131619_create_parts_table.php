@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreignId('category_id')->nullable()->constrained('part_categories')->nullOnDelete();
             $table->foreignId('supplier_id')->nullable()->constrained('suppliers')->nullOnDelete();
 
-            // --- Identity & Classification ---
             $table->string('sku')->unique();
             $table->string('part_number')->nullable()->unique(); // Manufacturer's part number
             $table->string('barcode')->nullable()->unique();
@@ -41,7 +40,6 @@ return new class extends Migration
             ])->default('active');
             $table->string('unit_of_measure')->default('each'); // each, kg, litre, metre, etc.
 
-            // --- Physical Attributes ---
             $table->decimal('height', 8, 2)->nullable();
             $table->decimal('width', 8, 2)->nullable();
             $table->decimal('length', 8, 2)->nullable();
@@ -50,15 +48,13 @@ return new class extends Migration
             $table->string('colour')->nullable();
             $table->string('material')->nullable();
 
-            // --- Pricing & Tax ---
-            $table->decimal('price', 10, 2);           // Sell price
+            $table->decimal('price', 10, 2); // Sell price
             $table->decimal('cost_price', 10, 2)->nullable(); // Buy/cost price
             $table->string('currency', 3)->default('GBP');
             $table->decimal('tax_rate', 5, 2)->nullable();
             $table->string('tax_code')->nullable();
             $table->decimal('discount_percentage', 5, 2)->nullable();
 
-            // --- Inventory & Warehouse ---
             $table->unsignedInteger('quantity')->default(0);
             $table->unsignedInteger('min_stock_level')->default(0);
             $table->unsignedInteger('max_stock_level')->nullable();
@@ -68,7 +64,6 @@ return new class extends Migration
             $table->string('warehouse_location')->nullable(); // e.g. Warehouse A
             $table->string('bin_location')->nullable(); // e.g. Shelf B3
 
-            // --- Feature Flags ---
             $table->boolean('is_active')->default(true);
             $table->boolean('is_purchasable')->default(true);
             $table->boolean('is_sellable')->default(true);
@@ -77,10 +72,8 @@ return new class extends Migration
             $table->boolean('is_batch_tracked')->default(false);// Track by batch/lot
             $table->boolean('is_test')->default(false);
 
-            // --- Meta ---
             $table->json('meta')->nullable();
 
-            // --- Audit ---
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
