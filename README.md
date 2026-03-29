@@ -303,7 +303,7 @@ Part
 
 Notable fields:
 ```bash
-sku # Internal stock-keeping unit
+sku         # Internal stock-keeping unit
 part_number # Manufacturer or supplier part number
 barcode
 brand / manufacturer
@@ -315,8 +315,8 @@ price / cost_price / currency
 tax_rate / tax_code / discount_percentage
 quantity
 min_stock_level / max_stock_level
-reorder_point / reorder_quantity
-lead_time_days
+reorder_point / reorder_quantity # Reorder Point - Stock level that triggers reorder point, Reorder Quantity - Quantinty to reorder
+lead_time_days                   # Days to restock from the supplier
 warehouse_location / bin_location
 is_active
 is_purchasable / is_sellable / is_manufactured
