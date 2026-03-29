@@ -2,9 +2,9 @@
 
 namespace App\Services\BillOfMaterials;
 
-use App\Models\Part;
-use App\Models\BillOfMaterial;
 use App\Http\Requests\StoreBillOfMaterialRequest;
+use App\Models\BillOfMaterial;
+use App\Models\Part;
 
 class BillOfMaterialCreatorService
 {
@@ -17,8 +17,10 @@ class BillOfMaterialCreatorService
      *
      * @return BillOfMaterial
      */
-    public function create(StoreBillOfMaterialRequest $request, Part $part): BillOfMaterial
-    {
+    public function create(
+        StoreBillOfMaterialRequest $request,
+        Part $part
+    ): BillOfMaterial {
         if (! $part->is_manufactured) {
             abort(422, 'This part is not manufactured.');
         }
@@ -34,5 +36,4 @@ class BillOfMaterialCreatorService
 
         return $billOfMaterial->load('childPart', 'parentPart');
     }
-
 }

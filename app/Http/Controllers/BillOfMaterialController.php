@@ -79,8 +79,10 @@ class BillOfMaterialController extends Controller
      *
      * @return JsonResponse
      */
-    public function store(StoreBillOfMaterialRequest $request, Part $part): JsonResponse
-    {
+    public function store(
+        StoreBillOfMaterialRequest $request,
+        Part $part
+    ): JsonResponse {
         $billOfMaterial = $this->management->store($request, $part);
 
         $user = $request->user();
@@ -129,8 +131,10 @@ class BillOfMaterialController extends Controller
      *
      * @return JsonResponse
      */
-    public function destroy(Part $part, BillOfMaterial $billOfMaterial): JsonResponse
-    {
+    public function destroy(
+        Part $part,
+        BillOfMaterial $billOfMaterial
+    ): JsonResponse {
         $this->authorize('delete', $billOfMaterial);
 
         $user = auth()->user();

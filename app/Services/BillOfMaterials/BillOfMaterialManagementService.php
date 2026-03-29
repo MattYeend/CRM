@@ -2,10 +2,10 @@
 
 namespace App\Services\BillOfMaterials;
 
-use App\Models\Part;
-use App\Models\BillOfMaterial;
 use App\Http\Requests\StoreBillOfMaterialRequest;
 use App\Http\Requests\UpdateBillOfMaterialRequest;
+use App\Models\BillOfMaterial;
+use App\Models\Part;
 
 class BillOfMaterialManagementService
 {
@@ -32,8 +32,10 @@ class BillOfMaterialManagementService
      *
      * @return BillOfMaterial
      */
-    public function store(StoreBillOfMaterialRequest $request, Part $part): BillOfMaterial
-    {
+    public function store(
+        StoreBillOfMaterialRequest $request,
+        Part $part
+    ): BillOfMaterial {
         return $this->creator->create($request, $part);
     }
 

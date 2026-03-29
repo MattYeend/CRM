@@ -3,7 +3,6 @@
 namespace App\Services\BillOfMaterials;
 
 use App\Models\Part;
-use App\Models\BillOfMaterial;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -21,7 +20,8 @@ class BillOfMaterialQueryService
     }
 
     /**
-     * Return paginated BOM entries for a given parent part, applying filters/sorting.
+     * Return paginated BOM entries for a given parent part,
+     * applying filters/sorting.
      *
      * @param Part $part
      *

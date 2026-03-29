@@ -2,8 +2,8 @@
 
 namespace App\Services\BillOfMaterials;
 
-use App\Models\BillOfMaterial;
 use App\Http\Requests\UpdateBillOfMaterialRequest;
+use App\Models\BillOfMaterial;
 
 class BillOfMaterialUpdaterService
 {
@@ -15,8 +15,10 @@ class BillOfMaterialUpdaterService
      *
      * @return BillOfMaterial
      */
-    public function update(UpdateBillOfMaterialRequest $request, BillOfMaterial $billOfMaterial): BillOfMaterial
-    {
+    public function update(
+        UpdateBillOfMaterialRequest $request,
+        BillOfMaterial $billOfMaterial
+    ): BillOfMaterial {
         $billOfMaterial->update($request->validated());
         return $billOfMaterial->load('childPart');
     }

@@ -15,7 +15,7 @@ class BillOfMaterial extends Model
      */
     use HasFactory,
         SoftDeletes;
-    
+
     /**
      * The attributes that are mass assignable.
      *
@@ -38,7 +38,7 @@ class BillOfMaterial extends Model
         'deleted_at',
         'restored_at',
     ];
-    
+
     /**
      * The attributes that should be cast.
      *
@@ -49,7 +49,7 @@ class BillOfMaterial extends Model
         'is_test' => 'boolean',
         'quantity' => 'decimal:4',
     ];
-    
+
     /**
      * Get the parent part that this BOM entry belongs to.
      * The parent is the manufactured part that requires child components.

@@ -2,8 +2,8 @@
 
 namespace App\Services\BillOfMaterials;
 
-use App\Models\Log;
 use App\Models\BillOfMaterial;
+use App\Models\Log;
 use App\Models\User;
 
 class BillOfMaterialLogService

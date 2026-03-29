@@ -24,7 +24,11 @@ class StoreBillOfMaterialRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'child_part_id' => 'required|exists:parts,id|different:parent_part_id',
+            'child_part_id' => [
+                'required',
+                'exists:parts,id',
+                'different:parent_part_id',
+            ],
             'quantity' => 'required|numeric|min:0.0001',
             'unit_of_measure' => 'nullable|string',
             'notes' => 'nullable|string',
