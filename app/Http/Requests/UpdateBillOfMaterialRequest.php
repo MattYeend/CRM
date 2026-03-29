@@ -26,6 +26,7 @@ class UpdateBillOfMaterialRequest extends FormRequest
     {
         return [
             'quantity' => 'sometimes|numeric|min:0.0001',
+            'scrap_percentage' => 'sometimes|numeric|min:0|max:100',
             'unit_of_measure' => 'nullable|string',
             'notes' => 'nullable|string',
         ];

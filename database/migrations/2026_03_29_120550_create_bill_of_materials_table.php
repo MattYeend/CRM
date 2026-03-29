@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('child_part_id')->constrained('parts')->cascadeOnDelete();
             $table->decimal('quantity', 10, 4)->default(1);
             $table->string('unit_of_measure')->default('each');
+            $table->decimal('scrap_percentage', 5, 2)->default(0);
             $table->text('notes')->nullable();
             $table->boolean('is_test')->default(false);
             $table->json('meta')->nullable();

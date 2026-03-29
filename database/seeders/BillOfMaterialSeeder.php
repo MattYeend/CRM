@@ -26,7 +26,8 @@ class BillOfMaterialSeeder extends Seeder
                             'child_part_id' => $childId,
                         ],
                         [
-                            'quantity' => rand(1, 10),
+                            'quantity' => fake()->randomFloat(4, 0.1, 10),
+                            'scrap_percentage' => fake()->randomFloat(2, 0, 5),
                             'unit_of_measure' => 'each',
                             'is_test' => true,
                             'created_by' => User::inRandomOrder()->first()?->id,

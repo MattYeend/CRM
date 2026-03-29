@@ -127,7 +127,7 @@ class Part extends Model
     }
 
     /**
-     * Get the primary supplier of the part
+     * Get the primary supplier of the part.
      *
      * @return BelongsTo<Supplier,Part>
      */
@@ -173,7 +173,7 @@ class Part extends Model
     }
 
     /**
-     * Get the image of the part.
+     * Get the images of the part.
      *
      * @return HasMany<PartImage>
      */
@@ -232,7 +232,6 @@ class Part extends Model
         return $this->hasMany(BillOfMaterial::class, 'child_part_id');
     }
 
-    // Scopes
     /**
      * Scope a query to only include active parts.
      *
@@ -271,8 +270,6 @@ class Part extends Model
         return $query->where('quantity', 0);
     }
 
-    // Helpers
-
     /**
      * Determine if the part is low on stock.
      *
@@ -302,13 +299,47 @@ class Part extends Model
      */
     public function marginPercentage(): ?float
     {
-        if (! $this->cost_price || $this->cost_price === 0) {
+        if (! $this->cost_price) {
             return null;
         }
 
         return round(
             ($this->price - $this->cost_price) / $this->price * 100,
             2
+        );
+    }
+
+    /**
+     * Calculate total BOM cost for this part (recursive).
+     *
+     * @param array $visited
+     *
+     * @return float|null
+     */
+    public function bomCost(array $visited = []): ?float
+    {
+        if (in_array($this->id, $visited)) {
+            return 0;
+        }
+
+        $visited[] = $this->id;
+
+        return $this->billOfMaterials->isEmpty()
+            ? (float) $this->cost_price
+            : $this->sumBomLineCosts($visited);
+    }
+
+    /**
+     * Sum the total costs of all BOM lines for this part.
+     *
+     * @param array $visited
+     *
+     * @return float
+     */
+    private function sumBomLineCosts(array $visited): float
+    {
+        return $this->billOfMaterials->sum(
+            fn ($bom) => $bom->totalCost($visited) ?? 0
         );
     }
 }

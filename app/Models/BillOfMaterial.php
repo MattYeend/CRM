@@ -25,6 +25,7 @@ class BillOfMaterial extends Model
         'parent_part_id',
         'child_part_id',
         'quantity',
+        'scrap_percentage',
         'unit_of_measure',
         'notes',
         'is_test',
@@ -48,6 +49,7 @@ class BillOfMaterial extends Model
         'meta' => 'array',
         'is_test' => 'boolean',
         'quantity' => 'decimal:4',
+        'scrap_percentage' => 'decimal:2',
     ];
 
     /**
@@ -109,5 +111,60 @@ class BillOfMaterial extends Model
     public function restorer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'restored_by');
+    }
+
+    /**
+     * Quantity including scrap
+     *
+     * @return float
+     */
+    public function effectiveQuantity(): float
+    {
+        $scrap = (float) ($this->scrap_percentage ?? 0);
+
+        return (float) $this->quantity * (1 + ($scrap / 100));
+    }
+
+    /**
+     * Direct cost (no recursion)
+     *
+     * @return float|null
+     */
+    public function lineCost(): ?float
+    {
+        $cost = $this->childPart?->cost_price;
+
+        if ($cost === null) {
+            return null;
+        }
+
+        return $this->effectiveQuantity() * (float) $cost;
+    }
+
+    /**
+     * Recursive cost (includes sub-assemblies)
+     *
+     * @param array $visited
+     *
+     * @return float|null
+     */
+    public function totalCost(array $visited = []): ?float
+    {
+        if (! $this->childPart) {
+            return null;
+        }
+
+        if (in_array($this->child_part_id, $visited)) {
+            return 0;
+        }
+
+        $visited[] = $this->child_part_id;
+
+        if ($this->childPart->hasBom()) {
+            return $this->effectiveQuantity()
+                * ($this->childPart->bomCost($visited) ?? 0);
+        }
+
+        return $this->lineCost();
     }
 }

@@ -22,7 +22,8 @@ class BillOfMaterialFactory extends Factory
         return [
             'parent_part_id'  => Part::factory(),
             'child_part_id' => Part::factory(),
-            'quantity' => fake()->randomFloat(2, 1, 50),
+            'quantity' => fake()->randomFloat(4, 0.1, 50),
+            'scrap_percentage' => fake()->randomFloat(2, 0, 10),
             'unit_of_measure' => fake()->randomElement(['each', 'kg', 'litre', 'metre']),
             'notes' => fake()->optional()->sentence(),
             'is_test' => true,
