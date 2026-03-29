@@ -26,16 +26,17 @@ A Laravel 12 CRM system
         11. [Part Categories](#part-categories)
         12. [Suppliers](#suppliers)
         13. [Part Suppliers (Pivot)](#part-suppliers-pivot)
-        14. [Activities](#activities)
-        15. [Tasks](#tasks)
-        16. [Attachments](#attachments)
-        17. [Notes](#notes)
-        18. [Users, Roles, and Permissions](#users-roles-and-permissions)
+        14. [Bill Of Materials (BOM)](#bill-of-materials-bom)
+        15. [Activities](#activities)
+        16. [Tasks](#tasks)
+        17. [Attachments](#attachments)
+        18. [Notes](#notes)
+        19. [Users, Roles, and Permissions](#users-roles-and-permissions)
             1. [Users](#users)
             2. [Roles](#roles)
             3. [Permissions](#permissions)
-        19. [Are Activities and Tasks the Same?](#are-activities-and-tasks-the-same)
-        20. [Relationship Overview Diagram](#relationship-overview-diagram)
+        20. [Are Activities and Tasks the Same?](#are-activities-and-tasks-the-same)
+        21. [Relationship Overview Diagram](#relationship-overview-diagram)
 3. [How To Setup](#how-to-setup)
 4. [How To Contribute](#how-to-contribute)
     1. [Commit Conventions](#commit-conventions)
@@ -295,7 +296,9 @@ Part
  ├─ belongsToMany Suppliers (via part_suppliers)
  │    └─ pivot: supplier_sku, unit_cost, lead_time_days, is_preferred
  ├─ hasMany PartImages (images — ordered by sort_order)
- └─ hasMany PartImages (primaryImage — where is_primary = true)
+ ├─ hasOne  PartImage (primaryImage — where is_primary = true)
+ ├─ hasMany BillOfMaterial (billOfMaterials — as parent/assembly)
+ └─ hasMany BillOfMaterial (usedInAssemblies — as component)
 ```
 
 Notable fields:
@@ -467,6 +470,91 @@ Part
  ├─ primarySupplier()    → belongsTo Supplier (via supplier_id — quick default)
  ├─ suppliers()          → belongsToMany Supplier (all via part_suppliers pivot)
  └─ preferredSupplier()  → belongsToMany Supplier (pivot where is_preferred = true)
+```
+
+### Bill Of Materials (BOM)
+`BillOfMaterials`
+
+Defines how parts are assembled - i.e. which components (child parts) are required to build a parent part.
+
+Core Concepts
+- Parent Part → the assembly (finished or intermediate)
+- Child Part → the component used in that assembly
+- Quantity → how much of the child is required
+
+Relationships
+From `Part` model
+```php
+// Components required to build this part
+public function billOfMaterials(): HasMany
+{
+    return $this->hasMany(BillOfMaterial::class, 'parent_part_id');
+}
+
+// Assemblies where this part is used
+public function usedInAssemblies(): HasMany
+{
+    return $this->hasMany(BillOfMaterial::class, 'child_part_id');
+}
+```
+
+From `BillOfMaterial` model
+```bash
+BillOfMaterial
+ ├─ belongsTo Part (parentPart)
+ ├─ belongsTo Part (childPart)
+ ├─ belongsTo User (creator)
+ ├─ belongsTo User (updater)
+ ├─ belongsTo User (deleter)
+ └─ belongsTo User (restorer)
+```
+
+Structure
+```bash
+Part (Parent)
+ └─ hasMany BillOfMaterial
+      ├─ child_part_id → Part (component)
+      └─ quantity
+
+Part (Child)
+ └─ hasMany BillOfMaterial (usedInAssemblies)
+      └─ parent_part_id → Part (assembly)
+```
+
+Fields
+```bash
+parent_part_id   # Assembly
+child_part_id    # Component
+quantity         # Decimal (4dp precision)
+unit_of_measure
+notes
+
+# System
+meta (json)
+is_test
+
+# Audit
+created_by / updated_by / deleted_by / restored_by
+timestamps...
+soft deletes...
+```
+
+Example
+```bash
+Bike (Parent Part)
+ ├─ Wheel (x2)
+ ├─ Frame (x1)
+ └─ Chain (x1)
+```
+Stored as
+```bash
+parent_part_id = Bike
+child_part_id  = Wheel
+quantity       = 2
+
+parent_part_id = Bike
+child_part_id  = Frame
+quantity       = 1
 ```
 
 ### Activities
