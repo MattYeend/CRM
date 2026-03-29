@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AttachmentController;
+use App\Http\Controllers\BillOfMaterialController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DealController;
 use App\Http\Controllers\InvoiceController;
@@ -626,4 +627,34 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
         'parts/{part}/serial-numbers/{id}/restore',
         [PartSerialNumberController::class, 'restore']
     )->name('api.partSerialNumbers.restore');
+
+    /**
+     * ------------------------------------------------------------
+     * -------------------- Bill Of Materials ---------------------
+     * ------------------------------------------------------------
+     */
+    Route::get(
+        'parts/{part}/bom',
+        [BillOfMaterialController::class, 'index']
+    )->name('api.billOfMaterials.index');
+    
+    Route::post(
+        'parts/{part}/bom',
+        [BillOfMaterialController::class, 'store']
+    )->name('api.billOfMaterials.store');
+    
+    Route::put(
+        'parts/{part}/bom/{billOfMaterial}',
+        [BillOfMaterialController::class, 'update']
+    )->name('api.billOfMaterials.update');
+    
+    Route::delete(
+        'parts/{part}/bom/{billOfMaterial}',
+        [BillOfMaterialController::class, 'destroy']
+    )->name('api.billOfMaterials.destroy');
+    
+    Route::post(
+        'parts/{part}/bom/{billOfMaterial}/restore',
+        [BillOfMaterialController::class, 'restore']
+    )->name('api.billOfMaterials.restore');
 });

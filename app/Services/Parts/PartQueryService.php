@@ -39,6 +39,8 @@ class PartQueryService
             'primaryImage',
             'stockMovements',
             'serialNumbers',
+            'billOfMaterials',
+            'usedInAssemblies'
         );
 
         $this->sorting->applySorting($query, $request);
@@ -61,6 +63,10 @@ class PartQueryService
             'category',
             'primarySupplier',
             'primaryImage',
+            'stockMovements',
+            'serialNumbers',
+            'billOfMaterials',
+            'usedInAssemblies'
         );
     }
 }

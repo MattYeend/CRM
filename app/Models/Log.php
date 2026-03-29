@@ -232,6 +232,12 @@ class Log extends Model
     public const ACTION_PART_SERIAL_NUMBER_RESTORED = 164;
     public const ACTION_PART_SERIAL_NUMBER_VIEWED = 165;
 
+    // Bill Of Materials
+    public const ACTION_BILL_OF_MATERIAL_CREATED = 166;
+    public const ACTION_BILL_OF_MATERIAL_UPDATED = 167;
+    public const ACTION_BILL_OF_MATERIAL_DELETED = 168;
+    public const ACTION_BILL_OF_MATERIAL_RESTORED = 169;
+
     // New Logging Actions should go here to be reviewed
     // by the development team for future releases.
     // Ensure to update the documentation accordingly.

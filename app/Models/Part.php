@@ -217,20 +217,20 @@ class Part extends Model
      *
      * @return HasMany<BillOfMaterial>
      */
-    // public function billOfMaterials(): HasMany
-    // {
-    //     return $this->hasMany(BillOfMaterial::class, 'parent_part_id');
-    // }
+    public function billOfMaterials(): HasMany
+    {
+        return $this->hasMany(BillOfMaterial::class, 'parent_part_id');
+    }
 
     /**
      * Get all assemblies where this part is used as a component.
      *
      * @return HasMany<BillOfMaterial>
      */
-    // public function usedInAssemblies(): HasMany
-    // {
-    //     return $this->hasMany(BillOfMaterial::class, 'child_part_id');
-    // }
+    public function usedInAssemblies(): HasMany
+    {
+        return $this->hasMany(BillOfMaterial::class, 'child_part_id');
+    }
 
     // Scopes
     /**
