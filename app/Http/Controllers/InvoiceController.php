@@ -8,38 +8,61 @@ use App\Models\Invoice;
 use App\Services\Invoices\InvoiceLogService;
 use App\Services\Invoices\InvoiceManagementService;
 use App\Services\Invoices\InvoiceQueryService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+
+/**
+ * Handles HTTP requests for the Invoice resource.
+ *
+ * Delegates business logic to three dedicated services:
+ *   - InvoiceLogService — records audit log entries for invoice changes
+ *   - InvoiceManagementService — handles create, update, delete, and restore
+ *      operations
+ *   - InvoiceQueryService — handles read/list queries with filtering and
+ *      pagination
+ *
+ * All responses are returned as JSON, making this controller suitable
+ * for consumption by the Vue frontend or any API client.
+ */
 
 class InvoiceController extends Controller
 {
     /**
-     * Declare a protected property to hold the InvoiceLogService,
-     * InvoiceManagementService and InvoiceQueryService instance
+     * Service responsible for writing audit log entries for invoice events.
      *
      * @var InvoiceLogService
-     * @var InvoiceManagementService
-     * @var InvoiceQueryService
      */
     protected InvoiceLogService $logger;
+
+    /**
+     * Service responsible for creating, updating, deleting, and restoring
+     * invoices.
+     *
+     * @var InvoiceManagementService
+     */
     protected InvoiceManagementService $management;
+
+    /**
+     * Service responsible for querying and listing invoices.
+     *
+     * @var InvoiceQueryService
+     */
     protected InvoiceQueryService $query;
 
     /**
-     * Constructor for the controller
+     * Inject the required services into the controller.
      *
-     * @param InvoiceLogService $logger
+     * @param  InvoiceLogService $logger Handles audit logging for invoice
+     * events.
      *
-     * @param InvoiceManagementService $management
+     * @param  InvoiceManagementService $management Handles invoice
+     * create/update/delete/restore.
      *
-     * @param InvoiceQueryService $query
-     *
-     * An instance of the InvoiceLogService used for logging
-     * invoice-related actions
-     * An instance of the InvoiceManagementService for management
-     * of invoices
-     * An instance of the InvoiceQueryService for the query of
-     * invoice-related actions
+     * @param  InvoiceQueryService $query Handles invoice listing and
+     * retrieval.
      */
     public function __construct(
         InvoiceLogService $logger,
@@ -54,9 +77,15 @@ class InvoiceController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
+     * Also includes the authenticated user's permissions for the Invoice
+     * resource, so the frontend can conditionally render create/view controls.
      *
-     * @return JsonResponse
+     * Authorises via the 'viewAny' policy before returning data.
+     *
+     * @param  Request $request Incoming HTTP request; may carry
+     * filter/pagination params.
+     *
+     * @return JsonResponse Paginated invoice data.
      */
     public function index(Request $request): JsonResponse
     {
@@ -70,9 +99,15 @@ class InvoiceController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param StoreInvoiceRequest $request
+     * Validation is handled upstream by StoreInvoiceRequest.
      *
-     * @return JsonResponse
+     * After storing, an audit log entry is written against the authenticated
+     * user.
+     *
+     * @param  StoreInvoiceRequest $request Validated request containing
+     * invoice data.
+     *
+     * @return JsonResponse The newly created invoice, with HTTP 201 Created.
      */
     public function store(StoreInvoiceRequest $request): JsonResponse
     {
@@ -92,9 +127,13 @@ class InvoiceController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Invoice $invoice
+     * Returns a single invoice by its model binding.
      *
-     * @return JsonResponse
+     * Authorises via the 'view' policy before returning data.
+     *
+     * @param  Invoice $invoice Route-model-bound invoice instance.
+     *
+     * @return JsonResponse The resolved invoice resource.
      */
     public function show(Invoice $invoice): JsonResponse
     {
@@ -108,11 +147,18 @@ class InvoiceController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param UpdateInvoiceRequest $request
+     * Validation is handled upstream by UpdateInvoiceRequest, which also
+     * implicitly authorises the operation via its authorize() method.
      *
-     * @param Invoice $invoice
+     * After updating, an audit log entry is written against the
+     * authenticated user.
      *
-     * @return JsonResponse
+     * @param  UpdateInvoiceRequest $request Validated request containing
+     * updated invoice data.
+     *
+     * @param  Invoice $invoice Route-model-bound invoice instance to update.
+     *
+     * @return JsonResponse The updated invoice resource.
      */
     public function update(
         UpdateInvoiceRequest $request,
@@ -134,9 +180,14 @@ class InvoiceController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Invoice $invoice
+     * Authorises via the 'delete' policy before proceeding.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * The audit log entry is written before the deletion so that the
+     * invoice instance is still fully accessible during logging.
+     *
+     * @param  Invoice $invoice Route-model-bound invoice instance to delete.
+     *
+     * @return JsonResponse Empty response with HTTP 204 No Content.
      */
     public function destroy(Invoice $invoice): JsonResponse
     {
@@ -156,11 +207,19 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Restore the specified resource from storage.
+     * Restore the specified invoice from soft deletion.
      *
-     * @param int $id
+     * Looks up the invoice including trashed records, then authorises via
+     * the 'restore' policy. Returns 404 if the invoice is not currently
+     * soft-deleted, preventing accidental double-restores.
      *
-     * @return JsonResponse
+     * @param  int|string $id The primary key of the soft-deleted invoice.
+     *
+     * @return JsonResponse The restored invoice resource.
+     *
+     * @throws ModelNotFoundException If no matching record exists.
+     *
+     * @throws HttpException If the invoice is not trashed (404).
      */
     public function restore($id): JsonResponse
     {
