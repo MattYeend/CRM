@@ -63,19 +63,8 @@ class StorePartRequest extends FormRequest
     private function typeAndStatusRules(): array
     {
         return [
-            'type' => 'required', Rule::in([
-                'raw_material',
-                'finished_good',
-                'consumable',
-                'spare_part',
-                'sub_assembly',
-            ]),
-            'status' => 'required', Rule::in([
-                'active',
-                'discontinued',
-                'pending',
-                'out_of_stock',
-            ]),
+            'type' => 'required', Rule::in(Part::PART_TYPES),
+            'status' => 'required', Rule::in(Part::ACTIVE_PART_STATUS),
         ];
     }
 

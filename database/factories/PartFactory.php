@@ -22,9 +22,7 @@ class PartFactory extends Factory
      */
     public function definition(): array
     {
-        $type = fake()->randomElement([
-            'raw_material', 'finished_good', 'consumable', 'spare_part', 'sub_assembly',
-        ]);
+        $type = fake()->randomElement(Part::PART_TYPES);
 
         $price = fake()->randomFloat(2, 1, 500);
         $costPrice = round($price * fake()->randomFloat(2, 0.4, 0.8), 2);
@@ -52,7 +50,7 @@ class PartFactory extends Factory
             'brand' => fake()->optional(0.7)->company(),
             'manufacturer' => fake()->optional(0.6)->company(),
             'type' => $type,
-            'status' => fake()->randomElement(['active', 'discontinued', 'pending', 'out_of_stock']),
+            'status' => fake()->randomElement(Part::PART_STATUSES),
             'unit_of_measure' => fake()->randomElement(['each', 'kg', 'litre', 'metre', 'box', 'pair']),
 
             // Physical Attributes
