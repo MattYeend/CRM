@@ -8,38 +8,59 @@ use App\Models\Lead;
 use App\Services\Leads\LeadLogService;
 use App\Services\Leads\LeadManagementService;
 use App\Services\Leads\LeadQueryService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+
+/**
+ * Handles HTTP requests for the Lead resource.
+ *
+ * Delegates business logic to three dedicated services:
+ *   - LeadLogService — records audit log entries for lead changes
+ *   - LeadManagementService — handles create, update, delete, and restore
+ *      operations
+ *   - LeadQueryService — handles read/list queries with filtering and
+ *      pagination
+ *
+ * All responses are returned as JSON, making this controller suitable
+ * for consumption by the Vue frontend or any API client.
+ */
 
 class LeadController extends Controller
 {
     /**
-     * Declare a protected property to hold the LeadLogService,
-     * LeadManagementService and LeadQueryService instance
+     * Service responsible for writing audit log entries for lead events.
      *
      * @var LeadLogService
-     * @var LeadManagementService
-     * @var LeadQueryService
      */
     protected LeadLogService $logger;
+
+    /**
+     * Service responsible for creating, updating, deleting, and restoring
+     * leads.
+     *
+     * @var LeadManagementService
+     */
     protected LeadManagementService $management;
+
+    /**
+     * Service responsible for querying and listing leads.
+     *
+     * @var LeadQueryService
+     */
     protected LeadQueryService $query;
 
     /**
-     * Constructor for the controller
+     * Inject the required services into the controller.
      *
-     * @param LeadLogService $logger
+     * @param  LeadLogService $logger Handles audit logging for lead events.
      *
-     * @param LeadManagementService $management
+     * @param  LeadManagementService $management Handles lead
+     * create/update/delete/restore.
      *
-     * @param LeadQueryService $query
-     *
-     * An instance of the LeadLogService used for logging
-     * lead-related actions
-     * An instance of the LeadManagementService for management
-     * of leads
-     * An instance of the LeadQueryService for the query of
-     * lead-related actions
+     * @param  LeadQueryService $query Handles lead listing and retrieval.
      */
     public function __construct(
         LeadLogService $logger,
@@ -54,9 +75,15 @@ class LeadController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
+     * Also includes the authenticated user's permissions for the Activity
+     * resource, so the frontend can conditionally render create/view controls.
      *
-     * @return JsonResponse
+     * Authorises via the 'viewAny' policy before returning data.
+     *
+     * @param  Request $request Incoming HTTP request; may carry
+     * filter/pagination params.
+     *
+     * @return JsonResponse Paginated lead data.
      */
     public function index(Request $request): JsonResponse
     {
@@ -70,9 +97,14 @@ class LeadController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param StoreLeadRequest $request
+     * Validation is handled upstream by StoreLeadRequest.
      *
-     * @return JsonResponse
+     * After storing, an audit log entry is written against the authenticated
+     * user.
+     *
+     * @param  StoreLeadRequest $request Validated request containing lead data.
+     *
+     * @return JsonResponse The newly created lead, with HTTP 201 Created.
      */
     public function store(StoreLeadRequest $request): JsonResponse
     {
@@ -92,9 +124,13 @@ class LeadController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Lead $lead
+     * Returns a single lead by its model binding.
      *
-     * @return JsonResponse
+     * Authorises via the 'view' policy before returning data.
+     *
+     * @param  Lead $lead Route-model-bound lead instance.
+     *
+     * @return JsonResponse The resolved lead resource.
      */
     public function show(Lead $lead): JsonResponse
     {
@@ -108,11 +144,18 @@ class LeadController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param UpdateLeadRequest $request
+     * Validation is handled upstream by UpdateLeadRequest, which also
+     * implicitly authorises the operation via its authorize() method.
      *
-     * @param Lead $lead
+     * After updating, an audit log entry is written against the
+     * authenticated user.
      *
-     * @return JsonResponse
+     * @param  UpdateLeadRequest $request Validated request containing updated
+     * lead data.
+     *
+     * @param  Lead $lead Route-model-bound lead instance to update.
+     *
+     * @return JsonResponse The updated lead resource.
      */
     public function update(
         UpdateLeadRequest $request,
@@ -134,9 +177,14 @@ class LeadController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Lead $lead
+     * Authorises via the 'delete' policy before proceeding.
      *
-     * @return JsonResponse
+     * The audit log entry is written before the deletion so that the
+     * lead instance is still fully accessible during logging.
+     *
+     * @param  Lead $lead Route-model-bound lead instance to delete.
+     *
+     * @return JsonResponse Empty response with HTTP 204 No Content.
      */
     public function destroy(Lead $lead): JsonResponse
     {
@@ -155,11 +203,19 @@ class LeadController extends Controller
     }
 
     /**
-     * Restore the specified resource from storage.
+     * Restore the specified lead from soft deletion.
      *
-     * @param int $id
+     * Looks up the lead including trashed records, then authorises via
+     * the 'restore' policy. Returns 404 if the lead is not currently
+     * soft-deleted, preventing accidental double-restores.
      *
-     * @return JsonResponse
+     * @param  int|string $id The primary key of the soft-deleted lead.
+     *
+     * @return JsonResponse The restored lead resource.
+     *
+     * @throws ModelNotFoundException If no matching record exists.
+     *
+     * @throws HttpException If the lead is not trashed (404).
      */
     public function restore(int $id): JsonResponse
     {

@@ -8,38 +8,61 @@ use App\Models\Learning;
 use App\Services\Learnings\LearningLogService;
 use App\Services\Learnings\LearningManagementService;
 use App\Services\Learnings\LearningQueryService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+
+/**
+ * Handles HTTP requests for the Learning resource.
+ *
+ * Delegates business logic to three dedicated services:
+ *   - LearningLogService — records audit log entries for learning changes
+ *   - LearningManagementService — handles create, update, delete, restore,
+ *      and completion operations
+ *   - LearningQueryService — handles read/list queries with filtering and
+ *      pagination
+ *
+ * All responses are returned as JSON, making this controller suitable
+ * for consumption by the Vue frontend or any API client.
+ */
 
 class LearningController extends Controller
 {
     /**
-     * Declare a protected property to hold the LearningLogService,
-     * LearningManagementService and LearningQueryService instance
+     * Service responsible for writing audit log entries for learning events.
      *
      * @var LearningLogService
-     * @var LeadManagementService
-     * @var LeadQueryService
      */
     protected LearningLogService $logger;
+
+    /**
+     * Service responsible for creating, updating, deleting, restoring, and
+     * managing completion state of learnings.
+     *
+     * @var LearningManagementService
+     */
     protected LearningManagementService $management;
+
+    /**
+     * Service responsible for querying and listing learnings.
+     *
+     * @var LearningQueryService
+     */
     protected LearningQueryService $query;
 
     /**
-     * Constructor for the controller
+     * Inject the required services into the controller.
      *
-     * @param LearningLogService $logger
+     * @param  LearningLogService $logger Handles audit logging for learning
+     * events.
      *
-     * @param LearningManagementService $management
+     * @param  LearningManagementService $management Handles learning
+     * create/update/delete/restore and completion transitions.
      *
-     * @param LearningQueryService $query
-     *
-     * An instance of the LearningLogService used for logging
-     * learning-related actions
-     * An instance of the LearningManagementService for management
-     * of learning
-     * An instance of the LearningQueryService for the query of
-     * learning-related actions
+     * @param  LearningQueryService $query Handles learning listing and
+     * retrieval.
      */
     public function __construct(
         LearningLogService $logger,
@@ -54,9 +77,15 @@ class LearningController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
+     * Also includes the authenticated user's permissions for the Learning
+     * resource, so the frontend can conditionally render create/view controls.
      *
-     * @return JsonResponse
+     * Authorises via the 'viewAny' policy before returning data.
+     *
+     * @param  Request $request Incoming HTTP request; may carry
+     * filter/pagination params.
+     *
+     * @return JsonResponse Paginated learning data.
      */
     public function index(Request $request): JsonResponse
     {
@@ -70,9 +99,15 @@ class LearningController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param StoreLearningRequest $request
+     * Validation is handled upstream by StoreLearningRequest.
      *
-     * @return JsonResponse
+     * After storing, an audit log entry is written against the authenticated
+     * user.
+     *
+     * @param  StoreLearningRequest $request Validated request containing
+     * learning data.
+     *
+     * @return JsonResponse The newly created learning, with HTTP 201 Created.
      */
     public function store(StoreLearningRequest $request): JsonResponse
     {
@@ -92,9 +127,13 @@ class LearningController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Learning $learning
+     * Returns a single learning by its model binding.
      *
-     * @return JsonResponse
+     * Authorises via the 'view' policy before returning data.
+     *
+     * @param  Learning $learning Route-model-bound learning instance.
+     *
+     * @return JsonResponse The resolved learning resource.
      */
     public function show(Learning $learning): JsonResponse
     {
@@ -108,11 +147,18 @@ class LearningController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param UpdateLearningRequest $request
+     * Validation is handled upstream by UpdateLearningRequest, which also
+     * implicitly authorises the operation via its authorize() method.
      *
-     * @param Learning $learning
+     * After updating, an audit log entry is written against the
+     * authenticated user.
      *
-     * @return JsonResponse
+     * @param  UpdateLearningRequest $request Validated request containing
+     * updated learning data.
+     *
+     * @param  Learning $learning Route-model-bound learning instance to update.
+     *
+     * @return JsonResponse The updated learning resource.
      */
     public function update(
         UpdateLearningRequest $request,
@@ -134,9 +180,14 @@ class LearningController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Learning $learning
+     * Authorises via the 'delete' policy before proceeding.
      *
-     * @return JsonResponse
+     * The audit log entry is written before the deletion so that the
+     * learning instance is still fully accessible during logging.
+     *
+     * @param  Learning $learning Route-model-bound learning instance to delete.
+     *
+     * @return JsonResponse Empty response with HTTP 204 No Content.
      */
     public function destroy(Learning $learning): JsonResponse
     {
@@ -158,11 +209,18 @@ class LearningController extends Controller
     /**
      * Mark the specified resource as completed.
      *
-     * @param Request $request
+     * Authorises via the 'complete' policy before proceeding.
      *
-     * @param Learning $learning
+     * After transitioning the learning to a completed state, an audit log
+     * entry is written against the authenticated user.
      *
-     * @return JsonResponse
+     * @param  Request $request Incoming HTTP request.
+     *
+     * @param  Learning $learning Route-model-bound learning instance to
+     * complete.
+     *
+     * @return JsonResponse The updated learning resource reflecting the
+     * completed state.
      */
     public function complete(Request $request, Learning $learning): JsonResponse
     {
@@ -184,11 +242,18 @@ class LearningController extends Controller
     /**
      * Mark the specified resource as incomplete.
      *
-     * @param Request $request
+     * Authorises via the 'incomplete' policy before proceeding.
      *
-     * @param Learning $learning
+     * After reverting the learning to an incomplete state, an audit log
+     * entry is written against the authenticated user.
      *
-     * @return JsonResponse
+     * @param  Request $request Incoming HTTP request.
+     *
+     * @param  Learning $learning Route-model-bound learning instance to mark
+     * incomplete.
+     *
+     * @return JsonResponse The updated learning resource reflecting the
+     * incomplete state.
      */
     public function incomplete(
         Request $request,
@@ -210,11 +275,19 @@ class LearningController extends Controller
     }
 
     /**
-     * Restore the specified resource from storage.
+     * Restore the specified learning from soft deletion.
      *
-     * @param int $id
+     * Looks up the learning including trashed records, then authorises via
+     * the 'restore' policy. Returns 404 if the learning is not currently
+     * soft-deleted, preventing accidental double-restores.
      *
-     * @return JsonResponse
+     * @param  int|string $id The primary key of the soft-deleted learning.
+     *
+     * @return JsonResponse The restored learning resource.
+     *
+     * @throws ModelNotFoundException If no matching record exists.
+     *
+     * @throws HttpException If the learning is not trashed (404).
      */
     public function restore(int $id): JsonResponse
     {
