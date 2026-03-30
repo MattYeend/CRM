@@ -43,7 +43,7 @@ class Product extends Model
      */
     public const OUT_OF_STOCK_PRODUCT_STATUS = 'out_of_stock';
 
-        /**
+    /**
      * Part Statuses
      */
     public const PRODUCT_STATUSES = [

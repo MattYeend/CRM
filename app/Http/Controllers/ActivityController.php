@@ -8,39 +8,59 @@ use App\Models\Activity;
 use App\Services\Activities\ActivityLogService;
 use App\Services\Activities\ActivityManagementService;
 use App\Services\Activities\ActivityQueryService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+
+/**
+ * Handles HTTP requests for the Activity resource.
+ *
+ * Delegates business logic to three dedicated services:
+ *   - ActivityLogService — records audit log entries for activity changes
+ *   - ActivityManagementService — handles create, update, delete, and restore
+ *      operations
+ *   - ActivityQueryService — handles read/list queries with filtering and
+ *      pagination
+ *
+ * All responses are returned as JSON, making this controller suitable
+ * for consumption by the Vue frontend or any API client.
+ */
 
 class ActivityController extends Controller
 {
     /**
-     * Declare a protected property to hold the ActivityLogService,
-     * ActivityManagementService and ActivityQueryService instance
+     * Service responsible for writing audit log entries for activity events.
      *
      * @var ActivityLogService
-     * @var ActivityManagementService
-     * @var ActivityQueryService
      */
     protected ActivityLogService $logger;
+
+    /**
+     * Service responsible for creating, updating, deleting, and restoring
+     * activities.
+     *
+     * @var ActivityManagementService
+     */
     protected ActivityManagementService $management;
+
+    /**
+     * Service responsible for querying and listing activities.
+     *
+     * @var ActivityQueryService
+     */
     protected ActivityQueryService $query;
 
     /**
-     * Constructor for the controller
+     * Inject the required services into the controller.
      *
-     * @param ActivityLogService $logger
-     *
-     * @param ActivityManagementService $management
-     *
-     * @param ActivityQueryService $query
-     *
-     * An instance of the ActivityLogService used for logging
-     * activity-related actions
-     * An instance of the ActivityManagementService for management
-     * of activities
-     * An instance of the ActivityQueryService for the query of
-     * activity-related actions
+     * @param  ActivityLogService $logger Handles audit logging for activity
+     * events.
+     * @param  ActivityManagementService $management Handles activity
+     * create/update/delete/restore.
+     * @param  ActivityQueryService $query Handles activity listing and
+     * retrieval.
      */
     public function __construct(
         ActivityLogService $logger,
@@ -53,11 +73,18 @@ class ActivityController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a paginated listing of the resource.
      *
-     * @param Request $request
+     * Also includes the authenticated user's permissions for the Activity
+     * resource, so the frontend can conditionally render create/view controls.
      *
-     * @return JsonResponse
+     * Authorises via the 'viewAny' policy before returning data.
+     *
+     * @param  Request $request Incoming HTTP request; may carry
+     * filter/pagination params.
+     *
+     * @return JsonResponse Paginated activity data with pagination metadata and
+     * permissions.
      */
     public function index(Request $request): JsonResponse
     {
@@ -81,9 +108,15 @@ class ActivityController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param StoreActivityRequest $request
+     * Validation is handled upstream by StoreActivityRequest.
+     * After storing, an audit log entry is written against the authenticated
+     * user.
      *
-     * @return JsonResponse
+     * @param  StoreActivityRequest $request Validated request containing
+     * activity
+     * data.
+     *
+     * @return JsonResponse The newly created activity, with HTTP 201 Created.
      */
     public function store(StoreActivityRequest $request): JsonResponse
     {
@@ -102,9 +135,13 @@ class ActivityController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Activity $activity
+     * Return a single activity by its model binding.
      *
-     * @return JsonResponse
+     * Authorises via the 'view' policy before returning data.
+     *
+     * @param  Activity $activity Route-model-bound activity instance.
+     *
+     * @return JsonResponse The resolved activity resource.
      */
     public function show(Activity $activity): JsonResponse
     {
@@ -118,11 +155,17 @@ class ActivityController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param UpdateActivityRequest $request
+     * Validation is handled upstream by UpdateActivityRequest, which also
+     * implicitly authorises the operation via its authorize() method.
+     * After updating, an audit log entry is written against the
+     * authenticated user.
      *
-     * @param Activity $activity
+     * @param  UpdateActivityRequest $request Validated request containing
+     * updated activity data.
      *
-     * @return JsonResponse
+     * @param  Activity $activity Route-model-bound activity instance to update.
+     *
+     * @return JsonResponse The updated activity resource.
      */
     public function update(
         UpdateActivityRequest $request,
@@ -144,9 +187,13 @@ class ActivityController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Activity $activity
+     * Authorises via the 'delete' policy before proceeding.
+     * The audit log entry is written before the deletion so that the
+     * activity instance is still fully accessible during logging.
      *
-     * @return JsonResponse
+     * @param  Activity $activity Route-model-bound activity instance to delete.
+     *
+     * @return JsonResponse Empty response with HTTP 204 No Content.
      */
     public function destroy(Activity $activity): JsonResponse
     {
@@ -168,9 +215,17 @@ class ActivityController extends Controller
     /**
      * Restore the specified user from soft deletion.
      *
-     * @param int $id
+     * Looks up the activity including trashed records, then authorises via
+     * the 'restore' policy. Returns 404 if the activity is not currently
+     * soft-deleted, preventing accidental double-restores.
      *
-     * @return JsonResponse
+     * @param  int|string $id The primary key of the soft-deleted activity.
+     *
+     * @return JsonResponse The restored activity resource.
+     *
+     * @throws ModelNotFoundException If no matching record exists.
+     *
+     * @throws HttpException If the activity is not trashed (404).
      */
     public function restore($id): JsonResponse
     {

@@ -4,14 +4,32 @@ namespace App\Exceptions;
 
 use Exception;
 
+/**
+ * Exception thrown when a stock operation cannot be fulfilled
+ * due to insufficient available quantity.
+ *
+ * Carries both the current stock level and the requested amount,
+ * allowing the caller to make informed decisions or surface a
+ * meaningful error message to the user.
+ *
+ * Example usage:
+ *   throw new InsufficientStock(currentQuantity: 3, requestedQuantity: 10);
+ *
+ * Example message produced:
+ *   "Insufficient stock. Current: 3, requested: 10."
+ */
 class InsufficientStock extends Exception
 {
     /**
-     * Create a new InsufficientStock instance.
+     * Create a new InsufficientStock exception instance.
      *
-     * @param int $currentQuantity
+     * Automatically builds a descriptive message from the two quantities
+     * and passes it up to the parent Exception constructor, so the message
+     * is always consistent and does not need to be set manually by the caller.
      *
-     * @param int $requestedQuantity
+     * @param int $currentQuantity The quantity currently available in stock.
+     * @param int $requestedQuantity The quantity that was requested but could
+     * not be fulfilled.
      */
     public function __construct(
         private readonly int $currentQuantity,
@@ -27,9 +45,10 @@ class InsufficientStock extends Exception
     }
 
     /**
-     * Get the current quantity.
+     * Get the quantity currently available in stock at the time the exception
+     * was thrown.
      *
-     * @return int
+     * @return int The available stock quantity.
      */
     public function getCurrentQuantity(): int
     {
@@ -37,9 +56,9 @@ class InsufficientStock extends Exception
     }
 
     /**
-     * Get the requested quantity.
+     * Get the quantity that was requested but could not be fulfilled.
      *
-     * @return int
+     * @return int The requested quantity.
      */
     public function getRequestedQuantity(): int
     {

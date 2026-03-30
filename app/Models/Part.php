@@ -41,7 +41,7 @@ class Part extends Model
      * Spare Part Part Type.
      */
     public const SPARE_PART_PART_TYPE = 'spare_part';
-    
+
     /**
      * Sub Assembly Part Type.
      */

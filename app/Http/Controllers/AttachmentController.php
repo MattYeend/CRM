@@ -9,44 +9,68 @@ use App\Services\Attachments\AttachmentAttacherService;
 use App\Services\Attachments\AttachmentLogService;
 use App\Services\Attachments\AttachmentManagementService;
 use App\Services\Attachments\AttachmentQueryService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
+/**
+ * Handles HTTP requests for the Attachment resource.
+ *
+ * Delegates business logic to four dedicated services:
+ *   - AttachmentAttacherService — associates attachments with
+ *      their parent entities
+ *   - AttachmentLogService — records audit log entries for
+ *      attachment events
+ *   - AttachmentManagementService — handles store, update, delete,
+ *      and restore operations
+ *   - AttachmentQueryService — handles read/list queries
+ *
+ * All responses are returned as JSON, making this controller suitable
+ * for consumption by the Vue frontend or any API client.
+ */
 class AttachmentController extends Controller
 {
     /**
-     * Declare a protected property to hold the
-     * AttachmentAttacherService, ActivityLogService,
-     * AttachmentQueryService and AttachmentManagementService
-     * instances
+     * Service responsible for associating attachments with their
+     * parent entities.
      *
      * @var AttachmentAttacherService
-     * @var AttachmentLogService
-     * @var AttachmentQueryService
-     * @var AttachmentManagementService
      */
     protected AttachmentAttacherService $attacher;
+
+    /**
+     * Service responsible for writing audit log entries for attachment events.
+     *
+     * @var AttachmentLogService
+     */
     protected AttachmentLogService $logger;
+
+    /**
+     * Service responsible for querying and listing attachments.
+     *
+     * @var AttachmentQueryService
+     */
     protected AttachmentQueryService $query;
+
+    /**
+     * Service responsible for creating, updating, deleting,
+     * and restoring attachments.
+     *
+     * @var AttachmentManagementService
+     */
     protected AttachmentManagementService $management;
 
     /**
-     * Constructor for the controller
+     * Inject the required services into the controller.
      *
-     * @param AttachmentAttacherService $attacher
-     *
-     * @param AttachmentLogService $logger
-     *
-     * @param AttachmentQueryService $query
-     *
-     * @param AttachmentManagementService $management
-     *
-     * An instance of the AttachmentLogService used for logging
-     * activitattachmenty-related actions
-     * An instance of the AttachmentManagementService for management
-     * of attachments
-     * An instance of the AttachmentQueryService for the query of
-     * attachment-related actions
-     * An instance of the AttacherService for attaching attachments
+     * @param  AttachmentAttacherService $attacher Handles associating
+     * attachments to parent entities.
+     * @param  AttachmentLogService $logger Handles audit logging for
+     * attachment events.
+     * @param  AttachmentQueryService $query Handles attachment listing
+     * and retrieval.
+     * @param  AttachmentManagementService $management Handles attachment
+     * store/update/delete/restore.
      */
     public function __construct(
         AttachmentAttacherService $attacher,
@@ -63,7 +87,9 @@ class AttachmentController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return JsonResponse
+     * Authorises via the 'viewAny' policy before returning data.
+     *
+     * @return JsonResponse The list of attachments.
      */
     public function index(): JsonResponse
     {
@@ -77,9 +103,17 @@ class AttachmentController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param StoreAttachmentRequest $request
+     * Validation is handled upstream by StoreAttachmentRequest.
+     * After storing, an audit log entry is written against the
+     * authenticated user.
+     * The response eager-loads the 'uploader' relationship so the caller
+     * immediately has access to the associated user details.
      *
-     * @return JsonResponse
+     * @param  StoreAttachmentRequest $request Validated request containing the
+     * file and metadata.
+     *
+     * @return JsonResponse The newly created attachment with its uploader,
+     * HTTP 201 Created.
      */
     public function store(StoreAttachmentRequest $request): JsonResponse
     {
@@ -99,9 +133,11 @@ class AttachmentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Attachment $attachment
+     * Authorises via the 'view' policy before returning data.
      *
-     * @return JsonResponse
+     * @param  Attachment $attachment Route-model-bound attachment instance.
+     *
+     * @return JsonResponse The resolved attachment resource.
      */
     public function show(Attachment $attachment): JsonResponse
     {
@@ -115,11 +151,21 @@ class AttachmentController extends Controller
     /**
      * Update the specified resource.
      *
-     * @param UpdateAttachmentRequest $request
+     * Validation is handled upstream by UpdateAttachmentRequest, which also
+     * implicitly authorises the operation via its authorize() method.
+     * After updating, an audit log entry is written against the
+     * authenticated user.
+     * The response eager-loads the 'uploader' relationship for consistency
+     * with store().
      *
-     * @param Attachment $attachment
+     * @param  UpdateAttachmentRequest $request Validated request containing
+     * updated attachment data.
      *
-     * @return JsonResponse
+     * @param  Attachment $attachment Route-model-bound attachment
+     * instance to update.
+     *
+     * @return JsonResponse The updated attachment with its uploader,
+     * HTTP 200 OK.
      */
     public function update(
         UpdateAttachmentRequest $request,
@@ -141,9 +187,16 @@ class AttachmentController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Attachment $attachment
+     * Authorises via the 'delete' policy before proceeding.
+     * The audit log entry is written before the deletion so that the
+     * attachment instance is still fully accessible during logging.
+     * The user ID is passed to the management service to record who performed
+     * the deletion.
      *
-     * @return JsonResponse
+     * @param  Attachment $attachment Route-model-bound attachment instance
+     * to delete.
+     *
+     * @return JsonResponse Empty response with HTTP 204 No Content.
      */
     public function destroy(Attachment $attachment): JsonResponse
     {
@@ -165,9 +218,19 @@ class AttachmentController extends Controller
     /**
      * Restore the specified user from soft deletion.
      *
-     * @param int $id
+     * Looks up the attachment including trashed records, then authorises via
+     * the 'restore' policy. Returns 404 if the attachment is not currently
+     * soft-deleted, preventing accidental double-restores.
+     * After restoring, an audit log entry is written against the authenticated
+     * user.
      *
-     * @return JsonResponse
+     * @param  int|string $id The primary key of the soft-deleted attachment.
+     *
+     * @return JsonResponse The restored attachment resource.
+     *
+     * @throws ModelNotFoundException If no matching record exists.
+     *
+     * @throws HttpException If the attachment is not trashed (404).
      */
     public function restore($id): JsonResponse
     {
