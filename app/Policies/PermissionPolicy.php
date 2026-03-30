@@ -29,7 +29,7 @@ class PermissionPolicy
     }
 
     /**
-     * Determine whether the user can view any permissions.
+     * Determine whether the user can view any models.
      *
      * @param User $user
      *
@@ -41,7 +41,7 @@ class PermissionPolicy
     }
 
     /**
-     * Determine whether the user can view the permission.
+     * Determine whether the user can view the model.
      *
      * @param User $user
      *
@@ -60,7 +60,7 @@ class PermissionPolicy
     }
 
     /**
-     * Determine whether the user can create permissions.
+     * Determine whether the user can create models.
      *
      * @param User $user
      *
@@ -72,7 +72,7 @@ class PermissionPolicy
     }
 
     /**
-     * Determine whether the user can update the permission.
+     * Determine whether the user can update the model.
      *
      * @param User $user
      *
@@ -91,7 +91,7 @@ class PermissionPolicy
     }
 
     /**
-     * Determine whether the user can delete the permission.
+     * Determine whether the user can delete the model.
      *
      * @param User $user
      *
@@ -110,7 +110,7 @@ class PermissionPolicy
     }
 
     /**
-     * Determine wheter the user can restore the permissions.
+     * Determine wheter the user can restore the models.
      *
      * @param User $user
      *

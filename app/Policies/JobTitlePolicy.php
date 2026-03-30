@@ -29,7 +29,7 @@ class JobTitlePolicy
     }
 
     /**
-     * Determine whether the user can view any job titles.
+     * Determine whether the user can view any models.
      *
      * @param User $user
      *
@@ -41,7 +41,7 @@ class JobTitlePolicy
     }
 
     /**
-     * Determine whether the user can view the job title.
+     * Determine whether the user can view the model.
      *
      * @param User $user
      *
@@ -60,7 +60,7 @@ class JobTitlePolicy
     }
 
     /**
-     * Determine whether the user can create job titles.
+     * Determine whether the user can create models.
      *
      * @param User $user
      *
@@ -72,7 +72,7 @@ class JobTitlePolicy
     }
 
     /**
-     * Determine whether the user can update the job title.
+     * Determine whether the user can update the model.
      *
      * @param User $user
      *
@@ -95,7 +95,7 @@ class JobTitlePolicy
     }
 
     /**
-     * Determine whether the user can delete the job title.
+     * Determine whether the user can delete the model.
      *
      * @param User $user
      *
@@ -118,7 +118,7 @@ class JobTitlePolicy
     }
 
     /**
-     * Determine wheter the user can restore the job title
+     * Determine wheter the user can restore the model.
      *
      * @param User $user
      *

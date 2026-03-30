@@ -28,7 +28,7 @@ class UserPolicy
     }
 
     /**
-     * Determine whether the user can view any users.
+     * Determine whether the user can view any models.
      *
      * @param User $user
      *
@@ -40,7 +40,7 @@ class UserPolicy
     }
 
     /**
-     * Determine whether the user can view the user.
+     * Determine whether the user can view the model.
      *
      * @param User $user
      *
@@ -59,7 +59,7 @@ class UserPolicy
     }
 
     /**
-     * Determine whether the user can create users.
+     * Determine whether the user can create models.
      *
      * @param User $user
      *
@@ -71,7 +71,7 @@ class UserPolicy
     }
 
     /**
-     * Determine whether the user can update the user.
+     * Determine whether the user can update the model.
      *
      * @param User $user
      *
@@ -90,7 +90,7 @@ class UserPolicy
     }
 
     /**
-     * Determine whether the user can delete the user.
+     * Determine whether the user can delete the model.
      *
      * @param User $user
      *
@@ -109,7 +109,7 @@ class UserPolicy
     }
 
     /**
-     * Determine whether the user can manage users.
+     * Determine whether the user can manage model.
      *
      * @param User $user
      *
@@ -121,7 +121,7 @@ class UserPolicy
     }
 
     /**
-     * Determine whether the user can assign roles to users.
+     * Determine whether the user can assign roles to the model.
      *
      * @param User $user
      *
@@ -133,7 +133,7 @@ class UserPolicy
     }
 
     /**
-     * Determine whether the user can assign permissions to users.
+     * Determine whether the user can assign permissions to the model.
      *
      * @param User $user
      *
@@ -145,7 +145,7 @@ class UserPolicy
     }
 
     /**
-     * Determine whether the user can restore users.
+     * Determine whether the user can restore models.
      *
      * @param User $user
      *

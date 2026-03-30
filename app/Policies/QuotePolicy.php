@@ -29,7 +29,7 @@ class QuotePolicy
     }
 
     /**
-     * Determine whether the user can view any quotes.
+     * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
@@ -37,7 +37,7 @@ class QuotePolicy
     }
 
     /**
-     * Determine whether the user can view the quote.
+     * Determine whether the user can view the model.
      *
      * @param User $user
      *
@@ -56,7 +56,7 @@ class QuotePolicy
     }
 
     /**
-     * Determine whether the user can create quotes.
+     * Determine whether the user can create models.
      *
      * @param User $user
      *
@@ -68,7 +68,7 @@ class QuotePolicy
     }
 
     /**
-     * Determine whether the user can update the quote.
+     * Determine whether the user can update the model.
      *
      * @param User $user
      *
@@ -87,7 +87,7 @@ class QuotePolicy
     }
 
     /**
-     * Determine whether the user can delete the quote.
+     * Determine whether the user can delete the model.
      *
      * @param User $user
      *
@@ -106,7 +106,7 @@ class QuotePolicy
     }
 
     /**
-     * Determine whether the user can restore the quote.
+     * Determine whether the user can restore the model.
      *
      * @param User $user
      *

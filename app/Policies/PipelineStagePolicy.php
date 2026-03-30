@@ -29,7 +29,7 @@ class PipelineStagePolicy
     }
 
     /**
-     * Determine whether the user can view any pipeline stages.
+     * Determine whether the user can view any models.
      *
      * @param User $user
      *
@@ -41,7 +41,7 @@ class PipelineStagePolicy
     }
 
     /**
-     * Determine whether the user can view the pipeline stage.
+     * Determine whether the user can view the model.
      *
      * @param User $user
      *
@@ -60,7 +60,7 @@ class PipelineStagePolicy
     }
 
     /**
-     * Determine whether the user can create pipeline stages.
+     * Determine whether the user can create models.
      *
      * @param User $user
      *
@@ -72,7 +72,7 @@ class PipelineStagePolicy
     }
 
     /**
-     * Determine whether the user can update the pipeline stage.
+     * Determine whether the user can update the model.
      *
      * @param User $user
      *
@@ -91,7 +91,7 @@ class PipelineStagePolicy
     }
 
     /**
-     * Determine whether the user can delete the pipeline stage.
+     * Determine whether the user can delete the model.
      *
      * @param User $user
      *
@@ -110,7 +110,7 @@ class PipelineStagePolicy
     }
 
     /**
-     * Determine whether the user can restore the pipeline stage.
+     * Determine whether the user can restore the model.
      *
      * @param User $user
      *
@@ -129,7 +129,7 @@ class PipelineStagePolicy
     }
 
     /**
-     * Determine whether the user can manage pipeline stages.
+     * Determine whether the user can manage models.
      *
      * @param User $user
      *
@@ -141,7 +141,7 @@ class PipelineStagePolicy
     }
 
     /**
-     * Determine whether the user can assign pipeline stages.
+     * Determine whether the user can assign models.
      *
      * @param User $user
      *

@@ -29,7 +29,7 @@ class AttachmentPolicy
     }
 
     /**
-     * Determine whether the user can view any attachments.
+     * Determine whether the user can view any models.
      *
      * @param User $user
      *
@@ -41,7 +41,7 @@ class AttachmentPolicy
     }
 
     /**
-     * Determine whether the user can view the attachment.
+     * Determine whether the user can view the model.
      *
      * @param User $user
      *
@@ -60,7 +60,7 @@ class AttachmentPolicy
     }
 
     /**
-     * Determine whether the user can create attachments.
+     * Determine whether the user can create models.
      *
      * @param User $user
      *
@@ -72,7 +72,7 @@ class AttachmentPolicy
     }
 
     /**
-     * Determine whether the user can update the attachment.
+     * Determine whether the user can update the model.
      *
      * @param User $user
      *
@@ -91,7 +91,7 @@ class AttachmentPolicy
     }
 
     /**
-     * Determine whether the user can delete the attachment.
+     * Determine whether the user can delete the model.
      *
      * @param User $user
      *
@@ -110,7 +110,7 @@ class AttachmentPolicy
     }
 
     /**
-     * Determine whether the user can restore the attachment.
+     * Determine whether the user can restore the model.
      *
      * @param User $user
      *
@@ -129,7 +129,7 @@ class AttachmentPolicy
     }
 
     /**
-     * Determine whether the user can upload attachments.
+     * Determine whether the user can upload models.
      *
      * @param User $user
      *

@@ -29,7 +29,7 @@ class ProductPolicy
     }
 
     /**
-     * Determine whether the user can view any products.
+     * Determine whether the user can view any models.
      *
      * @param User $user
      *
@@ -41,7 +41,7 @@ class ProductPolicy
     }
 
     /**
-     * Determine whether the user can view the product.
+     * Determine whether the user can view the model.
      *
      * @param User $user
      *
@@ -60,7 +60,7 @@ class ProductPolicy
     }
 
     /**
-     * Determine whether the user can create products.
+     * Determine whether the user can create models.
      *
      * @param User $user
      *
@@ -72,7 +72,7 @@ class ProductPolicy
     }
 
     /**
-     * Determine whether the user can update the product.
+     * Determine whether the user can update the model.
      *
      * @param User $user
      *
@@ -91,7 +91,7 @@ class ProductPolicy
     }
 
     /**
-     * Determine whether the user can delete the product.
+     * Determine whether the user can delete the model.
      *
      * @param User $user
      *
@@ -110,7 +110,7 @@ class ProductPolicy
     }
 
     /**
-     * Determine whether the user can restore the product.
+     * Determine whether the user can restore the model.
      *
      * @param User $user
      *

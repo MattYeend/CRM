@@ -28,7 +28,7 @@ class RolePolicy
     }
 
     /**
-     * Determine whether the user can view any roles.
+     * Determine whether the user can view any models.
      *
      * @param User $user
      *
@@ -40,7 +40,7 @@ class RolePolicy
     }
 
     /**
-     * Determine whether the user can view the role.
+     * Determine whether the user can view the model.
      *
      * @param User $user
      *

@@ -29,7 +29,7 @@ class TaskPolicy
     }
 
     /**
-     * Determine whether the user can view any tasks.
+     * Determine whether the user can view any models.
      *
      * @param User $user
      *
@@ -41,7 +41,7 @@ class TaskPolicy
     }
 
     /**
-     * Determine whether the user can view the task.
+     * Determine whether the user can view the model.
      *
      * @param User $user
      *
@@ -60,7 +60,7 @@ class TaskPolicy
     }
 
     /**
-     * Determine whether the user can create tasks.
+     * Determine whether the user can create models.
      *
      * @param User $user
      *
@@ -72,7 +72,7 @@ class TaskPolicy
     }
 
     /**
-     * Determine whether the user can update the task.
+     * Determine whether the user can update the model.
      *
      * @param User $user
      *
@@ -91,7 +91,7 @@ class TaskPolicy
     }
 
     /**
-     * Determine whether the user can delete the task.
+     * Determine whether the user can delete the model.
      *
      * @param User $user
      *
@@ -110,7 +110,7 @@ class TaskPolicy
     }
 
     /**
-     * Determine whether the user can restore the task.
+     * Determine whether the user can restore the model.
      *
      * @param User $user
      *
