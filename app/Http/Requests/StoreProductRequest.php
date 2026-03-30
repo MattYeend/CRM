@@ -26,6 +26,8 @@ class StoreProductRequest extends FormRequest
     {
         return array_merge(
             $this->baseRules(),
+            $this->statusRules(),
+            $this->quantityRules(),
             $this->metaRules(),
         );
     }
@@ -48,12 +50,34 @@ class StoreProductRequest extends FormRequest
             'description' => 'nullable|string',
             'price' => 'nullable|numeric',
             'currency' => 'nullable|string|max:8',
+        ];
+    }
+
+    /**
+     * Status rules
+     *
+     * @return array
+     */
+    private function statusRules(): array
+    {
+        return [
             'status' => 'required', Rule::in([
                 'active',
                 'discontinued',
                 'pending',
                 'out_of_stock',
             ]),
+        ];
+    }
+
+    /**
+     * Quantity rules
+     *
+     * @return array
+     */
+    private function quantityRules(): array
+    {
+        return [
             'quantity' => 'nullable|integer|min:0',
             'min_stock_level' => 'nullable|integer|min:0',
             'max_stock_level' => 'nullable|integer|min:0',
