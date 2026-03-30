@@ -8,38 +8,60 @@ use App\Models\JobTitle;
 use App\Services\JobTitles\JobTitleLogService;
 use App\Services\JobTitles\JobTitleManagementService;
 use App\Services\JobTitles\JobTitleQueryService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
+/**
+ * Handles HTTP requests for the JobTitle resource.
+ *
+ * Delegates business logic to three dedicated services:
+ *   - JobTitleLogService — records audit log entries for job title changes
+ *   - JobTitleManagementService — handles create, update, delete, and restore
+ *      operations
+ *   - JobTitleQueryService — handles read/list queries with filtering and
+ *      pagination
+ *
+ * All responses are returned as JSON, making this controller suitable
+ * for consumption by the Vue frontend or any API client.
+ */
 class JobTitleController extends Controller
 {
     /**
-     * Declare a protected property to hold the JobTitleLogService,
-     * JobTitleManagementService and JobTitleQueryService instance
+     * Service responsible for writing audit log entries for job title events.
      *
      * @var JobTitleLogService
-     * @var JobTitleManagementService
-     * @var JobTitleQueryServic
      */
     protected JobTitleLogService $logger;
+
+    /**
+     * Service responsible for creating, updating, deleting, and restoring
+     * job titles.
+     *
+     * @var JobTitleManagementService
+     */
     protected JobTitleManagementService $management;
+
+    /**
+     * Service responsible for querying and listing job titles.
+     *
+     * @var JobTitleQueryService
+     */
     protected JobTitleQueryService $query;
 
     /**
-     * Constructor for the controller
+     * Inject the required services into the controller.
      *
-     * @param JobTitleLogService $logger
+     * @param  JobTitleLogService $logger Handles audit logging for job title
+     * events.
      *
-     * @param JobTitleManagementService $management
+     * @param  JobTitleManagementService $management Handles job title
+     * create/update/delete/restore.
      *
-     * @param JobTitleQueryService $query
-     *
-     * An instance of the JobTitleLogService used for logging
-     * job title-related actions
-     * An instance of the JobTitleManagementService for management
-     * of job titles
-     * An instance of the JobTitleQueryService for the query of
-     * job title-related actions
+     * @param  JobTitleQueryService $query Handles job title listing and
+     * retrieval.
      */
     public function __construct(
         JobTitleLogService $logger,
@@ -54,9 +76,15 @@ class JobTitleController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
+     * Also includes the authenticated user's permissions for the Job Title
+     * resource, so the frontend can conditionally render create/view controls.
      *
-     * @return JsonResponse
+     * Authorises via the 'viewAny' policy before returning data.
+     *
+     * @param  Request $request Incoming HTTP request; may carry
+     * filter/pagination params.
+     *
+     * @return JsonResponse Paginated job title data.
      */
     public function index(Request $request): JsonResponse
     {
@@ -70,9 +98,15 @@ class JobTitleController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param StoreJobTitleRequest $request
+     * Validation is handled upstream by StoreJobTitleRequest.
      *
-     * @return JsonResponse
+     * After storing, an audit log entry is written against the authenticated
+     * user.
+     *
+     * @param  StoreJobTitleRequest $request Validated request containing
+     * job title data.
+     *
+     * @return JsonResponse The newly created job title, with HTTP 201 Created.
      */
     public function store(StoreJobTitleRequest $request): JsonResponse
     {
@@ -92,9 +126,13 @@ class JobTitleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param JobTitle $jobTitle
+     * Returns a single job title by its model binding.
      *
-     * @return JsonResponse
+     * Authorises via the 'view' policy before returning data.
+     *
+     * @param  JobTitle $jobTitle Route-model-bound job title instance.
+     *
+     * @return JsonResponse The resolved job title resource.
      */
     public function show(JobTitle $jobTitle): JsonResponse
     {
@@ -108,11 +146,19 @@ class JobTitleController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param UpdateJobTitleRequest $request
+     * Validation is handled upstream by UpdateJobTitleRequest, which also
+     * implicitly authorises the operation via its authorize() method.
      *
-     * @param JobTitle $jobTitle
+     * After updating, an audit log entry is written against the
+     * authenticated user.
      *
-     * @return JsonResponse
+     * @param  UpdateJobTitleRequest $request Validated request containing
+     * updated job title data.
+     *
+     * @param  JobTitle $jobTitle Route-model-bound job title instance to
+     * update.
+     *
+     * @return JsonResponse The updated job title resource.
      */
     public function update(
         UpdateJobTitleRequest $request,
@@ -134,9 +180,15 @@ class JobTitleController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param JobTitle $jobTitle
+     * Authorises via the 'delete' policy before proceeding.
      *
-     * @return JsonResponse
+     * The audit log entry is written before the deletion so that the
+     * job title instance is still fully accessible during logging.
+     *
+     * @param  JobTitle $jobTitle Route-model-bound job title instance to
+     * delete.
+     *
+     * @return JsonResponse Empty response with HTTP 204 No Content.
      */
     public function destroy(JobTitle $jobTitle): JsonResponse
     {
@@ -156,11 +208,19 @@ class JobTitleController extends Controller
     }
 
     /**
-     * Restore the specified resource from storage.
+     * Restore the specified job title from soft deletion.
      *
-     * @param int $id
+     * Looks up the job title including trashed records, then authorises via
+     * the 'restore' policy. Returns 404 if the job title is not currently
+     * soft-deleted, preventing accidental double-restores.
      *
-     * @return JsonResponse
+     * @param  int|string $id The primary key of the soft-deleted job title.
+     *
+     * @return JsonResponse The restored job title resource.
+     *
+     * @throws ModelNotFoundException If no matching record exists.
+     *
+     * @throws HttpException If the job title is not trashed (404).
      */
     public function restore(int $id): JsonResponse
     {
