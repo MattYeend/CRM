@@ -86,7 +86,8 @@ class InvoiceItemController extends Controller
      * @param  Request $request Incoming HTTP request; may carry
      * filter/pagination params.
      *
-     * @return JsonResponse Paginated invoice item data.
+     * @return JsonResponse Paginated invoice item data with pagination
+     * metadata and permissions.
      */
     public function index(Request $request): JsonResponse
     {

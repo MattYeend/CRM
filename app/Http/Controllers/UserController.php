@@ -8,37 +8,60 @@ use App\Models\User;
 use App\Services\Users\UserLogService;
 use App\Services\Users\UserManagementService;
 use App\Services\Users\UserQueryService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
+/**
+ * Handles HTTP requests for the User resource.
+ *
+ * Delegates business logic to three dedicated services:
+ *   - UserLogService — records audit log entries for user changes
+ *   - UserManagementService — handles create, update, delete, and restore
+ *      operations
+ *   - UserQueryService — handles read/list queries with filtering and
+ *      pagination
+ *
+ * All responses are returned as JSON, making this controller suitable
+ * for consumption by the Vue frontend or any API client.
+ */
 class UserController extends Controller
 {
     /**
-     * Declare a protected property to hold the UserLogService,
-     * UserQueryService, and UserManagementService instances
+     * Service responsible for writing audit log entries for user events.
      *
      * @var UserLogService
-     * @var UserManagementService
-     * @var UserQueryService
      */
-    private UserLogService $logger;
-    private UserManagementService $management;
-    private UserQueryService $query;
+    protected UserLogService $logger;
 
     /**
-     * Constructor for the controller
+     * Service responsible for creating, updating, deleting, and restoring
+     * users.
      *
-     * @param UserLogService $logger
-     * @param UserManagementService $management
-     * @param UserQueryService $query
+     * @var UserManagementService
+     */
+    protected UserManagementService $management;
+
+    /**
+     * Service responsible for querying and listing users.
      *
-     * An instance of the UserLogService used for logging
-     * user-related actions
-     * An instance of the UserManagementService for management
-     * of users
-     * An instance of the UserQueryService for the query of
-     * user-related actions
+     * @var UserQueryService
+     */
+    protected UserQueryService $query;
+
+    /**
+     * Inject the required services into the controller.
+     *
+     * @param  UserLogService $logger Handles audit logging for
+     * user events.
+     *
+     * @param  UserManagementService $management Handles user
+     * create/update/delete/restore.
+     *
+     * @param  UserQueryService $query Handles user listing and
+     * retrieval.
      */
     public function __construct(
         UserLogService $logger,
@@ -53,9 +76,16 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
+     * Also includes the authenticated user's permissions for the User
+     * resource, so the frontend can conditionally render create/view controls.
      *
-     * @return JsonResponse
+     * Authorises via the 'viewAny' policy before returning data.
+     *
+     * @param  Request $request Incoming HTTP request; may carry
+     * filter/pagination params.
+     *
+     * @return JsonResponse Paginated user data with pagination metadata and
+     * permissions.
      */
     public function index(Request $request): JsonResponse
     {
@@ -79,9 +109,15 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param StoreUserRequest $request
+     * Validation is handled upstream by StoreUserRequest.
      *
-     * @return JsonResponse
+     * After storing, an audit log entry is written against the authenticated
+     * user.
+     *
+     * @param  StoreUserRequest $request Validated request containing
+     * user data.
+     *
+     * @return JsonResponse The newly created user, with HTTP 201 Created.
      */
     public function store(StoreUserRequest $request): JsonResponse
     {
@@ -99,9 +135,13 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param User $user
+     * Returns a single user by its model binding.
      *
-     * @return JsonResponse
+     * Authorises via the 'view' policy before returning data.
+     *
+     * @param  User $user Route-model-bound user instance.
+     *
+     * @return JsonResponse The resolved user resource.
      */
     public function show(User $user): JsonResponse
     {
@@ -115,11 +155,18 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param UpdateUserRequest $request
+     * Validation is handled upstream by UpdateUserRequest, which also
+     * implicitly authorises the operation via its authorize() method.
      *
-     * @param User $user
+     * After updating, an audit log entry is written against the
+     * authenticated user.
      *
-     * @return JsonResponse
+     * @param  UpdateUserRequest $request Validated request containing
+     * updated user data.
+     *
+     * @param  User $user Route-model-bound user instance to update.
+     *
+     * @return JsonResponse The updated user resource.
      */
     public function update(UpdateUserRequest $request, User $user): JsonResponse
     {
@@ -139,9 +186,14 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param User $user
+     * Authorises via the 'delete' policy before proceeding.
      *
-     * @return JsonResponse
+     * The audit log entry is written before the deletion so that the
+     * user instance is still fully accessible during logging.
+     *
+     * @param  User $user Route-model-bound user instance to delete.
+     *
+     * @return JsonResponse Empty response with HTTP 204 No Content.
      */
     public function destroy(User $user): JsonResponse
     {
@@ -160,11 +212,19 @@ class UserController extends Controller
     }
 
     /**
-     * Restore the specified resource from storage.
+     * Restore the specified user from soft deletion.
      *
-     * @param int $id
+     * Looks up the user including trashed records, then authorises via
+     * the 'restore' policy. Returns 404 if the user is not currently
+     * soft-deleted, preventing accidental double-restores.
      *
-     * @return JsonResponse
+     * @param  int|string $id The primary key of the soft-deleted user.
+     *
+     * @return JsonResponse The restored user resource.
+     *
+     * @throws ModelNotFoundException If no matching record exists.
+     *
+     * @throws HttpException If the user is not trashed (404).
      */
     public function restore($id): JsonResponse
     {

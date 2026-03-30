@@ -11,37 +11,54 @@ use App\Services\PartStockMovements\PartStockMovementManagementService;
 use App\Services\PartStockMovements\PartStockMovementQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Gate;
 
+/**
+ * Handles HTTP requests for the PartStockMovement resource.
+ *
+ * Delegates business logic to three dedicated services:
+ *   - PartStockMovementLogService — records audit log entries
+ *   - PartStockMovementManagementService — handles creation of stock movements
+ *   - PartStockMovementQueryService — handles retrieval and listing
+ *
+ * All responses are returned as JSON, making this controller suitable
+ * for API consumption by frontend clients.
+ */
 class PartStockMovementController extends Controller
 {
     /**
-     * Declare a protected property to hold the PartStockMovementLogService,
-     * PartStockMovementManagementService and PartStockMovementQueryService
-     * instance
+     * Service responsible for writing audit log entries for stock movement
+     * events.
      *
      * @var PartStockMovementLogService
-     * @var PartStockMovementManagementService
-     * @var PartStockMovementQueryService
      */
     protected PartStockMovementLogService $logger;
+
+    /**
+     * Service responsible for creating and managing stock movements.
+     *
+     * @var PartStockMovementManagementService
+     */
     protected PartStockMovementManagementService $management;
+
+    /**
+     * Service responsible for querying and listing stock movements.
+     *
+     * @var PartStockMovementQueryService
+     */
     protected PartStockMovementQueryService $query;
 
     /**
-     * Constructor for the controller
+     * Inject the required services into the controller.
      *
-     * @param PartStockMovementLogService $logger
+     * @param  PartStockMovementLogService $logger Handles audit logging for
+     * stock movements.
      *
-     * @param PartStockMovementManagementService $management
+     * @param  PartStockMovementManagementService $management Handles creation
+     * and management of stock movements.
      *
-     * @param PartStockMovementQueryService $query
-     *
-     * An instance of the PartStockMovementLogService used for logging
-     * part stock movement-related actions
-     * An instance of the PartStockMovementManagementService for management
-     * of part stock movements
-     * An instance of the PartStockMovementQueryService for the query of
-     * part stock movement-related actions
+     * @param  PartStockMovementQueryService $query Handles retrieval and
+     * listing of stock movements.
      */
     public function __construct(
         PartStockMovementLogService $logger,
@@ -54,13 +71,21 @@ class PartStockMovementController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of stock movements for a given part.
      *
-     * @param Request $request
+     * Also includes the authenticated user's permissions for the
+     * Part Stock Movement resource, so the frontend can conditionally
+     * render create/view controls.
      *
-     * @param Part £part
+     * Authorises via the 'viewAny' policy before returning data.
      *
-     * @return JsonResponse
+     * @param  Request $request Incoming HTTP request; may include filters or
+     * pagination parameters.
+     *
+     * @param  Part $part Route-model-bound part instance.
+     *
+     * @return JsonResponse Paginated stock movement data with pagination
+     * metadata and permissions.
      */
     public function index(Request $request, Part $part): JsonResponse
     {
@@ -72,13 +97,22 @@ class PartStockMovementController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created stock movement in storage.
      *
-     * @param Part $part
+     * Validation is handled upstream by StorePartStockMovementRequest.
      *
-     * @param StorePartStockMovementRequest $request
+     * If insufficient stock is available, a 422 response is returned.
      *
-     * @return JsonResponse
+     * After storing, an audit log entry is written against the authenticated
+     * user.
+     *
+     * @param  StorePartStockMovementRequest $request Validated request
+     * containing stock movement data.
+     *
+     * @param  Part $part Route-model-bound part instance.
+     *
+     * @return JsonResponse The newly created stock movement with HTTP 201
+     * Created.
      */
     public function store(
         StorePartStockMovementRequest $request,
@@ -98,13 +132,16 @@ class PartStockMovementController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified stock movement.
      *
-     * @param PartStockMovement $partStockMovement
+     * Authorises via the 'view' policy before returning data.
      *
-     * @param Part $part
+     * @param  Part $part Route-model-bound part instance.
      *
-     * @return JsonResponse
+     * @param  PartStockMovement $partStockMovement Route-model-bound stock
+     * movement instance.
+     *
+     * @return JsonResponse The resolved stock movement resource.
      */
     public function show(Part $part, PartStockMovement $partStockMovement)
     {

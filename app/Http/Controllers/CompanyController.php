@@ -84,7 +84,8 @@ class CompanyController extends Controller
      * @param  Request $request Incoming HTTP request; may carry
      * filter/pagination params.
      *
-     * @return JsonResponse The list of companies.
+     * @return JsonResponse Paginated company data with pagination metadata and
+     * permissions.
      */
     public function index(Request $request): JsonResponse
     {

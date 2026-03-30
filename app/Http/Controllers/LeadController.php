@@ -74,7 +74,7 @@ class LeadController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * Also includes the authenticated user's permissions for the Activity
+     * Also includes the authenticated user's permissions for the Lead
      * resource, so the frontend can conditionally render create/view controls.
      *
      * Authorises via the 'viewAny' policy before returning data.
@@ -82,7 +82,8 @@ class LeadController extends Controller
      * @param  Request $request Incoming HTTP request; may carry
      * filter/pagination params.
      *
-     * @return JsonResponse Paginated lead data.
+     * @return JsonResponse Paginated lead data with pagination metadata and
+     * permissions.
      */
     public function index(Request $request): JsonResponse
     {

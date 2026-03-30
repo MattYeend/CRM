@@ -84,7 +84,8 @@ class JobTitleController extends Controller
      * @param  Request $request Incoming HTTP request; may carry
      * filter/pagination params.
      *
-     * @return JsonResponse Paginated job title data.
+     * @return JsonResponse Paginated job title data with pagination
+     * metadata and permissions.
      */
     public function index(Request $request): JsonResponse
     {

@@ -8,38 +8,56 @@ use App\Models\Permission;
 use App\Services\Permissions\PermissionLogService;
 use App\Services\Permissions\PermissionManagementService;
 use App\Services\Permissions\PermissionQueryService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
+/**
+ * Handles HTTP requests for the Permission resource.
+ *
+ * Delegates business logic to three dedicated services:
+ *   - PermissionLogService — records audit log entries
+ *   - PermissionManagementService — handles create, update, delete, restore
+ *   - PermissionQueryService — handles retrieval and listing
+ *
+ * All responses are returned as JSON for API consumption.
+ */
 class PermissionController extends Controller
 {
     /**
-     * Declare a protected property to hold the PermissionLogService,
-     * PermissionManagementService and PermissionQueryService instance
+     * Service responsible for writing audit log entries for permission events.
      *
      * @var PermissionLogService
-     * @var PermissionManagementService
-     * @var PermissionQueryServic
      */
     protected PermissionLogService $logger;
+
+    /**
+     * Service responsible for creating, updating, deleting, and restoring
+     * permissions.
+     *
+     * @var PermissionManagementService
+     */
     protected PermissionManagementService $management;
+
+    /**
+     * Service responsible for querying and listing permissions.
+     *
+     * @var PermissionQueryService
+     */
     protected PermissionQueryService $query;
 
     /**
-     * Constructor for the controller
+     * Inject required services into the controller.
      *
-     * @param PermissionLogService $logger
+     * @param  PermissionLogService $logger Handles audit logging permissions.
      *
-     * @param PermissionManagementService $management
+     * @param  PermissionManagementService $management Handles creation
+     * and management of permissionss.
      *
-     * @param PermissionQueryService $query
-     *
-     * An instance of the PermissionLogService used for logging
-     * permission-related actions
-     * An instance of the PermissionManagementService for management
-     * of permissions
-     * An instance of the PermissionQueryService for the query of
-     * permission-related actions
+     * @param  PermissionQueryService $query Handles retrieval and listing
+     * of permissions.
      */
     public function __construct(
         PermissionLogService $logger,
@@ -52,11 +70,19 @@ class PermissionController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of stock movements for a given permission.
      *
-     * @param Request $request
+     * Also includes the authenticated user's permissions for the
+     * Permission resource, so the frontend can conditionally
+     * render create/view controls.
      *
-     * @return JsonResponse
+     * Authorises via the 'viewAny' policy before returning data.
+     *
+     * @param  Request $request Incoming HTTP request; may include filters or
+     * pagination parameters.
+     *
+     * @return JsonResponse Paginated permissions data with pagination metadata
+     * and permissions.
      */
     public function index(Request $request): JsonResponse
     {
@@ -73,6 +99,15 @@ class PermissionController extends Controller
      * @param StorePermissionRequest $request
      *
      * @return JsonResponse
+     * Validation is handled upstream by StorePermissionRequest.
+     *
+     * After storing, an audit log entry is written against the
+     * authenticated user.
+     *
+     * @param StorePermissionRequest $request Validated request containing the
+     * permission data.
+     *
+     * @return JsonResponse The newly created permission, HTTP 201 Created.
      */
     public function store(StorePermissionRequest $request): JsonResponse
     {
@@ -92,9 +127,13 @@ class PermissionController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Permission $permission
+     * Returns a single permission by its model binding.
      *
-     * @return JsonResponse
+     * Authorises via the 'view' policy before returning data.
+     *
+     * @param  Permission $permission Route-model-bound permission instance.
+     *
+     * @return JsonResponse The resolved permission resource.
      */
     public function show(Permission $permission): JsonResponse
     {
@@ -108,11 +147,19 @@ class PermissionController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param UpdatePermissionRequest $request
+     * Validation is handled upstream by UpdatePermissionRequest, which also
+     * implicitly authorises the operation via its authorize() method.
      *
-     * @param Permission $permission
+     * After updating, an audit log entry is written against the
+     * authenticated user.
      *
-     * @return JsonResponse
+     * @param  UpdatePermissionRequest $request Validated request containing
+     * updated permission data.
+     *
+     * @param  Permission $permission Route-model-bound permission instance
+     * to update.
+     *
+     * @return JsonResponse The updated permission resource.
      */
     public function update(
         UpdatePermissionRequest $request,
@@ -134,9 +181,15 @@ class PermissionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Permission $permission
+     * Authorises via the 'delete' policy before proceeding.
      *
-     * @return JsonResponse
+     * The audit log entry is written before the deletion so that the
+     * permission instance is still fully accessible during logging.
+     *
+     * @param  Permission $permission Route-model-bound permission
+     * instance to delete.
+     *
+     * @return JsonResponse Empty response with HTTP 204 No Content.
      */
     public function destroy(Permission $permission): JsonResponse
     {
@@ -156,11 +209,19 @@ class PermissionController extends Controller
     }
 
     /**
-     * Restore the specified resource from storage.
+     * Restore the specified permission from soft deletion.
      *
-     * @param int $id
+     * Looks up the permission including trashed records, then authorises via
+     * the 'restore' policy. Returns 404 if the permission is not currently
+     * soft-deleted, preventing accidental double-restores.
      *
-     * @return JsonResponse
+     * @param  int|string $id The primary key of the soft-deleted permission.
+     *
+     * @return JsonResponse The restored permission resource.
+     *
+     * @throws ModelNotFoundException If no matching record exists.
+     *
+     * @throws HttpException If the permission is not trashed (404).
      */
     public function restore(int $id): JsonResponse
     {

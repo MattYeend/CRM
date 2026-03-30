@@ -91,7 +91,8 @@ class BillOfMaterialController extends Controller
      * @param  Request $request Incoming HTTP request; may carry
      * filter/pagination params.
      *
-     * @return JsonResponse The list of bill of materials for the given part.
+     * @return JsonResponse Paginated list of bill of materials for the
+     * given part.
      */
     public function index(Part $part, Request $request): JsonResponse
     {

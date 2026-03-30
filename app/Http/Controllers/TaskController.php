@@ -8,38 +8,60 @@ use App\Models\Task;
 use App\Services\Tasks\TaskLogService;
 use App\Services\Tasks\TaskManagementService;
 use App\Services\Tasks\TaskQueryService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
+/**
+ * Handles HTTP requests for the Task resource.
+ *
+ * Delegates business logic to three dedicated services:
+ *   - TaskLogService — records audit log entries for task changes
+ *   - TaskManagementService — handles create, update, delete, and restore
+ *      operations
+ *   - TaskQueryService — handles read/list queries with filtering and
+ *      pagination
+ *
+ * All responses are returned as JSON, making this controller suitable
+ * for consumption by the Vue frontend or any API client.
+ */
 class TaskController extends Controller
 {
     /**
-     * Declare a protected property to hold the TaskLogService,
-     * TaskManagementService and TaskQueryService instance
+     * Service responsible for writing audit log entries for task events.
      *
      * @var TaskLogService
-     * @var TaskManagementService
-     * @var TaskQueryService
      */
     protected TaskLogService $logger;
+
+    /**
+     * Service responsible for creating, updating, deleting, and restoring
+     * tasks.
+     *
+     * @var TaskManagementService
+     */
     protected TaskManagementService $management;
+
+    /**
+     * Service responsible for querying and listing tasks.
+     *
+     * @var TaskQueryService
+     */
     protected TaskQueryService $query;
 
     /**
-     * Constructor for the controller
+     * Inject the required services into the controller.
      *
-     * @param TaskLogService $logger
+     * @param  TaskLogService $logger Handles audit logging for
+     * task events.
      *
-     * @param TaskManagementService $management
+     * @param  TaskManagementService $management Handles task
+     * create/update/delete/restore.
      *
-     * @param TaskQueryService $query
-     *
-     * An instance of the TaskLogService used for logging
-     * task-related actions
-     * An instance of the TaskManagementService for management
-     * of tasks
-     * An instance of the TaskQueryService for the query of
-     * task-related actions
+     * @param  TaskQueryService $query Handles task listing and
+     * retrieval.
      */
     public function __construct(
         TaskLogService $logger,
@@ -54,9 +76,16 @@ class TaskController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
+     * Also includes the authenticated user's permissions for the Task
+     * resource, so the frontend can conditionally render create/view controls.
      *
-     * @return JsonResponse
+     * Authorises via the 'viewAny' policy before returning data.
+     *
+     * @param  Request $request Incoming HTTP request; may carry
+     * filter/pagination params.
+     *
+     * @return JsonResponse Paginated task data with pagination metadata and
+     * permissions.
      */
     public function index(Request $request): JsonResponse
     {
@@ -70,9 +99,15 @@ class TaskController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param StoreTaskRequest $request
+     * Validation is handled upstream by StoreTaskRequest.
      *
-     * @return JsonResponse
+     * After storing, an audit log entry is written against the authenticated
+     * user.
+     *
+     * @param  StoreTaskRequest $request Validated request containing
+     * task data.
+     *
+     * @return JsonResponse The newly created task, with HTTP 201 Created.
      */
     public function store(StoreTaskRequest $request): JsonResponse
     {
@@ -94,9 +129,13 @@ class TaskController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Task $task
+     * Returns a single task by its model binding.
      *
-     * @return JsonResponse
+     * Authorises via the 'view' policy before returning data.
+     *
+     * @param  Task $task Route-model-bound task instance.
+     *
+     * @return JsonResponse The resolved task resource.
      */
     public function show(Task $task): JsonResponse
     {
@@ -110,11 +149,18 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param UpdateTaskRequest $request
+     * Validation is handled upstream by UpdateTaskRequest, which also
+     * implicitly authorises the operation via its authorize() method.
      *
-     * @param Task $task
+     * After updating, an audit log entry is written against the
+     * authenticated user.
      *
-     * @return JsonResponse
+     * @param  UpdateTaskRequest $request Validated request containing
+     * updated task data.
+     *
+     * @param  Task $task Route-model-bound task instance to update.
+     *
+     * @return JsonResponse The updated task resource.
      */
     public function update(
         UpdateTaskRequest $request,
@@ -136,9 +182,14 @@ class TaskController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Task $task
+     * Authorises via the 'delete' policy before proceeding.
      *
-     * @return JsonResponse
+     * The audit log entry is written before the deletion so that the
+     * task instance is still fully accessible during logging.
+     *
+     * @param  Task $task Route-model-bound task instance to delete.
+     *
+     * @return JsonResponse Empty response with HTTP 204 No Content.
      */
     public function destroy(Task $task): JsonResponse
     {
@@ -158,11 +209,19 @@ class TaskController extends Controller
     }
 
     /**
-     * Restore the specified resource from storage.
+     * Restore the specified task from soft deletion.
      *
-     * @param int $id
+     * Looks up the task including trashed records, then authorises via
+     * the 'restore' policy. Returns 404 if the task is not currently
+     * soft-deleted, preventing accidental double-restores.
      *
-     * @return JsonResponse
+     * @param  int|string $id The primary key of the soft-deleted task.
+     *
+     * @return JsonResponse The restored task resource.
+     *
+     * @throws ModelNotFoundException If no matching record exists.
+     *
+     * @throws HttpException If the task is not trashed (404).
      */
     public function restore(int $id): JsonResponse
     {

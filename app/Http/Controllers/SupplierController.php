@@ -8,38 +8,60 @@ use App\Models\Supplier;
 use App\Services\Suppliers\SupplierLogService;
 use App\Services\Suppliers\SupplierManagementService;
 use App\Services\Suppliers\SupplierQueryService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
+/**
+ * Handles HTTP requests for the Supplier resource.
+ *
+ * Delegates business logic to three dedicated services:
+ *   - SupplierLogService — records audit log entries for supplier changes
+ *   - SupplierManagementService — handles create, update, delete, and restore
+ *      operations
+ *   - SupplierQueryService — handles read/list queries with filtering and
+ *      pagination
+ *
+ * All responses are returned as JSON, making this controller suitable
+ * for consumption by the Vue frontend or any API client.
+ */
 class SupplierController extends Controller
 {
     /**
-     * Declare a protected property to hold the SupplierLogService,
-     * SupplierManagementService and SupplierQueryService instance
+     * Service responsible for writing audit log entries for supplier events.
      *
      * @var SupplierLogService
-     * @var SupplierManagementService
-     * @var SupplierQueryService
      */
     protected SupplierLogService $logger;
+
+    /**
+     * Service responsible for creating, updating, deleting, and restoring
+     * suppliers.
+     *
+     * @var SupplierManagementService
+     */
     protected SupplierManagementService $management;
+
+    /**
+     * Service responsible for querying and listing suppliers.
+     *
+     * @var SupplierQueryService
+     */
     protected SupplierQueryService $query;
 
     /**
-     * Constructor for the controller
+     * Inject the required services into the controller.
      *
-     * @param SupplierLogService $logger
+     * @param  SupplierLogService $logger Handles audit logging for
+     * supplier events.
      *
-     * @param SupplierManagementService $management
+     * @param  SupplierManagementService $management Handles supplier
+     * create/update/delete/restore.
      *
-     * @param SupplierQueryService $query
-     *
-     * An instance of the SupplierLogService used for logging
-     * supplier-related actions
-     * An instance of the SupplierManagementService for management
-     * of suppliers
-     * An instance of the SupplierQueryService for the query of
-     * supplier-related actions
+     * @param  SupplierQueryService $query Handles supplier listing and
+     * retrieval.
      */
     public function __construct(
         SupplierLogService $logger,
@@ -54,9 +76,16 @@ class SupplierController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
+     * Also includes the authenticated user's permissions for the Supplier
+     * resource, so the frontend can conditionally render create/view controls.
      *
-     * @return JsonResponse
+     * Authorises via the 'viewAny' policy before returning data.
+     *
+     * @param  Request $request Incoming HTTP request; may carry
+     * filter/pagination params.
+     *
+     * @return JsonResponse Paginated supplier data with pagination metadata and
+     * permissions.
      */
     public function index(Request $request): JsonResponse
     {
@@ -70,9 +99,15 @@ class SupplierController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param StoreSupplierRequest $request
+     * Validation is handled upstream by StoreSupplierRequest.
      *
-     * @return JsonResponse
+     * After storing, an audit log entry is written against the authenticated
+     * user.
+     *
+     * @param  StoreSupplierRequest $request Validated request containing
+     * supplier data.
+     *
+     * @return JsonResponse The newly created supplier, with HTTP 201 Created.
      */
     public function store(StoreSupplierRequest $request): JsonResponse
     {
@@ -92,9 +127,13 @@ class SupplierController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Supplier $supplier
+     * Returns a single supplier by its model binding.
      *
-     * @return JsonResponse
+     * Authorises via the 'view' policy before returning data.
+     *
+     * @param  Supplier $supplier Route-model-bound supplier instance.
+     *
+     * @return JsonResponse The resolved supplier resource.
      */
     public function show(Supplier $supplier): JsonResponse
     {
@@ -108,11 +147,18 @@ class SupplierController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param UpdateSupplierRequest $request
+     * Validation is handled upstream by UpdateSupplierRequest, which also
+     * implicitly authorises the operation via its authorize() method.
      *
-     * @param Supplier $supplier
+     * After updating, an audit log entry is written against the
+     * authenticated user.
      *
-     * @return JsonResponse
+     * @param  UpdateSupplierRequest $request Validated request containing
+     * updated supplier data.
+     *
+     * @param  Supplier $supplier Route-model-bound supplier instance to update.
+     *
+     * @return JsonResponse The updated supplier resource.
      */
     public function update(
         UpdateSupplierRequest $request,
@@ -134,9 +180,14 @@ class SupplierController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Supplier $supplier
+     * Authorises via the 'delete' policy before proceeding.
      *
-     * @return JsonResponse
+     * The audit log entry is written before the deletion so that the
+     * supplier instance is still fully accessible during logging.
+     *
+     * @param  Supplier $supplier Route-model-bound supplier instance to delete.
+     *
+     * @return JsonResponse Empty response with HTTP 204 No Content.
      */
     public function destroy(Supplier $supplier): JsonResponse
     {
@@ -156,11 +207,19 @@ class SupplierController extends Controller
     }
 
     /**
-     * Restore the specified resource from storage.
+     * Restore the specified supplier from soft deletion.
      *
-     * @param int $id
+     * Looks up the supplier including trashed records, then authorises via
+     * the 'restore' policy. Returns 404 if the supplier is not currently
+     * soft-deleted, preventing accidental double-restores.
      *
-     * @return JsonResponse
+     * @param  int|string $id The primary key of the soft-deleted supplier.
+     *
+     * @return JsonResponse The restored supplier resource.
+     *
+     * @throws ModelNotFoundException If no matching record exists.
+     *
+     * @throws HttpException If the supplier is not trashed (404).
      */
     public function restore(int $id): JsonResponse
     {

@@ -86,7 +86,8 @@ class PartCategoryController extends Controller
      * @param  Request $request Incoming HTTP request; may carry
      * filter/pagination params.
      *
-     * @return JsonResponse Paginated part category data.
+     * @return JsonResponse Paginated part category data with pagination
+     * metadata and permissions.
      */
     public function index(Request $request): JsonResponse
     {
