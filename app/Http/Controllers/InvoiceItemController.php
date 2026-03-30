@@ -28,7 +28,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  * All responses are returned as JSON, making this controller suitable
  * for consumption by the Vue frontend or any API client.
  */
-
 class InvoiceItemController extends Controller
 {
     /**

@@ -8,38 +8,62 @@ use App\Models\PartCategory;
 use App\Services\PartCategories\PartCategoryLogService;
 use App\Services\PartCategories\PartCategoryManagementService;
 use App\Services\PartCategories\PartCategoryQueryService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
+/**
+ * Handles HTTP requests for the PartCategory resource.
+ *
+ * Delegates business logic to three dedicated services:
+ *   - PartCategoryLogService — records audit log entries for part category
+ *      changes
+ *   - PartCategoryManagementService — handles create, update, delete, and
+ *      restore operations
+ *   - PartCategoryQueryService — handles read/list queries with filtering and
+ *      pagination
+ *
+ * All responses are returned as JSON, making this controller suitable
+ * for consumption by the Vue frontend or any API client.
+ */
 class PartCategoryController extends Controller
 {
     /**
-     * Declare a protected property to hold the PartCategoryLogService,
-     * PartCategoryManagementService and PartCategoryQueryService instance
+     * Service responsible for writing audit log entries for part category
+     * events.
      *
      * @var PartCategoryLogService
-     * @var PartCategoryManagementService
-     * @var PartCategoryQueryService
      */
     protected PartCategoryLogService $logger;
+
+    /**
+     * Service responsible for creating, updating, deleting, and restoring
+     * part categories.
+     *
+     * @var PartCategoryManagementService
+     */
     protected PartCategoryManagementService $management;
+
+    /**
+     * Service responsible for querying and listing part categories.
+     *
+     * @var PartCategoryQueryService
+     */
     protected PartCategoryQueryService $query;
 
     /**
-     * Constructor for the controller
+     * Inject the required services into the controller.
      *
-     * @param PartCategoryLogService $logger
+     * @param  PartCategoryLogService $logger Handles audit logging for part
+     * category events.
      *
-     * @param PartCategoryManagementService $management
+     * @param  PartCategoryManagementService $management Handles part category
+     * create/update/delete/restore.
      *
-     * @param PartCategoryQueryService $query
-     *
-     * An instance of the PartCategoryLogService used for logging
-     * part-related actions
-     * An instance of the PartCategoryManagementService for management
-     * of parts
-     * An instance of the PartCategoryQueryService for the query of
-     * part-related actions
+     * @param  PartCategoryQueryService $query Handles part category listing
+     * and retrieval.
      */
     public function __construct(
         PartCategoryLogService $logger,
@@ -54,9 +78,15 @@ class PartCategoryController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
+     * Also includes the authenticated user's permissions for the Part Category
+     * resource, so the frontend can conditionally render create/view controls.
      *
-     * @return JsonResponse
+     * Authorises via the 'viewAny' policy before returning data.
+     *
+     * @param  Request $request Incoming HTTP request; may carry
+     * filter/pagination params.
+     *
+     * @return JsonResponse Paginated part category data.
      */
     public function index(Request $request): JsonResponse
     {
@@ -70,9 +100,16 @@ class PartCategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param StorePartCategoryRequest $request
+     * Validation is handled upstream by StorePartCategoryRequest.
      *
-     * @return JsonResponse
+     * After storing, an audit log entry is written against the authenticated
+     * user.
+     *
+     * @param  StorePartCategoryRequest $request Validated request containing
+     * part category data.
+     *
+     * @return JsonResponse The newly created part category, with HTTP 201
+     * Created.
      */
     public function store(StorePartCategoryRequest $request): JsonResponse
     {
@@ -92,9 +129,14 @@ class PartCategoryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param PartCategory $partCategory
+     * Returns a single part category by its model binding.
      *
-     * @return JsonResponse
+     * Authorises via the 'view' policy before returning data.
+     *
+     * @param  PartCategory $partCategory Route-model-bound part category
+     * instance.
+     *
+     * @return JsonResponse The resolved part category resource.
      */
     public function show(PartCategory $partCategory): JsonResponse
     {
@@ -108,11 +150,19 @@ class PartCategoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param UpdatePartCategoryRequest $request
+     * Validation is handled upstream by UpdatePartCategoryRequest, which also
+     * implicitly authorises the operation via its authorize() method.
      *
-     * @param PartCategory $partCategory
+     * After updating, an audit log entry is written against the
+     * authenticated user.
      *
-     * @return JsonResponse
+     * @param  UpdatePartCategoryRequest $request Validated request containing
+     * updated part category data.
+     *
+     * @param  PartCategory $partCategory Route-model-bound part category
+     * instance to update.
+     *
+     * @return JsonResponse The updated part category resource.
      */
     public function update(
         UpdatePartCategoryRequest $request,
@@ -134,9 +184,15 @@ class PartCategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param PartCategory $partCategory
+     * Authorises via the 'delete' policy before proceeding.
      *
-     * @return JsonResponse
+     * The audit log entry is written before the deletion so that the
+     * part category instance is still fully accessible during logging.
+     *
+     * @param  PartCategory $partCategory Route-model-bound part category
+     * instance to delete.
+     *
+     * @return JsonResponse Empty response with HTTP 204 No Content.
      */
     public function destroy(PartCategory $partCategory): JsonResponse
     {
@@ -156,11 +212,19 @@ class PartCategoryController extends Controller
     }
 
     /**
-     * Restore the specified resource from storage.
+     * Restore the specified part category from soft deletion.
      *
-     * @param int $id
+     * Looks up the part category including trashed records, then authorises
+     * via the 'restore' policy. Returns 404 if the part category is not
+     * currently soft-deleted, preventing accidental double-restores.
      *
-     * @return JsonResponse
+     * @param  int|string $id The primary key of the soft-deleted part category.
+     *
+     * @return JsonResponse The restored part category resource.
+     *
+     * @throws ModelNotFoundException If no matching record exists.
+     *
+     * @throws HttpException If the part category is not trashed (404).
      */
     public function restore(int $id): JsonResponse
     {
