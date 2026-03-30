@@ -9,39 +9,62 @@ use App\Models\PartSerialNumber;
 use App\Services\PartSerialNumbers\PartSerialNumberLogService;
 use App\Services\PartSerialNumbers\PartSerialNumberManagementService;
 use App\Services\PartSerialNumbers\PartSerialNumberQueryService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
+/**
+ * Handles HTTP requests for the PartSerialNumber resource.
+ *
+ * Delegates business logic to three dedicated services:
+ *   - PartSerialNumberLogService — records audit log entries for part serial
+ *      number changes
+ *   - PartSerialNumberManagementService — handles create, update, delete,
+ *      and restore operations
+ *   - PartSerialNumberQueryService — handles read/list queries with filtering
+ *      ans pagination
+ *
+ * All responses are returned as JSON, making this controller suitable
+ * for consumption by the Vue frontend or any API client.
+ */
 class PartSerialNumberController extends Controller
 {
     /**
-     * Declare a protected property to hold the PartSerialNumberLogService,
-     * PartSerialNumberManagementService and PartSerialNumberQueryService
-     * instance
+     * Service responsible for writing audit log entries for part serial number
+     * events.
      *
      * @var PartSerialNumberLogService
-     * @var PartSerialNumberManagementService
-     * @var PartSerialNumberQueryService
      */
     protected PartSerialNumberLogService $logger;
+
+    /**
+     * Service responsible for creating, updating, deleting, and restoring
+     * part serial numbers.
+     *
+     * @var PartSerialNumberManagementService
+     */
     protected PartSerialNumberManagementService $management;
+
+    /**
+     * Service responsible for querying and listing part serial numbers.
+     *
+     * @var PartSerialNumberQueryService
+     */
     protected PartSerialNumberQueryService $query;
 
     /**
-     * Constructor for the controller
+     * Inject the required services into the controller.
      *
-     * @param PartSerialNumberLogService $logger
+     * @param  PartSerialNumberLogService $logger Handles audit logging for part
+     * serial number events.
      *
-     * @param PartSerialNumberManagementService $management
+     * @param  PartSerialNumberManagementService $management Handles part serial
+     * number create/update/delete/restore.
      *
-     * @param PartSerialNumberQueryService $query
-     *
-     * An instance of the PartSerialNumberLogService used for logging
-     * part serial number-related actions
-     * An instance of the PartSerialNumberManagementService for management
-     * of part serial numbers
-     * An instance of the PartSerialNumberQueryService for the query of
-     * part serial number-related actions
+     * @param  PartSerialNumberQueryService $query Handles part serial number
+     * listing and retrieval.
      */
     public function __construct(
         PartSerialNumberLogService $logger,
@@ -54,13 +77,19 @@ class PartSerialNumberController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a paginated listing of the resource.
      *
-     * @param Request $request
+     * Also includes the authenticated user's permissions for the
+     * PartSerialNumber resource, so the frontend can conditionally
+     * render create/view controls.
      *
-     * @param Part $part
+     * Authorises via the 'viewAny' policy before returning data.
      *
-     * @return JsonResponse
+     * @param  Request $request Incoming HTTP request; may carry
+     * filter/pagination params.
+     *
+     * @return JsonResponse Paginated part serial number data with pagination
+     * metadata and permissions.
      */
     public function index(Request $request, Part $part): JsonResponse
     {
@@ -73,6 +102,11 @@ class PartSerialNumberController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     *
+     * Validation is handled upstream by StorePartSerialNumberRequest.
+     *
+     * After storing, an audit log entry is written against the authenticated
+     * user.
      *
      * @param StorePartSerialNumberRequest $request
      *
@@ -100,13 +134,20 @@ class PartSerialNumberController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param UpdatePartSerialNumberRequest $request
+     * Validation is handled upstream by UpdatePartSerialNumberRequest,
+     * which also implicitly authorises the operation via its
+     * authorize() method.
      *
-     * @param Part $part
+     * After updating, an audit log entry is written against the
+     * authenticated user.
      *
-     * @param PartSerialNumber $serialNumber
+     * @param  UpdatePartSerialNumberRequest $request Validated request
+     * containing updated part serial number data.
      *
-     * @return JsonResponse
+     * @param  PartSerialNumber $partserialnumber Route-model-bound part serial
+     * number instance to update.
+     *
+     * @return JsonResponse The updated part serial number resource.
      */
     public function update(
         UpdatePartSerialNumberRequest $request,
@@ -129,11 +170,15 @@ class PartSerialNumberController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Part $part
+     * Authorises via the 'delete' policy before proceeding.
      *
-     * @param PartSerialNumber $serialNumber
+     * The audit log entry is written before the deletion so that the
+     * part serial number instance is still fully accessible during logging.
      *
-     * @return JsonResponse
+     * @param  PartSerialNumber $partserialnumber Route-model-bound part
+     * serial number instance to delete.
+     *
+     * @return JsonResponse Empty response with HTTP 204 No Content.
      */
     public function destroy(
         Part $part,
@@ -157,9 +202,19 @@ class PartSerialNumberController extends Controller
     /**
      * Restore the specified resource from storage.
      *
-     * @param int $id
+     * Looks up the part serial number including trashed records, then
+     * authorises via the 'restore' policy. Returns 404 if the part
+     * serial number is not currently soft-deleted, preventing
+     * accidental double-restores.
      *
-     * @return JsonResponse
+     * @param  int|string $id The primary key of the soft-deleted
+     * part serial number.
+     *
+     * @return JsonResponse The restored part serial number resource.
+     *
+     * @throws ModelNotFoundException If no matching record exists.
+     *
+     * @throws HttpException If the part serial number is not trashed (404).
      */
     public function restore($id): JsonResponse
     {

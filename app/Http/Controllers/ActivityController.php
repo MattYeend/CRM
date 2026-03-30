@@ -115,8 +115,7 @@ class ActivityController extends Controller
      * user.
      *
      * @param  StoreActivityRequest $request Validated request containing
-     * activity
-     * data.
+     * activity data.
      *
      * @return JsonResponse The newly created activity, with HTTP 201 Created.
      */
