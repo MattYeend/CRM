@@ -8,38 +8,63 @@ use App\Models\InvoiceItem;
 use App\Services\InvoiceItems\InvoiceItemLogService;
 use App\Services\InvoiceItems\InvoiceItemManagementService;
 use App\Services\InvoiceItems\InvoiceItemQueryService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+
+/**
+ * Handles HTTP requests for the InvoiceItem resource.
+ *
+ * Delegates business logic to three dedicated services:
+ *   - InvoiceItemLogService — records audit log entries for invoice item
+ *      changes
+ *   - InvoiceItemManagementService — handles create, update, delete, and
+ *      restore operations
+ *   - InvoiceItemQueryService — handles read/list queries with filtering and
+ *      pagination
+ *
+ * All responses are returned as JSON, making this controller suitable
+ * for consumption by the Vue frontend or any API client.
+ */
 
 class InvoiceItemController extends Controller
 {
     /**
-     * Declare a protected property to hold the InvoiceItemLogService,
-     * InvoiceItemManagementService and InvoiceItemQueryService instance
+     * Service responsible for writing audit log entries for invoice item
+     * events.
      *
      * @var InvoiceItemLogService
-     * @var InvoiceManagementService
-     * @var InvoiceQueryService
      */
     protected InvoiceItemLogService $logger;
+
+    /**
+     * Service responsible for creating, updating, deleting, and restoring
+     * invoice items.
+     *
+     * @var InvoiceItemManagementService
+     */
     protected InvoiceItemManagementService $management;
+
+    /**
+     * Service responsible for querying and listing invoice items.
+     *
+     * @var InvoiceItemQueryService
+     */
     protected InvoiceItemQueryService $query;
 
     /**
-     * Constructor for the controller
+     * Inject the required services into the controller.
      *
-     * @param InvoiceItemLogService $logger
+     * @param  InvoiceItemLogService $logger Handles audit logging for invoice
+     * item events.
      *
-     * @param InvoiceItemManagementService $management
+     * @param  InvoiceItemManagementService $management Handles invoice item
+     * create/update/delete/restore.
      *
-     * @param InvoiceItemQueryService $query
-     *
-     * An instance of the InvoiceItemLogService used for logging
-     * invoice item-related actions
-     * An instance of the InvoiceItemManagementService for management
-     * of invoice items
-     * An instance of the InvoiceItemQueryService for the query of
-     * invoice items-related actions
+     * @param  InvoiceItemQueryService $query Handles invoice item listing and
+     * retrieval.
      */
     public function __construct(
         InvoiceItemLogService $logger,
@@ -54,9 +79,15 @@ class InvoiceItemController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
+     * Also includes the authenticated user's permissions for the Invoice Item
+     * resource, so the frontend can conditionally render create/view controls.
      *
-     * @return JsonResponse
+     * Authorises via the 'viewAny' policy before returning data.
+     *
+     * @param  Request $request Incoming HTTP request; may carry
+     * filter/pagination params.
+     *
+     * @return JsonResponse Paginated invoice item data.
      */
     public function index(Request $request): JsonResponse
     {
@@ -70,9 +101,16 @@ class InvoiceItemController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param StoreInvoiceItemRequest $request
+     * Validation is handled upstream by StoreInvoiceItemRequest.
      *
-     * @return JsonResponse
+     * After storing, an audit log entry is written against the authenticated
+     * user.
+     *
+     * @param  StoreInvoiceItemRequest $request Validated request containing
+     * invoice item data.
+     *
+     * @return JsonResponse The newly created invoice item, with HTTP 201
+     * Created.
      */
     public function store(StoreInvoiceItemRequest $request): JsonResponse
     {
@@ -92,9 +130,13 @@ class InvoiceItemController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param InvoiceItem $invoiceItem
+     * Returns a single invoice item by its model binding.
      *
-     * @return JsonResponse
+     * Authorises via the 'view' policy before returning data.
+     *
+     * @param  InvoiceItem $invoiceItem Route-model-bound invoice item instance.
+     *
+     * @return JsonResponse The resolved invoice item resource.
      */
     public function show(InvoiceItem $invoiceItem): JsonResponse
     {
@@ -108,11 +150,19 @@ class InvoiceItemController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * Validation is handled upstream by UpdateInvoiceItemRequest, which also
+     * implicitly authorises the operation via its authorize() method.
      *
-     * @param InvoiceItem $invoiceItem
+     * After updating, an audit log entry is written against the
+     * authenticated user.
      *
-     * @return JsonResponse
+     * @param  UpdateInvoiceItemRequest $request Validated request containing
+     * updated invoice item data.
+     *
+     * @param  InvoiceItem $invoiceItem Route-model-bound invoice item instance
+     * to update.
+     *
+     * @return JsonResponse The updated invoice item resource.
      */
     public function update(
         UpdateInvoiceItemRequest $request,
@@ -134,9 +184,15 @@ class InvoiceItemController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param InvoiceItem $invoiceItem
+     * Authorises via the 'delete' policy before proceeding.
      *
-     * @return JsonResponse
+     * The audit log entry is written before the deletion so that the
+     * invoice item instance is still fully accessible during logging.
+     *
+     * @param  InvoiceItem $invoiceItem Route-model-bound invoice item instance
+     * to delete.
+     *
+     * @return JsonResponse Empty response with HTTP 204 No Content.
      */
     public function destroy(InvoiceItem $invoiceItem): JsonResponse
     {
@@ -156,11 +212,19 @@ class InvoiceItemController extends Controller
     }
 
     /**
-     * Restore the specified resource from storage.
+     * Restore the specified invoice item from soft deletion.
      *
-     * @param int $id
+     * Looks up the invoice item including trashed records, then authorises via
+     * the 'restore' policy. Returns 404 if the invoice item is not currently
+     * soft-deleted, preventing accidental double-restores.
      *
-     * @return JsonResponse
+     * @param  int|string $id The primary key of the soft-deleted invoice item.
+     *
+     * @return JsonResponse The restored invoice item resource.
+     *
+     * @throws ModelNotFoundException If no matching record exists.
+     *
+     * @throws HttpException If the invoice item is not trashed (404).
      */
     public function restore($id): JsonResponse
     {
