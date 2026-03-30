@@ -24,6 +24,25 @@ class Product extends Model
         HasTestPrefix;
 
     /**
+     * Active Status.
+     */
+    public const ACTIVE_PRODUCT_STATUS = 'active';
+
+    /**
+     * Discontinued Status.
+     */
+    public const DISCONTINUED_PRODUCT_STATUS = 'discontinued';
+
+    /**
+     * Pending Status.
+     */
+    public const PENDING_PRODUCT_STATUS = 'pending';
+
+    /**
+     * Out Of Stock Status.
+     */
+    public const OUT_OF_STOCK_PRODUCT_STATUS = 'out_of_stock';
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int,string>
