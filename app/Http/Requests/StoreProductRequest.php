@@ -61,12 +61,7 @@ class StoreProductRequest extends FormRequest
     private function statusRules(): array
     {
         return [
-            'status' => 'required', Rule::in([
-                'active',
-                'discontinued',
-                'pending',
-                'out_of_stock',
-            ]),
+            'status' => 'required', Rule::in(Product::PRODUCT_STATUSES),
         ];
     }
 

@@ -42,6 +42,16 @@ class Product extends Model
      * Out Of Stock Status.
      */
     public const OUT_OF_STOCK_PRODUCT_STATUS = 'out_of_stock';
+
+        /**
+     * Part Statuses
+     */
+    public const PRODUCT_STATUSES = [
+        self::ACTIVE_PRODUCT_STATUS,
+        self::DISCONTINUED_PRODUCT_STATUS,
+        self::PENDING_PRODUCT_STATUS,
+        self::OUT_OF_STOCK_PRODUCT_STATUS,
+    ];
     /**
      * The attributes that are mass assignable.
      *

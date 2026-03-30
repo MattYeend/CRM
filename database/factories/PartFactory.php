@@ -52,7 +52,7 @@ class PartFactory extends Factory
             'brand' => fake()->optional(0.7)->company(),
             'manufacturer' => fake()->optional(0.6)->company(),
             'type' => $type,
-            'status' => fake()->randomElement(['active', 'active', 'active', 'discontinued', 'pending', 'out_of_stock']),
+            'status' => fake()->randomElement(['active', 'discontinued', 'pending', 'out_of_stock']),
             'unit_of_measure' => fake()->randomElement(['each', 'kg', 'litre', 'metre', 'box', 'pair']),
 
             // Physical Attributes

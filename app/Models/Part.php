@@ -23,6 +23,42 @@ class Part extends Model
         HasTestPrefix;
 
     /**
+     * Raw Material Type.
+     */
+    public const RAW_MATERIAL_PART_TYPE = 'raw_material';
+
+    /**
+     * Finished Good Type.
+     */
+    public const FINISHED_GOOD_PART_TYPE = 'finised_good';
+
+    /**
+     * Consumable Part Type.
+     */
+    public const CONSUMABLE_PART_TYPE = 'consumable';
+
+    /**
+     * Spare Part Part Type.
+     */
+    public const SPARE_PART_PART_TYPE = 'spare_part';
+    
+    /**
+     * Sub Assembly Part Type.
+     */
+    public const SUB_ASSEMBLY_PART_TYPE = 'sub_assembly';
+
+    /**
+     * Part Types.
+     */
+    public const PART_TYPES = [
+        self::RAW_MATERIAL_PART_TYPE,
+        self::FINISHED_GOOD_PART_TYPE,
+        self::CONSUMABLE_PART_TYPE,
+        self::SPARE_PART_PART_TYPE,
+        self::SUB_ASSEMBLY_PART_TYPE,
+    ];
+
+    /**
      * Active Status.
      */
     public const ACTIVE_PART_STATUS = 'active';
@@ -41,6 +77,16 @@ class Part extends Model
      * Out Of Stock Status.
      */
     public const OUT_OF_STOCK_PART_STATUS = 'out_of_stock';
+
+    /**
+     * Part Statuses
+     */
+    public const PART_STATUSES = [
+        self::ACTIVE_PART_STATUS,
+        self::DISCONTINUED_PART_STATUS,
+        self::PENDING_PART_STATUS,
+        self::OUT_OF_STOCK_PART_STATUS,
+    ];
 
     /**
      * The attributes that are mass assignable.

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Product;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -66,12 +67,7 @@ class UpdateProductRequest extends FormRequest
         return [
             'status' => [
                 'sometimes',
-                Rule::in([
-                    'active',
-                    'discontinued',
-                    'pending',
-                    'out_of_stock',
-                ]),
+                Rule::in(Product::PRODUCT_STATUSES),
             ],
         ];
     }
