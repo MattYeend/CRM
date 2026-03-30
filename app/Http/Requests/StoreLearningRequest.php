@@ -7,10 +7,24 @@ use App\Rules\HasCorrectAnswer;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Handles authorisation and validation for storing a new Learning.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — the learning title
+ *   - questionAndAnswerRules — nested question and answer structure,
+ *      including the HasCorrectAnswer custom rule
+ *   - metaRules — optional description and meta payload
+ */
 class StoreLearningRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Delegates to the 'create' policy for the Learning model.
+     *
+     * @return bool True if the authenticated user may create learnings.
      */
     public function authorize(): bool
     {
@@ -19,6 +33,9 @@ class StoreLearningRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges base, question and answer, and meta rule groups into a single
+     * ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -32,9 +49,9 @@ class StoreLearningRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Validation rules for the core learning title field.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -44,25 +61,29 @@ class StoreLearningRequest extends FormRequest
     }
 
     /**
-     * Question and answer rules
+     * Validation rules for the nested question and answer structure.
      *
-     * @return array
+     * Each question may carry multiple answers, and the HasCorrectAnswer
+     * custom rule enforces that at least one answer is marked correct per
+     * question.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function questionAndAnswerRules(): array
     {
         return [
-            'questions' => ['nullable', 'array'],
-            'questions.*.question' => ['nullable', 'string'],
+            'questions' => 'nullable|array',
+            'questions.*.question' => 'nullable|string',
             'questions.*.answers' => ['array', new HasCorrectAnswer()],
-            'questions.*.answers.*.answer' => ['nullable', 'string'],
-            'questions.*.answers.*.is_correct' => ['boolean'],
+            'questions.*.answers.*.answer' => 'nullable|string',
+            'questions.*.answers.*.is_correct' => 'boolean',
         ];
     }
 
     /**
-     * Meta rules
+     * Validation rules for optional descriptive and metadata fields.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function metaRules(): array
     {

@@ -7,10 +7,28 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * Handles authorisation and validation for storing a new Part.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — core part identity fields including SKU and unit of measure
+ *   - typeAndStatusRules — part type and status constrained to allowed values
+ *   - relationshipRules — product, category, and supplier associations
+ *   - physicalRules — dimensional and material attributes
+ *   - pricingRules — price, cost, currency, tax, and discount fields
+ *   - inventoryRules — stock levels, reorder thresholds, and warehouse location
+ *   - flagRules — boolean feature and state flags
+ *   - metaRules — optional meta payload
+ */
 class StorePartRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Delegates to the 'create' policy for the Part model.
+     *
+     * @return bool True if the authenticated user may create parts.
      */
     public function authorize(): bool
     {
@@ -19,6 +37,8 @@ class StorePartRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges all rule groups into a single ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -37,9 +57,12 @@ class StorePartRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Validation rules for core part identity fields.
      *
-     * @return array
+     * SKU must be unique across all parts. Name, description, and unit of
+     * measure are required; all other fields are optional.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -56,9 +79,12 @@ class StorePartRequest extends FormRequest
     }
 
     /**
-     * Type and status rules
+     * Validation rules for part type and status fields.
      *
-     * @return array
+     * Constrains both values to their respective allowed sets defined on
+     * the Part model.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function typeAndStatusRules(): array
     {
@@ -69,9 +95,12 @@ class StorePartRequest extends FormRequest
     }
 
     /**
-     * Relationship rules
+     * Validation rules for product, category, and supplier associations.
      *
-     * @return array
+     * Product association is required; category and supplier are optional
+     * but must reference existing records when provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function relationshipRules(): array
     {
@@ -83,9 +112,12 @@ class StorePartRequest extends FormRequest
     }
 
     /**
-     * Phyiscal rules
+     * Validation rules for physical dimension and material fields.
      *
-     * @return array
+     * All fields are optional but must be non-negative numerics or strings
+     * of the correct type when provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function physicalRules(): array
     {
@@ -101,9 +133,13 @@ class StorePartRequest extends FormRequest
     }
 
     /**
-     * Pricing rules
+     * Validation rules for pricing and tax fields.
      *
-     * @return array
+     * Price and currency are required; cost price, tax rate, tax code, and
+     * discount percentage are optional but constrained to appropriate types
+     * and ranges when provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function pricingRules(): array
     {
@@ -118,9 +154,12 @@ class StorePartRequest extends FormRequest
     }
 
     /**
-     * Inventory rules
+     * Validation rules for stock level and warehouse location fields.
      *
-     * @return array
+     * All fields are optional; quantity thresholds must be non-negative
+     * integers and location fields must be strings when provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function inventoryRules(): array
     {
@@ -137,9 +176,9 @@ class StorePartRequest extends FormRequest
     }
 
     /**
-     * Flag rules
+     * Validation rules for boolean feature and state flag fields.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function flagRules(): array
     {
@@ -155,9 +194,9 @@ class StorePartRequest extends FormRequest
     }
 
     /**
-     * Meta rules
+     * Validation rules for optional metadata fields.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function metaRules(): array
     {

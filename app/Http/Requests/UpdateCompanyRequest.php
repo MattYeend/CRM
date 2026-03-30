@@ -5,10 +5,22 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Handles authorisation and validation for updating an existing Company.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — company identity, address, and primary contact fields
+ *   - metaRules — optional meta payload
+ */
 class UpdateCompanyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Resolves the route-bound company and delegates to the 'update' policy.
+     *
+     * @return bool True if the authenticated user may update this company.
      */
     public function authorize(): bool
     {
@@ -19,6 +31,8 @@ class UpdateCompanyRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges base and meta rule groups into a single ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -31,9 +45,13 @@ class UpdateCompanyRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Validation rules for company identity, address, and primary contact
+     * fields.
      *
-     * @return array
+     * All fields are optional on update but constrained to appropriate types
+     * and lengths when provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -55,9 +73,9 @@ class UpdateCompanyRequest extends FormRequest
     }
 
     /**
-     * Meta rules
+     * Validation rules for optional metadata fields.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function metaRules(): array
     {

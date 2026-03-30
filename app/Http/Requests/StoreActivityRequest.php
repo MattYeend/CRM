@@ -8,10 +8,26 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * Handles authorisation and validation for storing a new Activity.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — core activity fields
+ *   - subjectRules — polymorphic subject type and ID
+ *   - metaRules — optional description and meta payload
+ *
+ * prepareForValidation resolves the incoming morph key to its full class
+ * name before the ruleset is applied.
+ */
 class StoreActivityRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Delegates to the 'create' policy for the Activity model.
+     *
+     * @return bool True if the authenticated user may create activities.
      */
     public function authorize(): bool
     {
@@ -20,6 +36,8 @@ class StoreActivityRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges base, subject, and meta rule groups into a single ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -33,7 +51,14 @@ class StoreActivityRequest extends FormRequest
     }
 
     /**
-     * Convert subject_type from morph key to full class before validation
+     * Resolve the subject_type morph key to its full class name before
+     * validation runs.
+     *
+     * Ensures that polymorphic type values sent as morph aliases are
+     * expanded to their fully-qualified class names so they pass the
+     * Rule::in check in subjectRules().
+     *
+     * @return void
      */
     protected function prepareForValidation(): void
     {
@@ -47,9 +72,9 @@ class StoreActivityRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Validation rules for core activity fields.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -65,9 +90,12 @@ class StoreActivityRequest extends FormRequest
     }
 
     /**
-     * Subject rules
+     * Validation rules for the polymorphic subject relationship.
      *
-     * @return array
+     * Ensures subject_type is one of the registered activity types and
+     * that subject_id is present whenever a subject_type is provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function subjectRules(): array
     {
@@ -85,9 +113,9 @@ class StoreActivityRequest extends FormRequest
     }
 
     /**
-     * Meta rules
+     * Validation rules for optional descriptive and metadata fields.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function metaRules(): array
     {

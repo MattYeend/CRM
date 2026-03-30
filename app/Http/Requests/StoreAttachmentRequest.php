@@ -7,10 +7,23 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * Handles authorisation and validation for storing a new Attachment.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — the uploaded file and its size constraint
+ *   - attachmentRules — polymorphic attachable type and ID
+ *   - metaRules — optional meta payload
+ */
 class StoreAttachmentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Delegates to the 'create' policy for the Attachment model.
+     *
+     * @return bool True if the authenticated user may create attachments.
      */
     public function authorize(): bool
     {
@@ -19,6 +32,8 @@ class StoreAttachmentRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges base, attachment, and meta rule groups into a single ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -32,9 +47,12 @@ class StoreAttachmentRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Validation rules for the uploaded file.
      *
-     * @return array
+     * Enforces that a file is present and does not exceed the maximum
+     * permitted size.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -44,9 +62,12 @@ class StoreAttachmentRequest extends FormRequest
     }
 
     /**
-     * Attachmetn rules
+     * Validation rules for the polymorphic attachable relationship.
      *
-     * @return array
+     * Ensures attachable_type is one of the registered attachable types and
+     * that attachable_id is present whenever an attachable_type is provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function attchmentRules(): array
     {
@@ -64,9 +85,9 @@ class StoreAttachmentRequest extends FormRequest
     }
 
     /**
-     * Meta rules
+     * Validation rules for optional metadata fields.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function metaRules(): array
     {

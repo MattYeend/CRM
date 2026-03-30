@@ -6,10 +6,22 @@ use App\Models\Company;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Handles authorisation and validation for storing a new Company.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — company identity, address, and primary contact fields
+ *   - metaRules — optional meta payload
+ */
 class StoreCompanyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Delegates to the 'create' policy for the Company model.
+     *
+     * @return bool True if the authenticated user may create companies.
      */
     public function authorize(): bool
     {
@@ -18,6 +30,8 @@ class StoreCompanyRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges base and meta rule groups into a single ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -30,9 +44,13 @@ class StoreCompanyRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Validation rules for company identity, address, and primary contact
+     * fields.
      *
-     * @return array
+     * Name is required; all address, contact, and categorisation fields are
+     * optional but constrained to appropriate types and lengths when provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -54,9 +72,9 @@ class StoreCompanyRequest extends FormRequest
     }
 
     /**
-     * Meta rules
+     * Validation rules for optional metadata fields.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function metaRules(): array
     {

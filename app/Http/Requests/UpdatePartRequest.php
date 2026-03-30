@@ -7,10 +7,29 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * Handles authorisation and validation for updating an existing Part.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — core part identity fields including SKU and identifiers
+ *   - typeRules — part type constrained to allowed values
+ *   - statusRules — part status constrained to allowed values
+ *   - relationshipRules — product, category, and supplier associations
+ *   - physicalRules — dimensional and material attributes
+ *   - pricingRules — price, cost, currency, tax, and discount fields
+ *   - inventoryRules — stock levels, reorder thresholds, and locations
+ *   - flagRules — boolean feature and state flags
+ *   - metaRules — optional metadata payload
+ */
 class UpdatePartRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Resolves the route-bound part and delegates to the 'update' policy.
+     *
+     * @return bool True if the authenticated user may update this part.
      */
     public function authorize(): bool
     {
@@ -21,6 +40,8 @@ class UpdatePartRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges all rule groups into a single ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -40,9 +61,12 @@ class UpdatePartRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Validation rules for core part identity fields.
      *
-     * @return array
+     * Ensures identifiers such as SKU, part number, and barcode remain
+     * unique when provided, excluding the current model being updated.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -70,9 +94,11 @@ class UpdatePartRequest extends FormRequest
     }
 
     /**
-     * Type rules
+     * Validation rules for the part type field.
      *
-     * @return array
+     * Restricts the value to the supported set of part types.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function typeRules(): array
     {
@@ -91,9 +117,11 @@ class UpdatePartRequest extends FormRequest
     }
 
     /**
-     * Status rules
+     * Validation rules for the part status field.
      *
-     * @return array
+     * Restricts the value to the statuses defined on the Part model.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function statusRules(): array
     {
@@ -106,9 +134,12 @@ class UpdatePartRequest extends FormRequest
     }
 
     /**
-     * Relationship rules
+     * Validation rules for product, category, and supplier associations.
      *
-     * @return array
+     * All relationships are optional but must reference existing records
+     * when provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function relationshipRules(): array
     {
@@ -120,9 +151,12 @@ class UpdatePartRequest extends FormRequest
     }
 
     /**
-     * Physical rules
+     * Validation rules for physical dimension and material fields.
      *
-     * @return array
+     * All fields are optional but must be non-negative numerics or valid
+     * strings when provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function physicalRules(): array
     {
@@ -138,9 +172,12 @@ class UpdatePartRequest extends FormRequest
     }
 
     /**
-     * Pricing rules
+     * Validation rules for pricing and tax fields.
      *
-     * @return array
+     * All fields are optional but must conform to valid numeric ranges
+     * and formats when provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function pricingRules(): array
     {
@@ -155,9 +192,12 @@ class UpdatePartRequest extends FormRequest
     }
 
     /**
-     * Inventory rules
+     * Validation rules for stock level and location fields.
      *
-     * @return array
+     * All fields are optional; quantity thresholds must be non-negative
+     * integers and location fields must be valid strings when provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function inventoryRules(): array
     {
@@ -174,9 +214,9 @@ class UpdatePartRequest extends FormRequest
     }
 
     /**
-     * Flag rules
+     * Validation rules for boolean feature and state flags.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function flagRules(): array
     {
@@ -192,9 +232,9 @@ class UpdatePartRequest extends FormRequest
     }
 
     /**
-     * Meta rules
+     * Validation rules for optional metadata fields.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function metaRules(): array
     {

@@ -5,10 +5,24 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Handles authorisation and validation for updating an existing InvoiceItem.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — description, quantity, and unit price fields
+ *   - metaRules — optional line total and meta payload
+ */
 class UpdateInvoiceItemRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Resolves the route-bound invoice item and delegates to the 'update'
+     * policy.
+     *
+     * @return bool True if the authenticated user may update this invoice
+     * item.
      */
     public function authorize(): bool
     {
@@ -19,6 +33,8 @@ class UpdateInvoiceItemRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges base and meta rule groups into a single ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -31,9 +47,12 @@ class UpdateInvoiceItemRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Validation rules for core invoice item fields.
      *
-     * @return array
+     * All fields are optional on update but constrained to appropriate types
+     * and ranges when provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -44,6 +63,11 @@ class UpdateInvoiceItemRequest extends FormRequest
         ];
     }
 
+    /**
+     * Validation rules for optional line total and metadata fields.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
+     */
     private function metaRules(): array
     {
         return [

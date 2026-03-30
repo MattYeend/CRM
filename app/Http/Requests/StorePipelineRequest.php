@@ -6,10 +6,22 @@ use App\Models\Pipeline;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Handles authorisation and validation for storing a new Pipeline.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — required pipeline name
+ *   - metaRules — optional description and default flag
+ */
 class StorePipelineRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Delegates to the 'create' policy for the Pipeline model.
+     *
+     * @return bool True if the authenticated user may create pipelines.
      */
     public function authorize(): bool
     {
@@ -18,6 +30,8 @@ class StorePipelineRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges base and meta rule groups into a single ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -30,9 +44,9 @@ class StorePipelineRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Validation rules for the pipeline name.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -42,9 +56,9 @@ class StorePipelineRequest extends FormRequest
     }
 
     /**
-     * Meta rules
+     * Validation rules for optional pipeline configuration fields.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function metaRules(): array
     {

@@ -7,10 +7,22 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * Handles authorisation and validation for storing a new Quote.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — deal association, financial totals, and date fields
+ *   - metaRules — optional meta payload
+ */
 class StoreQuoteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Delegates to the 'create' policy for the Quote model.
+     *
+     * @return bool True if the authenticated user may create quotes.
      */
     public function authorize(): bool
     {
@@ -19,6 +31,8 @@ class StoreQuoteRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges base and meta rule groups into a single ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -31,9 +45,13 @@ class StoreQuoteRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Validation rules for core quote fields.
      *
-     * @return array
+     * The deal_id must reference an existing deal and be unique across all
+     * quotes, enforcing a one-to-one relationship. Financial and date fields
+     * are optional but constrained to appropriate types when provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -54,9 +72,9 @@ class StoreQuoteRequest extends FormRequest
     }
 
     /**
-     * Meta rules
+     * Validation rules for optional metadata fields.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function metaRules(): array
     {

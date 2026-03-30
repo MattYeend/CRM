@@ -7,10 +7,23 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * Handles authorisation and validation for storing a new Task.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — title, description, and optional assignee
+ *   - taskableRules — polymorphic taskable type and ID
+ *   - metaRules — priority, status, due date, and optional meta payload
+ */
 class StoreTaskRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Delegates to the 'create' policy for the Task model.
+     *
+     * @return bool True if the authenticated user may create tasks.
      */
     public function authorize(): bool
     {
@@ -19,6 +32,8 @@ class StoreTaskRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges base, taskable, and meta rule groups into a single ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -32,9 +47,12 @@ class StoreTaskRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Validation rules for core task identity and assignment fields.
      *
-     * @return array
+     * Title is required; description is optional, and assigned_to must
+     * reference an existing user when provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -46,9 +64,12 @@ class StoreTaskRequest extends FormRequest
     }
 
     /**
-     * Taskable rules
+     * Validation rules for the polymorphic taskable relationship.
      *
-     * @return array
+     * Ensures taskable_type is one of the registered taskable types and
+     * that taskable_id is present whenever a taskable_type is provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function taskableRules(): array
     {
@@ -66,9 +87,12 @@ class StoreTaskRequest extends FormRequest
     }
 
     /**
-     * Meta rules
+     * Validation rules for priority, status, due date, and metadata fields.
      *
-     * @return array
+     * Priority and status are each constrained to their respective allowed
+     * values defined on the Task model.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function metaRules(): array
     {

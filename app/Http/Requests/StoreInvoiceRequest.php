@@ -7,10 +7,25 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * Handles authorisation and validation for storing a new Invoice.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — delegates to relationship, core, and status sub-groups
+ *   - relationshipBaseRules — company association
+ *   - coreBaseRules — invoice number, dates, and financial totals
+ *   - statusBaseRules — invoice status constrained to allowed values
+ *   - metaRules — optional meta payload
+ */
 class StoreInvoiceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Delegates to the 'create' policy for the Invoice model.
+     *
+     * @return bool True if the authenticated user may create invoices.
      */
     public function authorize(): bool
     {
@@ -19,6 +34,8 @@ class StoreInvoiceRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges base and meta rule groups into a single ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -31,9 +48,12 @@ class StoreInvoiceRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Aggregate validation rules for all core invoice fields.
      *
-     * @return array
+     * Merges relationship, core, and status sub-groups into a single
+     * base ruleset.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -45,9 +65,12 @@ class StoreInvoiceRequest extends FormRequest
     }
 
     /**
-     * Relationship base rules
+     * Validation rules for the company association.
      *
-     * @return array
+     * Ensures company_id, when provided, references an existing company
+     * record.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function relationshipBaseRules(): array
     {
@@ -59,10 +82,15 @@ class StoreInvoiceRequest extends FormRequest
             ],
         ];
     }
+
     /**
-     * Core base rules
+     * Validation rules for core invoice fields.
      *
-     * @return array
+     * The invoice number must be unique across all invoices. Date and
+     * financial fields are optional but constrained to appropriate types
+     * when provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function coreBaseRules(): array
     {
@@ -82,9 +110,12 @@ class StoreInvoiceRequest extends FormRequest
     }
 
     /**
-     * Status base rules
+     * Validation rules for the invoice status field.
      *
-     * @return array
+     * Constrains the value to the set of statuses defined on the Invoice
+     * model.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function statusBaseRules(): array
     {
@@ -103,9 +134,9 @@ class StoreInvoiceRequest extends FormRequest
     }
 
     /**
-     * Meta rules
+     * Validation rules for optional metadata fields.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function metaRules(): array
     {

@@ -7,10 +7,22 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * Handles authorisation and validation for storing a new PartCategory.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — optional parent association and unique category name
+ *   - metaRules — optional description, test flag, and meta payload
+ */
 class StorePartCategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Delegates to the 'create' policy for the PartCategory model.
+     *
+     * @return bool True if the authenticated user may create part categories.
      */
     public function authorize(): bool
     {
@@ -19,6 +31,8 @@ class StorePartCategoryRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges base and meta rule groups into a single ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -31,9 +45,12 @@ class StorePartCategoryRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Validation rules for the parent association and category name.
      *
-     * @return array
+     * The parent_id, when provided, must reference an existing part category.
+     * The name must be unique across all part categories.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -49,9 +66,9 @@ class StorePartCategoryRequest extends FormRequest
     }
 
     /**
-     * Meta rules
+     * Validation rules for optional descriptive and metadata fields.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function metaRules(): array
     {

@@ -7,10 +7,24 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * Handles authorisation and validation for storing a new Product.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — core product identity and pricing fields
+ *   - statusRules — product status constrained to allowed values
+ *   - quantityRules — stock level and reorder threshold fields
+ *   - metaRules — optional meta payload
+ */
 class StoreProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Delegates to the 'create' policy for the Product model.
+     *
+     * @return bool True if the authenticated user may create products.
      */
     public function authorize(): bool
     {
@@ -19,6 +33,9 @@ class StoreProductRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges base, status, quantity, and meta rule groups into a single
+     * ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -33,9 +50,12 @@ class StoreProductRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Validation rules for core product identity and pricing fields.
      *
-     * @return array
+     * The SKU must be unique across all products when provided. Name is
+     * required; all other fields are optional.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -54,9 +74,12 @@ class StoreProductRequest extends FormRequest
     }
 
     /**
-     * Status rules
+     * Validation rules for the product status field.
      *
-     * @return array
+     * Constrains the value to the set of statuses defined on the Product
+     * model.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function statusRules(): array
     {
@@ -66,9 +89,12 @@ class StoreProductRequest extends FormRequest
     }
 
     /**
-     * Quantity rules
+     * Validation rules for stock level and reorder threshold fields.
      *
-     * @return array
+     * All quantity fields are optional and must be non-negative integers
+     * when provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function quantityRules(): array
     {
@@ -83,9 +109,9 @@ class StoreProductRequest extends FormRequest
     }
 
     /**
-     * Meta rules
+     * Validation rules for optional metadata fields.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function metaRules(): array
     {

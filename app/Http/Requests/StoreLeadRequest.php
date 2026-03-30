@@ -7,10 +7,22 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * Handles authorisation and validation for storing a new Lead.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — core lead identity and contact fields
+ *   - metaRules — owner and assignee associations, and optional meta payload
+ */
 class StoreLeadRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Delegates to the 'create' policy for the Lead model.
+     *
+     * @return bool True if the authenticated user may create leads.
      */
     public function authorize(): bool
     {
@@ -19,6 +31,8 @@ class StoreLeadRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges base and meta rule groups into a single ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -31,9 +45,13 @@ class StoreLeadRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Validation rules for core lead identity and contact fields.
      *
-     * @return array
+     * Title, first name, and last name are required; email, phone, and
+     * source are optional but constrained to appropriate types and lengths
+     * when provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -48,9 +66,12 @@ class StoreLeadRequest extends FormRequest
     }
 
     /**
-     * Meta rules
+     * Validation rules for owner, assignee, and metadata fields.
      *
-     * @return array
+     * Ensures owner_id and assigned_to, when provided, reference existing
+     * user records.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function metaRules(): array
     {

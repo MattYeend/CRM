@@ -7,10 +7,22 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * Handles authorisation and validation for updating an existing Task.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — title, description, and optional assignee
+ *   - metaRules — priority, status, due date, and optional meta payload
+ */
 class UpdateTaskRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Resolves the route-bound task and delegates to the 'update' policy.
+     *
+     * @return bool True if the authenticated user may update this task.
      */
     public function authorize(): bool
     {
@@ -21,6 +33,8 @@ class UpdateTaskRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges base and meta rule groups into a single ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -33,9 +47,12 @@ class UpdateTaskRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Validation rules for core task fields.
      *
-     * @return array
+     * Title is optional for updates; description is optional, and assigned_to
+     * must reference an existing user when provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -51,9 +68,12 @@ class UpdateTaskRequest extends FormRequest
     }
 
     /**
-     * Meta rules
+     * Validation rules for task priority, status, due date, and metadata.
      *
-     * @return array
+     * Priority and status are each constrained to the allowed values
+     * defined on the Task model.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function metaRules(): array
     {

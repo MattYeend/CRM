@@ -7,10 +7,23 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * Handles authorisation and validation for storing a new Note.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — optional user association and the required note body
+ *   - noteRules — polymorphic notable type and ID
+ *   - metaRules — optional meta payload
+ */
 class StoreNoteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Delegates to the 'create' policy for the Note model.
+     *
+     * @return bool True if the authenticated user may create notes.
      */
     public function authorize(): bool
     {
@@ -19,6 +32,8 @@ class StoreNoteRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges base, note, and meta rule groups into a single ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -32,9 +47,12 @@ class StoreNoteRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Validation rules for the user association and note body.
      *
-     * @return array
+     * Ensures user_id, when provided, references an existing user record,
+     * and that the note body is present.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -49,9 +67,12 @@ class StoreNoteRequest extends FormRequest
     }
 
     /**
-     * Attachmetn rules
+     * Validation rules for the polymorphic notable relationship.
      *
-     * @return array
+     * Ensures notable_type is one of the registered notable types and
+     * that notable_id is present whenever a notable_type is provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function noteRules(): array
     {
@@ -69,9 +90,9 @@ class StoreNoteRequest extends FormRequest
     }
 
     /**
-     * Meta rules
+     * Validation rules for optional metadata fields.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function metaRules(): array
     {

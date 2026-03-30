@@ -5,10 +5,22 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Handles authorisation and validation for updating an existing Pipeline.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — optional pipeline name
+ *   - metaRules — optional description and default flag
+ */
 class UpdatePipelineRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Resolves the route-bound pipeline and delegates to the 'update' policy.
+     *
+     * @return bool True if the authenticated user may update this pipeline.
      */
     public function authorize(): bool
     {
@@ -19,6 +31,8 @@ class UpdatePipelineRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges base and meta rule groups into a single ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -31,9 +45,9 @@ class UpdatePipelineRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Validation rules for the pipeline name field.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -43,9 +57,9 @@ class UpdatePipelineRequest extends FormRequest
     }
 
     /**
-     * Meta rules
+     * Validation rules for optional pipeline configuration fields.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function metaRules(): array
     {

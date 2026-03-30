@@ -7,10 +7,22 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * Handles authorisation and validation for storing a new JobTitle.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — title uniqueness, short code, and optional group
+ *   - metaRules — optional meta payload
+ */
 class StoreJobTitleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Delegates to the 'create' policy for the JobTitle model.
+     *
+     * @return bool True if the authenticated user may create job titles.
      */
     public function authorize(): bool
     {
@@ -19,6 +31,8 @@ class StoreJobTitleRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges base and meta rule groups into a single ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -31,9 +45,12 @@ class StoreJobTitleRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Validation rules for core job title fields.
      *
-     * @return array
+     * The title must be unique across all job titles. Short code is required
+     * and group is optional.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -50,9 +67,9 @@ class StoreJobTitleRequest extends FormRequest
     }
 
     /**
-     * Meta rules
+     * Validation rules for optional metadata fields.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function metaRules(): array
     {

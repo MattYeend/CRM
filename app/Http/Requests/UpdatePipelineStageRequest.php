@@ -7,10 +7,24 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * Handles authorisation and validation for updating an existing PipelineStage.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — optional pipeline association and stage name
+ *   - metaRules — position, won stage flag, and lost stage flag
+ */
 class UpdatePipelineStageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Resolves the route-bound pipeline stage and delegates to the
+     * 'update' policy.
+     *
+     * @return bool True if the authenticated user may update this pipeline
+     * stage.
      */
     public function authorize(): bool
     {
@@ -21,6 +35,8 @@ class UpdatePipelineStageRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges base and meta rule groups into a single ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -33,9 +49,12 @@ class UpdatePipelineStageRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Validation rules for the pipeline association and stage name.
      *
-     * @return array
+     * Ensures pipeline_id references an existing pipeline when provided,
+     * and that the name is a valid string when present.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -50,9 +69,12 @@ class UpdatePipelineStageRequest extends FormRequest
     }
 
     /**
-     * Meta rules
+     * Validation rules for stage positioning and outcome flag fields.
      *
-     * @return array
+     * Won and lost stage flags are constrained to their respective allowed
+     * values defined on the PipelineStage model.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function metaRules(): array
     {

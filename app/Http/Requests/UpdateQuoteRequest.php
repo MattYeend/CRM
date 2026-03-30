@@ -6,10 +6,22 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * Handles authorisation and validation for updating an existing Quote.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — deal association, financial totals, and date fields
+ *   - metaRules — optional metadata payload
+ */
 class UpdateQuoteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Resolves the route-bound quote and delegates to the 'update' policy.
+     *
+     * @return bool True if the authenticated user may update this quote.
      */
     public function authorize(): bool
     {
@@ -20,6 +32,8 @@ class UpdateQuoteRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges base and meta rule groups into a single ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -32,9 +46,13 @@ class UpdateQuoteRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Validation rules for core quote fields.
      *
-     * @return array
+     * Ensures deal_id references an existing deal and remains unique across
+     * quotes when provided, excluding the current model being updated.
+     * Financial and date fields are optional but must conform to valid types.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -57,9 +75,9 @@ class UpdateQuoteRequest extends FormRequest
     }
 
     /**
-     * Meta rules
+     * Validation rules for optional metadata fields.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function metaRules(): array
     {

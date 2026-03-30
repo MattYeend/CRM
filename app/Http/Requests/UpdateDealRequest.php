@@ -7,10 +7,25 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * Handles authorisation and validation for updating an existing Deal.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — delegates to relationship, core, and status sub-groups
+ *   - relationshipBaseRules — company, owner, pipeline, and stage associations
+ *   - coreBaseRules — title, value, currency, and close date fields
+ *   - statusBaseRules — deal status constrained to allowed values
+ *   - metaRules — optional meta payload
+ */
 class UpdateDealRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Resolves the route-bound deal and delegates to the 'update' policy.
+     *
+     * @return bool True if the authenticated user may update this deal.
      */
     public function authorize(): bool
     {
@@ -21,6 +36,8 @@ class UpdateDealRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges base and meta rule groups into a single ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -33,9 +50,12 @@ class UpdateDealRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Aggregate validation rules for all core deal fields.
      *
-     * @return array
+     * Merges relationship, core, and status sub-groups into a single
+     * base ruleset.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -47,9 +67,12 @@ class UpdateDealRequest extends FormRequest
     }
 
     /**
-     * Relationship base rules
+     * Aggregate validation rules for all relationship fields.
      *
-     * @return array
+     * Merges company, owner, and pipeline/stage sub-groups into a single
+     * relationship ruleset.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function relationshipBaseRules(): array
     {
@@ -59,10 +82,14 @@ class UpdateDealRequest extends FormRequest
             $this->pipelineAndStagesRelationshipRules(),
         );
     }
+
     /**
-     * Company relationship rules
+     * Validation rules for the company association.
      *
-     * @return array
+     * Ensures company_id, when provided, references an existing company
+     * record.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function companyRelationshipRules(): array
     {
@@ -76,9 +103,11 @@ class UpdateDealRequest extends FormRequest
     }
 
     /**
-     * User/Owner relationship rules
+     * Validation rules for the owner association.
      *
-     * @return array
+     * Ensures owner_id, when provided, references an existing user record.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function ownerRelationshipRules(): array
     {
@@ -92,9 +121,12 @@ class UpdateDealRequest extends FormRequest
     }
 
     /**
-     * Pipeline and Stages relationship rules
+     * Validation rules for the pipeline and stage associations.
      *
-     * @return array
+     * Ensures pipeline_id and stage_id, when provided, reference existing
+     * pipeline and pipeline stage records respectively.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function pipelineAndStagesRelationshipRules(): array
     {
@@ -113,9 +145,12 @@ class UpdateDealRequest extends FormRequest
     }
 
     /**
-     * Core base rules
+     * Validation rules for core deal fields.
      *
-     * @return array
+     * All fields are optional on update but constrained to appropriate types
+     * and lengths when provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function coreBaseRules(): array
     {
@@ -128,9 +163,11 @@ class UpdateDealRequest extends FormRequest
     }
 
     /**
-     * Status base rules
+     * Validation rules for the deal status field.
      *
-     * @return array
+     * Constrains the value to the set of statuses defined on the Deal model.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function statusBaseRules(): array
     {
@@ -148,9 +185,9 @@ class UpdateDealRequest extends FormRequest
     }
 
     /**
-     * Meta rules
+     * Validation rules for optional metadata fields.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function metaRules(): array
     {

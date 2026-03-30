@@ -6,10 +6,26 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * Handles authorisation and validation for updating an existing Supplier.
+ *
+ * Validation rules are split into focused private methods and merged in
+ * rules(), keeping each concern isolated and easy to maintain:
+ *   - baseRules — supplier name and optional unique code
+ *   - infoRules — email, phone, and website fields
+ *   - addressRules — postal address fields
+ *   - priceRules — currency, payment terms, and tax number
+ *   - contactRules — primary contact name, email, and phone
+ *   - metaRules — active flag, notes, and optional metadata
+ */
 class UpdateSupplierRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Resolves the route-bound supplier and delegates to the 'update' policy.
+     *
+     * @return bool True if the authenticated user may update this supplier.
      */
     public function authorize(): bool
     {
@@ -20,6 +36,8 @@ class UpdateSupplierRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Merges all rule groups into a single ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -36,9 +54,12 @@ class UpdateSupplierRequest extends FormRequest
     }
 
     /**
-     * Base rules
+     * Validation rules for core supplier identity fields.
      *
-     * @return array
+     * Name is optional for updates; code remains unique across all suppliers
+     * excluding the current model.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function baseRules(): array
     {
@@ -55,9 +76,12 @@ class UpdateSupplierRequest extends FormRequest
     }
 
     /**
-     * Info rules
+     * Validation rules for general supplier contact information.
      *
-     * @return array
+     * All fields are optional but must conform to the correct type
+     * when provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function infoRules(): array
     {
@@ -69,9 +93,12 @@ class UpdateSupplierRequest extends FormRequest
     }
 
     /**
-     * Address rules
+     * Validation rules for supplier postal address fields.
      *
-     * @return array
+     * All fields are optional; country must be a two-character
+     * ISO code when provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function addressRules(): array
     {
@@ -86,9 +113,11 @@ class UpdateSupplierRequest extends FormRequest
     }
 
     /**
-     * Price rules
+     * Validation rules for pricing, payment, and tax fields.
      *
-     * @return array
+     * Currency must be a three-character ISO code when provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function priceRules(): array
     {
@@ -100,9 +129,11 @@ class UpdateSupplierRequest extends FormRequest
     }
 
     /**
-     * Contact rules
+     * Validation rules for the primary contact person fields.
      *
-     * @return array
+     * All fields are optional but must be of the correct type when provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function contactRules(): array
     {
@@ -114,9 +145,9 @@ class UpdateSupplierRequest extends FormRequest
     }
 
     /**
-     * Meta rules
+     * Validation rules for active status, notes, and metadata fields.
      *
-     * @return array
+     * @return array<string,ValidationRule|array<mixed>|string>
      */
     private function metaRules(): array
     {
