@@ -14,58 +14,95 @@ use App\Services\Products\ProductLogService;
 use App\Services\Products\ProductManagementService;
 use App\Services\Products\ProductQueryService;
 use App\Services\QuoteProducts\QuoteProductManagementService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
+/**
+ * Handles HTTP requests for the Product resource.
+ *
+ * Delegates business logic to six dedicated services:
+ *   - ProductLogService — records audit log entries for product changes
+ *   - ProductManagementService — handles create, update, delete, and restore
+ *      operations
+ *   - ProductQueryService — handles read/list queries with filtering and
+ *      pagination
+ *   - DealProductManagementService — handles adding, updating, removing, and
+ *      restoring deals associated with a product
+ *   - OrderProductManagementService — handles adding, updating, removing, and
+ *      restoring orders associated with a product
+ *   - QuoteProductManagementService — handles adding, updating, removing, and
+ *      restoring quotes associated with a product
+ *
+ * All responses are returned as JSON, making this controller suitable
+ * for consumption by the Vue frontend or any API client.
+ */
 class ProductController extends Controller
 {
     /**
-     * Declare a protected property to hold the ProductLogService,
-     * ProductManagementService, ProductQueryService,
-     * DealProductManagementService, OrderProductManagementService
-     * and QuoteProductManagementService instance
+     * Service responsible for writing audit log entries for product events.
      *
      * @var ProductLogService
-     * @var ProductManagementService
-     * @var ProductQueryService
-     * @var DealProductManagementService
-     * @var OrderProductManagementService
-     * @var QuoteProductManagementService
      */
     protected ProductLogService $logger;
+
+    /**
+     * Service responsible for creating, updating, deleting, and restoring
+     * products.
+     *
+     * @var ProductManagementService
+     */
     protected ProductManagementService $management;
+
+    /**
+     * Service responsible for querying and listing products.
+     *
+     * @var ProductQueryService
+     */
     protected ProductQueryService $query;
+
+    /**
+     * Service responsible for managing the deals associated with a product.
+     *
+     * @var DealProductManagementService
+     */
     protected DealProductManagementService $dealProductManagement;
+
+    /**
+     * Service responsible for managing the orders associated with a product.
+     *
+     * @var OrderProductManagementService
+     */
     protected OrderProductManagementService $orderProductManagement;
+
+    /**
+     * Service responsible for managing the quotes associated with a product.
+     *
+     * @var QuoteProductManagementService
+     */
     protected QuoteProductManagementService $quoteProductManagement;
 
     /**
-     * Constructor for the controller
+     * Inject the required services into the controller.
      *
-     * @param ProductLogService $logger
+     * @param ProductLogService $logger Handles audit logging for product
+     * events.
      *
-     * @param ProductManagementService $management
+     * @param ProductManagementService $management Handles product
+     * create/update/delete/restore.
      *
-     * @param ProductQueryService $query
+     * @param ProductQueryService $query Handles product listing and retrieval.
      *
-     * @param DealProductManagementService $dealProductManagement
+     * @param DealProductManagementService $dealProductManagement Handles deal
+     * associations on a product.
      *
-     * @param OrderProductManagementService $orderProductManagement
+     * @param OrderProductManagementService $orderProductManagement Handles
+     * order associations on a product.
      *
-     * @param QuoteProductManagementService $quoteProductManagement
-     *
-     * An instance of the ProductLogService used for logging
-     * product-related actions
-     * An instance of the ProductManagementService for management
-     * of products
-     * An instance of the ProductQueryService for the query of
-     * product-related actions
-     * An instance of the DealProductManagementService for the query
-     * of deal product-related actions
-     * An instance of the OrderProductManagementService for the query
-     * of order product-related actions
-     *  An instance of the QuoteProductManagementService for the query
-     * of quote product-related actions
+     * @param QuoteProductManagementService $quoteProductManagement Handles
+     * quote associations on a product.
      */
     public function __construct(
         ProductLogService $logger,
@@ -86,9 +123,16 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
+     * Also includes the authenticated user's permissions for the Product
+     * resource, so the frontend can conditionally render create/view controls.
      *
-     * @return JsonResponse
+     * Authorises via the 'viewAny' policy before returning data.
+     *
+     * @param Request $request Incoming HTTP request; may carry
+     * filter/pagination params.
+     *
+     * @return JsonResponse Paginated product data with pagination
+     * metadata and permissions.
      */
     public function index(Request $request): JsonResponse
     {
@@ -102,9 +146,15 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param StoreProductRequest $request
+     * Validation is handled upstream by StoreProductRequest.
      *
-     * @return JsonResponse
+     * After storing, an audit log entry is written against the authenticated
+     * user.
+     *
+     * @param StoreProductRequest $request Validated request containing
+     * product data.
+     *
+     * @return JsonResponse The newly created product, with HTTP 201 Created.
      */
     public function store(StoreProductRequest $request): JsonResponse
     {
@@ -124,9 +174,13 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Product $product
+     * Returns a single product by its model binding.
      *
-     * @return JsonResponse
+     * Authorises via the 'view' policy before returning data.
+     *
+     * @param Product $product Route-model-bound product instance.
+     *
+     * @return JsonResponse The resolved product resource.
      */
     public function show(Product $product): JsonResponse
     {
@@ -140,11 +194,18 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param UpdateProductRequest $request
+     * Validation is handled upstream by UpdateProductRequest, which also
+     * implicitly authorises the operation via its authorize() method.
      *
-     * @param Product $product
+     * After updating, an audit log entry is written against the
+     * authenticated user.
      *
-     * @return JsonResponse
+     * @param UpdateProductRequest $request Validated request containing
+     * updated product data.
+     *
+     * @param Product $product Route-model-bound product instance to update.
+     *
+     * @return JsonResponse The updated product resource.
      */
     public function update(
         UpdateProductRequest $request,
@@ -166,9 +227,14 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Product $product
+     * Authorises via the 'delete' policy before proceeding.
      *
-     * @return JsonResponse
+     * The audit log entry is written before the deletion so that the
+     * product instance is still fully accessible during logging.
+     *
+     * @param Product $product Route-model-bound product instance to delete.
+     *
+     * @return JsonResponse Empty response with HTTP 204 No Content.
      */
     public function destroy(Product $product): JsonResponse
     {
@@ -188,11 +254,19 @@ class ProductController extends Controller
     }
 
     /**
-     * Restore the specified resource from storage.
+     * Restore the specified product from soft deletion.
      *
-     * @param int $id
+     * Looks up the product including trashed records, then authorises via
+     * the 'restore' policy. Returns 404 if the product is not currently
+     * soft-deleted, preventing accidental double-restores.
      *
-     * @return JsonResponse
+     * @param int|string $id The primary key of the soft-deleted product.
+     *
+     * @return JsonResponse The restored product resource.
+     *
+     * @throws ModelNotFoundException If no matching record exists.
+     *
+     * @throws HttpException If the product is not trashed (404).
      */
     public function restore(int $id): JsonResponse
     {
@@ -217,17 +291,18 @@ class ProductController extends Controller
     }
 
     /**
-     * Attach deals to a product.
+     * Attach deals to the specified product.
      *
-     * @param Request $request
+     * Accepts a list of deals from the request payload and delegates to the
+     * product management service to associate them with the product.
      *
-     * @param Product $product
+     * @param Request $request Incoming HTTP request containing a 'deals'
+     * array, each entry with deal_id, quantity, price, and optional meta.
      *
-     * @return JsonResponse
+     * @param Product $product Route-model-bound product instance to attach
+     * deals to.
      *
-     * $request->input('deals') => [
-     *   ['deal_id' => 1, 'quantity' => 2, 'price' => 100, 'meta' => []],
-     * ]
+     * @return JsonResponse Confirmation message on success.
      */
     public function addDeals(Request $request, Product $product): JsonResponse
     {
@@ -238,13 +313,18 @@ class ProductController extends Controller
     }
 
     /**
-     * Update pivot data for deals attached to a product.
+     * Update the pivot data for deals attached to the specified product.
      *
-     * @param Request $request
+     * Accepts a revised list of deals from the request payload and delegates
+     * to the product management service to apply the changes.
      *
-     * @param Product $product
+     * @param Request $request Incoming HTTP request containing a 'deals'
+     * array.
      *
-     * @return JsonResponse
+     * @param Product $product Route-model-bound product instance whose deal
+     * associations should be updated.
+     *
+     * @return JsonResponse Confirmation message on success.
      */
     public function updateDeals(
         Request $request,
@@ -257,13 +337,17 @@ class ProductController extends Controller
     }
 
     /**
-     * Remove a deal from a product.
+     * Remove a deal from the specified product.
      *
-     * @param int $id
+     * Looks up the product including trashed records, then delegates to the
+     * product management service to dissociate the given deal.
      *
-     * @param Deal $deal
+     * @param int|string $id The primary key of the product, including trashed
+     * records.
      *
-     * @return JsonResponse
+     * @param Deal $deal Route-model-bound deal instance to remove.
+     *
+     * @return JsonResponse Confirmation message on success.
      */
     public function removeDeal(int $id, Deal $deal): JsonResponse
     {
@@ -274,13 +358,17 @@ class ProductController extends Controller
     }
 
     /**
-     * Restore a previously removed deal on a product.
+     * Restore a previously removed deal on the specified product.
      *
-     * @param Product $product
+     * Delegates to the product management service to re-associate the given
+     * deal with the product.
      *
-     * @param Deal $deal
+     * @param Product $product Route-model-bound product instance to restore
+     * the deal to.
      *
-     * @return JsonResponse
+     * @param Deal $deal Route-model-bound deal instance to restore.
+     *
+     * @return JsonResponse Confirmation message on success.
      */
     public function restoreDeal(Product $product, Deal $deal): JsonResponse
     {
@@ -290,13 +378,18 @@ class ProductController extends Controller
     }
 
     /**
-     * Attach orders to a product.
+     * Attach orders to the specified product.
      *
-     * @param Request $request Request containing 'orders' array
+     * Accepts a list of orders from the request payload and delegates to the
+     * product management service to associate them with the product.
      *
-     * @param Product $product The product to attach orders to
+     * @param Request $request Incoming HTTP request containing an 'orders'
+     * array.
      *
-     * @return JsonResponse
+     * @param Product $product Route-model-bound product instance to attach
+     * orders to.
+     *
+     * @return JsonResponse Confirmation message on success.
      */
     public function addOrders(Request $request, Product $product): JsonResponse
     {
@@ -307,13 +400,18 @@ class ProductController extends Controller
     }
 
     /**
-     * Update orders attached to a product.
+     * Update the orders attached to the specified product.
      *
-     * @param Request $request Request containing 'orders' array
+     * Accepts a revised list of orders from the request payload and delegates
+     * to the product management service to apply the changes.
      *
-     * @param Product $product The product whose orders are being updated
+     * @param Request $request Incoming HTTP request containing an 'orders'
+     * array.
      *
-     * @return JsonResponse
+     * @param Product $product Route-model-bound product instance whose order
+     * associations should be updated.
+     *
+     * @return JsonResponse Confirmation message on success.
      */
     public function updateOrders(
         Request $request,
@@ -326,13 +424,17 @@ class ProductController extends Controller
     }
 
     /**
-     * Remove an order from a product.
+     * Remove an order from the specified product.
      *
-     * @param Product $product
+     * Delegates to the product management service to dissociate the given
+     * order from the product.
      *
-     * @param Order $order The order to remove
+     * @param Product $product Route-model-bound product instance to remove
+     * the order from.
      *
-     * @return JsonResponse
+     * @param Deal $deal Route-model-bound deal instance to remove.
+     *
+     * @return JsonResponse Confirmation message on success.
      */
     public function removeOrder(Product $product, Deal $deal): JsonResponse
     {
@@ -342,13 +444,17 @@ class ProductController extends Controller
     }
 
     /**
-     * Restore a previously removed order for a product.
+     * Restore a previously removed order for the specified product.
      *
-     * @param Product $product
+     * Delegates to the product management service to re-associate the given
+     * order with the product.
      *
-     * @param Order $order The order to restore
+     * @param Product $product Route-model-bound product instance to restore
+     * the order to.
      *
-     * @return JsonResponse
+     * @param Order $order Route-model-bound order instance to restore.
+     *
+     * @return JsonResponse Confirmation message on success.
      */
     public function restoreOrder(Product $product, Order $order): JsonResponse
     {
@@ -358,13 +464,18 @@ class ProductController extends Controller
     }
 
     /**
-     * Attach quotes to a product.
+     * Attach quotes to the specified product.
      *
-     * @param Request $request Request containing 'quotes' array
+     * Accepts a list of quotes from the request payload and delegates to the
+     * product management service to associate them with the product.
      *
-     * @param Product $product The product to attach quotes to
+     * @param Request $request Incoming HTTP request containing a 'quotes'
+     * array.
      *
-     * @return JsonResponse
+     * @param Product $product Route-model-bound product instance to attach
+     * quotes to.
+     *
+     * @return JsonResponse Confirmation message on success.
      */
     public function addQuotes(Request $request, Product $product): JsonResponse
     {
@@ -375,13 +486,18 @@ class ProductController extends Controller
     }
 
     /**
-     * Update quotes attached to a product.
+     * Update the quotes attached to the specified product.
      *
-     * @param Request $request Request containing 'quotes' array
+     * Accepts a revised list of quotes from the request payload and delegates
+     * to the product management service to apply the changes.
      *
-     * @param Product $product The product whose quotes are being updated
+     * @param Request $request Incoming HTTP request containing a 'quotes'
+     * array.
      *
-     * @return JsonResponse
+     * @param Product $product Route-model-bound product instance whose quote
+     * associations should be updated.
+     *
+     * @return JsonResponse Confirmation message on success.
      */
     public function updateQuotes(
         Request $request,
@@ -394,29 +510,37 @@ class ProductController extends Controller
     }
 
     /**
-     * Remove a quote from a product.
+     * Remove a quote from the specified product.
      *
-     * @param Product $product
+     * Delegates to the product management service to dissociate the given
+     * quote from the product.
      *
-     * @param Quote $quote The quote to remove
+     * @param Product $product Route-model-bound product instance to remove
+     * the quote from.
      *
-     * @return JsonResponse
+     * @param Quote $quote Route-model-bound quote instance to remove.
+     *
+     * @return JsonResponse Confirmation message on success.
      */
-    public function removeQuote(Product $product, Deal $deal): JsonResponse
+    public function removeQuote(Product $product, Quote $quote): JsonResponse
     {
-        $this->management->removeQuote($product->id, $deal->id);
+        $this->management->removeQuote($product->id, $quote->id);
 
-        return response()->json(['message' => 'Deal removed from product']);
+        return response()->json(['message' => 'Quote removed from product']);
     }
 
     /**
-     * Restore a previously removed quote for a product.
+     * Restore a previously removed quote for the specified product.
      *
-     * @param Product $product
+     * Delegates to the product management service to re-associate the given
+     * quote with the product.
      *
-     * @param Quote $quote The quote to restore
+     * @param Product $product Route-model-bound product instance to restore
+     * the quote to.
      *
-     * @return JsonResponse
+     * @param Quote $quote Route-model-bound quote instance to restore.
+     *
+     * @return JsonResponse Confirmation message on success.
      */
     public function restoreQuote(Product $product, Quote $quote): JsonResponse
     {

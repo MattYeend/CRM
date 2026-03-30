@@ -10,45 +10,70 @@ use App\Services\QuoteProducts\QuoteProductManagementService;
 use App\Services\Quotes\QuoteLogService;
 use App\Services\Quotes\QuoteManagementService;
 use App\Services\Quotes\QuoteQueryService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
+/**
+ * Handles HTTP requests for the Quote resource.
+ *
+ * Delegates business logic to four dedicated services:
+ *   - QuoteLogService — records audit log entries for quote changes
+ *   - QuoteManagementService — handles create, update, delete, and restore
+ *      operations
+ *   - QuoteQueryService — handles read/list queries with filtering and
+ *      pagination
+ *   - QuoteProductManagementService — handles adding, updating, removing, and
+ *      restoring products on a quote
+ *
+ * All responses are returned as JSON, making this controller suitable
+ * for consumption by the Vue frontend or any API client.
+ */
 class QuoteController extends Controller
 {
     /**
-     * Declare a protected property to hold the QuoteLogService,
-     * QuoteManagementService, QuoteQueryService and
-     * QuoteProductManagementService instance
+     * Service responsible for writing audit log entries for quote events.
      *
      * @var QuoteLogService
-     * @var QuoteManagementService
-     * @var QuoteQueryService
-     * @var QuoteProductManagementService
      */
     protected QuoteLogService $logger;
+
+    /**
+     * Service responsible for creating, updating, deleting, and restoring
+     * quotes.
+     *
+     * @var QuoteManagementService
+     */
     protected QuoteManagementService $management;
+
+    /**
+     * Service responsible for querying and listing quotes.
+     *
+     * @var QuoteQueryService
+     */
     protected QuoteQueryService $query;
+
+    /**
+     * Service responsible for managing the products associated with a quote.
+     *
+     * @var QuoteProductManagementService
+     */
     protected QuoteProductManagementService $quoteProductManagement;
 
     /**
-     * Constructor for the controller
+     * Inject the required services into the controller.
      *
-     * @param QuoteLogService $logger
+     * @param QuoteLogService $logger Handles audit logging for quote events.
      *
-     * @param QuoteManagementService $management
+     * @param QuoteManagementService $management Handles quote
+     * create/update/delete/restore.
      *
-     * @param QuoteQueryService $query
+     * @param QuoteQueryService $query Handles quote listing and retrieval.
      *
-     * @param QuoteProductManagementService $quoteProductManagement
-     *
-     * An instance of the QuoteLogService used for logging
-     * quote-related actions
-     * An instance of the QuoteManagementService for management
-     * of quotes
-     * An instance of the QuoteQueryService for the query of
-     * quote-related actions
-     * An instance of the QuoteProductManagementService for the query of
-     * quote product-related actions
+     * @param QuoteProductManagementService $quoteProductManagement Handles
+     * product associations on a quote.
      */
     public function __construct(
         QuoteLogService $logger,
@@ -65,9 +90,12 @@ class QuoteController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
+     * Authorises via the 'viewAny' policy before returning data.
      *
-     * @return JsonResponse
+     * @param Request $request Incoming HTTP request; may carry
+     * filter/pagination params.
+     *
+     * @return JsonResponse Paginated quote data.
      */
     public function index(Request $request): JsonResponse
     {
@@ -81,9 +109,15 @@ class QuoteController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param StoreQuoteRequest $request
+     * Validation is handled upstream by StoreQuoteRequest.
      *
-     * @return JsonResponse
+     * After storing, an audit log entry is written against the authenticated
+     * user.
+     *
+     * @param StoreQuoteRequest $request Validated request containing quote
+     * data.
+     *
+     * @return JsonResponse The newly created quote, with HTTP 201 Created.
      */
     public function store(StoreQuoteRequest $request): JsonResponse
     {
@@ -103,9 +137,13 @@ class QuoteController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Quote $quote
+     * Returns a single quote by its model binding.
      *
-     * @return JsonResponse
+     * Authorises via the 'view' policy before returning data.
+     *
+     * @param Quote $quote Route-model-bound quote instance.
+     *
+     * @return JsonResponse The resolved quote resource.
      */
     public function show(Quote $quote): JsonResponse
     {
@@ -119,11 +157,18 @@ class QuoteController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param UpdateQuoteRequest $request
+     * Validation is handled upstream by UpdateQuoteRequest, which also
+     * implicitly authorises the operation via its authorize() method.
      *
-     * @param Quote $quote
+     * After updating, an audit log entry is written against the
+     * authenticated user.
      *
-     * @return JsonResponse
+     * @param UpdateQuoteRequest $request Validated request containing updated
+     * quote data.
+     *
+     * @param Quote $quote Route-model-bound quote instance to update.
+     *
+     * @return JsonResponse The updated quote resource.
      */
     public function update(
         UpdateQuoteRequest $request,
@@ -145,11 +190,16 @@ class QuoteController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Quote $quote
+     * Authorises via the 'delete' policy before proceeding.
      *
-     * @return JsonResponse
+     * The audit log entry is written before the deletion so that the
+     * quote instance is still fully accessible during logging.
+     *
+     * @param Quote $quote Route-model-bound quote instance to delete.
+     *
+     * @return JsonResponse Empty response with HTTP 204 No Content.
      */
-    public function destroy(Quote $quote)
+    public function destroy(Quote $quote): JsonResponse
     {
         $this->authorize('delete', $quote);
 
@@ -167,11 +217,19 @@ class QuoteController extends Controller
     }
 
     /**
-     * Restore the specified resource from storage.
+     * Restore the specified quote from soft deletion.
      *
-     * @param int $id
+     * Looks up the quote including trashed records, then authorises via
+     * the 'restore' policy. Returns 404 if the quote is not currently
+     * soft-deleted, preventing accidental double-restores.
      *
-     * @return JsonResponse
+     * @param int|string $id The primary key of the soft-deleted quote.
+     *
+     * @return JsonResponse The restored quote resource.
+     *
+     * @throws ModelNotFoundException If no matching record exists.
+     *
+     * @throws HttpException If the quote is not trashed (404).
      */
     public function restore(int $id): JsonResponse
     {
@@ -196,13 +254,18 @@ class QuoteController extends Controller
     }
 
     /**
-     * Attach products to a quote.
+     * Attach products to the specified quote.
      *
-     * @param Request $request
+     * Accepts a list of products from the request payload and delegates to
+     * the quote product management service to associate them with the quote.
      *
-     * @param Quote $quote
+     * @param Request $request Incoming HTTP request containing a 'products'
+     * array.
      *
-     * @return Json Response
+     * @param Quote $quote Route-model-bound quote instance to attach products
+     * to.
+     *
+     * @return JsonResponse Confirmation message on success.
      */
     public function addProducts(Request $request, Quote $quote): JsonResponse
     {
@@ -213,13 +276,18 @@ class QuoteController extends Controller
     }
 
     /**
-     * Update products attached to a quote.
+     * Update the products attached to the specified quote.
      *
-     * @param Request $request
+     * Accepts a revised list of products from the request payload and
+     * delegates to the quote product management service to apply the changes.
      *
-     * @param Quote $quote
+     * @param Request $request Incoming HTTP request containing a 'products'
+     * array.
      *
-     * @return Json Response
+     * @param Quote $quote Route-model-bound quote instance whose product
+     * associations should be updated.
+     *
+     * @return JsonResponse Confirmation message on success.
      */
     public function updateProducts(Request $request, Quote $quote): JsonResponse
     {
@@ -230,13 +298,17 @@ class QuoteController extends Controller
     }
 
     /**
-     * Remove a product from a quote.
+     * Remove a product from the specified quote.
      *
-     * @param Request $request
+     * Delegates to the quote product management service to dissociate the
+     * given product from the quote.
      *
-     * @param Quote $quote
+     * @param Quote $quote Route-model-bound quote instance to remove the
+     * product from.
      *
-     * @return Json Response
+     * @param Product $product Route-model-bound product instance to remove.
+     *
+     * @return JsonResponse Confirmation message on success.
      */
     public function removeProduct(Quote $quote, Product $product): JsonResponse
     {
@@ -246,13 +318,17 @@ class QuoteController extends Controller
     }
 
     /**
-     * Restore a product previously removed from a quote.
+     * Restore a previously removed product to the specified quote.
      *
-     * @param Request $request
+     * Delegates to the quote product management service to re-associate the
+     * given product with the quote.
      *
-     * @param Quote $quote
+     * @param Quote $quote Route-model-bound quote instance to restore the
+     * product to.
      *
-     * @return Json Response
+     * @param Product $product Route-model-bound product instance to restore.
+     *
+     * @return JsonResponse Confirmation message on success.
      */
     public function restoreProduct(Quote $quote, Product $product): JsonResponse
     {

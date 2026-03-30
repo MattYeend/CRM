@@ -8,36 +8,54 @@ use App\Services\Roles\RoleManagementService;
 use App\Services\Roles\RoleQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Gate;
 
+/**
+ * Handles HTTP requests for the Role resource.
+ *
+ * Delegates business logic to three dedicated services:
+ *   - RoleLogService — records audit log entries for role changes
+ *   - RoleManagementService — handles permission sync and other role
+ *      management operations
+ *   - RoleQueryService — handles read/list queries with filtering and
+ *      pagination
+ *
+ * All responses are returned as JSON, making this controller suitable
+ * for consumption by the Vue frontend or any API client.
+ */
 class RoleController extends Controller
 {
     /**
-     * Declare a protected property to hold the RoleLogService,
-     * RoleManagementService and RoleQueryService instance
+     * Service responsible for writing audit log entries for role events.
      *
      * @var RoleLogService
-     * @var RoleManagementService
-     * @var RoleQueryService
      */
     protected RoleLogService $logger;
+
+    /**
+     * Service responsible for managing roles, including permission
+     * synchronisation.
+     *
+     * @var RoleManagementService
+     */
     protected RoleManagementService $management;
+
+    /**
+     * Service responsible for querying and listing roles.
+     *
+     * @var RoleQueryService
+     */
     protected RoleQueryService $query;
 
     /**
-     * Constructor for the controller
+     * Inject the required services into the controller.
      *
-     * @param RoleLogService $logger
+     * @param RoleLogService $logger Handles audit logging for role events.
      *
-     * @param RoleManagementService $management
+     * @param RoleManagementService $management Handles role management
+     * including permission sync.
      *
-     * @param RoleQueryService $query
-     *
-     * An instance of the RoleLogService used for logging
-     * role-related actions
-     * An instance of the RoleManagementService for management
-     * of role
-     * An instance of the RoleQueryService for the query of
-     * role-related actions
+     * @param RoleQueryService $query Handles role listing and retrieval.
      */
     public function __construct(
         RoleLogService $logger,
@@ -50,11 +68,17 @@ class RoleController extends Controller
     }
 
     /**
-     * Display a listing of the resources with user counts and permissions.
+     * Display a listing of the resource.
      *
-     * @param Request $request
+     * Returns roles with their associated user counts and permissions.
      *
-     * @return JsonResponse
+     * Authorises via the 'viewAny' policy before returning data.
+     *
+     * @param Request $request Incoming HTTP request; may carry
+     * filter/pagination params.
+     *
+     * @return JsonResponse Paginated role data with user counts and
+     * permissions.
      */
     public function index(Request $request): JsonResponse
     {
@@ -66,11 +90,17 @@ class RoleController extends Controller
     }
 
     /**
-     * Display the specified resource with its permissions and users.
+     * Display the specified resource.
      *
-     * @param Role $role
+     * Returns a single role by its model binding, including its associated
+     * permissions and users.
      *
-     * @return JsonResponse
+     * Authorises via the 'view' policy before returning data.
+     *
+     * @param Role $role Route-model-bound role instance.
+     *
+     * @return JsonResponse The resolved role resource with permissions and
+     * users.
      */
     public function show(Role $role): JsonResponse
     {
@@ -82,11 +112,15 @@ class RoleController extends Controller
     }
 
     /**
-     * Sync permissions for the given resource.
+     * Sync permissions for the specified role.
      *
-     * @param Role $role
+     * Delegates to the role management service to replace the role's current
+     * permission set with the provided data.
      *
-     * @param array $data
+     * @param Role $role The role instance whose permissions should be synced.
+     *
+     * @param array $data The complete set of permissions to sync against the
+     * role.
      *
      * @return void
      */
