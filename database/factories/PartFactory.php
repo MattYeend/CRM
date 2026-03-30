@@ -116,7 +116,7 @@ class PartFactory extends Factory
     {
         return $this->state(fn (array $attrs) => [
             'quantity' => fake()->numberBetween(1, $attrs['min_stock_level']),
-            'status' => 'active',
+            'status' => Part::ACTIVE_PART_STATUS,
         ]);
     }
 

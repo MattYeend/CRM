@@ -30,7 +30,7 @@ class Part extends Model
     /**
      * Finished Good Type.
      */
-    public const FINISHED_GOOD_PART_TYPE = 'finised_good';
+    public const FINISHED_GOOD_PART_TYPE = 'finished_good';
 
     /**
      * Consumable Part Type.
