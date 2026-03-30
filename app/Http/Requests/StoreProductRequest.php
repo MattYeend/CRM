@@ -48,6 +48,12 @@ class StoreProductRequest extends FormRequest
             'description' => 'nullable|string',
             'price' => 'nullable|numeric',
             'currency' => 'nullable|string|max:8',
+            'status' => 'required', Rule::in([
+                'active',
+                'discontinued',
+                'pending',
+                'out_of_stock',
+            ]),
             'quantity' => 'nullable|integer|min:0',
             'min_stock_level' => 'nullable|integer|min:0',
             'max_stock_level' => 'nullable|integer|min:0',

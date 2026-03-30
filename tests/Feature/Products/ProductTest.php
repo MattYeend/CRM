@@ -154,7 +154,8 @@ test('store creates a new product and returns 201', function () {
         'name' => 'Test Product',
         'description' => 'A product created during test',
         'price' => 99.99,
-        'currency' => 'USD',
+        'currency' => 'GBP',
+        'status' => 'active',
         'quantity' => 10,
         'meta' => ['color' => 'red'],
     ];

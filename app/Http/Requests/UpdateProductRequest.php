@@ -51,6 +51,15 @@ class UpdateProductRequest extends FormRequest
             'description' => 'nullable|string',
             'price' => 'nullable|numeric',
             'currency' => 'nullable|string|max:8',
+            'status' => [
+                'sometimes',
+                Rule::in([
+                    'active',
+                    'discontinued',
+                    'pending',
+                    'out_of_stock',
+                ]),
+            ],
             'quantity' => 'nullable|integer',
             'quantity' => 'nullable|integer|min:0',
             'min_stock_level' => 'nullable|integer|min:0',

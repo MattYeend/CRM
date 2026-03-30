@@ -34,6 +34,7 @@ class Product extends Model
         'description',
         'price',
         'currency',
+        'status',
         'quantity',
         'min_stock_level',
         'max_stock_level',

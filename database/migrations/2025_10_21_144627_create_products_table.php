@@ -18,6 +18,12 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->decimal('price', 15, 2)->default(0);
             $table->string('currency', 8)->default('GBP');
+            $table->enum('status', [
+                'active',
+                'discontinued',
+                'pending',
+                'out_of_stock',
+            ])->default('active');
             $table->unsignedInteger('quantity')->default(0);
             $table->unsignedInteger('min_stock_level')->default(0);
             $table->unsignedInteger('max_stock_level')->nullable();
