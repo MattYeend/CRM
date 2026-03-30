@@ -65,10 +65,13 @@ class AttachmentController extends Controller
      *
      * @param  AttachmentAttacherService $attacher Handles associating
      * attachments to parent entities.
+     *
      * @param  AttachmentLogService $logger Handles audit logging for
      * attachment events.
+     *
      * @param  AttachmentQueryService $query Handles attachment listing
      * and retrieval.
+     *
      * @param  AttachmentManagementService $management Handles attachment
      * store/update/delete/restore.
      */
@@ -87,9 +90,16 @@ class AttachmentController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * Also includes the authenticated user's permissions for the Attachment
+     * resource, so the frontend can conditionally render create/view controls.
+     *
      * Authorises via the 'viewAny' policy before returning data.
      *
-     * @return JsonResponse The list of attachments.
+     * @param  Request $request Incoming HTTP request; may carry
+     * filter/pagination params.
+     *
+     * @return JsonResponse Paginated attachment data with pagination metadata
+     * and permissions.
      */
     public function index(): JsonResponse
     {
@@ -104,8 +114,10 @@ class AttachmentController extends Controller
      * Store a newly created resource in storage.
      *
      * Validation is handled upstream by StoreAttachmentRequest.
+     *
      * After storing, an audit log entry is written against the
      * authenticated user.
+     *
      * The response eager-loads the 'uploader' relationship so the caller
      * immediately has access to the associated user details.
      *
@@ -133,6 +145,8 @@ class AttachmentController extends Controller
     /**
      * Display the specified resource.
      *
+     * Return a single attacthment by its model binding.
+     *
      * Authorises via the 'view' policy before returning data.
      *
      * @param  Attachment $attachment Route-model-bound attachment instance.
@@ -153,8 +167,10 @@ class AttachmentController extends Controller
      *
      * Validation is handled upstream by UpdateAttachmentRequest, which also
      * implicitly authorises the operation via its authorize() method.
+     *
      * After updating, an audit log entry is written against the
      * authenticated user.
+     *
      * The response eager-loads the 'uploader' relationship for consistency
      * with store().
      *
@@ -188,8 +204,10 @@ class AttachmentController extends Controller
      * Remove the specified resource from storage.
      *
      * Authorises via the 'delete' policy before proceeding.
+     *
      * The audit log entry is written before the deletion so that the
      * attachment instance is still fully accessible during logging.
+     *
      * The user ID is passed to the management service to record who performed
      * the deletion.
      *
@@ -221,6 +239,7 @@ class AttachmentController extends Controller
      * Looks up the attachment including trashed records, then authorises via
      * the 'restore' policy. Returns 404 if the attachment is not currently
      * soft-deleted, preventing accidental double-restores.
+     *
      * After restoring, an audit log entry is written against the authenticated
      * user.
      *

@@ -57,8 +57,10 @@ class ActivityController extends Controller
      *
      * @param  ActivityLogService $logger Handles audit logging for activity
      * events.
+     *
      * @param  ActivityManagementService $management Handles activity
      * create/update/delete/restore.
+     *
      * @param  ActivityQueryService $query Handles activity listing and
      * retrieval.
      */
@@ -109,6 +111,7 @@ class ActivityController extends Controller
      * Store a newly created resource in storage.
      *
      * Validation is handled upstream by StoreActivityRequest.
+     *
      * After storing, an audit log entry is written against the authenticated
      * user.
      *
@@ -157,6 +160,7 @@ class ActivityController extends Controller
      *
      * Validation is handled upstream by UpdateActivityRequest, which also
      * implicitly authorises the operation via its authorize() method.
+     *
      * After updating, an audit log entry is written against the
      * authenticated user.
      *
@@ -188,6 +192,7 @@ class ActivityController extends Controller
      * Remove the specified resource from storage.
      *
      * Authorises via the 'delete' policy before proceeding.
+     *
      * The audit log entry is written before the deletion so that the
      * activity instance is still fully accessible during logging.
      *
