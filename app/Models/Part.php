@@ -419,6 +419,16 @@ class Part extends Model
     }
 
     /**
+     * Determine whether this part has an associated bill of materials.
+     *
+     * @return bool
+     */
+    public function hasBom(): bool
+    {
+        return $this->billOfMaterials()->exists();
+    }
+
+    /**
      * Sum the total costs of all BOM line entries for this part.
      *
      * @param  array $visited Part IDs already visited in the current
@@ -431,15 +441,5 @@ class Part extends Model
         return $this->billOfMaterials->sum(
             fn ($bom) => $bom->totalCost($visited) ?? 0
         );
-    }
-
-    /**
-     * Determine whether this part has an associated bill of materials.
-     *
-     * @return bool
-     */
-    public function hasBom(): bool
-    {
-        return $this->billOfMaterials()->exists();
     }
 }
