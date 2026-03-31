@@ -4,12 +4,22 @@ namespace App\Services\BillOfMaterials;
 
 use App\Models\BillOfMaterial;
 
+/**
+ * Handles soft deletion and restoration of Bill of Materials (BOM) entries.
+ *
+ * Writes audit fields before delegating to Eloquent's soft-delete and
+ * restore methods, ensuring the deleted_by, deleted_at, restored_by,
+ * and restored_at columns are always populated.
+ */
 class BillOfMaterialDestructorService
 {
     /**
-     * Delete a BOM entry.
+     * Soft-delete a BOM entry.
      *
-     * @param BillOfMaterial $billOfMaterial
+     * Records the authenticated user and timestamp in the audit columns
+     * before soft-deleting the BOM entry.
+     *
+     * @param  BillOfMaterial $billOfMaterial The BOM entry to soft-delete.
      *
      * @return void
      */
@@ -26,11 +36,15 @@ class BillOfMaterialDestructorService
     }
 
     /**
-     * Restore a trashed BOM.
+     * Restore a soft-deleted BOM entry.
      *
-     * @param int $id
+     * Looks up the BOM entry including trashed records, records the
+     * authenticated user and timestamp in the audit columns, then restores
+     * the BOM entry. Returns the BOM unchanged if it is not currently trashed.
      *
-     * @return BillOfMaterial
+     * @param  int $id The primary key of the soft-deleted BOM entry.
+     *
+     * @return BillOfMaterial The restored BOM entry instance.
      */
     public function restore(int $id): BillOfMaterial
     {

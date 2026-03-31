@@ -4,12 +4,22 @@ namespace App\Services\Attachments;
 
 use App\Models\Attachment;
 
+/**
+ * Handles soft deletion and restoration of Attachment records.
+ *
+ * Writes audit fields before delegating to Eloquent's soft-delete and
+ * restore methods, ensuring the deleted_by, deleted_at, restored_by, and
+ * restored_at columns are always populated.
+ */
 class AttachmentDestructorService
 {
     /**
-     * Soft-delete a attachment.
+     * Soft-delete an attachment.
      *
-     * @param Attachment $attachment
+     * Records the authenticated user and timestamp in the audit columns
+     * before soft-deleting the attachment.
+     *
+     * @param  Attachment $attachment The attachment instance to soft-delete.
      *
      * @return void
      */
@@ -26,11 +36,16 @@ class AttachmentDestructorService
     }
 
     /**
-     * Restore a trashed attachment.
+     * Restore a soft-deleted attachment.
      *
-     * @param int $id
+     * Looks up the attachment including trashed records, records the
+     * authenticated user and timestamp in the audit columns, then restores
+     * the attachment. Returns the attachment unchanged if it is not currently
+     * trashed.
      *
-     * @return Attachment
+     * @param  int $id The primary key of the soft-deleted attachment.
+     *
+     * @return Attachment The restored attachment instance.
      */
     public function restore(int $id): Attachment
     {

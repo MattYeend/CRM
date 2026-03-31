@@ -6,18 +6,23 @@ use App\Models\Attachment;
 use App\Models\Log;
 use App\Models\User;
 
+/**
+ * Handles audit logging for Attachment lifecycle events.
+ *
+ * Each public method writes a structured log entry via the Log model for
+ * a specific attachment action, combining base attachment data with
+ * action-specific timestamp and actor fields.
+ */
 class AttachmentLogService
 {
     /**
-     * Log the attachment of a file.
+     * Log an attachment upload event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Attachment $attachment The attachment that was uploaded.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Attachment $attachment The attachment that was updated.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function attachmentUploaded(
         User $user,
@@ -39,15 +44,13 @@ class AttachmentLogService
     }
 
     /**
-     * Log the attachment of a file being deleted.
+     * Log an attachment deletion event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Attachment $attachment The attachment that was deleted.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Attachment $attachment The attachment that was deleted.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function attachmentDeleted(
         User $user,
@@ -69,15 +72,13 @@ class AttachmentLogService
     }
 
     /**
-     * Log the attachment of a file being restored.
+     * Log an attachment restoration event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Attachment $attachment The attachment that was restored.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Attachment $attachment The attachment that was restored.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function attachmentRestored(
         User $user,
@@ -85,8 +86,8 @@ class AttachmentLogService
         Attachment $attachment
     ): array {
         $data = $this->baseAttachmentData($attachment) + [
-            'deleted_at' => now(),
-            'deleted_by' => $user->name,
+            'restored_at' => now(),
+            'restored_by' => $user->name,
         ];
 
         Log::log(
@@ -99,15 +100,13 @@ class AttachmentLogService
     }
 
     /**
-     * Log the attachment of a file being downloaded.
+     * Log an attachment download event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Attachment $attachment The attachment that was downloaded.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Attachment $attachment The attachment that was downloaded.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function attachmentDownloaded(
         User $user,
@@ -129,11 +128,11 @@ class AttachmentLogService
     }
 
     /**
-     * Prepare base data for Attachment logging.
+     * Build the base data array shared across all attachment log entries.
      *
-     * @param Attachment $attachment The attachment being logged.
+     * @param  Attachment $attachment The attachment being logged.
      *
-     * @return array The base data for logging.
+     * @return array The base fields extracted from the attachment.
      */
     protected function baseAttachmentData(Attachment $attachment): array
     {

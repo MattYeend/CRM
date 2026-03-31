@@ -5,20 +5,31 @@ namespace App\Services\Deals;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
+/**
+ * Applies search filters to Deal queries.
+ *
+ * Supports filtering by common deal attributes such as status
+ * and owner.
+ */
 class DealSearchService
 {
-    /** apply search to the query.
+    /**
+     * Apply search filtering to the given query.
      *
-     * @param Builder $query
+     * Filters deals by status and owner_id when provided in the request.
+     * If no filters are supplied, the query is left unchanged.
      *
-     * @param Request $request
+     * @param  Builder $query The Eloquent query builder instance to filter.
+     * @param  Request $request Incoming HTTP request carrying search
+     * parameters.
      *
      * @return void
      */
-    public function applySearch($query, Request $request): void
+    public function applySearch(Builder $query, Request $request): void
     {
         $status = $request->query('status');
         $ownerId = $request->query('owner_id');
+
         if ($status) {
             $query->where('status', $status);
         }

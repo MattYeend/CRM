@@ -6,18 +6,24 @@ use App\Models\Company;
 use App\Models\Log;
 use App\Models\User;
 
+/**
+ * Handles logging of Company-related actions.
+ *
+ * Provides methods to log creation, update, deletion, and restoration
+ * of company records, recording the responsible user and timestamps.
+ */
 class CompanyLogService
 {
     /**
      * Log the creation of a company.
      *
-     * @param User $user The user being logged.
+     * Records the user who created the company and the timestamp.
      *
-     * @param int $userId The ID of the user who performed the action.
+     * @param  User $user The user performing the action.
+     * @param  int $userId The ID of the user performing the action.
+     * @param  Company $company The company being created.
      *
-     * @param Company $company The company that was created.
-     *
-     * @return Log The created log entry.
+     * @return array The logged data for the creation action.
      */
     public function companyCreated(
         User $user,
@@ -41,13 +47,13 @@ class CompanyLogService
     /**
      * Log the update of a company.
      *
-     * @param User $user The user being logged.
+     * Records the user who updated the company and the timestamp.
      *
-     * @param int $userId The ID of the user who performed the action.
+     * @param  User $user The user performing the action.
+     * @param  int $userId The ID of the user performing the action.
+     * @param  Company $company The company being updated.
      *
-     * @param Company $company The company that was updated.
-     *
-     * @return Log The created log entry.
+     * @return array The logged data for the update action.
      */
     public function companyUpdated(
         User $user,
@@ -71,13 +77,13 @@ class CompanyLogService
     /**
      * Log the deletion of a company.
      *
-     * @param User $user The user being logged.
+     * Records the user who deleted the company and the timestamp.
      *
-     * @param int $userId The ID of the user who performed the action.
+     * @param  User $user The user performing the action.
+     * @param  int $userId The ID of the user performing the action.
+     * @param  Company $company The company being deleted.
      *
-     * @param Company $company The company being deleted.
-     *
-     * @return Log The created log entry.
+     * @return array The logged data for the deletion action.
      */
     public function companyDeleted(
         User $user,
@@ -101,13 +107,13 @@ class CompanyLogService
     /**
      * Log the restoration of a company.
      *
-     * @param User $user The user being logged.
+     * Records the user who restored the company and the timestamp.
      *
-     * @param int $userId The ID of the user who performed the action.
+     * @param  User $user The user performing the action.
+     * @param  int $userId The ID of the user performing the action.
+     * @param  Company $company The company being restored.
      *
-     * @param Company $company The company restored.
-     *
-     * @return Log The created log entry.
+     * @return array The logged data for the restoration action.
      */
     public function companyRestored(
         User $user,
@@ -129,11 +135,13 @@ class CompanyLogService
     }
 
     /**
-     * Construct base data array for a Company.
+     * Prepare the base data for logging a company.
      *
-     * @param Company $company The company being logged.
+     * Extracts relevant attributes from the company for logging purposes.
      *
-     * @return array The base data for logging.
+     * @param  Company $company The company to extract data from.
+     *
+     * @return array The base data array to be included in logs.
      */
     protected function baseCompanyData(Company $company): array
     {

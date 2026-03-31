@@ -5,11 +5,38 @@ namespace App\Services\Attachments;
 use App\Models\Attachment;
 use Illuminate\Http\Request;
 
+/**
+ * Handles updates to existing Attachment records.
+ *
+ * Optionally replaces the stored file via AttachmentFileService when a new
+ * file is present in the request, updates the polymorphic association via
+ * AttachmentAttacherService, and persists the updated attribute data with
+ * audit fields.
+ */
 class AttachmentUpdaterService
 {
+    /**
+     * Service responsible for attaching the file to its polymorphic parent.
+     *
+     * @var AttachmentAttacherService
+     */
     protected AttachmentAttacherService $attacher;
+
+    /**
+     * Service responsible for storing and replacing attachment files on disk.
+     *
+     * @var AttachmentFileService
+     */
     protected AttachmentFileService $fileService;
 
+    /**
+     * Inject the required services into the updater.
+     *
+     * @param  AttachmentAttacherService $attacher Handles polymorphic model
+     * association.
+     * @param  AttachmentFileService $fileService Handles file storage and
+     * replacement operations.
+     */
     public function __construct(
         AttachmentAttacherService $attacher,
         AttachmentFileService $fileService
@@ -19,13 +46,17 @@ class AttachmentUpdaterService
     }
 
     /**
-     * Update the attachment using request data.
+     * Update the attachment using the validated request data.
      *
-     * @param Request $request
+     * Replaces the stored file if a new file is provided, updates the
+     * polymorphic association, and persists the remaining validated fields
+     * with updated audit timestamps.
      *
-     * @param Attachment $attachment
+     * @param  Request $request Incoming HTTP request containing optional file
+     * and updated attachment data.
+     * @param  Attachment $attachment The attachment instance to update.
      *
-     * @return Attachment
+     * @return Attachment The updated and freshly reloaded attachment instance.
      */
     public function update(Request $request, Attachment $attachment): Attachment
     {

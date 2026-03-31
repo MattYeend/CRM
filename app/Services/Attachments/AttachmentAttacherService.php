@@ -4,16 +4,24 @@ namespace App\Services\Attachments;
 
 use App\Models\Attachment;
 
+/**
+ * Handles attaching Attachment models to polymorphic parent models.
+ *
+ * This service resolves a target model from a given type and identifier,
+ * and associates the provided attachment via a polymorphic relationship
+ * if the model can be successfully resolved.
+ */
 class AttachmentAttacherService
 {
     /**
      * Attach an attachment to a polymorphic model if resolvable.
      *
-     * @param \App\Models\Attachment $attachment
+     * Resolves the target model and associates the attachment if both
+     * type and identifier are valid.
      *
-     * @param string|null $type
-     *
-     * @param int|null $id
+     * @param  string|null  $type        The fully qualified model class name
+     * @param  int|null     $id          The identifier of the target model
+     * @param  Attachment   $attachment  The attachment model to associate
      *
      * @return void
      */
@@ -34,12 +42,13 @@ class AttachmentAttacherService
     }
 
     /**
-     * Resolve the model instance for the given type and id.
-     * Returns null if resolution fails.
+     * Resolve the model instance for the given type and identifier.
      *
-     * @param string $type
+     * Attempts to instantiate the model via the service container and
+     * retrieve the record by its primary key. Returns null if resolution fails.
      *
-     * @param int $id
+     * @param  string  $type  The fully qualified model class name
+     * @param  int     $id    The identifier of the model
      *
      * @return mixed|null
      */
@@ -47,9 +56,11 @@ class AttachmentAttacherService
     {
         try {
             $candidate = app($type);
+
             return $candidate->find($id);
         } catch (\Throwable $e) {
             report($e);
+
             return null;
         }
     }

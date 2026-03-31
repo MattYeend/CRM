@@ -6,18 +6,24 @@ use App\Models\Deal;
 use App\Models\Log;
 use App\Models\User;
 
+/**
+ * Handles logging of Deal-related actions.
+ *
+ * Provides methods to log creation, update, deletion, and restoration
+ * of deal records, recording the responsible user and timestamps.
+ */
 class DealLogService
 {
     /**
      * Log the creation of a deal.
      *
-     * @param User $user The user being logged.
+     * Records the user who created the deal and the timestamp.
      *
-     * @param int $userId The ID of the user who performed the action.
+     * @param  User $user The user performing the action.
+     * @param  int $userId The ID of the user performing the action.
+     * @param  Deal $deal The deal being created.
      *
-     * @param Deal $deal The deal that was created.
-     *
-     * @return Log The created log entry.
+     * @return array The logged data for the creation action.
      */
     public function dealCreated(
         User $user,
@@ -41,13 +47,13 @@ class DealLogService
     /**
      * Log the update of a deal.
      *
-     * @param User $user The user being logged.
+     * Records the user who updated the deal and the timestamp.
      *
-     * @param int $userId The ID of the user who performed the action.
+     * @param  User $user The user performing the action.
+     * @param  int $userId The ID of the user performing the action.
+     * @param  Deal $deal The deal being updated.
      *
-     * @param Deal $deal The deal that was updated.
-     *
-     * @return Log The created log entry.
+     * @return array The logged data for the update action.
      */
     public function dealUpdated(
         User $user,
@@ -71,13 +77,13 @@ class DealLogService
     /**
      * Log the deletion of a deal.
      *
-     * @param User $user The user being logged.
+     * Records the user who deleted the deal and the timestamp.
      *
-     * @param int $userId The ID of the user who performed the action.
+     * @param  User $user The user performing the action.
+     * @param  int $userId The ID of the user performing the action.
+     * @param  Deal $deal The deal being deleted.
      *
-     * @param Deal $deal The deal that was deleted.
-     *
-     * @return Log The created log entry.
+     * @return array The logged data for the deletion action.
      */
     public function dealDeleted(
         User $user,
@@ -101,13 +107,13 @@ class DealLogService
     /**
      * Log the restoration of a deal.
      *
-     * @param User $user The user being logged.
+     * Records the user who restored the deal and the timestamp.
      *
-     * @param int $userId The ID of the user who performed the action.
+     * @param  User $user The user performing the action.
+     * @param  int $userId The ID of the user performing the action.
+     * @param  Deal $deal The deal being restored.
      *
-     * @param Deal $deal The deal that was restored.
-     *
-     * @return Log The created log entry.
+     * @return array The logged data for the restoration action.
      */
     public function dealRestored(
         User $user,
@@ -129,11 +135,13 @@ class DealLogService
     }
 
     /**
-     * Build the common data array for a Deal log entry.
+     * Prepare the base data for logging a deal.
      *
-     * @param Deal $deal
+     * Extracts relevant attributes from the deal for logging purposes.
      *
-     * @return array
+     * @param  Deal $deal The deal to extract data from.
+     *
+     * @return array The base data array to be included in logs.
      */
     private function baseDealData(Deal $deal): array
     {

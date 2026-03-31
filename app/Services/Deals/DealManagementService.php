@@ -6,12 +6,27 @@ use App\Http\Requests\StoreDealRequest;
 use App\Http\Requests\UpdateDealRequest;
 use App\Models\Deal;
 
+/**
+ * Central service for managing Deal records.
+ *
+ * Delegates creation, update, deletion, and restoration operations to
+ * the respective creator, updater, and destructor services, providing
+ * a unified interface for deal management.
+ */
 class DealManagementService
 {
     private DealCreatorService $creator;
     private DealUpdaterService $updater;
     private DealDestructorService $destructor;
 
+    /**
+     * Inject the required services into the management service.
+     *
+     * @param  DealCreatorService $creator Handles deal creation.
+     * @param  DealUpdaterService $updater Handles deal updates.
+     * @param  DealDestructorService $destructor Handles deletion
+     * and restoration.
+     */
     public function __construct(
         DealCreatorService $creator,
         DealUpdaterService $updater,
@@ -25,9 +40,11 @@ class DealManagementService
     /**
      * Create a new deal.
      *
-     * @param StoreDealRequest $request
+     * Delegates to the creator service to validate and store the deal.
      *
-     * @return Deal
+     * @param  StoreDealRequest $request The request containing deal data.
+     *
+     * @return Deal The newly created deal instance.
      */
     public function store(StoreDealRequest $request): Deal
     {
@@ -37,11 +54,13 @@ class DealManagementService
     /**
      * Update an existing deal.
      *
-     * @param UpdateDealRequest $request
+     * Delegates to the updater service to modify the deal data.
      *
-     * @param Deal $deal
+     * @param  UpdateDealRequest $request The request containing
+     * updated deal data.
+     * @param  Deal $deal The deal to update.
      *
-     * @return Deal
+     * @return Deal The updated deal instance.
      */
     public function update(
         UpdateDealRequest $request,
@@ -51,9 +70,11 @@ class DealManagementService
     }
 
     /**
-     * Delete a deal (soft delete).
+     * Soft-delete a deal.
      *
-     * @param Deal $deal
+     * Delegates to the destructor service to perform a soft-delete.
+     *
+     * @param  Deal $deal The deal to delete.
      *
      * @return void
      */
@@ -65,9 +86,11 @@ class DealManagementService
     /**
      * Restore a soft-deleted deal.
      *
-     * @param int $id
+     * Delegates to the destructor service to restore the deal.
      *
-     * @return Deal
+     * @param  int $id The primary key of the soft-deleted deal.
+     *
+     * @return Deal The restored deal instance.
      */
     public function restore(int $id): Deal
     {

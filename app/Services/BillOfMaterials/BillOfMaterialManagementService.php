@@ -7,6 +7,13 @@ use App\Http\Requests\UpdateBillOfMaterialRequest;
 use App\Models\BillOfMaterial;
 use App\Models\Part;
 
+/**
+ * Central service for managing Bill of Materials (BOM) entries.
+ *
+ * Delegates creation, update, deletion, and restoration operations to
+ * the respective creator, updater, and destructor services, providing
+ * a unified interface for BOM management.
+ */
 class BillOfMaterialManagementService
 {
     private BillOfMaterialCreatorService $creator;
@@ -26,11 +33,13 @@ class BillOfMaterialManagementService
     /**
      * Create a new BOM entry.
      *
-     * @param StoreBillOfMaterialRequest $request
+     * Delegates to the creator service to validate and store the new BOM.
      *
-     * @param Part $part
+     * @param  StoreBillOfMaterialRequest $request The request containing
+     * BOM data.
+     * @param  Part $part The parent part to which the BOM will be attached.
      *
-     * @return BillOfMaterial
+     * @return BillOfMaterial The newly created BOM entry.
      */
     public function store(
         StoreBillOfMaterialRequest $request,
@@ -42,11 +51,13 @@ class BillOfMaterialManagementService
     /**
      * Update an existing BOM entry.
      *
-     * @param UpdateBillOfMaterialRequest $request
+     * Delegates to the updater service to modify the BOM data.
      *
-     * @param BillOfMaterial $billOfMaterial
+     * @param  UpdateBillOfMaterialRequest $request The request
+     * containing updated BOM data.
+     * @param  BillOfMaterial $billOfMaterial The BOM entry to update.
      *
-     * @return BillOfMaterial
+     * @return BillOfMaterial The updated BOM entry.
      */
     public function update(
         UpdateBillOfMaterialRequest $request,
@@ -58,7 +69,9 @@ class BillOfMaterialManagementService
     /**
      * Delete a BOM entry.
      *
-     * @param BillOfMaterial $billOfMaterial
+     * Delegates to the destructor service to perform a soft-delete.
+     *
+     * @param  BillOfMaterial $billOfMaterial The BOM entry to delete.
      *
      * @return void
      */
@@ -70,9 +83,11 @@ class BillOfMaterialManagementService
     /**
      * Restore a soft-deleted BOM entry.
      *
-     * @param int $id
+     * Delegates to the destructor service to restore the BOM.
      *
-     * @return BillOfMaterial
+     * @param  int $id The primary key of the soft-deleted BOM entry.
+     *
+     * @return BillOfMaterial The restored BOM entry.
      */
     public function restore(int $id): BillOfMaterial
     {

@@ -5,16 +5,26 @@ namespace App\Services\Companies;
 use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\Company;
 
+/**
+ * Handles updates to Company records.
+ *
+ * Validates incoming data, assigns audit fields, and persists updates
+ * to the company record.
+ */
 class CompanyUpdaterService
 {
     /**
-     * Update the company using request data.
+     * Update an existing company.
      *
-     * @param UpdateCompanyRequest $request
+     * Applies validated request data, records the authenticated user
+     * and timestamp in audit fields, and returns a fresh instance of
+     * the updated company.
      *
-     * @param Company $company
+     * @param  UpdateCompanyRequest $request The request containing
+     * validated update data.
+     * @param  Company $company The company to update.
      *
-     * @return Company
+     * @return Company The updated company instance.
      */
     public function update(
         UpdateCompanyRequest $request,

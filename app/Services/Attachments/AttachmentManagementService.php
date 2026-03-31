@@ -6,12 +6,45 @@ use App\Http\Requests\StoreAttachmentRequest;
 use App\Http\Requests\UpdateAttachmentRequest;
 use App\Models\Attachment;
 
+/**
+ * Orchestrates attachment lifecycle operations by delegating to focused
+ * sub-services.
+ *
+ * Acts as the single entry point for attachment create, update, delete, and
+ * restore operations, keeping controllers decoupled from the underlying
+ * service implementations.
+ */
 class AttachmentManagementService
 {
+    /**
+     * Service responsible for creating new attachment records.
+     *
+     * @var AttachmentCreatorService
+     */
     private AttachmentCreatorService $creator;
+
+    /**
+     * Service responsible for updating existing attachment records.
+     *
+     * @var AttachmentUpdaterService
+     */
     private AttachmentUpdaterService $updater;
+
+    /**
+     * Service responsible for soft-deleting and restoring attachment records.
+     *
+     * @var AttachmentDestructorService
+     */
     private AttachmentDestructorService $destructor;
 
+    /**
+     * Inject the required services into the management service.
+     *
+     * @param  AttachmentCreatorService $creator Handles attachment creation.
+     * @param  AttachmentUpdaterService $updater Handles attachment updates.
+     * @param  AttachmentDestructorService $destructor Handles attachment
+     * deletion and restoration.
+     */
     public function __construct(
         AttachmentCreatorService $creator,
         AttachmentUpdaterService $updater,
@@ -25,9 +58,10 @@ class AttachmentManagementService
     /**
      * Create a new attachment.
      *
-     * @param StoreAttachmentRequest $request
+     * @param  StoreAttachmentRequest $request Validated request containing
+     * the file and attachable context.
      *
-     * @return Attachment
+     * @return Attachment The newly created attachment.
      */
     public function store(StoreAttachmentRequest $request): Attachment
     {
@@ -35,13 +69,13 @@ class AttachmentManagementService
     }
 
     /**
-     * Update an existing att$attachment.
+     * Update an existing attachment.
      *
-     * @param UpdateAttachmentRequest $request
+     * @param  UpdateAttachmentRequest $request Validated request containing
+     * updated attachment data.
+     * @param  Attachment $attachment The attachment instance to update.
      *
-     * @param Attachment $attachment
-     *
-     * @return Attachment
+     * @return Attachment The updated attachment.
      */
     public function update(
         UpdateAttachmentRequest $request,
@@ -51,9 +85,9 @@ class AttachmentManagementService
     }
 
     /**
-     * Delete a atta$attachment (soft delete).
+     * Soft-delete an attachment.
      *
-     * @param Attachment $attachment
+     * @param  Attachment $attachment The attachment instance to delete.
      *
      * @return void
      */
@@ -65,9 +99,9 @@ class AttachmentManagementService
     /**
      * Restore a soft-deleted attachment.
      *
-     * @param int $id
+     * @param  int $id The primary key of the soft-deleted attachment.
      *
-     * @return Attachment
+     * @return Attachment The restored attachment.
      */
     public function restore(int $id): Attachment
     {

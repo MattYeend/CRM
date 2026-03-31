@@ -6,14 +6,23 @@ use App\Models\Attachment;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * Handles file storage and management for Attachment models.
+ *
+ * This service is responsible for persisting uploaded files to storage,
+ * creating corresponding Attachment models, and replacing existing files
+ * while ensuring old files are properly removed.
+ */
 class AttachmentFileService
 {
     /**
-     * Store uploaded file and create Attachment model.
+     * Store an uploaded file and create an Attachment model.
      *
-     * @param UploadedFile $file
+     * Persists the file to the configured filesystem disk and records
+     * its metadata in a new Attachment model.
      *
-     * @param int|null $uploadedBy
+     * @param  UploadedFile  $file        The uploaded file instance
+     * @param  int|null      $uploadedBy  The ID of the user uploading the file
      *
      * @return Attachment
      */
@@ -35,13 +44,17 @@ class AttachmentFileService
     }
 
     /**
-     * Replace file
+     * Replace the file associated with an Attachment model.
      *
-     * @param string $type
+     * Deletes the existing file from storage (if present), stores the new file,
+     * and updates the attachment metadata accordingly.
      *
-     * @param int $id
+     * @param  Attachment    $attachment  The attachment to update
+     * @param  UploadedFile  $file        The new uploaded file
+     * @param  int|null      $uploadedBy  The ID of the user performing
+     * the update
      *
-     * @return mixed|null
+     * @return Attachment
      */
     public function replaceFile(
         Attachment $attachment,

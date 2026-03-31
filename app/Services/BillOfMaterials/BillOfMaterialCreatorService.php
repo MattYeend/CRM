@@ -5,17 +5,31 @@ namespace App\Services\BillOfMaterials;
 use App\Http\Requests\StoreBillOfMaterialRequest;
 use App\Models\BillOfMaterial;
 use App\Models\Part;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
+/**
+ * Handles creation of Bill of Materials (BOM) entries.
+ *
+ * Validates business rules before creating a new BOM entry, ensuring
+ * that only manufactured parts can have child parts and that a part
+ * cannot contain itself.
+ */
 class BillOfMaterialCreatorService
 {
     /**
      * Create a new BOM entry.
      *
-     * @param StoreBillOfMaterialRequest $request
+     * Validates the request and parent part, then creates a new
+     * BillOfMaterial record linking the parent and child parts.
      *
-     * @param Part $part
+     * @param  StoreBillOfMaterialRequest $request The validated request
+     * data for creating the BOM.
+     * @param  Part $part The parent part to which the child part will be added.
      *
-     * @return BillOfMaterial
+     * @return BillOfMaterial The newly created BOM entry with loaded relations.
+     *
+     * @throws HttpResponseException If the parent part is not manufactured
+     *         or if the part attempts to contain itself.
      */
     public function create(
         StoreBillOfMaterialRequest $request,

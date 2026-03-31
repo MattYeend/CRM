@@ -10,7 +10,6 @@ trait HandlesPolicyPermissions
      * Determine if the given user has the specified permission.
      *
      * @param User $user The user to check permissions for.
-     *
      * @param string $permission The permission identifier to check.
      *
      * @return bool True if the user has the permission, false otherwise.
@@ -28,9 +27,7 @@ trait HandlesPolicyPermissions
      * against the user's ID.
      *
      * @param User $user The user to check permissions for.
-     *
      * @param mixed $model The model instance to check ownership of.
-     *
      * @param string $permission The permission identifier required alongside
      * ownership.
      *
@@ -52,12 +49,9 @@ trait HandlesPolicyPermissions
      * they own via a narrower permission (e.g. `post.update-own`).
      *
      * @param User $user The user to check permissions for.
-     *
      * @param mixed $model The model instance to check ownership of.
-     *
      * @param string $any The permission identifier granting access to any
-     *resource.
-     *
+     * resource.
      * @param string $own The permission identifier granting access to owned
      * resources only.
      *

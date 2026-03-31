@@ -6,12 +6,27 @@ use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\Company;
 
+/**
+ * Central service for managing Company records.
+ *
+ * Delegates creation, update, deletion, and restoration operations to
+ * the respective creator, updater, and destructor services, providing
+ * a unified interface for company management.
+ */
 class CompanyManagementService
 {
     private CompanyCreatorService $creator;
     private CompanyUpdaterService $updater;
     private CompanyDestructorService $destructor;
 
+    /**
+     * Inject the required services into the management service.
+     *
+     * @param  CompanyCreatorService $creator Handles company creation.
+     * @param  CompanyUpdaterService $updater Handles company updates.
+     * @param  CompanyDestructorService $destructor Handles deletion and
+     * restoration.
+     */
     public function __construct(
         CompanyCreatorService $creator,
         CompanyUpdaterService $updater,
@@ -25,9 +40,11 @@ class CompanyManagementService
     /**
      * Create a new company.
      *
-     * @param StoreCompanyRequest $request
+     * Delegates to the creator service to validate and store the company.
      *
-     * @return Company
+     * @param  StoreCompanyRequest $request The request containing company data.
+     *
+     * @return Company The newly created company instance.
      */
     public function store(StoreCompanyRequest $request): Company
     {
@@ -37,11 +54,13 @@ class CompanyManagementService
     /**
      * Update an existing company.
      *
-     * @param UpdateCompanyRequest $request
+     * Delegates to the updater service to modify the company data.
      *
-     * @param Company $company
+     * @param  UpdateCompanyRequest $request The request containing
+     * updated company data.
+     * @param  Company $company The company to update.
      *
-     * @return Company
+     * @return Company The updated company instance.
      */
     public function update(
         UpdateCompanyRequest $request,
@@ -51,9 +70,11 @@ class CompanyManagementService
     }
 
     /**
-     * Delete a company (soft delete).
+     * Soft-delete a company.
      *
-     * @param Company $company
+     * Delegates to the destructor service to perform a soft-delete.
+     *
+     * @param  Company $company The company to delete.
      *
      * @return void
      */
@@ -65,9 +86,11 @@ class CompanyManagementService
     /**
      * Restore a soft-deleted company.
      *
-     * @param int $id
+     * Delegates to the destructor service to restore the company.
      *
-     * @return Company
+     * @param  int $id The primary key of the soft-deleted company.
+     *
+     * @return Company The restored company instance.
      */
     public function restore(int $id): Company
     {

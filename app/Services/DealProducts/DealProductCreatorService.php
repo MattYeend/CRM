@@ -4,14 +4,29 @@ namespace App\Services\DealProducts;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Handles creation of product relationships on parent models.
+ *
+ * Attaches one or more products to a parent model (e.g. Deal, Order, Quote)
+ * via a pivot table, including quantity, price, and optional metadata.
+ */
 class DealProductCreatorService
 {
     /**
-     * Attach product(s) to a parent (Deal, Order, Quote)
+     * Attach product(s) to a parent model.
      *
-     * @param Model $parent
+     * Iterates over the provided items and attaches each product to the
+     * parent model without removing existing relationships. Defaults are
+     * applied for missing quantity, price, and meta values.
      *
-     * @param array $items Each item ['product_id', 'quantity', 'price', 'meta']
+     * @param  Model $parent The parent model to attach products to.
+     * @param  array $items Array of product data, each containing:
+     *                      - product_id (int)
+     *                      - quantity (int, optional)
+     *                      - price (float, optional)
+     *                      - meta (array|null, optional)
+     *
+     * @return void
      */
     public function create(Model $parent, array $items): void
     {
