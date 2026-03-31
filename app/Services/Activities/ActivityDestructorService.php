@@ -4,12 +4,21 @@ namespace App\Services\Activities;
 
 use App\Models\Activity;
 
+/**
+ * Handles deletion and restoration of Activity models.
+ *
+ * This service encapsulates logic for soft-deleting and restoring activities,
+ * including tracking which user performed the action and when it occurred.
+ * It ensures audit-related fields are populated alongside model state changes.
+ */
 class ActivityDestructorService
 {
     /**
      * Soft-delete a activity.
      *
-     * @param Activity $activity
+     * Records deletion metadata before performing the soft delete.
+     *
+     * @param  Activity  $activity  The activity model to delete
      *
      * @return void
      */
@@ -28,7 +37,10 @@ class ActivityDestructorService
     /**
      * Restore a trashed activity.
      *
-     * @param int $id
+     * Restores the activity if it is currently soft-deleted and records
+     * restoration metadata.
+     *
+     * @param  int  $id  The ID of the activity to restore
      *
      * @return Activity
      */

@@ -7,10 +7,27 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
+/**
+ * Handles querying and presentation of Activity models.
+ *
+ * This service is responsible for retrieving Activity models with support
+ * for filtering, sorting, pagination, and transformation into a consistent
+ * response structure. It also enriches results with related data and
+ * authorisation metadata for frontend consumption.
+ */
 class ActivityQueryService
 {
     private ActivitySortingService $sorting;
     private ActivityTrashFilterService $trashFilter;
+
+    /**
+     * Create a new service instance.
+     *
+     * @param  ActivitySortingService      $sorting
+     * @param  ActivityTrashFilterService  $trashFilter
+     *
+     * @return void
+     */
     public function __construct(
         ActivitySortingService $sorting,
         ActivityTrashFilterService $trashFilter,
@@ -20,9 +37,13 @@ class ActivityQueryService
     }
 
     /**
-     * Return paginated activities, applying filters/sorting.
+     * Return paginated activities, applying filters and sorting.
      *
-     * @param Request $request
+     * Applies query parameters, eager loads relationships, and appends
+     * permission metadata to the paginated result set.
+     *
+     * @param  Request  $request  The incoming request containing query
+     * parameters
      *
      * @return LengthAwarePaginator
      */
@@ -57,7 +78,9 @@ class ActivityQueryService
     /**
      * Return a single activity.
      *
-     * @param Activity $activity
+     * Formats the activity into a consistent response structure.
+     *
+     * @param  Activity  $activity  The activity model to retrieve
      *
      * @return array
      */
@@ -67,9 +90,12 @@ class ActivityQueryService
     }
 
     /**
-     * Format a activity into an array with user_id, subject, and permissions.
+     * Format a activity into a structured array.
      *
-     * @param Activity $activity
+     * Includes core attributes, related user data, derived subject name,
+     * and authorisation permissions for the current user.
+     *
+     * @param  Activity  $activity
      *
      * @return array
      */
@@ -93,18 +119,21 @@ class ActivityQueryService
     }
 
     /**
-     * Get the subject name.
+     * Resolve the subject name for an activity.
      *
-     * @param Activity $activity
+     * Attempts to derive a displayable name from the related subject
+     * using common attributes such as `name` or `title`.
+     *
+     * @param  Activity  $activity
      *
      * @return string
      */
     private function subjectName(Activity $activity): string
     {
         if ($activity->subject) {
-            $subjectName = $activity->subject->name ??
-                $activity->subject->title ??
-                null;
+            $subjectName = $activity->subject->name
+                ?? $activity->subject->title
+                ?? null;
         }
 
         return $activity->subject_name = $subjectName;

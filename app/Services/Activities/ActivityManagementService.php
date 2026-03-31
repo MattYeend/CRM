@@ -6,12 +6,29 @@ use App\Http\Requests\StoreActivityRequest;
 use App\Http\Requests\UpdateActivityRequest;
 use App\Models\Activity;
 
+/**
+ * Coordinates lifecycle operations for Activity models.
+ *
+ * This service acts as a facade over specialised activity services,
+ * delegating creation, updating, deletion, and restoration logic to
+ * dedicated classes. It provides a single entry point for managing
+ * Activity models while keeping individual responsibilities separated.
+ */
 class ActivityManagementService
 {
     private ActivityCreatorService $creator;
     private ActivityUpdaterService $updater;
     private ActivityDestructorService $destructor;
 
+    /**
+     * Create a new service instance.
+     *
+     * @param  ActivityCreatorService    $creator
+     * @param  ActivityUpdaterService    $updater
+     * @param  ActivityDestructorService $destructor
+     *
+     * @return void
+     */
     public function __construct(
         ActivityCreatorService $creator,
         ActivityUpdaterService $updater,
@@ -25,7 +42,7 @@ class ActivityManagementService
     /**
      * Create a new activity.
      *
-     * @param StoreActivityRequest $request
+     * @param  StoreActivityRequest  $request  The validated request instance
      *
      * @return Activity
      */
@@ -37,9 +54,8 @@ class ActivityManagementService
     /**
      * Update an existing activity.
      *
-     * @param UpdateActivityRequest $request
-     *
-     * @param Activity $activity
+     * @param  UpdateActivityRequest  $request   The validated request instance
+     * @param  Activity               $activity  The activity model to update
      *
      * @return Activity
      */
@@ -53,7 +69,10 @@ class ActivityManagementService
     /**
      * Delete a activity (soft delete).
      *
-     * @param Activity $activity
+     * Delegates to the destructor service to handle audit fields
+     * and soft deletion.
+     *
+     * @param  Activity  $activity  The activity model to delete
      *
      * @return void
      */
@@ -65,7 +84,7 @@ class ActivityManagementService
     /**
      * Restore a soft-deleted activity.
      *
-     * @param int $id
+     * @param  int  $id  The ID of the activity to restore
      *
      * @return Activity
      */

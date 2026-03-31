@@ -6,18 +6,27 @@ use App\Models\Activity;
 use App\Models\Log;
 use App\Models\User;
 
+/**
+ * Handles logging of Activity model events.
+ *
+ * This service centralises the creation of structured log entries for
+ * Activity models, including lifecycle events such as creation, updates,
+ * deletion, restoration, completion, and reopening.
+ *
+ * Each log entry includes base activity data along with contextual metadata
+ * about the user who performed the action and the timestamp at which it
+ * occurred.
+ */
 class ActivityLogService
 {
     /**
      * Log activity when a new activity is created.
      *
-     * @param User $user The user being logged.
+     * @param  User      $user      The user being logged
+     * @param  int       $userId    The ID of the user who performed the action
+     * @param  Activity  $activity  The activity that was created
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Activity $activity The activity that was created.
-     *
-     * @return array The data logged for the activity.
+     * @return array
      */
     public function activityCreated(
         User $user,
@@ -41,13 +50,11 @@ class ActivityLogService
     /**
      * Log activity when an activity is updated.
      *
-     * @param User $user The user being logged.
+     * @param  User      $user      The user being logged
+     * @param  int       $userId    The ID of the user who performed the action
+     * @param  Activity  $activity  The activity that was updated
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Activity $activity The activity that was updated.
-     *
-     * @return array The data logged for the activity.
+     * @return array
      */
     public function activityUpdated(
         User $user,
@@ -71,13 +78,11 @@ class ActivityLogService
     /**
      * Log activity when an activity is deleted.
      *
-     * @param User $user The user being logged.
+     * @param  User      $user      The user being logged
+     * @param  int       $userId    The ID of the user who performed the action
+     * @param  Activity  $activity  The activity that was deleted
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Activity $activity The activity that was deleted.
-     *
-     * @return array The data logged for the activity.
+     * @return array
      */
     public function activityDeleted(
         User $user,
@@ -101,13 +106,11 @@ class ActivityLogService
     /**
      * Log activity when an activity is restored.
      *
-     * @param User $user The user being logged.
+     * @param  User      $user      The user being logged
+     * @param  int       $userId    The ID of the user who performed the action
+     * @param  Activity  $activity  The activity that was restored
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Activity $activity The activity that was restored.
-     *
-     * @return array The data logged for the activity.
+     * @return array
      */
     public function activityRestored(
         User $user,
@@ -131,13 +134,11 @@ class ActivityLogService
     /**
      * Log activity when an activity is completed.
      *
-     * @param User $user The user being logged.
+     * @param  User      $user      The user being logged
+     * @param  int       $userId    The ID of the user who performed the action
+     * @param  Activity  $activity  The activity that was completed
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Activity $activity The activity that was completed.
-     *
-     * @return array The data logged for the activity.
+     * @return array
      */
     public function activityCompleted(
         User $user,
@@ -161,13 +162,11 @@ class ActivityLogService
     /**
      * Log activity when an activity is reopened.
      *
-     * @param User $user The user being logged.
+     * @param  User      $user      The user being logged
+     * @param  int       $userId    The ID of the user who performed the action
+     * @param  Activity  $activity  The activity that was reopened
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Activity $activity The activity that was reopened.
-     *
-     * @return array The data logged for the activity.
+     * @return array
      */
     public function activityReopened(
         User $user,
@@ -175,8 +174,8 @@ class ActivityLogService
         Activity $activity
     ): array {
         $data = $this->baseActivityData($activity) + [
-            'restored_at' => now(),
             'restored_by' => $user->name,
+            'restored_at' => now(),
         ];
 
         Log::log(
@@ -189,11 +188,14 @@ class ActivityLogService
     }
 
     /**
-     * Construct base data array for a Activity.
+     * Construct the base data array for an Activity model.
      *
-     * @param Activity $activity The activity being logged.
+     * Provides a consistent subset of activity attributes included
+     * in all log entries.
      *
-     * @return array The base data for logging.
+     * @param  Activity  $activity  The activity being logged
+     *
+     * @return array
      */
     protected function baseActivityData(Activity $activity): array
     {
