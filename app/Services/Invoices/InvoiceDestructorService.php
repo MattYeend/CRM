@@ -4,12 +4,22 @@ namespace App\Services\Invoices;
 
 use App\Models\Invoice;
 
+/**
+ * Handles soft deletion and restoration of Invoice records.
+ *
+ * Writes audit fields before delegating to Eloquent's soft-delete and
+ * restore methods, ensuring the deleted_by, deleted_at, restored_by,
+ * and restored_at columns are always populated.
+ */
 class InvoiceDestructorService
 {
     /**
      * Soft-delete a invoice.
      *
-     * @param Invoice $invoice
+     * Records the authenticated user and timestamp in the audit columns
+     * before soft-deleting the invoice.
+     *
+     * @param  Invoice $invoice The invoice to soft-delete.
      *
      * @return void
      */
@@ -26,11 +36,16 @@ class InvoiceDestructorService
     }
 
     /**
-     * Restore a trashed invoice.
+     * Restore a soft-deleted invoice.
      *
-     * @param int $id
+     * Looks up the invoice item including trashed records, records the
+     * authenticated user and timestamp in the audit columns, then restores
+     * the invoice. Returns the invoice item unchanged if it is not
+     * currently trashed.
      *
-     * @return Invoice
+     * @param  int $id The primary key of the soft-deleted invoice item.
+     *
+     * @return Invoice The restored invoice instance.
      */
     public function restore(int $id): Invoice
     {

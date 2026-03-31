@@ -5,16 +5,26 @@ namespace App\Services\JobTitles;
 use App\Http\Requests\UpdateJobTitleRequest;
 use App\Models\JobTitle;
 
+/**
+ * Handles updates to JobTitle records.
+ *
+ * Validates incoming request data, assigns audit fields, and persists
+ * updates to the job title.
+ */
 class JobTitleUpdaterService
 {
     /**
-     * Update the job title using request data.
+     * Update an existing job title.
      *
-     * @param UpdateJobTitleRequest $request
+     * Extracts validated data from the request, assigns the authenticated
+     * user and timestamp to audit fields, updates the job title, and returns
+     * a fresh instance.
      *
-     * @param JobTitle $jobTitle
+     * @param  UpdateJobTitleRequest $request The request containing
+     * validated job title data.
+     * @param  JobTitle $jobTitle The job title to update.
      *
-     * @return JobTitle
+     * @return JobTitle The updated job title instance.
      */
     public function update(
         UpdateJobTitleRequest $request,

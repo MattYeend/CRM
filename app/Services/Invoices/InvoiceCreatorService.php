@@ -5,14 +5,24 @@ namespace App\Services\Invoices;
 use App\Http\Requests\StoreInvoiceRequest;
 use App\Models\Invoice;
 
+/**
+ * Handles creation of Invoice records.
+ *
+ * Validates incoming request data, assigns audit fields, and persists
+ * a new invoice record.
+ */
 class InvoiceCreatorService
 {
     /**
-     * Create a new invoice from request data.
+     * Create a new invoice.
      *
-     * @param StoreInvoiceRequest $request
+     * Extracts validated data from the request, assigns the authenticated
+     * user and timestamp to audit fields, and creates the invoice record.
      *
-     * @return Invoice
+     * @param  StoreInvoiceRequest $request The request containing validated
+     * invoice data.
+     *
+     * @return Invoice The newly created invoice instance.
      */
     public function create(StoreInvoiceRequest $request): Invoice
     {

@@ -6,140 +6,119 @@ use App\Models\InvoiceItem;
 use App\Models\Log;
 use App\Models\User;
 
+/**
+ * Handles logging of actions performed on InvoiceItem models.
+ *
+ * Supports creation, updates, deletion, and restoration logs.
+ * Builds base log data and appends user and timestamp information.
+ */
 class InvoiceItemLogService
 {
     /**
-     * Log the creation of an Invoice Item.
+     * Log the creation of an invoice item.
      *
-     * @param User $user The user being logged
+     * @param  User $user  The user performing the action
+     * @param  int $userId  The ID of the user performing the action
+     * @param  InvoiceItem $invoiceItem  The invoice item that was created
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param InvoiceItem $invoiceItem The invoice item was created.
-     *
-     * @return Log The created log entry.
+     * @return array
      */
     public function invoiceItemCreated(
         User $user,
         int $userId,
         InvoiceItem $invoiceItem
     ): array {
-        $data = $this->baseInvoiceItemData($invoiceItem, $user) + [
+        $data = $this->baseInvoiceItemData($invoiceItem) + [
             'created_at' => now(),
             'created_by' => $user->name,
         ];
 
-        Log::log(
-            Log::ACTION_INVOICE_ITEM_CREATED,
-            $data,
-            $userId,
-        );
+        Log::log(Log::ACTION_INVOICE_ITEM_CREATED, $data, $userId);
 
         return $data;
     }
 
     /**
-     * Log the update of an Invoice Item.
+     * Log the update of an invoice item.
      *
-     * @param User $user The user being logged.
+     * @param  User $user
+     * @param  int $userId
+     * @param  InvoiceItem $invoiceItem
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param InvoiceItem $invoiceItem The invoice item was updated.
-     *
-     * @return Log The created log entry.
+     * @return array
      */
     public function invoiceItemUpdated(
         User $user,
         int $userId,
         InvoiceItem $invoiceItem
     ): array {
-        $data = $this->baseInvoiceItemData($invoiceItem, $user) + [
+        $data = $this->baseInvoiceItemData($invoiceItem) + [
             'updated_at' => now(),
             'updated_by' => $user->name,
         ];
 
-        Log::log(
-            Log::ACTION_INVOICE_ITEM_UPDATED,
-            $data,
-            $userId,
-        );
+        Log::log(Log::ACTION_INVOICE_ITEM_UPDATED, $data, $userId);
 
         return $data;
     }
 
     /**
-     * Log the deletion of an Invoice Item.
+     * Log the deletion of an invoice item.
      *
-     * @param User $user The user being logged.
+     * @param  User $user
+     * @param  int $userId
+     * @param  InvoiceItem $invoiceItem
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param InvoiceItem $invoiceItem The invoice item was deleted.
-     *
-     * @return Log The created log entry.
+     * @return array
      */
     public function invoiceItemDeleted(
         User $user,
         int $userId,
         InvoiceItem $invoiceItem
     ): array {
-        $data = $this->baseInvoiceItemData($invoiceItem, $user) + [
+        $data = $this->baseInvoiceItemData($invoiceItem) + [
             'deleted_at' => now(),
             'deleted_by' => $user->name,
         ];
 
-        Log::log(
-            Log::ACTION_INVOICE_ITEM_DELETED,
-            $data,
-            $userId,
-        );
+        Log::log(Log::ACTION_INVOICE_ITEM_DELETED, $data, $userId);
 
         return $data;
     }
 
     /**
-     * Log the restoration of an Invoice Item.
+     * Log the restoration of an invoice item.
      *
-     * @param User $user The user being logged.
+     * @param  User  $user
+     * @param  int $userId
+     * @param  InvoiceItem $invoiceItem
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param InvoiceItem $invoiceItem The invoice item was restored.
-     *
-     * @return Log The created log entry.
+     * @return array
      */
     public function invoiceItemRestored(
         User $user,
         int $userId,
         InvoiceItem $invoiceItem
     ): array {
-        $data = $this->baseInvoiceItemData($invoiceItem, $user) + [
+        $data = $this->baseInvoiceItemData($invoiceItem) + [
             'restored_at' => now(),
             'restored_by' => $user->name,
         ];
 
-        Log::log(
-            Log::ACTION_INVOICE_ITEM_RESTORED,
-            $data,
-            $userId,
-        );
+        Log::log(Log::ACTION_INVOICE_ITEM_RESTORED, $data, $userId);
 
         return $data;
     }
 
     /**
-     * Prepare base data for an Invoice Item log entry.
+     * Build base data for invoice item log entries.
      *
-     * @param InvoiceItem $invoiceItem The invoice item being logged.
+     * @param  InvoiceItem $invoiceItem
      *
-     * @param User $user The user that performed the action.
-     *
-     * @return array The base data for the log entry.
+     * @return array
      */
-    protected function baseInvoiceItemData(
-        InvoiceItem $invoiceItem
-    ): array {
+    protected function baseInvoiceItemData(InvoiceItem $invoiceItem): array
+    {
         return [
             'id' => $invoiceItem->id,
             'invoice_id' => $invoiceItem->invoice_id,

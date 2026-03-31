@@ -5,40 +5,93 @@ namespace App\Services\DealProducts;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Handles updates to product relationships on parent models.
+ * Central service for managing product relationships on parent models.
  *
- * Updates pivot data such as quantity, price, and metadata for
- * products already attached to the parent model.
+ * Delegates creation, update, removal, and restoration of product
+ * relationships to the respective services, providing a unified API
+ * for managing pivot data.
  */
-class DealProductUpdaterService
+class DealProductManagementService
 {
+    private DealProductCreatorService $creator;
+    private DealProductUpdaterService $updater;
+    private DealProductDestructorService $destructor;
+
+    /**
+     * Inject the required services into the management service.
+     *
+     * @param  DealProductCreatorService $creator Handles product attachment.
+     * @param  DealProductUpdaterService $updater Handles pivot updates.
+     * @param  DealProductDestructorService $destructor Handles removal
+     * and restoration.
+     */
+    public function __construct(
+        DealProductCreatorService $creator,
+        DealProductUpdaterService $updater,
+        DealProductDestructorService $destructor,
+    ) {
+        $this->creator = $creator;
+        $this->updater = $updater;
+        $this->destructor = $destructor;
+    }
+
+    /**
+     * Attach product(s) to a parent model.
+     *
+     * Delegates to the creator service to attach products with pivot data.
+     *
+     * @param  Model $parent The parent model.
+     * @param  array $items Array of product data.
+     *
+     * @return void
+     */
+    public function add(Model $parent, array $items): void
+    {
+        $this->creator->create($parent, $items);
+    }
+
     /**
      * Update pivot data for products attached to a parent model.
      *
-     * Iterates over the provided items and updates the pivot data for
-     * each associated product. Defaults are applied for missing values.
+     * Delegates to the updater service to modify pivot data.
      *
      * @param  Model $parent The parent model.
-     * @param  array $items Array of product data, each containing:
-     *                      - product_id (int)
-     *                      - quantity (int, optional)
-     *                      - price (float, optional)
-     *                      - meta (array|null, optional)
+     * @param  array $items Array of product data.
      *
      * @return void
      */
     public function update(Model $parent, array $items): void
     {
-        foreach ($items as $item) {
-            $quantity = $item['quantity'] ?? 1;
-            $price = $item['price'] ?? 0;
-            $meta = $item['meta'] ?? null;
+        $this->updater->update($parent, $items);
+    }
 
-            $parent->products()->updateExistingPivot($item['product_id'], [
-                'quantity' => $quantity,
-                'price' => $price,
-                'meta' => $meta,
-            ]);
-        }
+    /**
+     * Remove a product from a parent model.
+     *
+     * Delegates to the destructor service to detach the product.
+     *
+     * @param  Model $parent The parent model.
+     * @param  int $productId The ID of the product to remove.
+     *
+     * @return void
+     */
+    public function remove(Model $parent, int $productId): void
+    {
+        $this->destructor->remove($parent, $productId);
+    }
+
+    /**
+     * Restore a previously removed product on a parent model.
+     *
+     * Delegates to the destructor service to restore the pivot relationship.
+     *
+     * @param  Model $parent The parent model.
+     * @param  int $productId The ID of the product to restore.
+     *
+     * @return void
+     */
+    public function restore(Model $parent, int $productId): void
+    {
+        $this->destructor->restore($parent, $productId);
     }
 }

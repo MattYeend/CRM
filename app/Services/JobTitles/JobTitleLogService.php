@@ -6,18 +6,25 @@ use App\Models\JobTitle;
 use App\Models\Log;
 use App\Models\User;
 
+/**
+ * Handles audit logging for JobTitle lifecycle events.
+ *
+ * Each public method writes a structured log entry via the Log model for
+ * a specific job title action, combining base job title data with
+ * action-specific timestamp and actor fields.
+ */
 class JobTitleLogService
 {
     /**
-     * Log the creation of a JobTitle.
+     * Log a job title creation event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
      *
-     * @param int $userId The ID of the user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
      *
-     * @param JobTitle $jobTitle The lead that was created.
+     * @param  JobTitle $jobTitle The job title that was created.
      *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function jobTitleCreated(
         User $user,
@@ -39,15 +46,15 @@ class JobTitleLogService
     }
 
     /**
-     * Log the update of a JobTitle.
+     * Log a job title update event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
      *
-     * @param int $userId The ID of the user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
      *
-     * @param JobTitle $jobTitle The jobTitle that was updated.
+     * @param  JobTitle $jobTitle The job title that was updated.
      *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function jobTitleUpdated(
         User $user,
@@ -69,15 +76,15 @@ class JobTitleLogService
     }
 
     /**
-     * Log the deletion of a JobTitle.
+     * Log a job title deletion event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
      *
-     * @param int $userId The ID of the user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
      *
-     * @param JobTitle $jobTitle The lead that was deleted.
+     * @param  JobTitle $jobTitle The job title that was deleted.
      *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function jobTitleDeleted(
         User $user,
@@ -99,15 +106,15 @@ class JobTitleLogService
     }
 
     /**
-     * Log the restoration of a JobTitle.
+     * Log a job title restoration event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
      *
-     * @param int $userId The ID of the user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
      *
-     * @param JobTitle $jobTitle The jobTitle that was restored.
+     * @param  JobTitle $jobTitle The job title that was restored.
      *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function jobTitleRestored(
         User $user,
@@ -129,13 +136,13 @@ class JobTitleLogService
     }
 
     /**
-     * Build the common data array for a JobTitle log entry.
+     * Build the base data array shared across all job title log entries.
      *
-     * @param JobTitle $jobTitle
+     * @param  JobTitle $jobTitle The job title being logged.
      *
-     * @return array
+     * @return array The base fields extracted from the job title.
      */
-    private function baseJobTitleData($jobTitle): array
+    private function baseJobTitleData(JobTitle $jobTitle): array
     {
         return [
             'id' => $jobTitle->id,

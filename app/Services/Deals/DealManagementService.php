@@ -15,8 +15,25 @@ use App\Models\Deal;
  */
 class DealManagementService
 {
+    /**
+     * Service responsible for creating new deal records.
+     *
+     * @var DealCreatorService
+     */
     private DealCreatorService $creator;
+
+    /**
+     * Service responsible for updating existing dealrecords.
+     *
+     * @var DealUpdaterService
+     */
     private DealUpdaterService $updater;
+
+    /**
+     * Service responsible for soft-deleting and restoring deal records.
+     *
+     * @var DealDestructorService
+     */
     private DealDestructorService $destructor;
 
     /**

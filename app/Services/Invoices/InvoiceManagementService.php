@@ -6,12 +6,44 @@ use App\Http\Requests\StoreInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Models\Invoice;
 
+/**
+ * Central service for managing Invoice records.
+ *
+ * Delegates creation, update, deletion, and restoration operations to
+ * the respective creator, updater, and destructor services, providing
+ * a unified interface for invoice management.
+ */
 class InvoiceManagementService
 {
+    /**
+     * Service responsible for creating new invoice records.
+     *
+     * @var InvoiceCreatorService
+     */
     private InvoiceCreatorService $creator;
+
+    /**
+     * Service responsible for updating existing invoice records.
+     *
+     * @var InvoiceUpdaterService
+     */
     private InvoiceUpdaterService $updater;
+
+    /**
+     * Service responsible for soft-deleting and restoring invoice records.
+     *
+     * @var InvoiceDestructorService
+     */
     private InvoiceDestructorService $destructor;
 
+    /**
+     * Inject the required services into the management service.
+     *
+     * @param  InvoiceCreatorService $creator Handles invoice creation.
+     * @param  InvoiceUpdaterService $updater Handles invoice updates.
+     * @param  InvoiceDestructorService $destructor Handles deletion
+     * and restoration.
+     */
     public function __construct(
         InvoiceCreatorService $creator,
         InvoiceUpdaterService $updater,
@@ -25,9 +57,12 @@ class InvoiceManagementService
     /**
      * Create a new invoice.
      *
-     * @param StoreInvoiceRequest $request
+     * Delegates to the creator service to validate and store the invoice.
      *
-     * @return Invoice
+     * @param  StoreInvoiceRequest $request The request containing invoice
+     * data.
+     *
+     * @return Invoice The newly created invoice instance.
      */
     public function store(StoreInvoiceRequest $request): Invoice
     {
@@ -35,13 +70,15 @@ class InvoiceManagementService
     }
 
     /**
-     * Update an existing invoice.
+     * Update an existing Invoice.
      *
-     * @param UpdateInvoiceRequest $request
+     * Delegates to the updater service to modify the Invoice data.
      *
-     * @param Invoice $invoice
+     * @param  UpdateInvoiceRequest $request The request containing
+     * updated invoice data.
+     * @param  Invoice $Invoice The Invoice to update.
      *
-     * @return Invoice
+     * @return Invoice The updated Invoice instance.
      */
     public function update(
         UpdateInvoiceRequest $request,
@@ -51,9 +88,11 @@ class InvoiceManagementService
     }
 
     /**
-     * Delete a invoice (soft delete).
+     * Soft-delete a invoice.
      *
-     * @param Invoice $invoice
+     * Delegates to the destructor service to perform a soft-delete.
+     *
+     * @param  Invoice $invoice The invoice to delete.
      *
      * @return void
      */
@@ -65,9 +104,11 @@ class InvoiceManagementService
     /**
      * Restore a soft-deleted invoice.
      *
-     * @param int $id
+     * Delegates to the destructor service to restore the invoice.
      *
-     * @return Invoice
+     * @param  int $id The primary key of the soft-deleted invoice.
+     *
+     * @return Invoice The restored invoice instance.
      */
     public function restore(int $id): Invoice
     {

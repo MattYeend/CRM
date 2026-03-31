@@ -5,16 +5,26 @@ namespace App\Services\Invoices;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Models\Invoice;
 
+/**
+ * Handles updates to Invoice records.
+ *
+ * Validates incoming request data, assigns audit fields, and persists
+ * updates to the invoice.
+ */
 class InvoiceUpdaterService
 {
     /**
-     * Update the invoice using request data.
+     * Update an existing invoice.
      *
-     * @param UpdateInvoiceRequest $request
+     * Extracts validated data from the request, assigns the authenticated
+     * user and timestamp to audit fields, updates the invoice, and returns
+     * a fresh instance.
      *
-     * @param Invoice $invoice
+     * @param  UpdateInvoiceRequest $request The request containing
+     * validated invoice data.
+     * @param  Invoice $invoice The invoice to update.
      *
-     * @return Invoice
+     * @return Invoice The updated invoice instance.
      */
     public function update(
         UpdateInvoiceRequest $request,

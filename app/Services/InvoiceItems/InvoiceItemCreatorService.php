@@ -5,14 +5,24 @@ namespace App\Services\InvoiceItems;
 use App\Http\Requests\StoreInvoiceItemRequest;
 use App\Models\InvoiceItem;
 
+/**
+ * Handles creation of InvoiceItem records.
+ *
+ * Validates incoming request data, assigns audit fields, and persists
+ * a new invoiceItem record.
+ */
 class InvoiceItemCreatorService
 {
     /**
-     * Create a new invoice item from request data.
+     * Create a new invoiceItem.
      *
-     * @param StoreInvoiceItemRequest $request
+     * Extracts validated data from the request, assigns the authenticated
+     * user and timestamp to audit fields, and creates the invoiceItem record.
      *
-     * @return InvoiceItem
+     * @param  StoreInvoiceItemRequest $request The request containing validated
+     * invoiceItem data.
+     *
+     * @return InvoiceItem The newly created invoiceItem instance.
      */
     public function create(StoreInvoiceItemRequest $request): InvoiceItem
     {

@@ -6,12 +6,44 @@ use App\Http\Requests\StoreInvoiceItemRequest;
 use App\Http\Requests\UpdateInvoiceItemRequest;
 use App\Models\InvoiceItem;
 
+/**
+ * Central service for managing InvoiceItem records.
+ *
+ * Delegates creation, update, deletion, and restoration operations to
+ * the respective creator, updater, and destructor services, providing
+ * a unified interface for invoice item management.
+ */
 class InvoiceItemManagementService
 {
+    /**
+     * Service responsible for creating new invoice item records.
+     *
+     * @var InvoiceItemCreatorService
+     */
     private InvoiceItemCreatorService $creator;
+
+    /**
+     * Service responsible for updating existing invoice item records.
+     *
+     * @var InvoiceItemUpdaterService
+     */
     private InvoiceItemUpdaterService $updater;
+
+    /**
+     * Service responsible for soft-deleting and restoring invoice item records.
+     *
+     * @var InvoiceItemDestructorService
+     */
     private InvoiceItemDestructorService $destructor;
 
+    /**
+     * Inject the required services into the management service.
+     *
+     * @param  InvoiceItemCreatorService $creator Handles invoice item creation.
+     * @param  InvoiceItemUpdaterService $updater Handles invoice item updates.
+     * @param  InvoiceItemDestructorService $destructor Handles deletion
+     * and restoration.
+     */
     public function __construct(
         InvoiceItemCreatorService $creator,
         InvoiceItemUpdaterService $updater,
@@ -25,9 +57,12 @@ class InvoiceItemManagementService
     /**
      * Create a new invoice item.
      *
-     * @param StoreInvoiceItemRequest $request
+     * Delegates to the creator service to validate and store the invoice item.
      *
-     * @return InvoiceItem
+     * @param  StoreInvoiceItemRequest $request The request containing invoice
+     * item data.
+     *
+     * @return InvoiceItem The newly created invoice item instance.
      */
     public function store(StoreInvoiceItemRequest $request): InvoiceItem
     {
@@ -35,13 +70,15 @@ class InvoiceItemManagementService
     }
 
     /**
-     * Update an existing invoice item.
+     * Update an existing InvoiceItem.
      *
-     * @param UpdateInvoiceItemRequest $request
+     * Delegates to the updater service to modify the InvoiceItem data.
      *
-     * @param InvoiceItem $invoiceItem
+     * @param  UpdateInvoiceItemRequest $request The request containing
+     * updated invoice item data.
+     * @param  InvoiceItem $InvoiceItem The InvoiceItem to update.
      *
-     * @return InvoiceItem
+     * @return InvoiceItem The updated InvoiceItem instance.
      */
     public function update(
         UpdateInvoiceItemRequest $request,
@@ -51,9 +88,11 @@ class InvoiceItemManagementService
     }
 
     /**
-     * Delete a invoice item (soft delete).
+     * Soft-delete a invoiceItem.
      *
-     * @param InvoiceItem $invoiceItem
+     * Delegates to the destructor service to perform a soft-delete.
+     *
+     * @param  InvoiceItem $invoiceItem The invoiceItem to delete.
      *
      * @return void
      */
@@ -63,11 +102,13 @@ class InvoiceItemManagementService
     }
 
     /**
-     * Restore a soft-deleted invoice item.
+     * Restore a soft-deleted invoiceItem.
      *
-     * @param int $id
+     * Delegates to the destructor service to restore the invoiceItem.
      *
-     * @return InvoiceItem
+     * @param  int $id The primary key of the soft-deleted invoiceItem.
+     *
+     * @return InvoiceItem The restored invoiceItem instance.
      */
     public function restore(int $id): InvoiceItem
     {

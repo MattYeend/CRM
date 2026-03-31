@@ -6,18 +6,22 @@ use App\Models\Invoice;
 use App\Models\Log;
 use App\Models\User;
 
+/**
+ * Handles logging of actions performed on Invoice models.
+ *
+ * Supports creation, updates, deletion, and restoration logs.
+ * Builds base log data and appends user and timestamp information.
+ */
 class InvoiceLogService
 {
     /**
-     * Log the creation of an Invoice.
+     * Log the creation of an invoice.
      *
-     * @param User $user The user being logged.
+     * @param  User $user  The user performing the action
+     * @param  int $userId  The ID of the user performing the action
+     * @param  Invoice $invoice  The invoice that was created
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Invoice $invoice The invoice that was created.
-     *
-     * @return Log The created log entry.
+     * @return array
      */
     public function invoiceCreated(
         User $user,
@@ -39,15 +43,13 @@ class InvoiceLogService
     }
 
     /**
-     * Log the update of an Invoice.
+     * Log the update of an invoice.
      *
-     * @param User $user The user being logged.
+     * @param  User $user
+     * @param  int $userId
+     * @param  Invoice $invoice
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Invoice $invoice The invoice that was updated.
-     *
-     * @return Log The created log entry.
+     * @return array
      */
     public function invoiceUpdated(
         User $user,
@@ -69,15 +71,13 @@ class InvoiceLogService
     }
 
     /**
-     * Log the deletion of an Invoice.
+     * Log the deletion of an invoice.
      *
-     * @param User $user The user being logged.
+     * @param  User $user
+     * @param  int $userId
+     * @param  Invoice $invoice
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Invoice $invoice The invoice that was deleted.
-     *
-     * @return Log The created log entry.
+     * @return array
      */
     public function invoiceDeleted(
         User $user,
@@ -99,15 +99,13 @@ class InvoiceLogService
     }
 
     /**
-     * Log the restoration of an Invoice.
+     * Log the restoration of an invoice.
      *
-     * @param User $user The user being logged.
+     * @param  User  $user
+     * @param  int $userId
+     * @param  Invoice $invoice
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Invoice $invoice The invoice that was restored.
-     *
-     * @return Log The created log entry.
+     * @return array
      */
     public function invoiceRestored(
         User $user,
@@ -132,12 +130,10 @@ class InvoiceLogService
      * Log the sending of an Invoice.
      *
      * @param User $user The user being logged.
-     *
      * @param int $userId The ID of the user who performed the action.
-     *
      * @param Invoice $invoice The invoice was sent.
      *
-     * @return Log The created log entry.
+     * @return array
      */
     public function invoiceSent(
         User $user,
@@ -162,12 +158,10 @@ class InvoiceLogService
      * Log the payment of an Invoice.
      *
      * @param User $user The user being logged.
-     *
      * @param int $userId The ID of the user who performed the action.
-     *
      * @param Invoice $invoice The invoice was paid.
      *
-     * @return Log The created log entry.
+     * @return array
      */
     public function invoicePaid(
         User $user,
@@ -192,12 +186,10 @@ class InvoiceLogService
      * Log the overdue status of an Invoice.
      *
      * @param User $user The user being logged.
-     *
      * @param int $userId The ID of the user who performed the action.
-     *
      * @param Invoice $invoice The invoice was marked as overdue.
      *
-     * @return Log The created log entry.
+     * @return array
      */
     public function invoiceOverdue(
         User $user,
@@ -219,9 +211,9 @@ class InvoiceLogService
     }
 
     /**
-     * Build the common data array for an Invoice log entry.
+     * Build base data for invoice log entries.
      *
-     * @param Invoice $invoice
+     * @param  Invoice $invoice
      *
      * @return array
      */

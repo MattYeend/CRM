@@ -65,7 +65,8 @@ class BillOfMaterialQueryService
         );
 
         $query = $part->billOfMaterials()
-            ->with('childPart:id,sku,name,quantity,unit_of_measure');
+            ->with('childPart:id,sku,name,quantity,unit_of_measure')
+            ->getQuery();
 
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
