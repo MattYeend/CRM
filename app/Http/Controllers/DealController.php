@@ -67,13 +67,10 @@ class DealController extends Controller
      * Inject the required services into the controller.
      *
      * @param  DealLogService $logger Handles audit logging for deal events.
-     *
      * @param  DealManagementService $management Handles deal
      * create/update/delete/restore.
-     *
      * @param  DealQueryService $query Handles deal listing and
      * retrieval.
-     *
      * @param  DealProductManagementService $dealProductManagement
      * Handles attaching, updating, and removing products on deals.
      */
@@ -170,7 +167,6 @@ class DealController extends Controller
      *
      * @param  UpdateDealRequest $request Validated request containing updated
      * deal data.
-     *
      * @param  Deal $deal Route-model-bound deal instance to
      * update.
      *
@@ -271,7 +267,6 @@ class DealController extends Controller
      *
      * @param  Request $request The HTTP request containing the
      * 'products' array.
-     *
      * @param  Deal $deal Route-model-bound deal instance to attach products to.
      *
      * @return JsonResponse Confirmation message on success.
@@ -295,7 +290,6 @@ class DealController extends Controller
      *
      * @param  Request $request The HTTP request containing the
      * 'products' array.
-     *
      * @param  Deal $deal Route-model-bound deal instance whose products
      * will be updated.
      *
@@ -315,7 +309,6 @@ class DealController extends Controller
      *
      * @param  Deal $deal Route-model-bound deal instance to remove the
      * product from.
-     *
      * @param  Product $product Route-model-bound product instance to detach.
      *
      * @return void
@@ -333,7 +326,6 @@ class DealController extends Controller
      *
      * @param  Deal $deal Route-model-bound deal instance to restore the
      * product on.
-     *
      * @param  Product $product Route-model-bound product instance to restore.
      *
      * @return void

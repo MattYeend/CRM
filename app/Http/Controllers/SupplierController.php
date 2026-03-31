@@ -56,10 +56,8 @@ class SupplierController extends Controller
      *
      * @param  SupplierLogService $logger Handles audit logging for
      * supplier events.
-     *
      * @param  SupplierManagementService $management Handles supplier
      * create/update/delete/restore.
-     *
      * @param  SupplierQueryService $query Handles supplier listing and
      * retrieval.
      */
@@ -155,7 +153,6 @@ class SupplierController extends Controller
      *
      * @param  UpdateSupplierRequest $request Validated request containing
      * updated supplier data.
-     *
      * @param  Supplier $supplier Route-model-bound supplier instance to update.
      *
      * @return JsonResponse The updated supplier resource.

@@ -66,12 +66,9 @@ class QuoteController extends Controller
      * Inject the required services into the controller.
      *
      * @param QuoteLogService $logger Handles audit logging for quote events.
-     *
      * @param QuoteManagementService $management Handles quote
      * create/update/delete/restore.
-     *
      * @param QuoteQueryService $query Handles quote listing and retrieval.
-     *
      * @param QuoteProductManagementService $quoteProductManagement Handles
      * product associations on a quote.
      */
@@ -165,7 +162,6 @@ class QuoteController extends Controller
      *
      * @param UpdateQuoteRequest $request Validated request containing updated
      * quote data.
-     *
      * @param Quote $quote Route-model-bound quote instance to update.
      *
      * @return JsonResponse The updated quote resource.
@@ -261,7 +257,6 @@ class QuoteController extends Controller
      *
      * @param Request $request Incoming HTTP request containing a 'products'
      * array.
-     *
      * @param Quote $quote Route-model-bound quote instance to attach products
      * to.
      *
@@ -283,7 +278,6 @@ class QuoteController extends Controller
      *
      * @param Request $request Incoming HTTP request containing a 'products'
      * array.
-     *
      * @param Quote $quote Route-model-bound quote instance whose product
      * associations should be updated.
      *
@@ -305,7 +299,6 @@ class QuoteController extends Controller
      *
      * @param Quote $quote Route-model-bound quote instance to remove the
      * product from.
-     *
      * @param Product $product Route-model-bound product instance to remove.
      *
      * @return JsonResponse Confirmation message on success.
@@ -325,7 +318,6 @@ class QuoteController extends Controller
      *
      * @param Quote $quote Route-model-bound quote instance to restore the
      * product to.
-     *
      * @param Product $product Route-model-bound product instance to restore.
      *
      * @return JsonResponse Confirmation message on success.

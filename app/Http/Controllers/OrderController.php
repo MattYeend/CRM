@@ -66,12 +66,9 @@ class OrderController extends Controller
      * Inject the required services into the controller.
      *
      * @param  OrderLogService $logger Handles audit logging for order events.
-     *
      * @param  OrderManagementService $management Handles order
      * create/update/delete/restore.
-     *
      * @param  OrderQueryService $query Handles order listing and retrieval.
-     *
      * @param  OrderProductManagementService $orderProductManagement Handles
      * product associations on an order.
      */
@@ -169,7 +166,6 @@ class OrderController extends Controller
      *
      * @param  UpdateOrderRequest $request Validated request containing updated
      * order data.
-     *
      * @param  Order $order Route-model-bound order instance to update.
      *
      * @return JsonResponse The updated order resource.
@@ -266,7 +262,6 @@ class OrderController extends Controller
      *
      * @param  Request $request Incoming HTTP request containing a 'products'
      * array.
-     *
      * @param  Order $order Route-model-bound order instance to add products to.
      *
      * @return JsonResponse Confirmation message on success.
@@ -287,7 +282,6 @@ class OrderController extends Controller
      *
      * @param  Request $request Incoming HTTP request containing a 'products'
      * array.
-     *
      * @param  Order $order Route-model-bound order instance whose products
      * should be updated.
      *
@@ -309,7 +303,6 @@ class OrderController extends Controller
      *
      * @param  Order $order Route-model-bound order instance to remove the
      * product from.
-     *
      * @param  Product $product Route-model-bound product instance to remove.
      *
      * @return JsonResponse Confirmation message on success.
@@ -329,7 +322,6 @@ class OrderController extends Controller
      *
      * @param  Order $order Route-model-bound order instance to restore the
      * product to.
-     *
      * @param  Product $product Route-model-bound product instance to restore.
      *
      * @return JsonResponse Confirmation message on success.

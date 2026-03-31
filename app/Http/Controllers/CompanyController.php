@@ -56,10 +56,8 @@ class CompanyController extends Controller
      *
      * @param  CompanyLogService $logger Handles audit logging for
      * company events.
-     *
      * @param  CompanyManagementService $management Handles company
      * create/update/delete/restore.
-     *
      * @param  CompanyQueryService $query Handles company listing and
      * retrieval.
      */
@@ -155,7 +153,6 @@ class CompanyController extends Controller
      *
      * @param  UpdateCompanyRequest $request Validated request containing
      * updated company data.
-     *
      * @param  Company $company Route-model-bound company instance
      * to update.
      *

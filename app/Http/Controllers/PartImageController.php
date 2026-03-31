@@ -56,10 +56,8 @@ class PartImageController extends Controller
      *
      * @param  PartImageLogService $logger Handles audit logging for part image
      * events.
-     *
      * @param  PartImageManagementService $management Handles part image
      * create/update/delete/restore.
-     *
      * @param  PartImageQueryService $query Handles part image listing and
      * retrieval.
      */
@@ -155,7 +153,6 @@ class PartImageController extends Controller
      *
      * @param  UpdatePartImageRequest $request Validated request containing
      * updated part image data.
-     *
      * @param  PartImage $partImage Route-model-bound part image instance to
      * update.
      *

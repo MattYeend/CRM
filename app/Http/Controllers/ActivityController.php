@@ -56,10 +56,8 @@ class ActivityController extends Controller
      *
      * @param  ActivityLogService $logger Handles audit logging for activity
      * events.
-     *
      * @param  ActivityManagementService $management Handles activity
      * create/update/delete/restore.
-     *
      * @param  ActivityQueryService $query Handles activity listing and
      * retrieval.
      */
@@ -164,7 +162,6 @@ class ActivityController extends Controller
      *
      * @param  UpdateActivityRequest $request Validated request containing
      * updated activity data.
-     *
      * @param  Activity $activity Route-model-bound activity instance to update.
      *
      * @return JsonResponse The updated activity resource.

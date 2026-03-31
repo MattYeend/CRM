@@ -89,18 +89,13 @@ class ProductController extends Controller
      *
      * @param ProductLogService $logger Handles audit logging for product
      * events.
-     *
      * @param ProductManagementService $management Handles product
      * create/update/delete/restore.
-     *
      * @param ProductQueryService $query Handles product listing and retrieval.
-     *
      * @param DealProductManagementService $dealProductManagement Handles deal
      * associations on a product.
-     *
      * @param OrderProductManagementService $orderProductManagement Handles
      * order associations on a product.
-     *
      * @param QuoteProductManagementService $quoteProductManagement Handles
      * quote associations on a product.
      */
@@ -202,7 +197,6 @@ class ProductController extends Controller
      *
      * @param UpdateProductRequest $request Validated request containing
      * updated product data.
-     *
      * @param Product $product Route-model-bound product instance to update.
      *
      * @return JsonResponse The updated product resource.
@@ -298,7 +292,6 @@ class ProductController extends Controller
      *
      * @param Request $request Incoming HTTP request containing a 'deals'
      * array, each entry with deal_id, quantity, price, and optional meta.
-     *
      * @param Product $product Route-model-bound product instance to attach
      * deals to.
      *
@@ -320,7 +313,6 @@ class ProductController extends Controller
      *
      * @param Request $request Incoming HTTP request containing a 'deals'
      * array.
-     *
      * @param Product $product Route-model-bound product instance whose deal
      * associations should be updated.
      *
@@ -344,7 +336,6 @@ class ProductController extends Controller
      *
      * @param int|string $id The primary key of the product, including trashed
      * records.
-     *
      * @param Deal $deal Route-model-bound deal instance to remove.
      *
      * @return JsonResponse Confirmation message on success.
@@ -365,7 +356,6 @@ class ProductController extends Controller
      *
      * @param Product $product Route-model-bound product instance to restore
      * the deal to.
-     *
      * @param Deal $deal Route-model-bound deal instance to restore.
      *
      * @return JsonResponse Confirmation message on success.
@@ -385,7 +375,6 @@ class ProductController extends Controller
      *
      * @param Request $request Incoming HTTP request containing an 'orders'
      * array.
-     *
      * @param Product $product Route-model-bound product instance to attach
      * orders to.
      *
@@ -407,7 +396,6 @@ class ProductController extends Controller
      *
      * @param Request $request Incoming HTTP request containing an 'orders'
      * array.
-     *
      * @param Product $product Route-model-bound product instance whose order
      * associations should be updated.
      *
@@ -431,7 +419,6 @@ class ProductController extends Controller
      *
      * @param Product $product Route-model-bound product instance to remove
      * the order from.
-     *
      * @param Deal $deal Route-model-bound deal instance to remove.
      *
      * @return JsonResponse Confirmation message on success.
@@ -451,7 +438,6 @@ class ProductController extends Controller
      *
      * @param Product $product Route-model-bound product instance to restore
      * the order to.
-     *
      * @param Order $order Route-model-bound order instance to restore.
      *
      * @return JsonResponse Confirmation message on success.
@@ -471,7 +457,6 @@ class ProductController extends Controller
      *
      * @param Request $request Incoming HTTP request containing a 'quotes'
      * array.
-     *
      * @param Product $product Route-model-bound product instance to attach
      * quotes to.
      *
@@ -493,7 +478,6 @@ class ProductController extends Controller
      *
      * @param Request $request Incoming HTTP request containing a 'quotes'
      * array.
-     *
      * @param Product $product Route-model-bound product instance whose quote
      * associations should be updated.
      *
@@ -517,7 +501,6 @@ class ProductController extends Controller
      *
      * @param Product $product Route-model-bound product instance to remove
      * the quote from.
-     *
      * @param Quote $quote Route-model-bound quote instance to remove.
      *
      * @return JsonResponse Confirmation message on success.
@@ -537,7 +520,6 @@ class ProductController extends Controller
      *
      * @param Product $product Route-model-bound product instance to restore
      * the quote to.
-     *
      * @param Quote $quote Route-model-bound quote instance to restore.
      *
      * @return JsonResponse Confirmation message on success.

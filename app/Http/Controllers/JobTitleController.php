@@ -56,10 +56,8 @@ class JobTitleController extends Controller
      *
      * @param  JobTitleLogService $logger Handles audit logging for job title
      * events.
-     *
      * @param  JobTitleManagementService $management Handles job title
      * create/update/delete/restore.
-     *
      * @param  JobTitleQueryService $query Handles job title listing and
      * retrieval.
      */
@@ -155,7 +153,6 @@ class JobTitleController extends Controller
      *
      * @param  UpdateJobTitleRequest $request Validated request containing
      * updated job title data.
-     *
      * @param  JobTitle $jobTitle Route-model-bound job title instance to
      * update.
      *

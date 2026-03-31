@@ -55,10 +55,8 @@ class NoteController extends Controller
      * Inject the required services into the controller.
      *
      * @param  NoteLogService $logger Handles audit logging for note events.
-     *
      * @param  NoteManagementService $management Handles note
      * create/update/delete/restore.
-     *
      * @param  NoteQueryService $query Handles note listing and retrieval.
      */
     public function __construct(
@@ -152,7 +150,6 @@ class NoteController extends Controller
      *
      * @param  UpdateNoteRequest $request Validated request containing updated
      * note data.
-     *
      * @param  Note $note Route-model-bound note instance to update.
      *
      * @return JsonResponse The updated note resource.

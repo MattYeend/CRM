@@ -53,10 +53,8 @@ class PartStockMovementController extends Controller
      *
      * @param  PartStockMovementLogService $logger Handles audit logging for
      * stock movements.
-     *
      * @param  PartStockMovementManagementService $management Handles creation
      * and management of stock movements.
-     *
      * @param  PartStockMovementQueryService $query Handles retrieval and
      * listing of stock movements.
      */
@@ -81,7 +79,6 @@ class PartStockMovementController extends Controller
      *
      * @param  Request $request Incoming HTTP request; may include filters or
      * pagination parameters.
-     *
      * @param  Part $part Route-model-bound part instance.
      *
      * @return JsonResponse Paginated stock movement data with pagination
@@ -108,7 +105,6 @@ class PartStockMovementController extends Controller
      *
      * @param  StorePartStockMovementRequest $request Validated request
      * containing stock movement data.
-     *
      * @param  Part $part Route-model-bound part instance.
      *
      * @return JsonResponse The newly created stock movement with HTTP 201
@@ -137,7 +133,6 @@ class PartStockMovementController extends Controller
      * Authorises via the 'view' policy before returning data.
      *
      * @param  Part $part Route-model-bound part instance.
-     *
      * @param  PartStockMovement $partStockMovement Route-model-bound stock
      * movement instance.
      *

@@ -56,10 +56,8 @@ class UserController extends Controller
      *
      * @param  UserLogService $logger Handles audit logging for
      * user events.
-     *
      * @param  UserManagementService $management Handles user
      * create/update/delete/restore.
-     *
      * @param  UserQueryService $query Handles user listing and
      * retrieval.
      */
@@ -163,7 +161,6 @@ class UserController extends Controller
      *
      * @param  UpdateUserRequest $request Validated request containing
      * updated user data.
-     *
      * @param  User $user Route-model-bound user instance to update.
      *
      * @return JsonResponse The updated user resource.

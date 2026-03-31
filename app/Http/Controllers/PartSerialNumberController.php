@@ -59,10 +59,8 @@ class PartSerialNumberController extends Controller
      *
      * @param  PartSerialNumberLogService $logger Handles audit logging for part
      * serial number events.
-     *
      * @param  PartSerialNumberManagementService $management Handles part serial
      * number create/update/delete/restore.
-     *
      * @param  PartSerialNumberQueryService $query Handles part serial number
      * listing and retrieval.
      */
@@ -109,7 +107,6 @@ class PartSerialNumberController extends Controller
      * user.
      *
      * @param StorePartSerialNumberRequest $request
-     *
      * @param Part $part
      *
      * @return JsonResponse
@@ -143,7 +140,6 @@ class PartSerialNumberController extends Controller
      *
      * @param  UpdatePartSerialNumberRequest $request Validated request
      * containing updated part serial number data.
-     *
      * @param  PartSerialNumber $partserialnumber Route-model-bound part serial
      * number instance to update.
      *

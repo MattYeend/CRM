@@ -58,10 +58,8 @@ class PipelineStageController extends Controller
      *
      * @param  PipelineStageLogService $logger Handles audit logging for
      * pipeline stage events.
-     *
      * @param  PipelineStageManagementService $management Handles pipeline
      * stage create/update/delete/restore.
-     *
      * @param  PipelineStageQueryService $query Handles pipeline stage listing
      * and retrieval.
      */
@@ -158,7 +156,6 @@ class PipelineStageController extends Controller
      *
      * @param  UpdatePipelineStageRequest $request Validated request containing
      * updated pipeline stage data.
-     *
      * @param  PipelineStage $pipelineStage Route-model-bound pipeline stage
      * instance to update.
      *

@@ -56,10 +56,8 @@ class InvoiceController extends Controller
      *
      * @param  InvoiceLogService $logger Handles audit logging for invoice
      * events.
-     *
      * @param  InvoiceManagementService $management Handles invoice
      * create/update/delete/restore.
-     *
      * @param  InvoiceQueryService $query Handles invoice listing and
      * retrieval.
      */
@@ -155,7 +153,6 @@ class InvoiceController extends Controller
      *
      * @param  UpdateInvoiceRequest $request Validated request containing
      * updated invoice data.
-     *
      * @param  Invoice $invoice Route-model-bound invoice instance to update.
      *
      * @return JsonResponse The updated invoice resource.

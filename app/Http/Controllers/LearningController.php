@@ -56,10 +56,8 @@ class LearningController extends Controller
      *
      * @param  LearningLogService $logger Handles audit logging for learning
      * events.
-     *
      * @param  LearningManagementService $management Handles learning
      * create/update/delete/restore and completion transitions.
-     *
      * @param  LearningQueryService $query Handles learning listing and
      * retrieval.
      */
@@ -155,7 +153,6 @@ class LearningController extends Controller
      *
      * @param  UpdateLearningRequest $request Validated request containing
      * updated learning data.
-     *
      * @param  Learning $learning Route-model-bound learning instance to update.
      *
      * @return JsonResponse The updated learning resource.
@@ -215,7 +212,6 @@ class LearningController extends Controller
      * entry is written against the authenticated user.
      *
      * @param  Request $request Incoming HTTP request.
-     *
      * @param  Learning $learning Route-model-bound learning instance to
      * complete.
      *
@@ -248,7 +244,6 @@ class LearningController extends Controller
      * entry is written against the authenticated user.
      *
      * @param  Request $request Incoming HTTP request.
-     *
      * @param  Learning $learning Route-model-bound learning instance to mark
      * incomplete.
      *

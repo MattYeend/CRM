@@ -58,10 +58,8 @@ class PartCategoryController extends Controller
      *
      * @param  PartCategoryLogService $logger Handles audit logging for part
      * category events.
-     *
      * @param  PartCategoryManagementService $management Handles part category
      * create/update/delete/restore.
-     *
      * @param  PartCategoryQueryService $query Handles part category listing
      * and retrieval.
      */
@@ -159,7 +157,6 @@ class PartCategoryController extends Controller
      *
      * @param  UpdatePartCategoryRequest $request Validated request containing
      * updated part category data.
-     *
      * @param  PartCategory $partCategory Route-model-bound part category
      * instance to update.
      *

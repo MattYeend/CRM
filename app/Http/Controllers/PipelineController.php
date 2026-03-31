@@ -56,10 +56,8 @@ class PipelineController extends Controller
      *
      * @param  PipelineLogService $logger Handles audit logging for
      * pipeline events.
-     *
      * @param  PipelineManagementService $management Handles pipeline
      * create/update/delete/restore.
-     *
      * @param  PipelineQueryService $query Handles pipeline listing and
      * retrieval.
      */
@@ -155,7 +153,6 @@ class PipelineController extends Controller
      *
      * @param  UpdatePipelineRequest $request Validated request containing
      * updated pipeline data.
-     *
      * @param  Pipeline $pipeline Route-model-bound pipeline instance to update.
      *
      * @return JsonResponse The updated pipeline resource.

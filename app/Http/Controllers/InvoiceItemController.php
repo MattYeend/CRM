@@ -58,10 +58,8 @@ class InvoiceItemController extends Controller
      *
      * @param  InvoiceItemLogService $logger Handles audit logging for invoice
      * item events.
-     *
      * @param  InvoiceItemManagementService $management Handles invoice item
      * create/update/delete/restore.
-     *
      * @param  InvoiceItemQueryService $query Handles invoice item listing and
      * retrieval.
      */
@@ -158,7 +156,6 @@ class InvoiceItemController extends Controller
      *
      * @param  UpdateInvoiceItemRequest $request Validated request containing
      * updated invoice item data.
-     *
      * @param  InvoiceItem $invoiceItem Route-model-bound invoice item instance
      * to update.
      *

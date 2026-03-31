@@ -51,10 +51,8 @@ class RoleController extends Controller
      * Inject the required services into the controller.
      *
      * @param RoleLogService $logger Handles audit logging for role events.
-     *
      * @param RoleManagementService $management Handles role management
      * including permission sync.
-     *
      * @param RoleQueryService $query Handles role listing and retrieval.
      */
     public function __construct(
@@ -118,7 +116,6 @@ class RoleController extends Controller
      * permission set with the provided data.
      *
      * @param Role $role The role instance whose permissions should be synced.
-     *
      * @param array $data The complete set of permissions to sync against the
      * role.
      *

@@ -56,10 +56,8 @@ class TaskController extends Controller
      *
      * @param  TaskLogService $logger Handles audit logging for
      * task events.
-     *
      * @param  TaskManagementService $management Handles task
      * create/update/delete/restore.
-     *
      * @param  TaskQueryService $query Handles task listing and
      * retrieval.
      */
@@ -157,7 +155,6 @@ class TaskController extends Controller
      *
      * @param  UpdateTaskRequest $request Validated request containing
      * updated task data.
-     *
      * @param  Task $task Route-model-bound task instance to update.
      *
      * @return JsonResponse The updated task resource.

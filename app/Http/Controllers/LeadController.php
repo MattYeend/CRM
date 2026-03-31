@@ -55,10 +55,8 @@ class LeadController extends Controller
      * Inject the required services into the controller.
      *
      * @param  LeadLogService $logger Handles audit logging for lead events.
-     *
      * @param  LeadManagementService $management Handles lead
      * create/update/delete/restore.
-     *
      * @param  LeadQueryService $query Handles lead listing and retrieval.
      */
     public function __construct(
@@ -152,7 +150,6 @@ class LeadController extends Controller
      *
      * @param  UpdateLeadRequest $request Validated request containing updated
      * lead data.
-     *
      * @param  Lead $lead Route-model-bound lead instance to update.
      *
      * @return JsonResponse The updated lead resource.

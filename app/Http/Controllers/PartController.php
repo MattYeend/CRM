@@ -55,10 +55,8 @@ class PartController extends Controller
      * Inject the required services into the controller.
      *
      * @param  PartLogService $logger Handles audit logging for part events.
-     *
      * @param  PartManagementService $management Handles part
      * create/update/delete/restore.
-     *
      * @param  PartQueryService $query Handles part listing and retrieval.
      */
     public function __construct(
@@ -152,7 +150,6 @@ class PartController extends Controller
      *
      * @param  UpdatePartRequest $request Validated request containing updated
      * part data.
-     *
      * @param  Part $part Route-model-bound part instance to update.
      *
      * @return JsonResponse The updated part resource.

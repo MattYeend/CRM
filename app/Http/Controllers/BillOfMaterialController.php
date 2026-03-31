@@ -59,10 +59,8 @@ class BillOfMaterialController extends Controller
      *
      * @param  BillOfMaterialLogService $logger Handles audit logging for
      * bill of material events.
-     *
      * @param  BillOfMaterialManagementService $management Handles bill
      * of material create/update/delete/restore.
-     *
      * @param  BillOfMaterialQueryService $query Handles bill of material
      * listing and retrieval.
      */
@@ -87,7 +85,6 @@ class BillOfMaterialController extends Controller
      * Authorises via the 'viewAny' policy before returning data.
      *
      * @param  Part $part Route-model-bound part instance to scope the listing.
-     *
      * @param  Request $request Incoming HTTP request; may carry
      * filter/pagination params.
      *
@@ -113,7 +110,6 @@ class BillOfMaterialController extends Controller
      *
      * @param  StoreBillOfMaterialRequest $request Validated request containing
      * bill of material data.
-     *
      * @param  Part $part Route-model-bound part instance
      * the bill of material belongs to.
      *
@@ -148,10 +144,8 @@ class BillOfMaterialController extends Controller
      *
      * @param  UpdateBillOfMaterialRequest $request Validated request containing
      * updated bill of material data.
-     *
      * @param  Part $part Route-model-bound part instance
      * the bill of material belongs to.
-     *
      * @param  BillOfMaterial $billOfMaterial Route-model-bound bill of material
      * instance to update.
      *
@@ -185,7 +179,6 @@ class BillOfMaterialController extends Controller
      *
      * @param  Part $part Route-model-bound part instance
      * the bill of material belongs to.
-     *
      * @param  BillOfMaterial $billOfMaterial Route-model-bound bill of material
      * instance to delete.
      *
@@ -219,7 +212,6 @@ class BillOfMaterialController extends Controller
      *
      * @param  Part $part Route-model-bound part instance the bill of material
      * belongs to.
-     *
      * @param  int  $id The primary key of the soft-deleted bill of material.
      *
      * @return JsonResponse The restored bill of material resource.

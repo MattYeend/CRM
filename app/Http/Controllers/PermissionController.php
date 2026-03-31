@@ -52,10 +52,8 @@ class PermissionController extends Controller
      * Inject required services into the controller.
      *
      * @param  PermissionLogService $logger Handles audit logging permissions.
-     *
      * @param  PermissionManagementService $management Handles creation
      * and management of permissionss.
-     *
      * @param  PermissionQueryService $query Handles retrieval and listing
      * of permissions.
      */
@@ -96,9 +94,6 @@ class PermissionController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param StorePermissionRequest $request
-     *
-     * @return JsonResponse
      * Validation is handled upstream by StorePermissionRequest.
      *
      * After storing, an audit log entry is written against the
@@ -155,7 +150,6 @@ class PermissionController extends Controller
      *
      * @param  UpdatePermissionRequest $request Validated request containing
      * updated permission data.
-     *
      * @param  Permission $permission Route-model-bound permission instance
      * to update.
      *

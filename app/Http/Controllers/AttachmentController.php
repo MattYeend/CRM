@@ -66,13 +66,10 @@ class AttachmentController extends Controller
      *
      * @param  AttachmentAttacherService $attacher Handles associating
      * attachments to parent entities.
-     *
      * @param  AttachmentLogService $logger Handles audit logging for
      * attachment events.
-     *
      * @param  AttachmentQueryService $query Handles attachment listing
      * and retrieval.
-     *
      * @param  AttachmentManagementService $management Handles attachment
      * store/update/delete/restore.
      */
@@ -177,7 +174,6 @@ class AttachmentController extends Controller
      *
      * @param  UpdateAttachmentRequest $request Validated request containing
      * updated attachment data.
-     *
      * @param  Attachment $attachment Route-model-bound attachment
      * instance to update.
      *
