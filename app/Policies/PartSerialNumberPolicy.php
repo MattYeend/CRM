@@ -11,7 +11,8 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 /**
  * Defines authorization rules for the PartSerialNumber model.
  *
- * This policy controls access to PartSerialNumber models based on user permissions.
+ * This policy controls access to PartSerialNumber models based on user
+ * permissions.
  * It supports both global ("any") and ownership-based ("own") permissions
  * for viewing, creating, updating, deleting, and restoring models.
  *
@@ -27,7 +28,8 @@ class PartSerialNumberPolicy
     use HandlesAuthorization, HandlesPolicyPermissions;
 
     /**
-     * Grant all abilities to super admin users before checking other permissions.
+     * Grant all abilities to super admin users before checking other
+     * permissions.
      *
      * @param User $user
      *

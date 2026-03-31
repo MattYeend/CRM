@@ -27,7 +27,8 @@ class PartPolicy
     use HandlesAuthorization, HandlesPolicyPermissions;
 
     /**
-     * Grant all abilities to super admin users before checking other permissions.
+     * Grant all abilities to super admin users before checking other
+     * permissions.
      *
      * @param User $user
      *
