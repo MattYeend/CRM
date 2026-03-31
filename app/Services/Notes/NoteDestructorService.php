@@ -4,12 +4,22 @@ namespace App\Services\Notes;
 
 use App\Models\Note;
 
+/**
+ * Handles soft deletion and restoration of Note records.
+ *
+ * Writes audit fields before delegating to Eloquent's soft-delete and
+ * restore methods, ensuring the deleted_by, deleted_at, restored_by, and
+ * restored_at columns are always populated.
+ */
 class NoteDestructorService
 {
     /**
      * Soft-delete a note.
      *
-     * @param Note $note
+     * Records the authenticated user and timestamp in the audit columns
+     * before soft-deleting the note.
+     *
+     * @param  Note $note The note instance to soft-delete.
      *
      * @return void
      */
@@ -26,11 +36,16 @@ class NoteDestructorService
     }
 
     /**
-     * Restore a trashed note.
+     * Restore a soft-deleted note.
      *
-     * @param int $id
+     * Looks up the note including trashed records, records the
+     * authenticated user and timestamp in the audit columns, then restores
+     * the note. Returns the note unchanged if it is not currently
+     * trashed.
      *
-     * @return Note
+     * @param  int $id The primary key of the soft-deleted note.
+     *
+     * @return Note The restored note instance.
      */
     public function restore(int $id): Note
     {

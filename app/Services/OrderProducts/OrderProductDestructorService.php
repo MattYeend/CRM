@@ -4,28 +4,43 @@ namespace App\Services\OrderProducts;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Handles removal and restoration of product relationships on parent models.
+ *
+ * Supports detaching products from a parent model and restoring pivot
+ * records when soft deletes are enabled on the pivot table.
+ */
 class OrderProductDestructorService
 {
     /**
-     * Remove pivot relation
+     * Remove a product relationship from a parent model.
      *
-     * @param Model $order
-     * @param int $productId
+     * Detaches the specified product from the parent model.
+     *
+     * @param  Model $parent The parent model.
+     * @param  int $productId The ID of the product to remove.
+     *
+     * @return void
      */
-    public function remove(Model $order, int $productId): void
+    public function remove(Model $parent, int $productId): void
     {
-        $order->products()->detach($productId);
+        $parent->products()->detach($productId);
     }
 
     /**
-     * Restore pivot relation (if using soft deletes on pivot)
+     * Restore a previously removed product relationship.
      *
-     * @param Model $order
-     * @param int $productId
+     * Attempts to locate a soft-deleted pivot record and restore it
+     * if the pivot model supports soft deletes.
+     *
+     * @param  Model $parent The parent model.
+     * @param  int $productId The ID of the product to restore.
+     *
+     * @return void
      */
-    public function restore(Model $order, int $productId): void
+    public function restore(Model $parent, int $productId): void
     {
-        $pivot = $order->products()
+        $pivot = $parent->products()
             ->withTrashed()
             ->wherePivot('product_id', $productId)
             ->first();

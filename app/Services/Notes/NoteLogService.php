@@ -6,18 +6,23 @@ use App\Models\Log;
 use App\Models\Note;
 use App\Models\User;
 
+/**
+ * Handles audit logging for Note lifecycle events.
+ *
+ * Each public method writes a structured log entry via the Log model for
+ * a specific note action, combining base note data with
+ * action-specific timestamp and actor fields.
+ */
 class NoteLogService
 {
     /**
-     * Log the creation of a Note.
+     * Log a note creation event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Note $note The note that was created.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Note $note The note was created.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function noteCreated(
         User $user,
@@ -39,15 +44,13 @@ class NoteLogService
     }
 
     /**
-     * Log the update of a Note.
+     * Log a note update event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Note $note The note that was updated.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Note $note The note was updated.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function noteUpdated(
         User $user,
@@ -69,15 +72,13 @@ class NoteLogService
     }
 
     /**
-     * Log the deletion of a Note.
+     * Log a note deletion event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Note $note The note that was deleted.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Note $note The note was deleted.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function noteDeleted(
         User $user,
@@ -99,15 +100,13 @@ class NoteLogService
     }
 
     /**
-     * Log the restoration of a Note.
+     * Log a note restoration event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Note $note The note that was restored.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Note $note The note was restored.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function noteRestored(
         User $user,
@@ -129,13 +128,13 @@ class NoteLogService
     }
 
     /**
-     * Prepare base data for Note logging.
+     * Log a note assignment event.
      *
-     * @param Note $note The note being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Note $note The note that was assigned.
      *
-     * @param User $user The user performing the action.
-     *
-     * @return array The base data for logging.
+     * @return array The structured data written to the log entry.
      */
     protected function baseNoteData(Note $note): array
     {

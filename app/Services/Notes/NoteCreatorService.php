@@ -7,10 +7,19 @@ use App\Models\Company;
 use App\Models\Deal;
 use App\Models\Note;
 
+/**
+ * Handles creation of Note models and optional attachment
+ * to polymorphic related models.
+ *
+ * Supports attaching notes to predefined "notable" models
+ * such as deals and companies.
+ */
 class NoteCreatorService
 {
     /**
-     * Allowed polymorphic models
+     * Map of allowed notable types to their corresponding model classes.
+     *
+     * @var array<string,class-string>
      */
     protected array $notableModels = [
         'deal' => Deal::class,
@@ -20,9 +29,13 @@ class NoteCreatorService
     /**
      * Create a new note from request data.
      *
-     * @param StoreNoteRequest $request
+     * Populates audit fields and optionally attaches the note
+     * to a related polymorphic model if provided.
      *
-     * @return Note
+     * @param  StoreNoteRequest $request The validated request containing
+     * note data.
+     *
+     * @return Note The newly created note instance.
      */
     public function create(StoreNoteRequest $request): Note
     {

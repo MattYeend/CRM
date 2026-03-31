@@ -108,7 +108,9 @@ class LearningManagementService
     /**
      * Soft-delete a learning.
      *
-     * @param  Learning $learning The learning instance to delete.
+     * Delegates to the destructor service to perform a soft-delete.
+     *
+     * @param  Learning $learning The learning to delete.
      *
      * @return void
      */

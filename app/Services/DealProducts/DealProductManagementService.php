@@ -13,8 +13,25 @@ use Illuminate\Database\Eloquent\Model;
  */
 class DealProductManagementService
 {
+    /**
+     * Service responsible for creating new note records.
+     *
+     * @var DealProductCreatorService
+     */
     private DealProductCreatorService $creator;
+
+    /**
+     * Service responsible for updating existing note records.
+     *
+     * @var DealProductUpdaterService
+     */
     private DealProductUpdaterService $updater;
+
+    /**
+     * Service responsible for soft-deleting and restoring note records.
+     *
+     * @var DealProductDestructorService
+     */
     private DealProductDestructorService $destructor;
 
     /**

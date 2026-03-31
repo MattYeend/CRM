@@ -4,22 +4,38 @@ namespace App\Services\OrderProducts;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Handles creation of product relationships on parent models.
+ *
+ * Attaches one or more products to a parent model (e.g. Deal, Order, Quote)
+ * via a pivot table, including quantity, price, and optional metadata.
+ */
 class OrderProductCreatorService
 {
     /**
-     * Attach product(s) to an Order.
+     * Attach product(s) to a parent model.
      *
-     * @param Model $order
-     * @param array $items Each item ['product_id', 'quantity', 'price', 'meta']
+     * Iterates over the provided items and attaches each product to the
+     * parent model without removing existing relationships. Defaults are
+     * applied for missing quantity, price, and meta values.
+     *
+     * @param  Model $parent The parent model to attach products to.
+     * @param  array $items Array of product data, each containing:
+     *                      - product_id (int)
+     *                      - quantity (int, optional)
+     *                      - price (float, optional)
+     *                      - meta (array|null, optional)
+     *
+     * @return void
      */
-    public function create(Model $order, array $items): void
+    public function create(Model $parent, array $items): void
     {
         foreach ($items as $item) {
             $quantity = $item['quantity'] ?? 1;
             $price = $item['price'] ?? 0;
             $meta = $item['meta'] ?? null;
 
-            $order->products()->syncWithoutDetaching([
+            $parent->products()->syncWithoutDetaching([
                 $item['product_id'] => [
                     'quantity' => $quantity,
                     'price' => $price,

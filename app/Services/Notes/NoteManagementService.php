@@ -6,12 +6,45 @@ use App\Http\Requests\StoreNoteRequest;
 use App\Http\Requests\UpdateNoteRequest;
 use App\Models\Note;
 
+/**
+ * Orchestrates note lifecycle operations by delegating to focused
+ * sub-services.
+ *
+ * Acts as the single entry point for note create, update, delete, and
+ * restore operations, keeping controllers decoupled from the underlying
+ * service implementations.
+ */
 class NoteManagementService
 {
+    /**
+     * Service responsible for creating new note records.
+     *
+     * @var NoteCreatorService
+     */
     private NoteCreatorService $creator;
+
+    /**
+     * Service responsible for updating existing note records.
+     *
+     * @var NoteUpdaterService
+     */
     private NoteUpdaterService $updater;
+
+    /**
+     * Service responsible for soft-deleting and restoring note records.
+     *
+     * @var NoteDestructorService
+     */
     private NoteDestructorService $destructor;
 
+    /**
+     * Inject the required services into the management service.
+     *
+     * @param  NoteCreatorService $creator Handles note creation.
+     * @param  NoteUpdaterService $updater Handles note updates.
+     * @param  NoteDestructorService $destructor Handles note deletion
+     * and restoration.
+     */
     public function __construct(
         NoteCreatorService $creator,
         NoteUpdaterService $updater,
@@ -25,9 +58,10 @@ class NoteManagementService
     /**
      * Create a new note.
      *
-     * @param StoreNoteRequest $request
+     * @param  StoreNoteRequest $request Validated request containing note
+     * data.
      *
-     * @return Note
+     * @return Note The newly created note.
      */
     public function store(StoreNoteRequest $request): Note
     {
@@ -37,11 +71,11 @@ class NoteManagementService
     /**
      * Update an existing note.
      *
-     * @param UpdateNoteRequest $request
+     * @param  UpdateNoteRequest $request Validated request containing
+     * updated note data.
+     * @param  Note $note The note instance to update.
      *
-     * @param Note $note
-     *
-     * @return Note
+     * @return Note The updated note.
      */
     public function update(
         UpdateNoteRequest $request,
@@ -51,9 +85,11 @@ class NoteManagementService
     }
 
     /**
-     * Delete a note (soft delete).
+     * Soft-delete a note.
      *
-     * @param Note $note
+     * Delegates to the destructor service to perform a soft-delete.
+     *
+     * @param  Note $note The note to delete.
      *
      * @return void
      */
@@ -63,11 +99,11 @@ class NoteManagementService
     }
 
     /**
-     * Restore a soft-deleted note
+     * Restore a soft-deleted note.
      *
-     * @param int $id
+     * @param  int $id The primary key of the soft-deleted note.
      *
-     * @return Note
+     * @return Note The restored note.
      */
     public function restore(int $id): Note
     {

@@ -87,7 +87,9 @@ class LeadManagementService
     /**
      * Soft-delete a lead.
      *
-     * @param  Lead $lead The lead instance to delete.
+     * Delegates to the destructor service to perform a soft-delete.
+     *
+     * @param  Lead $lead The lead to delete.
      *
      * @return void
      */
