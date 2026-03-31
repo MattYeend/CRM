@@ -8,16 +8,26 @@ use App\Models\User;
 use App\Traits\HandlesPolicyPermissions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
+/**
+ * Defines authorization rules for the Lead model.
+ *
+ * This policy controls access to Lead models based on user permissions.
+ * It supports both global ("any") and ownership-based ("own") permissions
+ * for viewing, creating, updating, deleting, and restoring models.
+ *
+ * Super admin users are granted all abilities automatically via the
+ * before() method.
+ */
 class LeadPolicy
 {
     use HandlesAuthorization, HandlesPolicyPermissions;
 
     /**
-     * Handle all permissions for super admin role.
+     * Grant all abilities to super admin users before checking other permissions.
      *
      * @param User $user
      *
-     * @return bool|null
+     * @return bool|null Return true to allow, null to continue checking
      */
     public function before(User $user): ?bool
     {
