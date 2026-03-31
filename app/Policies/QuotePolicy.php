@@ -30,9 +30,9 @@ class QuotePolicy
      * Grant all abilities to super admin users before checking other
      * permissions.
      *
-     * @param User $user
+     * @param  User  $user
      *
-     * @return bool|null Return true to allow, null to continue checking
+     * @return  bool|null  Return true to allow, null to continue checking
      */
     public function before(User $user): ?bool
     {
@@ -45,6 +45,10 @@ class QuotePolicy
 
     /**
      * Determine whether the user can view any models.
+     *
+     * @param  User  $user
+     *
+     * @return  bool
      */
     public function viewAny(User $user): bool
     {
@@ -54,11 +58,10 @@ class QuotePolicy
     /**
      * Determine whether the user can view the model.
      *
-     * @param User $user
+     * @param  User   $user
+     * @param  Quote  $quote
      *
-     * @param Quote $quote
-     *
-     * @return bool
+     * @return  bool
      */
     public function view(User $user, Quote $quote): bool
     {
@@ -85,11 +88,10 @@ class QuotePolicy
     /**
      * Determine whether the user can update the model.
      *
-     * @param User $user
+     * @param  User   $user
+     * @param  Quote  $quote
      *
-     * @param Quote $quote
-     *
-     * @return bool
+     * @return  bool
      */
     public function update(User $user, Quote $quote): bool
     {
@@ -104,11 +106,10 @@ class QuotePolicy
     /**
      * Determine whether the user can delete the model.
      *
-     * @param User $user
+     * @param  User   $user
+     * @param  Quote  $quote
      *
-     * @param Quote $quote
-     *
-     * @return bool
+     * @return  bool
      */
     public function delete(User $user, Quote $quote): bool
     {
@@ -123,11 +124,10 @@ class QuotePolicy
     /**
      * Determine whether the user can restore the model.
      *
-     * @param User $user
+     * @param  User   $user
+     * @param  Quote  $quote
      *
-     * @param Quote $quote
-     *
-     * @return bool
+     * @return  bool
      */
     public function restore(User $user, Quote $quote): bool
     {

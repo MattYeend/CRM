@@ -14,10 +14,25 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Cashier\Cashier;
 
+/**
+ * Bootstraps core application services and framework integrations.
+ *
+ * This provider configures global model behaviour, including polymorphic
+ * relation mappings and billing integration via Laravel Cashier.
+ * It also registers environment-specific safeguards and event listeners
+ * that respond to external service events.
+ *
+ * In non-local environments, destructive Artisan commands are disabled
+ * to prevent accidental data loss.
+ */
 class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
+     *
+     * This method is reserved for binding services into the container.
+     *
+     * @return void
      */
     public function register(): void
     {
@@ -26,6 +41,11 @@ class AppServiceProvider extends ServiceProvider
 
     /**
      * Bootstrap any application services.
+     *
+     * Configures morph maps, billing behaviour, environment safeguards,
+     * and event listeners.
+     *
+     * @return void
      */
     public function boot(): void
     {
@@ -52,7 +72,14 @@ class AppServiceProvider extends ServiceProvider
     }
 
     /**
-     * Prevent destructive commands from running.
+     * Prevent destructive Artisan commands from running in protected
+     * environments.
+     *
+     * Overrides selected commands with safe handlers that output an error
+     * message instead of executing potentially destructive operations such
+     * as dropping tables or resetting the database.
+     *
+     * @return void
      */
     protected function preventDestructiveCommands()
     {

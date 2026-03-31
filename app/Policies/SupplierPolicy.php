@@ -58,9 +58,8 @@ class SupplierPolicy
     /**
      * Determine whether the user can view the model.
      *
-     * @param User $user
-     *
-     * @param Supplier $supplier
+     * @param User      $user
+     * @param Supplier  $supplier
      *
      * @return bool
      */
@@ -89,9 +88,8 @@ class SupplierPolicy
     /**
      * Determine whether the user can update the model.
      *
-     * @param User $user
-     *
-     * @param Supplier $supplier
+     * @param User      $user
+     * @param Supplier  $supplier
      *
      * @return bool
      */
@@ -108,9 +106,8 @@ class SupplierPolicy
     /**
      * Determine whether the user can delete the model.
      *
-     * @param User $user
-     *
-     * @param Supplier $supplier
+     * @param User      $user
+     * @param Supplier  $supplier
      *
      * @return bool
      */
@@ -127,9 +124,8 @@ class SupplierPolicy
     /**
      * Determine whether the user can restore the model.
      *
-     * @param User $user
-     *
-     * @param Supplier $supplier
+     * @param User      $user
+     * @param Supplier  $supplier
      *
      * @return bool
      */

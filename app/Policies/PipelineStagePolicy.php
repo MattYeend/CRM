@@ -31,9 +31,9 @@ class PipelineStagePolicy
      * Grant all abilities to super admin users before checking other
      * permissions.
      *
-     * @param User $user
+     * @param  User  $user
      *
-     * @return bool|null Return true to allow, null to continue checking
+     * @return  bool|null  Return true to allow, null to continue checking
      */
     public function before(User $user): ?bool
     {
@@ -47,9 +47,9 @@ class PipelineStagePolicy
     /**
      * Determine whether the user can view any models.
      *
-     * @param User $user
+     * @param  User  $user
      *
-     * @return bool
+     * @return  bool
      */
     public function viewAny(User $user): bool
     {
@@ -59,11 +59,10 @@ class PipelineStagePolicy
     /**
      * Determine whether the user can view the model.
      *
-     * @param User $user
+     * @param  User           $user
+     * @param  PipelineStage  $pipelineStage
      *
-     * @param PipelineStage $pipelineStage
-     *
-     * @return bool
+     * @return  bool
      */
     public function view(User $user, PipelineStage $pipelineStage): bool
     {
@@ -78,9 +77,9 @@ class PipelineStagePolicy
     /**
      * Determine whether the user can create models.
      *
-     * @param User $user
+     * @param  User  $user
      *
-     * @return bool
+     * @return  bool
      */
     public function create(User $user): bool
     {
@@ -90,11 +89,10 @@ class PipelineStagePolicy
     /**
      * Determine whether the user can update the model.
      *
-     * @param User $user
+     * @param  User           $user
+     * @param  PipelineStage  $pipelineStage
      *
-     * @param PipelineStage $pipelineStage
-     *
-     * @return bool
+     * @return  bool
      */
     public function update(User $user, PipelineStage $pipelineStage): bool
     {
@@ -109,9 +107,8 @@ class PipelineStagePolicy
     /**
      * Determine whether the user can delete the model.
      *
-     * @param User $user
-     *
-     * @param PipelineStage $pipelineStage
+     * @param  User           $user
+     * @param  PipelineStage  $pipelineStage
      *
      * @return bool
      */
@@ -128,9 +125,8 @@ class PipelineStagePolicy
     /**
      * Determine whether the user can restore the model.
      *
-     * @param User $user
-     *
-     * @param PipelineStage $pipelineStage
+     * @param  User           $user
+     * @param  PipelineStage  $pipelineStage
      *
      * @return bool
      */
@@ -147,9 +143,9 @@ class PipelineStagePolicy
     /**
      * Determine whether the user can manage models.
      *
-     * @param User $user
+     * @param  User  $user
      *
-     * @return bool
+     * @return  bool
      */
     public function manage(User $user): bool
     {
@@ -159,9 +155,9 @@ class PipelineStagePolicy
     /**
      * Determine whether the user can assign models.
      *
-     * @param User $user
+     * @param  User  $user
      *
-     * @return bool
+     * @return  bool
      */
     public function assign(User $user): bool
     {
