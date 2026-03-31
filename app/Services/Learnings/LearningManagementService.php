@@ -6,14 +6,62 @@ use App\Http\Requests\StoreLearningRequest;
 use App\Http\Requests\UpdateLearningRequest;
 use App\Models\Learning;
 
+/**
+ * Orchestrates learning lifecycle operations by delegating to focused
+ * sub-services.
+ *
+ * Acts as the single entry point for learning create, update, delete, and
+ * restore operations, keeping controllers decoupled from the underlying
+ * service implementations.
+ */
 class LearningManagementService
 {
+    /**
+     * Service responsible for creating new learning records.
+     *
+     * @var LearningCreatorService
+     */
     private LearningCreatorService $creator;
+
+    /**
+     * Service responsible for updating existing learning records.
+     *
+     * @var LearningUpdaterService
+     */
     private LearningUpdaterService $updater;
+
+    /**
+     * Service responsible for soft-deleting and restoring learning records.
+     *
+     * @var LearningDestructorService
+     */
     private LearningDestructorService $destructor;
+
+    /**
+     * Service responsible for completing learning records.
+     *
+     * @var LearningCompleteService
+     */
     private LearningCompleteService $complete;
+
+    /**
+     * Service responsible for incompleting learning records.
+     *
+     * @var LearningIncompleteService
+     */
     private LearningIncompleteService $incomplete;
 
+    /**
+     * Inject the required services into the management service.
+     *
+     * @param  LearningCreatorService $creator Handles learning creation.
+     * @param  LearningUpdaterService $updater Handles learning updates.
+     * @param  LearningDestructorService $destructor Handles learning deletion
+     * and restoration.
+     * @param  LearningCompleteService $complete Handles learning completion.
+     * @param  LearningIncompleteService $incomplete Handlies learning
+     * incompletion.
+     */
     public function __construct(
         LearningCreatorService $creator,
         LearningUpdaterService $updater,
@@ -31,9 +79,10 @@ class LearningManagementService
     /**
      * Create a new learning.
      *
-     * @param StoreLearningRequest $request
+     * @param  StoreLearningRequest $request Validated request
+     * containing learning data.
      *
-     * @return Learning
+     * @return Learning The newly created learning.
      */
     public function store(StoreLearningRequest $request): Learning
     {
@@ -43,11 +92,11 @@ class LearningManagementService
     /**
      * Update an existing learning.
      *
-     * @param UpdateLearningRequest $request
+     * @param  UpdateLearningRequest $request Validated request containing
+     * updated learning data.
+     * @param  Learning $learning The learning instance to update.
      *
-     * @param Learning $learning
-     *
-     * @return Learning
+     * @return Learning The updated learning.
      */
     public function update(
         UpdateLearningRequest $request,
@@ -57,9 +106,9 @@ class LearningManagementService
     }
 
     /**
-     * Delete a learning (soft delete).
+     * Soft-delete a learning.
      *
-     * @param Learning $learning
+     * @param  Learning $learning The learning instance to delete.
      *
      * @return void
      */
@@ -69,11 +118,11 @@ class LearningManagementService
     }
 
     /**
-     * Restore a soft-deleted learning
+     * Restore a soft-deleted learning.
      *
-     * @param int $id
+     * @param  int $id The primary key of the soft-deleted learning.
      *
-     * @return Learning
+     * @return Learning The restored learning.
      */
     public function restore(int $id): Learning
     {
@@ -81,9 +130,12 @@ class LearningManagementService
     }
 
     /**
-     * Complete a learning
+     * Mark a learning as complete.
      *
-     * @param Learning $learning
+     * Delegates to the completion service to update the user's
+     * learning progress.
+     *
+     * @param  Learning $learning The learning to mark as complete.
      *
      * @return void
      */
@@ -93,9 +145,12 @@ class LearningManagementService
     }
 
     /**
-     * Incomplete a learning
+     * Mark a learning as incomplete.
      *
-     * @param Learning $learning
+     * Delegates to the incomplete service to update the user's
+     * learning progress.
+     *
+     * @param  Learning $learning The learning to mark as incomplete.
      *
      * @return void
      */

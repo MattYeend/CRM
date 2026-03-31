@@ -6,20 +6,43 @@ use App\Http\Requests\StoreLearningRequest;
 use App\Models\Learning;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Handles the creation of new Learning records.
+ *
+ * Extracts validated data from the request, stamps the creator and
+ * creation timestamp, and persists the new Learning.
+ */
 class LearningCreatorService
 {
+    /**
+     * Service responsible for creating new learning questions.
+     *
+     * @var LearningQuestionsCreateService
+     */
+    private LearningQuestionsCreateService $questionsService;
+
+    /**
+     * Inject the required services into the management service.
+     *
+     * @param  LearningQuestionsCreateService $questionsService
+     * Handles learning question creation.
+     */
     public function __construct(
-        private LearningQuestionsCreateService $questionsService,
+        LearningQuestionsCreateService $questionsService,
     ) {
         $this->questionsService = $questionsService;
     }
 
     /**
-     * Create a new learning from request data.
+     * Create a new learning from the validated request data.
      *
-     * @param StoreLearningRequest $request
+     * Sets the created_by and created_at audit fields from the authenticated
+     * user before persisting the record.
      *
-     * @return Learning
+     * @param  StoreLearningRequest $request Validated request containing
+     * learning data.
+     *
+     * @return Learning The newly created learning record.
      */
     public function create(StoreLearningRequest $request): Learning
     {

@@ -6,21 +6,44 @@ use App\Http\Requests\UpdateLearningRequest;
 use App\Models\Learning;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Handles updates to Learning records.
+ *
+ * Validates incoming request data, assigns audit fields, and persists
+ * updates to the learning.
+ */
 class LearningUpdaterService
 {
+    /**
+     * Service responsible for updating existing learning questions.
+     *
+     * @var LearningQuestionsRecreateService
+     */
+    private LearningQuestionsRecreateService $questionsService;
+
+    /**
+     * Inject the required services into the management service.
+     *
+     * @param  LearningQuestionsRecreateService $questionsService
+     * Handles learning question updates.
+     */
     public function __construct(
-        private LearningQuestionsRecreateService $questionsService,
+        LearningQuestionsRecreateService $questionsService,
     ) {
         $this->questionsService = $questionsService;
     }
     /**
-     * Update the learning using request data.
+     * Update an existing learning.
      *
-     * @param UpdateLearningRequest $request
+     * Extracts validated data from the request, assigns the authenticated
+     * user and timestamp to audit fields, updates the learning, and returns
+     * a fresh instance.
      *
-     * @param Learning $learning
+     * @param  UpdateLearningRequest $request The request containing
+     * validated learning data.
+     * @param  Learning $learning The learning to update.
      *
-     * @return Learning
+     * @return Learning The updated learning instance.
      */
     public function update(
         UpdateLearningRequest $request,

@@ -41,9 +41,7 @@ class JobTitleManagementService
      * Inject the required services into the management service.
      *
      * @param  JobTitleCreatorService $creator Handles job title creation.
-     *
      * @param  JobTitleUpdaterService $updater Handles job title updates.
-     *
      * @param  JobTitleDestructorService $destructor Handles job title deletion
      * and restoration.
      */
@@ -75,7 +73,6 @@ class JobTitleManagementService
      *
      * @param  UpdateJobTitleRequest $request Validated request containing
      * updated job title data.
-     *
      * @param  JobTitle $jobTitle The job title instance to update.
      *
      * @return JobTitle The updated job title.

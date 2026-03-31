@@ -6,18 +6,23 @@ use App\Models\Learning;
 use App\Models\Log;
 use App\Models\User;
 
+/**
+ * Handles audit logging for Learning lifecycle events.
+ *
+ * Each public method writes a structured log entry via the Log model for
+ * a specific learning action, combining base learning data with
+ * action-specific timestamp and actor fields.
+ */
 class LearningLogService
 {
     /**
-     * Log the creation of an Learning.
+     * Log a learning creation event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Learning $learning The learning that was created.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Learning $learning The learning was created.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function learningCreated(
         User $user,
@@ -39,15 +44,13 @@ class LearningLogService
     }
 
     /**
-     * Log the update of an Learning.
+     * Log a learning update event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Learning $learning The learning that was updated.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Learning $learning The learning was updated.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function learningUpdated(
         User $user,
@@ -69,15 +72,13 @@ class LearningLogService
     }
 
     /**
-     * Log the deletion of an Learning.
+     * Log a learning deletion event.
      *
-     * @param User $user The user was logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Learning $learning The learning that was deleted.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Learning $learning The learning was deleted.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function learningDeleted(
         User $user,
@@ -99,15 +100,13 @@ class LearningLogService
     }
 
     /**
-     * Log the restoration of an Learning.
+     * Log a learning restoration event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Learning $learning The learning that was restored.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Learning $learning The learning was restored.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function learningRestored(
         User $user,
@@ -129,15 +128,13 @@ class LearningLogService
     }
 
     /**
-     * Log the complete status of an Learning.
+     * Log a learning completion event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Learning $learning The learning that was completed.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Learning $learning The learning was marked as complete.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function learningComplete(
         User $user,
@@ -160,13 +157,13 @@ class LearningLogService
     }
 
     /**
-     * Log the incomplete status of an Learning.
+     * Log a learning incompletion event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Learning $learning The learning that was incomplete.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Learning $learning The learning was marked as incomplete.
+     * @return array The structured data written to the log entry.
      */
     public function learningIncomplete(
         User $user,
@@ -189,13 +186,13 @@ class LearningLogService
     }
 
     /**
-     * Log the viewing of an Learning.
+     * Log a learning viewed event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Learning $learning The learning that was viewed.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Learning $learning The learning was viewed.
+     * @return array The structured data written to the log entry.
      */
     public function learningViewed(
         User $user,
@@ -217,11 +214,11 @@ class LearningLogService
     }
 
     /**
-     * Build the common data array for an Learning log entry.
+     * Build the base data array shared across all learning log entries.
      *
-     * @param Learning $learning
+     * @param  Learning $learning The learning being logged.
      *
-     * @return array
+     * @return array The base fields extracted from the learning.
      */
     private function baseLearningData(Learning $learning): array
     {

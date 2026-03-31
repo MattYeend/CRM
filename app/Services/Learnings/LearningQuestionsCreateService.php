@@ -4,14 +4,19 @@ namespace App\Services\Learnings;
 
 use App\Models\Learning;
 
+/**
+ * Handles creation of questions and answers for a learning.
+ *
+ * Iterates through structured question data and persists
+ * related questions and answers.
+ */
 class LearningQuestionsCreateService
 {
     /**
-     * Create questions and answers for a learning.
+     * Create questions and their answers for a learning.
      *
-     * @param Learning $learning
-     *
-     * @param array $questions
+     * @param  Learning $learning The learning to attach questions to.
+     * @param  array $questions The structured questions and answers data.
      *
      * @return void
      */

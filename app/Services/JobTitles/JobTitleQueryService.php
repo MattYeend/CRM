@@ -10,7 +10,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
  * Handles read queries for JobTitle records.
  *
  * Delegates searching, sorting, and trash filtering to dedicated
- * sub-services and returns paginated or single invoice results with
+ * sub-services and returns paginated or single job title results with
  * the appropriate relationships loaded.
  */
 class JobTitleQueryService

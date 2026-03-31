@@ -19,9 +19,7 @@ class JobTitleLogService
      * Log a job title creation event.
      *
      * @param  User $user The user who performed the action.
-     *
      * @param  int $userId The ID of the user who performed the action.
-     *
      * @param  JobTitle $jobTitle The job title that was created.
      *
      * @return array The structured data written to the log entry.
@@ -49,9 +47,7 @@ class JobTitleLogService
      * Log a job title update event.
      *
      * @param  User $user The user who performed the action.
-     *
      * @param  int $userId The ID of the user who performed the action.
-     *
      * @param  JobTitle $jobTitle The job title that was updated.
      *
      * @return array The structured data written to the log entry.
@@ -79,9 +75,7 @@ class JobTitleLogService
      * Log a job title deletion event.
      *
      * @param  User $user The user who performed the action.
-     *
      * @param  int $userId The ID of the user who performed the action.
-     *
      * @param  JobTitle $jobTitle The job title that was deleted.
      *
      * @return array The structured data written to the log entry.
@@ -109,9 +103,7 @@ class JobTitleLogService
      * Log a job title restoration event.
      *
      * @param  User $user The user who performed the action.
-     *
      * @param  int $userId The ID of the user who performed the action.
-     *
      * @param  JobTitle $jobTitle The job title that was restored.
      *
      * @return array The structured data written to the log entry.

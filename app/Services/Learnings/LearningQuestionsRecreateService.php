@@ -4,14 +4,20 @@ namespace App\Services\Learnings;
 
 use App\Models\Learning;
 
+/**
+ * Handles full replacement (recreation) of questions and answers
+ * for a learning.
+ *
+ * Deletes existing questions and answers, then recreates them from
+ * the provided structured data.
+ */
 class LearningQuestionsRecreateService
 {
     /**
      * Recreate questions and answers for a learning.
      *
-     * @param Learning $learning
-     *
-     * @param array $questions
+     * @param  Learning $learning The learning to update.
+     * @param  array $questions The structured questions and answers data.
      *
      * @return void
      */

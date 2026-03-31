@@ -21,7 +21,7 @@ class InvoiceLogService
      * @param  int $userId  The ID of the user performing the action
      * @param  Invoice $invoice  The invoice that was created
      *
-     * @return array
+     * @return array The structured data written to the log entry.
      */
     public function invoiceCreated(
         User $user,
@@ -49,7 +49,7 @@ class InvoiceLogService
      * @param  int $userId
      * @param  Invoice $invoice
      *
-     * @return array
+     * @return array The structured data written to the log entry.
      */
     public function invoiceUpdated(
         User $user,
@@ -77,7 +77,7 @@ class InvoiceLogService
      * @param  int $userId
      * @param  Invoice $invoice
      *
-     * @return array
+     * @return array The structured data written to the log entry.
      */
     public function invoiceDeleted(
         User $user,
@@ -105,7 +105,7 @@ class InvoiceLogService
      * @param  int $userId
      * @param  Invoice $invoice
      *
-     * @return array
+     * @return array The structured data written to the log entry.
      */
     public function invoiceRestored(
         User $user,
@@ -133,7 +133,7 @@ class InvoiceLogService
      * @param int $userId The ID of the user who performed the action.
      * @param Invoice $invoice The invoice was sent.
      *
-     * @return array
+     * @return array The structured data written to the log entry.
      */
     public function invoiceSent(
         User $user,
@@ -161,7 +161,7 @@ class InvoiceLogService
      * @param int $userId The ID of the user who performed the action.
      * @param Invoice $invoice The invoice was paid.
      *
-     * @return array
+     * @return array The structured data written to the log entry.
      */
     public function invoicePaid(
         User $user,
@@ -189,7 +189,7 @@ class InvoiceLogService
      * @param int $userId The ID of the user who performed the action.
      * @param Invoice $invoice The invoice was marked as overdue.
      *
-     * @return array
+     * @return array The structured data written to the log entry.
      */
     public function invoiceOverdue(
         User $user,
@@ -215,7 +215,7 @@ class InvoiceLogService
      *
      * @param  Invoice $invoice
      *
-     * @return array
+     * @return array the base fields extracted from the invoice.
      */
     private function baseInvoiceData(Invoice $invoice): array
     {

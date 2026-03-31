@@ -6,13 +6,46 @@ use App\Models\Lead;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
+/**
+ * Handles read queries for Lead records.
+ *
+ * Delegates searching, sorting, and trash filtering to dedicated
+ * sub-services and returns paginated or single lead results with
+ * the appropriate relationships loaded.
+ */
 class LeadQueryService
 {
-    private LeadSeachService $search;
+    /**
+     * Service responsible for applying the search.
+     *
+     * @var LeadSearchService
+     */
+    private LeadSearchService $search;
+
+    /**
+     * Service responsible for applying sort order.
+     *
+     * @var LeadSortingService
+     */
     private LeadSortingService $sorting;
+
+    /**
+     * Service responsible for applying trash visibility filters.
+     *
+     * @var LeadTrashFilterService
+     */
     private LeadTrashFilterService $trashFilter;
+
+    /**
+     * Inject the required services into the query service.
+     *
+     * @param  LeadSearchService $search Handles search filtering.
+     * @param  LeadSortingService $sorting Handles sort order.
+     * @param  LeadTrashFilterService $trashFilter Handles
+     * trash filtering.
+     */
     public function __construct(
-        LeadSeachService $search,
+        LeadSearchService $search,
         LeadSortingService $sorting,
         LeadTrashFilterService $trashFilter,
     ) {
@@ -22,11 +55,16 @@ class LeadQueryService
     }
 
     /**
-     * Return paginated lead, applying filters/sorting.
+     * Return a paginated list of leads with search, sorting,
+     * and trash filters applied.
      *
-     * @param Request $request
+     * The per_page value is clamped between 1 and 100. All active query
+     * string parameters are appended to the paginator links.
      *
-     * @return LengthAwarePaginator
+     * @param  Request $request Incoming HTTP request; may carry search,
+     * sort, filter, and pagination params.
+     *
+     * @return LengthAwarePaginator Paginated leads item results.
      */
     public function list(Request $request): LengthAwarePaginator
     {
@@ -48,11 +86,12 @@ class LeadQueryService
     }
 
     /**
-     * Return a single lead
+     * Return a single lead with related data loaded.
      *
-     * @param Lead $lead
+     * @param  Lead $lead The route-model-bound lead
+     * instance.
      *
-     * @return Lead
+     * @return Lead The lead with relationships loaded.
      */
     public function show(Lead $lead): Lead
     {

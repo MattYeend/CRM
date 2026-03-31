@@ -6,18 +6,23 @@ use App\Models\Lead;
 use App\Models\Log;
 use App\Models\User;
 
+/**
+ * Handles audit logging for Lead lifecycle events.
+ *
+ * Each public method writes a structured log entry via the Log model for
+ * a specific lead action, combining base lead data with
+ * action-specific timestamp and actor fields.
+ */
 class LeadLogService
 {
     /**
-     * Log the creation of a Lead.
+     * Log a lead creation event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Lead $lead The lead that was created.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Lead $lead The lead that was created.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function leadCreated(
         User $user,
@@ -39,15 +44,13 @@ class LeadLogService
     }
 
     /**
-     * Log the update of a lead.
+     * Log a lead update event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Lead $lead The lead that was updated.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Lead $lead The lead that was updated.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function leadUpdated(
         User $user,
@@ -69,15 +72,13 @@ class LeadLogService
     }
 
     /**
-     * Log the deletion of a lead.
+     * Log a lead deletion event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Lead $lead The lead that was deleted.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Lead $lead The lead that was deleted.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function leadDeleted(
         User $user,
@@ -99,15 +100,13 @@ class LeadLogService
     }
 
     /**
-     * Log the restoration of a lead.
+     * Log a lead restoration event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Lead $lead The lead that was restored.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Lead $lead The lead that was restored.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function leadRestored(
         User $user,
@@ -129,15 +128,13 @@ class LeadLogService
     }
 
     /**
-     * Log the assignment of a lead to a new owner.
+     * Log a lead assignment event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Lead $lead The lead that was assigned.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Lead $lead The lead that was reassigned.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function leadAssigned(
         User $user,
@@ -159,11 +156,11 @@ class LeadLogService
     }
 
     /**
-     * Build the common data array for a Lead log entry.
+     * Build the base data array shared across all lead log entries.
      *
-     * @param Lead $lead
+     * @param  Lead $lead The lead being logged.
      *
-     * @return array
+     * @return array The base fields extracted from the lead.
      */
     private function baseLeadData($lead): array
     {

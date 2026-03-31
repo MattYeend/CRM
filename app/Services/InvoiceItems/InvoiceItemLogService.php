@@ -21,7 +21,7 @@ class InvoiceItemLogService
      * @param  int $userId  The ID of the user performing the action
      * @param  InvoiceItem $invoiceItem  The invoice item that was created
      *
-     * @return array
+     * @return array The structured data written to the log entry.
      */
     public function invoiceItemCreated(
         User $user,
@@ -45,7 +45,7 @@ class InvoiceItemLogService
      * @param  int $userId
      * @param  InvoiceItem $invoiceItem
      *
-     * @return array
+     * @return array The structured data written to the log entry.
      */
     public function invoiceItemUpdated(
         User $user,
@@ -69,7 +69,7 @@ class InvoiceItemLogService
      * @param  int $userId
      * @param  InvoiceItem $invoiceItem
      *
-     * @return array
+     * @return array The structured data written to the log entry.
      */
     public function invoiceItemDeleted(
         User $user,
@@ -93,7 +93,7 @@ class InvoiceItemLogService
      * @param  int $userId
      * @param  InvoiceItem $invoiceItem
      *
-     * @return array
+     * @return array The structured data written to the log entry.
      */
     public function invoiceItemRestored(
         User $user,
@@ -115,7 +115,7 @@ class InvoiceItemLogService
      *
      * @param  InvoiceItem $invoiceItem
      *
-     * @return array
+     * @return array The base fiedls extracted from the invoice item.
      */
     protected function baseInvoiceItemData(InvoiceItem $invoiceItem): array
     {
