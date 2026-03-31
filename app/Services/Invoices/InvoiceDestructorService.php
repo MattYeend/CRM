@@ -38,12 +38,12 @@ class InvoiceDestructorService
     /**
      * Restore a soft-deleted invoice.
      *
-     * Looks up the invoice item including trashed records, records the
+     * Looks up the invoice including trashed records, records the
      * authenticated user and timestamp in the audit columns, then restores
-     * the invoice. Returns the invoice item unchanged if it is not
+     * the invoice. Returns the invoice unchanged if it is not
      * currently trashed.
      *
-     * @param  int $id The primary key of the soft-deleted invoice item.
+     * @param  int $id The primary key of the soft-deleted invoice.
      *
      * @return Invoice The restored invoice instance.
      */

@@ -54,7 +54,7 @@ class InvoiceQueryService
      * @param  Request $request Incoming HTTP request; may carry search,
      * sort, filter, and pagination params.
      *
-     * @return LengthAwarePaginator Paginated invoice item results.
+     * @return LengthAwarePaginator Paginated invoice results.
      */
     public function list(Request $request): LengthAwarePaginator
     {
