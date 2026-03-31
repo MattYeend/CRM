@@ -11,6 +11,13 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * Represents a file attachment uploaded against a polymorphic parent model.
+ *
+ * Attachments may belong to a Company, Deal, Task, or User via the attachable
+ * relationship. The underlying file is stored on a configurable disk and is
+ * automatically removed from storage when the model is deleted.
+ */
 class Attachment extends Model
 {
     /**
@@ -23,25 +30,25 @@ class Attachment extends Model
         HasTestPrefix;
 
     /**
-     * The fully-qualified class name used as the attachment type for Company
+     * The fully-qualified class name used as the attachable type for Company
      * attachments.
      */
     public const ATTACHABLE_COMPANY = Company::class;
 
     /**
-     * The fully-qualified class name used as the attachment type for Deal
+     * The fully-qualified class name used as the attachable type for Deal
      * attachments.
      */
     public const ATTACHABLE_DEAL = Deal::class;
 
     /**
-     * The fully-qualified class name used as the attachment type for Task
+     * The fully-qualified class name used as the attachable type for Task
      * attachments.
      */
     public const ATTACHABLE_TASK = Task::class;
 
     /**
-     * The fully-qualified class name used as the attachment type for User
+     * The fully-qualified class name used as the attachable type for User
      * attachments.
      */
     public const ATTACHABLE_USER = User::class;
@@ -98,7 +105,7 @@ class Attachment extends Model
      * Get the polymorphic attachable model this attachment belongs to.
      *
      * The attachment may be a Company, Deal, Task, or User as defined
-     * in ATTACHMENT_TYPES.
+     * in ATTACHABLE_TYPES.
      *
      * @return MorphTo<Model,Attachment>
      */
@@ -204,7 +211,7 @@ class Attachment extends Model
     }
 
     /**
-     * Get all of the attactment activities.
+     * Get all activities associated with the attachment.
      *
      * @return MorphMany<Activity>
      */
@@ -214,7 +221,7 @@ class Attachment extends Model
     }
 
     /**
-     * Get all of the attactment tasks.
+     * Get all tasks associated with the attachment.
      *
      * @return MorphMany<Task>
      */
@@ -224,7 +231,7 @@ class Attachment extends Model
     }
 
     /**
-     * Get all of the attachment notes.
+     * Get all notes associated with the attachment.
      *
      * @return MorphMany<Note>
      */
@@ -250,7 +257,7 @@ class Attachment extends Model
      *
      * @return void
      */
-    protected static function booted()
+    protected static function booted(): void
     {
         static::deleting(function (Attachment $attachment) {
             Storage::disk($attachment->disk)->delete($attachment->path);

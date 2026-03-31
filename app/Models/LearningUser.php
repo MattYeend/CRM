@@ -4,6 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
+/**
+ * Pivot model representing the many-to-many relationship between learnings
+ * and users.
+ *
+ * Tracks each user's completion state and timestamp for an assigned learning,
+ * along with the standard audit tracking columns.
+ */
 class LearningUser extends Pivot
 {
     /**

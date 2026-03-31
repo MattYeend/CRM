@@ -10,6 +10,14 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Represents an activity record within the CRM.
+ *
+ * Activities are polymorphically associated with a subject model such as a
+ * Company, Deal, Task, or User, and optionally attributed to a user. Each
+ * activity carries a type string that is prefixed during test runs via the
+ * HasTestPrefix trait.
+ */
 class Activity extends Model
 {
     /**
@@ -54,6 +62,7 @@ class Activity extends Model
         self::ACTIVITY_TASK,
         self::ACTIVITY_USER,
     ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -94,7 +103,7 @@ class Activity extends Model
     /**
      * Get the user that owns the activity.
      *
-     * @return BelongsTo<User>
+     * @return BelongsTo<User,Activity>
      */
     public function user(): BelongsTo
     {
@@ -201,9 +210,9 @@ class Activity extends Model
      *
      * Returns null if no user is associated.
      *
-     * @return string
+     * @return string|null
      */
-    public function getUserNameAttribute(): string
+    public function getUserNameAttribute(): ?string
     {
         return $this->user?->name;
     }

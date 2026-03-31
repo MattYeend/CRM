@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Represents a question within a Learning record.
+ *
+ * Each question belongs to a single Learning and may have multiple answer
+ * options, one or more of which may be marked as correct.
+ */
 class LearningQuestion extends Model
 {
     /**
@@ -28,7 +34,7 @@ class LearningQuestion extends Model
     ];
 
     /**
-     * The learning this question belongs to.
+     * Get the learning this question belongs to.
      *
      * @return BelongsTo<Learning,LearningQuestion>
      */
@@ -38,7 +44,7 @@ class LearningQuestion extends Model
     }
 
     /**
-     * The answers for this question.
+     * Get all answer options for this question.
      *
      * @return HasMany<LearningAnswer>
      */
@@ -58,11 +64,9 @@ class LearningQuestion extends Model
     }
 
     /**
-     * Get the learning question.
+     * Get the question text, applying the test prefix when marked as a test.
      *
-     * Applies the test prefix when the learning is marked as a test.
-     *
-     * @param  string|null  $value  The raw learning title from the database.
+     * @param  string|null  $value  The raw question value from the database.
      *
      * @return string
      */

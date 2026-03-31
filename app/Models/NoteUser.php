@@ -4,6 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
+/**
+ * Pivot model representing the many-to-many relationship between notes
+ * and users.
+ *
+ * Tracks the association between a note and a user, along with standard
+ * audit and test tracking columns.
+ */
 class NoteUser extends Pivot
 {
     /**

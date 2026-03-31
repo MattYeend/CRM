@@ -10,6 +10,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Represents an invoice issued to a company.
+ *
+ * Tracks the invoice number, issue and due dates, financial totals, currency,
+ * and lifecycle status. An invoice has many line items and exposes computed
+ * accessors for common status checks such as overdue, paid, and draft.
+ */
 class Invoice extends Model
 {
     /**
@@ -150,7 +157,7 @@ class Invoice extends Model
     }
 
     /**
-     * Get all of the invoice attachments.
+     * Get all attachments associated with the invoice.
      *
      * @return MorphMany<Attachment>
      */
@@ -160,7 +167,7 @@ class Invoice extends Model
     }
 
     /**
-     * Get all of the invoice activities.
+     * Get all activities associated with the invoice.
      *
      * @return MorphMany<Activity>
      */
@@ -170,7 +177,7 @@ class Invoice extends Model
     }
 
     /**
-     * Get all of the invoice tasks.
+     * Get all tasks associated with the invoice.
      *
      * @return MorphMany<Task>
      */
@@ -180,7 +187,7 @@ class Invoice extends Model
     }
 
     /**
-     * Get all of the invoice notes.
+     * Get all notes associated with the invoice.
      *
      * @return MorphMany<Note>
      */
@@ -191,6 +198,9 @@ class Invoice extends Model
 
     /**
      * Determine whether the invoice is overdue.
+     *
+     * Returns true when the due date has passed and the invoice has not
+     * been paid.
      *
      * @return bool
      */
@@ -210,7 +220,7 @@ class Invoice extends Model
     }
 
     /**
-     * Determine whether the invoice is draft.
+     * Determine whether the invoice is in draft status.
      *
      * @return bool
      */
@@ -220,8 +230,7 @@ class Invoice extends Model
     }
 
     /**
-     * Get the invoice number, applies the test prefix when the invoice is
-     * marked as a test.
+     * Get the invoice number, applying the test prefix when marked as a test.
      *
      * @param  string|null  $value  The raw invoice number from the database.
      *

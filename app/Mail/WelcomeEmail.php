@@ -9,12 +9,20 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * Mailable for the welcome email sent to newly registered users.
+ *
+ * Queued via the Queueable trait to keep the registration flow responsive.
+ * Model state is preserved across queue boundaries via SerializesModels.
+ */
 class WelcomeEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
+     *
+     * No dependencies are required at this time.
      */
     public function __construct()
     {
@@ -23,6 +31,10 @@ class WelcomeEmail extends Mailable
 
     /**
      * Get the message envelope.
+     *
+     * Defines the email subject line.
+     *
+     * @return Envelope The configured message envelope.
      */
     public function envelope(): Envelope
     {
@@ -33,6 +45,10 @@ class WelcomeEmail extends Mailable
 
     /**
      * Get the message content definition.
+     *
+     * Resolves the Blade view used to render the email body.
+     *
+     * @return Content The configured message content.
      */
     public function content(): Content
     {
@@ -43,6 +59,8 @@ class WelcomeEmail extends Mailable
 
     /**
      * Get the attachments for the message.
+     *
+     * No attachments are included with the welcome email.
      *
      * @return array<int,Attachment>
      */

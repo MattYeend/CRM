@@ -11,6 +11,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Represents a single stage within a pipeline.
+ *
+ * Pipeline stages define the ordered steps that deals progress through.
+ * Each stage can represent an open, won, or lost state, and includes
+ * positional ordering within the pipeline.
+ *
+ * Stages support lifecycle tracking, related entities (deals, tasks,
+ * notes, attachments), and may be marked as test records with prefixed names.
+ */
 class PipelineStage extends Model
 {
     /**
@@ -33,27 +43,27 @@ class PipelineStage extends Model
     public const TYPE_WON = 'won';
 
     /**
-     * Represents an lost stage.
+     * Represents a lost stage.
      */
     public const TYPE_LOST = 'lost';
 
     /**
-     * Represents if a stage is won.
+     * Indicates the stage is a winning stage.
      */
     public const IS_WON_STAGE = true;
 
     /**
-     * Represents if a stage is not won.
+     * Indicates the stage is not a winning stage.
      */
     public const NOT_WON_STAGE = false;
 
     /**
-     * Represents if a stage is lost.
+     * Indicates the stage is a lost stage.
      */
     public const IS_LOST_STAGE = true;
 
     /**
-     * Represents if a stage is not lost.
+     * Indicates the stage is not a lost stage.
      */
     public const NOT_LOST_STAGE = false;
 
@@ -97,7 +107,7 @@ class PipelineStage extends Model
     ];
 
     /**
-     * Get the pipeline that owns the stage.
+     * Get the pipeline that owns this stage.
      *
      * @return BelongsTo<Pipeline,PipelineStage>
      */
@@ -107,7 +117,7 @@ class PipelineStage extends Model
     }
 
     /**
-     * Get the deals for the stage.
+     * Get the deals currently assigned to this stage.
      *
      * @return HasMany<Deal>
      */
@@ -119,11 +129,11 @@ class PipelineStage extends Model
     /**
      * Scope a query to only include won stages.
      *
-     * @param Builder $query
+     * @param  Builder<PipelineStage> $query The query builder instance.
      *
-     * @return Builder
+     * @return Builder<PipelineStage> The modified query builder instance.
      */
-    public function scopeWon($query): Builder
+    public function scopeWon(Builder $query): Builder
     {
         return $query->where('is_won_stage', self::IS_WON_STAGE);
     }
@@ -131,23 +141,25 @@ class PipelineStage extends Model
     /**
      * Scope a query to only include lost stages.
      *
-     * @param Builder $query
+     * @param  Builder<PipelineStage> $query The query builder instance.
      *
-     * @return Builder
+     * @return Builder<PipelineStage> The modified query builder instance.
      */
-    public function scopeLost($query): Builder
+    public function scopeLost(Builder $query): Builder
     {
         return $query->where('is_lost_stage', self::IS_LOST_STAGE);
     }
 
     /**
-     * Scope a query to only include open stages.
+     * Scope a query to only include open (active) stages.
      *
-     * @param Builder $query
+     * Open stages are those that are neither won nor lost.
      *
-     * @return Builder
+     * @param  Builder<PipelineStage> $query The query builder instance.
+     *
+     * @return Builder<PipelineStage> The modified query builder instance.
      */
-    public function scopeOpen($query): Builder
+    public function scopeOpen(Builder $query): Builder
     {
         return $query->where('is_won_stage', self::NOT_WON_STAGE)
             ->where('is_lost_stage', self::NOT_LOST_STAGE);
@@ -164,7 +176,7 @@ class PipelineStage extends Model
     }
 
     /**
-     * Get the user that updated the stage.
+     * Get the user that last updated the stage.
      *
      * @return BelongsTo<User,PipelineStage>
      */
@@ -194,9 +206,9 @@ class PipelineStage extends Model
     }
 
     /**
-     * Get all of the pipeline stages attachments.
+     * Get all attachments associated with the stage.
      *
-     * @return MorphMany<Attachment
+     * @return MorphMany<Attachment>
      */
     public function attachments(): MorphMany
     {
@@ -204,7 +216,7 @@ class PipelineStage extends Model
     }
 
     /**
-     * Get all of the pipeline stages activities.
+     * Get all activities associated with the stage.
      *
      * @return MorphMany<Activity>
      */
@@ -214,7 +226,7 @@ class PipelineStage extends Model
     }
 
     /**
-     * Get all of the pipeline stages tasks.
+     * Get all tasks associated with the stage.
      *
      * @return MorphMany<Task>
      */
@@ -224,7 +236,7 @@ class PipelineStage extends Model
     }
 
     /**
-     * Get all of the pipeline stages notes.
+     * Get all notes associated with the stage.
      *
      * @return MorphMany<Note>
      */
@@ -234,13 +246,13 @@ class PipelineStage extends Model
     }
 
     /**
-     * Get the pipeline stage name, applies the test prefix when the
-     * pipeline stage is marked as a test.
+     * Get the formatted stage name.
      *
-     * @param  string|null  $value  The raw pipeline stage name from
-     * the database.
+     * Applies a test prefix when the stage is marked as a test record.
      *
-     * @return string
+     * @param  string|null $value The raw stage name from the database.
+     *
+     * @return string The formatted stage name.
      */
     public function getNameAttribute($value): string
     {

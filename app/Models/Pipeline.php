@@ -11,6 +11,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Represents a sales or workflow pipeline.
+ *
+ * Pipelines define a structured sequence of stages through which deals
+ * progress. They can be marked as default, support soft deletion, and
+ * include related activities such as deals, tasks, notes, and attachments.
+ *
+ * Pipelines may also be flagged as test records, in which case certain
+ * attributes (e.g. name) are automatically prefixed.
+ */
 class Pipeline extends Model
 {
     /**
@@ -59,7 +69,9 @@ class Pipeline extends Model
     ];
 
     /**
-     * Get the stages for the pipeline.
+     * Get the stages associated with the pipeline.
+     *
+     * Represents the ordered steps that define the workflow.
      *
      * @return HasMany<PipelineStage>
      */
@@ -69,7 +81,7 @@ class Pipeline extends Model
     }
 
     /**
-     * Get the deals for the pipeline.
+     * Get the deals associated with the pipeline.
      *
      * @return HasMany<Deal>
      */
@@ -81,11 +93,11 @@ class Pipeline extends Model
     /**
      * Scope a query to only include the default pipeline.
      *
-     * @param Builder $query
+     * @param  Builder<Pipeline> $query The query builder instance.
      *
-     * @return Builder
+     * @return Builder<Pipeline> The modified query builder instance.
      */
-    public function scopeDefault($query): Builder
+    public function scopeDefault(Builder $query): Builder
     {
         return $query->where('is_default', true);
     }
@@ -101,7 +113,7 @@ class Pipeline extends Model
     }
 
     /**
-     * Get the user that updated the pipeline.
+     * Get the user that last updated the pipeline.
      *
      * @return BelongsTo<User,Pipeline>
      */
@@ -131,7 +143,7 @@ class Pipeline extends Model
     }
 
     /**
-     * Get all of the pipeline attachments.
+     * Get all attachments associated with the pipeline.
      *
      * @return MorphMany<Attachment>
      */
@@ -141,7 +153,7 @@ class Pipeline extends Model
     }
 
     /**
-     * Get all of the pipeline activities.
+     * Get all activities associated with the pipeline.
      *
      * @return MorphMany<Activity>
      */
@@ -151,7 +163,7 @@ class Pipeline extends Model
     }
 
     /**
-     * Get all of the pipeline tasks.
+     * Get all tasks associated with the pipeline.
      *
      * @return MorphMany<Task>
      */
@@ -161,7 +173,7 @@ class Pipeline extends Model
     }
 
     /**
-     * Get all of the pipeline notes.
+     * Get all notes associated with the pipeline.
      *
      * @return MorphMany<Note>
      */
@@ -171,12 +183,13 @@ class Pipeline extends Model
     }
 
     /**
-     * Get the pipeline name, applies the test prefix when the pipeline is
-     * marked as a test.
+     * Get the formatted pipeline name.
      *
-     * @param  string|null  $value  The raw pipeline name from the database.
+     * Applies a test prefix when the pipeline is marked as a test record.
      *
-     * @return string
+     * @param  string|null $value The raw pipeline name from the database.
+     *
+     * @return string The formatted pipeline name.
      */
     public function getNameAttribute($value): string
     {

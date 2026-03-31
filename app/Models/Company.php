@@ -10,6 +10,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Represents a company record within the CRM.
+ *
+ * Holds identity, address, and primary contact information for a company,
+ * and acts as the root of several key relationships including deals,
+ * invoices, activities, tasks, notes, and attachments.
+ */
 class Company extends Model
 {
     /**
@@ -66,7 +73,8 @@ class Company extends Model
         'restored_at' => 'datetime',
     ];
 
-    /** Get the deals for the company.
+    /**
+     * Get the deals for the company.
      *
      * @return HasMany<Deal>
      */
@@ -86,7 +94,7 @@ class Company extends Model
     }
 
     /**
-     * Get all of the companies attachments.
+     * Get all attachments associated with the company.
      *
      * @return MorphMany<Attachment>
      */
@@ -96,7 +104,7 @@ class Company extends Model
     }
 
     /**
-     * Get all of the companies activities.
+     * Get all activities associated with the company.
      *
      * @return MorphMany<Activity>
      */
@@ -106,7 +114,7 @@ class Company extends Model
     }
 
     /**
-     * Get all of the companies tasks.
+     * Get all tasks associated with the company.
      *
      * @return MorphMany<Task>
      */
@@ -116,7 +124,7 @@ class Company extends Model
     }
 
     /**
-     * Get all of the companies notes.
+     * Get all notes associated with the company.
      *
      * @return MorphMany<Note>
      */
@@ -168,7 +176,7 @@ class Company extends Model
     /**
      * Get the company name, applying the test prefix when marked as a test.
      *
-     * @param  string|null  $value  The raw title from the database.
+     * @param  string|null  $value  The raw name value from the database.
      *
      * @return string
      */

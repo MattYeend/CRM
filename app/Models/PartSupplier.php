@@ -5,6 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
+/**
+ * Pivot model representing the many-to-many relationship between parts
+ * and suppliers.
+ *
+ * Stores supplier-specific pricing, SKU, lead time, and preferred status
+ * for each part-supplier pairing, along with standard audit and soft-delete
+ * tracking columns.
+ */
 class PartSupplier extends Pivot
 {
     /**
@@ -55,7 +63,7 @@ class PartSupplier extends Pivot
     ];
 
     /**
-     * Part the supplier belongs to
+     * Get the part this supplier entry belongs to.
      *
      * @return BelongsTo<Part,PartSupplier>
      */
@@ -65,7 +73,7 @@ class PartSupplier extends Pivot
     }
 
     /**
-     * Supplier the part belongs to
+     * Get the supplier associated with this pivot entry.
      *
      * @return BelongsTo<Supplier,PartSupplier>
      */

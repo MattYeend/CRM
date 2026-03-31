@@ -9,6 +9,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Represents a sales lead within the CRM.
+ *
+ * A lead captures prospective contact information and is optionally owned
+ * and assigned to users. Leads can be converted into Deal records via the
+ * convertToDeal method once they are ready to progress through the pipeline.
+ */
 class Lead extends Model
 {
     /**
@@ -63,7 +70,7 @@ class Lead extends Model
     ];
 
     /**
-     * The owner of the lead.
+     * Get the owner of the lead.
      *
      * @return BelongsTo<User,Lead>
      */
@@ -73,7 +80,7 @@ class Lead extends Model
     }
 
     /**
-     * The user assigned to the lead.
+     * Get the user assigned to the lead.
      *
      * @return BelongsTo<User,Lead>
      */
@@ -89,7 +96,7 @@ class Lead extends Model
      * and meta data. Pipeline, company, and close date are left unset
      * for the caller to populate as needed.
      *
-     * @return Deal
+     * @return Deal The newly created and persisted deal.
      */
     public function convertToDeal(): Deal
     {
@@ -150,7 +157,7 @@ class Lead extends Model
     }
 
     /**
-     * Get all of the lead attachments.
+     * Get all attachments associated with the lead.
      *
      * @return MorphMany<Attachment>
      */
@@ -160,7 +167,7 @@ class Lead extends Model
     }
 
     /**
-     * Get all of the lead activities.
+     * Get all activities associated with the lead.
      *
      * @return MorphMany<Activity>
      */
@@ -170,7 +177,7 @@ class Lead extends Model
     }
 
     /**
-     * Get all of the lead tasks.
+     * Get all tasks associated with the lead.
      *
      * @return MorphMany<Task>
      */
@@ -180,7 +187,7 @@ class Lead extends Model
     }
 
     /**
-     * Get all of the lead notes.
+     * Get all notes associated with the lead.
      *
      * @return MorphMany<Note>
      */
@@ -190,8 +197,7 @@ class Lead extends Model
     }
 
     /**
-     * Get the lead title, applies the test prefix when the lead is
-     * marked as a test.
+     * Get the lead title, applying the test prefix when marked as a test.
      *
      * @param  string|null  $value  The raw lead title from the database.
      *

@@ -2,10 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Represents a single stock movement event for a part.
+ *
+ * Tracks the type of movement (in, out, adjustment, transfer, or return),
+ * the quantity changed, and the stock levels before and after the movement.
+ * Provides scopes and helper methods for filtering and classifying movements
+ * by direction.
+ */
 class PartStockMovement extends Model
 {
     /**
@@ -14,20 +23,35 @@ class PartStockMovement extends Model
     use HasFactory;
 
     /**
-     * Stock movement type constants.
+     * Stock inbound movement type.
      */
     public const TYPE_IN = 'in';
+
+    /**
+     * Stock outbound movement type.
+     */
     public const TYPE_OUT = 'out';
+
+    /**
+     * Stock adjustment movement type.
+     */
     public const TYPE_ADJUSTMENT = 'adjustment';
+
+    /**
+     * Stock transfer movement type.
+     */
     public const TYPE_TRANSFER = 'transfer';
+
+    /**
+     * Stock return movement type.
+     */
     public const TYPE_RETURN = 'return';
 
     /**
      * Human-readable labels for each movement type.
      *
-     * Useful for dropdowns and display:
-     *   PartStockMovement::TYPES  — all types
-     *   Select::make()->options(PartStockMovement::TYPES) — Filament select
+     * Keyed by the type constant value, suitable for use in dropdowns and
+     * display contexts (e.g. Filament select options).
      */
     public const TYPES = [
         self::TYPE_IN => 'In',
@@ -67,7 +91,7 @@ class PartStockMovement extends Model
     ];
 
     /**
-     * Part the movement belongs to.
+     * Get the part this stock movement belongs to.
      *
      * @return BelongsTo<Part,PartStockMovement>
      */
@@ -77,9 +101,9 @@ class PartStockMovement extends Model
     }
 
     /**
-     * The user that created the movement.
+     * Get the user that created the stock movement.
      *
-     * @return BelongsTo<Part,PartStockMovement>
+     * @return BelongsTo<User,PartStockMovement>
      */
     public function createdBy(): BelongsTo
     {
@@ -89,20 +113,22 @@ class PartStockMovement extends Model
     /**
      * Scope a query to movements of a given type.
      *
-     * @param  Builder $query
+     * @param  Builder $query The query builder instance.
      *
-     * @param  string  $type  Movement type to filter by
-     * (e.g. 'in', 'out', 'return')
+     * @param  string $type The movement type to filter by (e.g. 'in', 'out',
+     * 'return').
      *
-     * @return Builder
+     * @return Builder The modified query builder instance.
      */
-    public function scopeOfType($query, string $type)
+    public function scopeOfType(Builder $query, string $type): Builder
     {
         return $query->where('type', $type);
     }
 
     /**
-     * Determine whether this movement adds stock (type 'in' or 'return').
+     * Determine whether this movement adds stock.
+     *
+     * Returns true for movements of type 'in' or 'return'.
      *
      * @return bool
      */
@@ -112,7 +138,9 @@ class PartStockMovement extends Model
     }
 
     /**
-     * Determine whether this movement removes stock (type 'out').
+     * Determine whether this movement removes stock.
+     *
+     * Returns true for movements of type 'out'.
      *
      * @return bool
      */

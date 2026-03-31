@@ -10,6 +10,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Represents a payment order associated with a deal and a user.
+ *
+ * Tracks the order amount, currency, payment method, Stripe identifiers,
+ * and lifecycle status. Exposes a markAsPaid convenience method and a
+ * scopePaid query scope for filtering paid orders. Products are associated
+ * via the order_products pivot table.
+ */
 class Order extends Model
 {
     /**
@@ -22,17 +30,17 @@ class Order extends Model
         HasTestPrefix;
 
     /**
-     * Represents a pending order.
+     * Represents a pending order awaiting payment.
      */
     public const STATUS_PENDING = 'pending';
 
     /**
-     * Represents an order that has been paid.
+     * Represents an order that has been successfully paid.
      */
     public const STATUS_PAID = 'paid';
 
     /**
-     * Represents an order that has failed.
+     * Represents an order whose payment attempt failed.
      */
     public const STATUS_FAILED = 'failed';
 
@@ -98,7 +106,7 @@ class Order extends Model
     }
 
     /**
-     * Get the creator of the order.
+     * Get the user that created the order.
      *
      * @return BelongsTo<User,Order>
      */
@@ -108,7 +116,7 @@ class Order extends Model
     }
 
     /**
-     * Get the last updater of the order.
+     * Get the user that last updated the order.
      *
      * @return BelongsTo<User,Order>
      */
@@ -118,7 +126,7 @@ class Order extends Model
     }
 
     /**
-     * Get the user who deleted the order.
+     * Get the user that deleted the order.
      *
      * @return BelongsTo<User,Order>
      */
@@ -128,7 +136,7 @@ class Order extends Model
     }
 
     /**
-     * Get the user who restored the order.
+     * Get the user that restored the order.
      *
      * @return BelongsTo<User,Order>
      */
@@ -140,9 +148,9 @@ class Order extends Model
     /**
      * Scope a query to only include paid orders.
      *
-     * @param Builder $query
+     * @param  Builder $query The query builder instance.
      *
-     * @return Builder
+     * @return Builder The modified query builder instance.
      */
     public function scopePaid(Builder $query): Builder
     {
@@ -150,7 +158,7 @@ class Order extends Model
     }
 
     /**
-     * Mark the order as paid and set the paid_at timestamp.
+     * Mark the order as paid and record the payment timestamp.
      *
      * @return bool True if the model was successfully updated.
      */
@@ -163,15 +171,15 @@ class Order extends Model
     }
 
     /**
-     * Get the product for the order.
+     * Get the products associated with the order.
      *
-     * @return BelongToMany<Product,Order>
+     * @return BelongsToMany<Product>
      */
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'order_products')
             ->using(OrderProduct::class)
-            ->withPivot(['quantity','price','total'])
+            ->withPivot(['quantity', 'price', 'total'])
             ->withTimestamps();
     }
 }

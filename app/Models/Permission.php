@@ -9,6 +9,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Represents a permission that can be assigned to roles.
+ *
+ * Permissions are identified by a unique name and an optional human-readable
+ * label. Helper methods are provided to check whether a permission is
+ * associated with one or more roles by name.
+ */
 class Permission extends Model
 {
     /**
@@ -48,7 +55,7 @@ class Permission extends Model
     ];
 
     /**
-     * The roles that belong to the permission.
+     * Get the roles that have this permission.
      *
      * @return BelongsToMany<Role>
      */
@@ -58,9 +65,9 @@ class Permission extends Model
     }
 
     /**
-     * Get all of the permission attachments.
+     * Get all attachments associated with the permission.
      *
-     * @return MorphMany<Attachments>
+     * @return MorphMany<Attachment>
      */
     public function attachments(): MorphMany
     {
@@ -68,7 +75,7 @@ class Permission extends Model
     }
 
     /**
-     * Get all of the permission activities.
+     * Get all activities associated with the permission.
      *
      * @return MorphMany<Activity>
      */
@@ -78,7 +85,7 @@ class Permission extends Model
     }
 
     /**
-     * Get all of the permission tasks.
+     * Get all tasks associated with the permission.
      *
      * @return MorphMany<Task>
      */
@@ -88,7 +95,7 @@ class Permission extends Model
     }
 
     /**
-     * Get all of the permission notes.
+     * Get all notes associated with the permission.
      *
      * @return MorphMany<Note>
      */
@@ -98,11 +105,11 @@ class Permission extends Model
     }
 
     /**
-     * Check if the permission has a specific role.
+     * Determine whether the permission is assigned to a specific role.
      *
-     * @param string $roleName
+     * @param  string $roleName The name of the role to check.
      *
-     * @return bool
+     * @return bool True if the role is associated with this permission.
      */
     public function hasRole(string $roleName): bool
     {
@@ -110,11 +117,11 @@ class Permission extends Model
     }
 
     /**
-     * Check if the permission has any of the given roles.
+     * Determine whether the permission is assigned to any of the given roles.
      *
-     * @param array $roleNames
+     * @param  array $roleNames The role names to check against.
      *
-     * @return bool
+     * @return bool True if at least one of the roles is associated.
      */
     public function hasAnyRole(array $roleNames): bool
     {
@@ -122,11 +129,11 @@ class Permission extends Model
     }
 
     /**
-     * Check if the permission has all of the given roles.
+     * Determine whether the permission is assigned to all of the given roles.
      *
-     * @param array $roleNames
+     * @param  array $roleNames The role names to check against.
      *
-     * @return bool
+     * @return bool True if every role in the array is associated.
      */
     public function hasAllRoles(array $roleNames): bool
     {

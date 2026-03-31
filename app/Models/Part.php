@@ -11,6 +11,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Represents a physical part or component within the inventory system.
+ *
+ * Tracks identity, physical dimensions, pricing, stock levels, and
+ * warehouse location. Supports bill of materials relationships for
+ * assembly costing, multiple supplier associations, serial number and
+ * stock movement tracking, and part images.
+ */
 class Part extends Model
 {
     /**
@@ -23,32 +31,32 @@ class Part extends Model
         HasTestPrefix;
 
     /**
-     * Raw Material Type.
+     * Raw material part type.
      */
     public const RAW_MATERIAL_PART_TYPE = 'raw_material';
 
     /**
-     * Finished Good Type.
+     * Finished good part type.
      */
     public const FINISHED_GOOD_PART_TYPE = 'finished_good';
 
     /**
-     * Consumable Part Type.
+     * Consumable part type.
      */
     public const CONSUMABLE_PART_TYPE = 'consumable';
 
     /**
-     * Spare Part Part Type.
+     * Spare part type.
      */
     public const SPARE_PART_PART_TYPE = 'spare_part';
 
     /**
-     * Sub Assembly Part Type.
+     * Sub-assembly part type.
      */
     public const SUB_ASSEMBLY_PART_TYPE = 'sub_assembly';
 
     /**
-     * Part Types.
+     * All valid part types.
      */
     public const PART_TYPES = [
         self::RAW_MATERIAL_PART_TYPE,
@@ -59,27 +67,27 @@ class Part extends Model
     ];
 
     /**
-     * Active Status.
+     * Active part status.
      */
     public const ACTIVE_PART_STATUS = 'active';
 
     /**
-     * Discontinued Status.
+     * Discontinued part status.
      */
     public const DISCONTINUED_PART_STATUS = 'discontinued';
 
     /**
-     * Pending Status.
+     * Pending part status.
      */
     public const PENDING_PART_STATUS = 'pending';
 
     /**
-     * Out Of Stock Status.
+     * Out of stock part status.
      */
     public const OUT_OF_STOCK_PART_STATUS = 'out_of_stock';
 
     /**
-     * Part Statuses
+     * All valid part statuses.
      */
     public const PART_STATUSES = [
         self::ACTIVE_PART_STATUS,
@@ -203,7 +211,10 @@ class Part extends Model
     }
 
     /**
-     * Get all the suppliers of the part.
+     * Get all suppliers associated with the part.
+     *
+     * Pivot data includes supplier SKU, unit cost, lead time, and preferred
+     * flag.
      *
      * @return BelongsToMany<Supplier>
      */
@@ -220,7 +231,10 @@ class Part extends Model
     }
 
     /**
-     * Get the preferred supplier via the pivot table.
+     * Get the preferred supplier for the part via the pivot table.
+     *
+     * Filters the part_suppliers pivot to only return the supplier marked
+     * as preferred.
      *
      * @return BelongsToMany<Supplier>
      */
@@ -239,7 +253,7 @@ class Part extends Model
     }
 
     /**
-     * Get the images of the part.
+     * Get all images for the part, ordered by sort order.
      *
      * @return HasMany<PartImage>
      */
@@ -279,7 +293,8 @@ class Part extends Model
     }
 
     /**
-     * Get the bill of materials where this part is the parent (assembly).
+     * Get the bill of materials entries where this part is the parent
+     * (assembled) part.
      *
      * @return HasMany<BillOfMaterial>
      */
@@ -289,7 +304,7 @@ class Part extends Model
     }
 
     /**
-     * Get all assemblies where this part is used as a component.
+     * Get all BOM entries where this part is used as a component.
      *
      * @return HasMany<BillOfMaterial>
      */
@@ -301,11 +316,11 @@ class Part extends Model
     /**
      * Scope a query to only include active parts.
      *
-     * @param Builder $query
+     * @param  Builder $query The query builder instance.
      *
-     * @return Builder
+     * @return Builder The modified query builder instance.
      */
-    public function scopeActive($query)
+    public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
     }
@@ -313,13 +328,13 @@ class Part extends Model
     /**
      * Scope a query to parts that are low on stock.
      *
-     * Compares quantity against reorder_point.
+     * Compares the current quantity against the reorder point.
      *
-     * @param Builder $query
+     * @param  Builder $query The query builder instance.
      *
-     * @return Builder
+     * @return Builder The modified query builder instance.
      */
-    public function scopeLowStock($query)
+    public function scopeLowStock(Builder $query): Builder
     {
         return $query->whereColumn('quantity', '<=', 'reorder_point');
     }
@@ -327,17 +342,20 @@ class Part extends Model
     /**
      * Scope a query to parts that are out of stock.
      *
-     * @param Builder $query
+     * @param  Builder $query The query builder instance.
      *
-     * @return Builder
+     * @return Builder The modified query builder instance.
      */
-    public function scopeOutOfStock($query)
+    public function scopeOutOfStock(Builder $query): Builder
     {
         return $query->where('quantity', 0);
     }
 
     /**
      * Determine if the part is low on stock.
+     *
+     * Returns true when a reorder point is set and the current quantity
+     * is at or below it.
      *
      * @return bool
      */
@@ -357,11 +375,11 @@ class Part extends Model
     }
 
     /**
-     * Calculate the profit margin percentage.
+     * Calculate the profit margin percentage for the part.
      *
-     * Returns null if cost price is not set or zero.
+     * Returns null if cost price is not set or is zero.
      *
-     * @return float|null
+     * @return float|null The margin as a percentage, or null if unavailable.
      */
     public function marginPercentage(): ?float
     {
@@ -376,11 +394,16 @@ class Part extends Model
     }
 
     /**
-     * Calculate total BOM cost for this part (recursive).
+     * Calculate the total BOM cost for this part, including sub-assemblies.
      *
-     * @param array $visited
+     * Recursively traverses the bill of materials tree. Returns the part's
+     * own cost price if it has no BOM entries. Circular references are
+     * prevented via the visited array.
      *
-     * @return float|null
+     * @param  array $visited Part IDs already visited in the current
+     * traversal, used to prevent infinite recursion.
+     *
+     * @return float|null The total BOM cost, or null if unresolvable.
      */
     public function bomCost(array $visited = []): ?float
     {
@@ -396,16 +419,27 @@ class Part extends Model
     }
 
     /**
-     * Sum the total costs of all BOM lines for this part.
+     * Sum the total costs of all BOM line entries for this part.
      *
-     * @param array $visited
+     * @param  array $visited Part IDs already visited in the current
+     * traversal, passed through to prevent circular references.
      *
-     * @return float
+     * @return float The summed cost of all BOM lines.
      */
     private function sumBomLineCosts(array $visited): float
     {
         return $this->billOfMaterials->sum(
             fn ($bom) => $bom->totalCost($visited) ?? 0
         );
+    }
+
+    /**
+     * Determine whether this part has an associated bill of materials.
+     *
+     * @return bool
+     */
+    public function hasBom(): bool
+    {
+        return $this->billOfMaterials()->exists();
     }
 }

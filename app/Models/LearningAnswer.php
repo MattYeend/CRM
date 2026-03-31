@@ -6,11 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Represents a single answer option for a LearningQuestion.
+ *
+ * Stores the answer text and whether it is the correct answer for the
+ * associated question.
+ */
 class LearningAnswer extends Model
 {
     /**
      * @use HasFactory<\Database\Factories\LearningAnswerFactory>
-     * @use HasTestPrefix<\App\Traits\HasTestPrefix>
      */
     use HasFactory;
 
@@ -26,7 +31,7 @@ class LearningAnswer extends Model
     ];
 
     /**
-     * The question this answer belongs to.
+     * Get the question this answer belongs to.
      *
      * @return BelongsTo<LearningQuestion,LearningAnswer>
      */

@@ -10,10 +10,17 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Represents a note attached to a polymorphic notable model.
+ *
+ * Notes may be associated with a Company, Deal, Task, or User via the notable
+ * relationship, and are optionally attributed to a user via the user
+ * relationship.
+ */
 class Note extends Model
 {
     /**
-     * @use HasFactory<\Database\Factories\LearningFactory>
+     * @use HasFactory<\Database\Factories\NoteFactory>
      * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
      * @use HasTestPrefix<\App\Traits\HasTestPrefix>
      */
@@ -23,30 +30,27 @@ class Note extends Model
 
     /**
      * The fully-qualified class name used as the notable type for Company
-     * activities.
+     * notes.
      */
     public const NOTABLE_COMPANY = Company::class;
 
     /**
-     * The fully-qualified class name used as the notable type for Deal
-     * activities.
+     * The fully-qualified class name used as the notable type for Deal notes.
      */
     public const NOTABLE_DEAL = Deal::class;
 
     /**
-     * The fully-qualified class name used as the subject type for Task
-     * activities.
+     * The fully-qualified class name used as the notable type for Task notes.
      */
     public const NOTABLE_TASK = Task::class;
 
     /**
-     * The fully-qualified class name used as the subject type for User
-     * activities.
+     * The fully-qualified class name used as the notable type for User notes.
      */
     public const NOTABLE_USER = User::class;
 
     /**
-     * All valid notable types that an activity can be associated with.
+     * All valid notable types that a note can be associated with.
      */
     public const NOTABLE_TYPES = [
         self::NOTABLE_COMPANY,
@@ -54,6 +58,7 @@ class Note extends Model
         self::NOTABLE_TASK,
         self::NOTABLE_USER,
     ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -96,7 +101,7 @@ class Note extends Model
      * The note may be a Company, Deal, Task, or User as defined
      * in NOTABLE_TYPES.
      *
-     * @return MorphTo<Notable>
+     * @return MorphTo<Model,Note>
      */
     public function notable(): MorphTo
     {
@@ -154,7 +159,7 @@ class Note extends Model
     }
 
     /**
-     * Get all of the note attachments.
+     * Get all attachments associated with the note.
      *
      * @return MorphMany<Attachment>
      */
@@ -164,7 +169,7 @@ class Note extends Model
     }
 
     /**
-     * Get all of the note activities.
+     * Get all activities associated with the note.
      *
      * @return MorphMany<Activity>
      */
@@ -174,7 +179,7 @@ class Note extends Model
     }
 
     /**
-     * Get all of the note tasks.
+     * Get all tasks associated with the note.
      *
      * @return MorphMany<Task>
      */
@@ -184,10 +189,9 @@ class Note extends Model
     }
 
     /**
-     * Get the note type, applies the test prefix when the note is marked
-     * as a test.
+     * Get the note body, applying the test prefix when marked as a test.
      *
-     * @param  string|null  $value  The raw note type from the database.
+     * @param  string|null  $value  The raw note body from the database.
      *
      * @return string
      */

@@ -7,6 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Represents an image associated with a part.
+ *
+ * Each part may have multiple images, but only one may be designated as
+ * the primary image. The booted method enforces this constraint by
+ * automatically demoting any existing primary image when a new one is saved
+ * with is_primary set to true.
+ */
 class PartImage extends Model
 {
     /**
@@ -55,7 +63,7 @@ class PartImage extends Model
     ];
 
     /**
-     * Get the part the image belongs to
+     * Get the part this image belongs to.
      *
      * @return BelongsTo<Part,PartImage>
      */
@@ -65,14 +73,16 @@ class PartImage extends Model
     }
 
     /**
-     * Booted function to make sure only one primary
-     * image per part.
+     * Bootstrap the model and its traits.
+     *
+     * Registers a saving listener that ensures only one image per part is
+     * marked as primary. When a new image is saved with is_primary set to
+     * true, all other images for the same part are demoted.
      *
      * @return void
      */
     protected static function booted(): void
     {
-        // Ensure only one primary image per part
         static::saving(function (PartImage $image) {
             if ($image->is_primary) {
                 static::where('part_id', $image->part_id)

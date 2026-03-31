@@ -12,6 +12,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Represents a learning resource that can be assigned to users.
+ *
+ * Each learning may carry a set of questions with answers. Completion state
+ * is tracked per user via the LearningUser pivot. Query scopes are provided
+ * to filter learnings by assignment and completion status for a given user.
+ */
 class Learning extends Model
 {
     /**
@@ -70,7 +77,7 @@ class Learning extends Model
     ];
 
     /**
-     * Get the questions of the learning.
+     * Get the questions for the learning.
      *
      * @return HasMany<LearningQuestion>
      */
@@ -130,9 +137,12 @@ class Learning extends Model
     }
 
     /**
-     * The users that are assigned to this learning.
+     * Get the users assigned to this learning.
      *
-     * @return BelongsToMany<User,LearningUser>
+     * Pivot data includes completion state, timestamp, and audit fields
+     * via the LearningUser pivot model.
+     *
+     * @return BelongsToMany<User>
      */
     public function users(): BelongsToMany
     {
@@ -146,7 +156,7 @@ class Learning extends Model
     }
 
     /**
-     * Get all of the learning attachments.
+     * Get all attachments associated with the learning.
      *
      * @return MorphMany<Attachment>
      */
@@ -156,7 +166,7 @@ class Learning extends Model
     }
 
     /**
-     * Get all of the learning activities.
+     * Get all activities associated with the learning.
      *
      * @return MorphMany<Activity>
      */
@@ -166,7 +176,7 @@ class Learning extends Model
     }
 
     /**
-     * Get all of the learning tasks.
+     * Get all tasks associated with the learning.
      *
      * @return MorphMany<Task>
      */
@@ -176,7 +186,7 @@ class Learning extends Model
     }
 
     /**
-     * Get all of the learning notes.
+     * Get all notes associated with the learning.
      *
      * @return MorphMany<Note>
      */
@@ -188,9 +198,9 @@ class Learning extends Model
     /**
      * Scope a query to only include learnings assigned to a given user.
      *
-     * @param Builder $query The query builder instance.
+     * @param  Builder $query The query builder instance.
      *
-     * @param int $userId The ID of the user to filter by.
+     * @param  int $userId The ID of the user to filter by.
      *
      * @return Builder The modified query builder instance.
      */
@@ -202,11 +212,11 @@ class Learning extends Model
     }
 
     /**
-     * Scope a query to only include completed learnings.
+     * Scope a query to only include learnings completed by a given user.
      *
-     * @param Builder $query The query builder instance.
+     * @param  Builder $query The query builder instance.
      *
-     * @param int $userId The id of the user.
+     * @param  int $userId The ID of the user to filter by.
      *
      * @return Builder The modified query builder instance.
      */
@@ -219,11 +229,12 @@ class Learning extends Model
     }
 
     /**
-     * Scope a query to only include incomplete learnings.
+     * Scope a query to only include learnings not yet completed by a given
+     * user.
      *
-     * @param Builder $query The query builder instance.
+     * @param  Builder $query The query builder instance.
      *
-     * @param int $userId The id of the user.
+     * @param  int $userId The ID of the user to filter by.
      *
      * @return Builder The modified query builder instance.
      */
@@ -236,9 +247,7 @@ class Learning extends Model
     }
 
     /**
-     * Get the learning title.
-     *
-     * Applies the test prefix when the learning is marked as a test.
+     * Get the learning title, applying the test prefix when marked as a test.
      *
      * @param  string|null  $value  The raw learning title from the database.
      *

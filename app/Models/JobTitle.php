@@ -9,6 +9,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Represents a job title that can be assigned to users.
+ *
+ * Provides a set of predefined title and group constants covering C-Suite,
+ * executive, and director level positions, and exposes a users relationship
+ * to retrieve all users holding the title.
+ */
 class JobTitle extends Model
 {
     /**
@@ -177,7 +184,7 @@ class JobTitle extends Model
     }
 
     /**
-     * Get the users that have the job title
+     * Get the users that hold this job title.
      *
      * @return HasMany<User>
      */

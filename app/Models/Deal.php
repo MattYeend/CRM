@@ -10,6 +10,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Represents a sales deal within the CRM pipeline.
+ *
+ * A deal is owned by a company and a user, belongs to a pipeline and stage,
+ * and tracks its monetary value, currency, close date, and lifecycle status.
+ * Products may be attached to a deal via the deal_products pivot table.
+ */
 class Deal extends Model
 {
     /**
@@ -124,7 +131,7 @@ class Deal extends Model
     }
 
     /**
-     * Get the tasks for the deal.
+     * Get all tasks associated with the deal.
      *
      * @return MorphMany<Task>
      */
@@ -134,7 +141,7 @@ class Deal extends Model
     }
 
     /**
-     * Get the notes for the deal.
+     * Get all notes associated with the deal.
      *
      * @return MorphMany<Note>
      */
@@ -144,7 +151,7 @@ class Deal extends Model
     }
 
     /**
-     * Get the attachments for the deal.
+     * Get all attachments associated with the deal.
      *
      * @return MorphMany<Attachment>
      */
@@ -154,7 +161,7 @@ class Deal extends Model
     }
 
     /**
-     * Get the activities for the deal.
+     * Get all activities associated with the deal.
      *
      * @return MorphMany<Activity>
      */
@@ -204,7 +211,7 @@ class Deal extends Model
     }
 
     /**
-     * Get the product for the deal.
+     * Get the products associated with the deal.
      *
      * @return BelongsToMany<Product>
      */
@@ -212,13 +219,12 @@ class Deal extends Model
     {
         return $this->belongsToMany(Product::class, 'deal_products')
             ->using(DealProduct::class)
-            ->withPivot(['quantity','price','total'])
+            ->withPivot(['quantity', 'price', 'total'])
             ->withTimestamps();
     }
 
     /**
-     * Get the deal title, applies the test prefix when the deal is
-     * marked as a test.
+     * Get the deal title, applying the test prefix when marked as a test.
      *
      * @param  string|null  $value  The raw title from the database.
      *

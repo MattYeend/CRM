@@ -10,6 +10,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
+/**
+ * Represents a hierarchical category for organising parts.
+ *
+ * Categories may be nested via a self-referential parent/children
+ * relationship. A URL-friendly slug is automatically generated from the
+ * category name on creation and regenerated whenever the name changes.
+ */
 class PartCategory extends Model
 {
     /**
@@ -87,9 +94,9 @@ class PartCategory extends Model
     }
 
     /**
-     * Get the user that created the permission.
+     * Get the user that created the part category.
      *
-     * @return BelongsTo<User>
+     * @return BelongsTo<User,PartCategory>
      */
     public function creator(): BelongsTo
     {
@@ -97,9 +104,9 @@ class PartCategory extends Model
     }
 
     /**
-     * Get the user that last updated the permission.
+     * Get the user that last updated the part category.
      *
-     * @return BelongsTo<User>
+     * @return BelongsTo<User,PartCategory>
      */
     public function updater(): BelongsTo
     {
@@ -107,9 +114,9 @@ class PartCategory extends Model
     }
 
     /**
-     * Get the user that deleted the permission.
+     * Get the user that deleted the part category.
      *
-     * @return BelongsTo<User>
+     * @return BelongsTo<User,PartCategory>
      */
     public function deleter(): BelongsTo
     {
@@ -117,9 +124,9 @@ class PartCategory extends Model
     }
 
     /**
-     * Get the user that restored the permission.
+     * Get the user that restored the part category.
      *
-     * @return BelongsTo<User>
+     * @return BelongsTo<User,PartCategory>
      */
     public function restorer(): BelongsTo
     {

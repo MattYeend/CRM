@@ -5,6 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Pivot model representing the many-to-many relationship between orders
+ * and products.
+ *
+ * Stores the quantity, unit price, and line total for each product on an
+ * order, along with the standard audit and soft-delete tracking columns.
+ */
 class OrderProduct extends Pivot
 {
     /**

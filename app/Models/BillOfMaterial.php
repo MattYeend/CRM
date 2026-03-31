@@ -7,6 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Represents a single line in a Bill of Materials, defining the relationship
+ * between a parent (manufactured) part and a child (component) part.
+ *
+ * Tracks the required quantity, scrap allowance, and unit of measure for each
+ * component, and provides methods for calculating both direct and recursive
+ * assembly costs.
+ */
 class BillOfMaterial extends Model
 {
     /**
@@ -54,6 +62,7 @@ class BillOfMaterial extends Model
 
     /**
      * Get the parent part that this BOM entry belongs to.
+     *
      * The parent is the manufactured part that requires child components.
      *
      * @return BelongsTo<Part,BillOfMaterial>
@@ -74,7 +83,7 @@ class BillOfMaterial extends Model
     }
 
     /**
-     * Get the user that created the bom.
+     * Get the user that created the bill of material.
      *
      * @return BelongsTo<User,BillOfMaterial>
      */
@@ -84,7 +93,7 @@ class BillOfMaterial extends Model
     }
 
     /**
-     * Get the user that updated the bom.
+     * Get the user that updated the bill of material.
      *
      * @return BelongsTo<User,BillOfMaterial>
      */
@@ -94,7 +103,7 @@ class BillOfMaterial extends Model
     }
 
     /**
-     * Get the user that deleted the bom.
+     * Get the user that deleted the bill of material.
      *
      * @return BelongsTo<User,BillOfMaterial>
      */
@@ -104,7 +113,7 @@ class BillOfMaterial extends Model
     }
 
     /**
-     * Get the user that restored the bom.
+     * Get the user that restored the bill of material.
      *
      * @return BelongsTo<User,BillOfMaterial>
      */
@@ -114,9 +123,12 @@ class BillOfMaterial extends Model
     }
 
     /**
-     * Quantity including scrap
+     * Calculate the required quantity adjusted for the scrap allowance.
      *
-     * @return float
+     * Adds the scrap percentage on top of the base quantity to account for
+     * material loss during manufacturing.
+     *
+     * @return float The quantity including scrap.
      */
     public function effectiveQuantity(): float
     {
@@ -126,9 +138,12 @@ class BillOfMaterial extends Model
     }
 
     /**
-     * Direct cost (no recursion)
+     * Calculate the direct line cost for this BOM entry.
      *
-     * @return float|null
+     * Multiplies the effective quantity by the child part's cost price.
+     * Returns null if the child part has no cost price set.
+     *
+     * @return float|null The direct cost, or null if cost price is unavailable.
      */
     public function lineCost(): ?float
     {
@@ -142,11 +157,17 @@ class BillOfMaterial extends Model
     }
 
     /**
-     * Recursive cost (includes sub-assemblies)
+     * Calculate the total cost for this BOM entry, including sub-assemblies.
      *
-     * @param array $visited
+     * Recursively traverses the bill of materials tree to sum costs at all
+     * levels. Circular references are prevented via the visited array.
+     * Returns null if the child part cannot be resolved, and zero if a
+     * circular reference is detected.
      *
-     * @return float|null
+     * @param  array $visited Part IDs already visited in the current traversal,
+     * used to prevent infinite recursion.
+     *
+     * @return float|null The total recursive cost, or null if unresolvable.
      */
     public function totalCost(array $visited = []): ?float
     {

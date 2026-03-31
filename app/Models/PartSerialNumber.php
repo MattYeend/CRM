@@ -9,6 +9,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Represents a uniquely identifiable serialised instance of a part.
+ *
+ * Tracks lifecycle state (in stock, sold, returned, scrapped), manufacturing
+ * and expiry dates, and optional metadata. Provides query scopes for common
+ * stock states and helper methods for expiry and serial formatting.
+ *
+ * Serial numbers may be automatically prefixed when marked as test records.
+ */
 class PartSerialNumber extends Model
 {
     /**
@@ -20,20 +29,30 @@ class PartSerialNumber extends Model
         SoftDeletes,
         HasTestPrefix;
 
-    /** Part is available and held in stock. */
+    /**
+     * Part is available and held in stock.
+     */
     public const STATUS_IN_STOCK = 'in_stock';
 
-    /** Part has been sold to a customer. */
+    /**
+     * Part has been sold to a customer.
+     */
     public const STATUS_SOLD = 'sold';
 
-    /** Part has been returned after a sale. */
+    /**
+     * Part has been returned after a sale.
+     */
     public const STATUS_RETURNED = 'returned';
 
-    /** Part has been written off and is no longer usable. */
+    /**
+     * Part has been written off and is no longer usable.
+     */
     public const STATUS_SCRAPPED = 'scrapped';
 
     /**
      * All valid status values.
+     *
+     * Suitable for validation rules and filtering logic.
      */
     public const STATUSES = [
         self::STATUS_IN_STOCK,
@@ -82,7 +101,7 @@ class PartSerialNumber extends Model
     ];
 
     /**
-     * Part the serial number belongs to.
+     * Get the part this serial number belongs to.
      *
      * @return BelongsTo<Part,PartSerialNumber>
      */
@@ -92,11 +111,11 @@ class PartSerialNumber extends Model
     }
 
     /**
-     * Scope to only serial numbers currently held in stock.
+     * Scope a query to only serial numbers currently held in stock.
      *
-     * @param  Builder<PartSerialNumber> $query
+     * @param  Builder<PartSerialNumber> $query The query builder instance.
      *
-     * @return Builder<PartSerialNumber>
+     * @return Builder<PartSerialNumber> The modified query builder instance.
      */
     public function scopeInStock(Builder $query): Builder
     {
@@ -104,14 +123,16 @@ class PartSerialNumber extends Model
     }
 
     /**
-     * Scope to in-stock serial numbers expiring within the given
+     * Scope a query to in-stock serial numbers expiring within a given
      * number of days.
      *
-     * @param  Builder<PartSerialNumber> $query
+     * Filters to records with a non-null expiry date that falls within
+     * the specified lookahead window.
      *
+     * @param  Builder<PartSerialNumber> $query The query builder instance.
      * @param  int $days Lookahead window in days (default 30).
      *
-     * @return Builder<PartSerialNumber>
+     * @return Builder<PartSerialNumber> The modified query builder instance.
      */
     public function scopeExpiringSoon(Builder $query, int $days = 30): Builder
     {
@@ -123,7 +144,7 @@ class PartSerialNumber extends Model
     /**
      * Determine whether this serial number's expiry date has passed.
      *
-     * Returns `false` when no expiry date is set.
+     * Returns false when no expiry date is set.
      *
      * @return bool
      */
@@ -133,14 +154,13 @@ class PartSerialNumber extends Model
     }
 
     /**
-     * Get the serial number, applies the test prefix when the part
-     * serial number
-     * is marked as a test.
+     * Get the formatted serial number.
      *
-     * @param  string|null  $value  The raw part serial number from the
-     * database.
+     * Applies a test prefix when the serial number is marked as a test record.
      *
-     * @return string
+     * @param  string|null $value The raw serial number from the database.
+     *
+     * @return string The formatted serial number.
      */
     public function getSerialNumberAttribute($value): string
     {

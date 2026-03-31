@@ -9,6 +9,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Represents a single line item on an invoice.
+ *
+ * Each item is associated with an invoice and optionally a product, and
+ * carries a description, quantity, unit price, and a computed line total.
+ */
 class InvoiceItem extends Model
 {
     /**
@@ -69,7 +75,7 @@ class InvoiceItem extends Model
     }
 
     /**
-     * Get the product that owns the invoice item.
+     * Get the product associated with the invoice item.
      *
      * @return BelongsTo<Product,InvoiceItem>
      */
@@ -79,7 +85,9 @@ class InvoiceItem extends Model
     }
 
     /**
-     * Get the line total for the invoice item.
+     * Get the computed line total for the invoice item.
+     *
+     * Calculated as quantity multiplied by unit price.
      *
      * @return float
      */
@@ -91,7 +99,7 @@ class InvoiceItem extends Model
     /**
      * Get the user that created the invoice item.
      *
-     * @return BelongsTo<User,InvioceItem>
+     * @return BelongsTo<User,InvoiceItem>
      */
     public function creator(): BelongsTo
     {
@@ -101,7 +109,7 @@ class InvoiceItem extends Model
     /**
      * Get the user that updated the invoice item.
      *
-     * @return BelongsTo<User,InvioceItem>
+     * @return BelongsTo<User,InvoiceItem>
      */
     public function updater(): BelongsTo
     {
@@ -111,7 +119,7 @@ class InvoiceItem extends Model
     /**
      * Get the user that deleted the invoice item.
      *
-     * @return BelongsTo<User,InvioceItem>
+     * @return BelongsTo<User,InvoiceItem>
      */
     public function deleter(): BelongsTo
     {
@@ -121,7 +129,7 @@ class InvoiceItem extends Model
     /**
      * Get the user that restored the invoice item.
      *
-     * @return BelongsTo<User,InvioceItem>
+     * @return BelongsTo<User,InvoiceItem>
      */
     public function restorer(): BelongsTo
     {
@@ -129,7 +137,7 @@ class InvoiceItem extends Model
     }
 
     /**
-     * Get all of the invoice item attachments.
+     * Get all attachments associated with the invoice item.
      *
      * @return MorphMany<Attachment>
      */
@@ -139,7 +147,7 @@ class InvoiceItem extends Model
     }
 
     /**
-     * Get all of the invoice item activities.
+     * Get all activities associated with the invoice item.
      *
      * @return MorphMany<Activity>
      */
@@ -149,7 +157,7 @@ class InvoiceItem extends Model
     }
 
     /**
-     * Get all of the invoice item tasks.
+     * Get all tasks associated with the invoice item.
      *
      * @return MorphMany<Task>
      */
@@ -159,7 +167,7 @@ class InvoiceItem extends Model
     }
 
     /**
-     * Get all of the invoice item notes.
+     * Get all notes associated with the invoice item.
      *
      * @return MorphMany<Note>
      */
@@ -169,11 +177,10 @@ class InvoiceItem extends Model
     }
 
     /**
-     * Get the invoice description, pplies the test prefix when the
-     * invoice item is marked as a test.
+     * Get the invoice item description, applying the test prefix when marked
+     * as a test.
      *
-     * @param  string|null  $value  The raw invoice item description
-     * from the database.
+     * @param  string|null  $value  The raw description value from the database.
      *
      * @return string
      */
