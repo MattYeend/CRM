@@ -12,6 +12,19 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Represents a sellable product within the system.
+ *
+ * Products track pricing, stock levels, and lifecycle status
+ * (active, discontinued, pending, or out of stock). They support
+ * inventory management features such as reorder points, lead times,
+ * and stock thresholds.
+ *
+ * Products are associated with commercial entities such as deals,
+ * quotes, and orders, and support related activities like tasks,
+ * notes, and attachments. Products may also be marked as test records,
+ * in which case certain attributes (e.g. name) are automatically prefixed.
+ */
 class Product extends Model
 {
     /**
@@ -24,27 +37,29 @@ class Product extends Model
         HasTestPrefix;
 
     /**
-     * Active Status.
+     * Active product status.
      */
     public const ACTIVE_PRODUCT_STATUS = 'active';
 
     /**
-     * Discontinued Status.
+     * Discontinued product status.
      */
     public const DISCONTINUED_PRODUCT_STATUS = 'discontinued';
 
     /**
-     * Pending Status.
+     * Pending product status.
      */
     public const PENDING_PRODUCT_STATUS = 'pending';
 
     /**
-     * Out Of Stock Status.
+     * Out-of-stock product status.
      */
     public const OUT_OF_STOCK_PRODUCT_STATUS = 'out_of_stock';
 
     /**
-     * Part Statuses
+     * All valid product statuses.
+     *
+     * Suitable for validation and filtering logic.
      */
     public const PRODUCT_STATUSES = [
         self::ACTIVE_PRODUCT_STATUS,
@@ -52,6 +67,7 @@ class Product extends Model
         self::PENDING_PRODUCT_STATUS,
         self::OUT_OF_STOCK_PRODUCT_STATUS,
     ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -98,7 +114,7 @@ class Product extends Model
     ];
 
     /**
-     * Get the invoice items for the product.
+     * Get the invoice items associated with the product.
      *
      * @return HasMany<InvoiceItem>
      */
@@ -118,7 +134,7 @@ class Product extends Model
     }
 
     /**
-     * Get the user that updated the product.
+     * Get the user that last updated the product.
      *
      * @return BelongsTo<User,Product>
      */
@@ -148,7 +164,7 @@ class Product extends Model
     }
 
     /**
-     * Get all of the product attachments.
+     * Get all attachments associated with the product.
      *
      * @return MorphMany<Attachment>
      */
@@ -158,7 +174,7 @@ class Product extends Model
     }
 
     /**
-     * Get all of the product activities.
+     * Get all activities associated with the product.
      *
      * @return MorphMany<Activity>
      */
@@ -168,7 +184,7 @@ class Product extends Model
     }
 
     /**
-     * Get all of the product tasks.
+     * Get all tasks associated with the product.
      *
      * @return MorphMany<Task>
      */
@@ -178,7 +194,7 @@ class Product extends Model
     }
 
     /**
-     * Get all of the product notes.
+     * Get all notes associated with the product.
      *
      * @return MorphMany<Note>
      */
@@ -188,11 +204,13 @@ class Product extends Model
     }
 
     /**
-     * Get the deals for the product.
+     * Get the deals associated with the product.
+     *
+     * Includes pivot data such as quantity and price.
      *
      * @return BelongsToMany<Deal>
      */
-    public function deals()
+    public function deals(): BelongsToMany
     {
         return $this->belongsToMany(Deal::class, 'deal_products')
             ->withPivot('quantity', 'price', 'deleted_at')
@@ -201,11 +219,13 @@ class Product extends Model
     }
 
     /**
-     * Get the quotes for the product.
+     * Get the quotes associated with the product.
+     *
+     * Includes pivot data such as quantity and price.
      *
      * @return BelongsToMany<Quote>
      */
-    public function quotes()
+    public function quotes(): BelongsToMany
     {
         return $this->belongsToMany(Quote::class, 'quote_products')
             ->withPivot('quantity', 'price', 'deleted_at')
@@ -214,11 +234,13 @@ class Product extends Model
     }
 
     /**
-     * Get the orders for the product.
+     * Get the orders associated with the product.
+     *
+     * Includes pivot data such as quantity, price, and metadata.
      *
      * @return BelongsToMany<Order>
      */
-    public function orders()
+    public function orders(): BelongsToMany
     {
         return $this->belongsToMany(Order::class, 'order_products')
             ->withPivot('quantity', 'price', 'meta', 'deleted_at')
@@ -229,13 +251,13 @@ class Product extends Model
     /**
      * Scope a query to products that are low on stock.
      *
-     * Compares quantity against reorder_point.
+     * Compares quantity against the reorder point.
      *
-     * @param Builder $query
+     * @param  Builder<Product> $query The query builder instance.
      *
-     * @return Builder
+     * @return Builder<Product> The modified query builder instance.
      */
-    public function scopeLowStock($query)
+    public function scopeLowStock(Builder $query): Builder
     {
         return $query->whereColumn('quantity', '<=', 'reorder_point');
     }
@@ -243,17 +265,17 @@ class Product extends Model
     /**
      * Scope a query to products that are out of stock.
      *
-     * @param Builder $query
+     * @param  Builder<Product> $query The query builder instance.
      *
-     * @return Builder
+     * @return Builder<Product> The modified query builder instance.
      */
-    public function scopeOutOfStock($query)
+    public function scopeOutOfStock(Builder $query): Builder
     {
         return $query->where('quantity', 0);
     }
 
     /**
-     * Determine if the product is low on stock.
+     * Determine whether the product is low on stock.
      *
      * @return bool
      */
@@ -263,7 +285,7 @@ class Product extends Model
     }
 
     /**
-     * Determine if the product is out of stock.
+     * Determine whether the product is out of stock.
      *
      * @return bool
      */
@@ -273,12 +295,13 @@ class Product extends Model
     }
 
     /**
-     * Get the product name, applies the test prefix when the product is
-     * marked as a test.
+     * Get the formatted product name.
      *
-     * @param  string|null  $value  The raw product name from the database.
+     * Applies a test prefix when the product is marked as a test record.
      *
-     * @return string
+     * @param  string|null $value The raw product name from the database.
+     *
+     * @return string The formatted product name.
      */
     public function getNameAttribute($value): string
     {

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasTestPrefix;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +11,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Represents a supplier providing parts or products.
+ *
+ * Suppliers store contact, address, and commercial information such as
+ * payment terms, tax details, and preferred currency. They are linked
+ * to parts via a many-to-many relationship that includes supplier-specific
+ * data (e.g. supplier SKU, unit cost, lead time).
+ *
+ * Suppliers support lifecycle tracking (active/inactive), audit fields,
+ * and may be marked as test records with prefixed attributes.
+ */
 class Supplier extends Model
 {
     /**
@@ -59,9 +71,9 @@ class Supplier extends Model
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string,string>
+     * @var array<string,string>
      */
     protected $casts = [
         'is_active' => 'boolean',
@@ -74,7 +86,10 @@ class Supplier extends Model
     ];
 
     /**
-     * Get the parts the belong to the supplier
+     * Get the parts supplied by this supplier.
+     *
+     * Includes pivot data such as supplier SKU, unit cost, lead time,
+     * and preferred supplier flag.
      *
      * @return BelongsToMany<Part>
      */
@@ -91,7 +106,7 @@ class Supplier extends Model
     }
 
     /**
-     * Get the part supplier of the supplier
+     * Get the part-supplier pivot records for this supplier.
      *
      * @return HasMany<PartSupplier>
      */
@@ -101,7 +116,7 @@ class Supplier extends Model
     }
 
     /**
-     * Get the user who created the task.
+     * Get the user that created the supplier.
      *
      * @return BelongsTo<User,Supplier>
      */
@@ -111,7 +126,7 @@ class Supplier extends Model
     }
 
     /**
-     * Get the user who last updated the task.
+     * Get the user that last updated the supplier.
      *
      * @return BelongsTo<User,Supplier>
      */
@@ -121,7 +136,7 @@ class Supplier extends Model
     }
 
     /**
-     * Get the user who deleted the task.
+     * Get the user that deleted the supplier.
      *
      * @return BelongsTo<User,Supplier>
      */
@@ -131,7 +146,7 @@ class Supplier extends Model
     }
 
     /**
-     * Get the user that restored the task.
+     * Get the user that restored the supplier.
      *
      * @return BelongsTo<User,Supplier>
      */
@@ -141,21 +156,25 @@ class Supplier extends Model
     }
 
     /**
-     * Scope out if the supplier is active
+     * Scope a query to only include active suppliers.
+     *
+     * @param  Builder<Supplier> $query The query builder instance.
+     *
+     * @return Builder<Supplier> The modified query builder instance.
      */
-    public function scopeActive($query)
+    public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
     }
 
     /**
-     * Get the suppliers name.
+     * Get the formatted supplier name.
      *
-     * Applies the test prefix when the supplier is marked as a test.
+     * Applies a test prefix when the supplier is marked as a test record.
      *
-     * @param  string|null  $value  The raw supplier name from the database.
+     * @param  string|null $value The raw supplier name from the database.
      *
-     * @return string
+     * @return string The formatted supplier name.
      */
     public function getNameAttribute($value): string
     {

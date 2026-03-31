@@ -19,6 +19,18 @@ use Laravel\Cashier\Billable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * Represents an authenticated user within the system.
+ *
+ * Users support authentication, billing, notifications, and API access.
+ * They are associated with roles and permissions for access control,
+ * and may own or be assigned various entities such as deals, tasks,
+ * notes, and learnings.
+ *
+ * Permissions are derived from the user's role and cached for performance.
+ * Users may also be marked as test records, in which case certain
+ * attributes (e.g. name) are automatically prefixed.
+ */
 class User extends Authenticatable
 {
     /**
@@ -63,7 +75,7 @@ class User extends Authenticatable
         'stripe_id',
         'pm_type',
         'pm_last_four',
-        'trail_ends_at',
+        'trial_ends_at',
     ];
 
     /**
@@ -79,9 +91,9 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string,string>
+     * @var array<string,string>
      */
     protected $casts = [
         'permissions' => 'array',
@@ -97,7 +109,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * The roles that belong to the user.
+     * Get the role assigned to the user.
      *
      * @return BelongsTo<Role,User>
      */
@@ -107,7 +119,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Super admin user role
+     * Determine whether the user is a super administrator.
      *
      * @return bool
      */
@@ -117,7 +129,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Admin user role
+     * Determine whether the user is an administrator.
      *
      * @return bool
      */
@@ -127,7 +139,7 @@ class User extends Authenticatable
     }
 
     /**
-     * User role
+     * Determine whether the user is a standard user.
      *
      * @return bool
      */
@@ -137,9 +149,9 @@ class User extends Authenticatable
     }
 
     /**
-     * The permissions that belong to the user through roles.
+     * Get the permissions assigned to the user via their role.
      *
-     * @return Collection
+     * @return Collection<int,string>
      */
     public function permissions(): Collection
     {
@@ -149,7 +161,9 @@ class User extends Authenticatable
     }
 
     /**
-     * Get all permissions for the user, caching the result for 60 minutes.
+     * Get all permissions for the user.
+     *
+     * Results are cached for 60 minutes to improve performance.
      *
      * @return array<int,string>
      */
@@ -163,9 +177,9 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if the user has a specific permission.
+     * Determine whether the user has a given permission.
      *
-     * @param string $permission
+     * @param  string $permission The permission name.
      *
      * @return bool
      */
@@ -175,9 +189,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if the user has a specific role.
+     * Determine whether the user has a given role.
      *
-     * @param int $roleId
+     * Accepts either a role ID or role name.
+     *
+     * @param  int|string $role The role ID or name.
      *
      * @return bool
      */
@@ -205,7 +221,7 @@ class User extends Authenticatable
     }
 
     /**
-     * The deals owned by the user.
+     * Get the deals owned by the user.
      *
      * @return HasMany<Deal>
      */
@@ -215,7 +231,7 @@ class User extends Authenticatable
     }
 
     /**
-     * The tasks assigned to the user.
+     * Get the tasks assigned to the user.
      *
      * @return HasMany<Task>
      */
@@ -225,7 +241,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get notes with the user id.
+     * Get the notes created by the user.
      *
      * @return HasMany<Note>
      */
@@ -235,7 +251,9 @@ class User extends Authenticatable
     }
 
     /**
-     * The learnings belonging to the user.
+     * Get the learnings associated with the user.
+     *
+     * Includes pivot data such as completion status and timestamps.
      *
      * @return BelongsToMany<Learning>
      */
@@ -244,14 +262,19 @@ class User extends Authenticatable
         return $this->belongsToMany(Learning::class)
             ->using(LearningUser::class)
             ->withPivot([
-                'is_complete', 'user_id', 'completed_at', 'is_test', 'meta',
-                'created_by', 'updated_by',
+                'is_complete',
+                'user_id',
+                'completed_at',
+                'is_test',
+                'meta',
+                'created_by',
+                'updated_by',
             ])
             ->withTimestamps();
     }
 
     /**
-     * Get all of the user attachments.
+     * Get all attachments associated with the user.
      *
      * @return MorphMany<Attachment>
      */
@@ -261,7 +284,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get all of the user activities.
+     * Get all activities associated with the user.
      *
      * @return MorphMany<Activity>
      */
@@ -271,7 +294,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get all of the user tasks.
+     * Get all tasks where the user is the taskable entity.
      *
      * @return MorphMany<Task>
      */
@@ -281,7 +304,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get all of the user notes.
+     * Get all notes associated with the user as a notable entity.
      *
      * @return MorphMany<Note>
      */
@@ -291,7 +314,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the job title of the user
+     * Get the job title associated with the user.
      *
      * @return BelongsTo<JobTitle,User>
      */
@@ -301,12 +324,13 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the user name, applies the test prefix when the user is marked
-     * as a test.
+     * Get the formatted user name.
      *
-     * @param  string|null  $value  The raw user title from the database.
+     * Applies a test prefix when the user is marked as a test record.
      *
-     * @return string
+     * @param  string|null $value The raw user name from the database.
+     *
+     * @return string The formatted user name.
      */
     public function getNameAttribute($value): string
     {
@@ -316,10 +340,8 @@ class User extends Authenticatable
     /**
      * The "booted" method of the model.
      *
-     * This method is called once the model is booted and allows you to
-     * define model event callbacks. Here, it attaches callbacks to the
-     * "created" and "updated" events to clear the user's permission cache
-     * whenever a User model is created or updated.
+     * Clears the user's cached permissions whenever the model is
+     * created or updated to ensure consistency.
      *
      * @return void
      */

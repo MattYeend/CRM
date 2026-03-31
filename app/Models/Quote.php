@@ -9,6 +9,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Represents a commercial quote associated with a deal.
+ *
+ * Quotes capture pricing details for a set of products, including
+ * subtotal, tax, and total amounts. They track lifecycle events such
+ * as when the quote was sent and when it was accepted.
+ *
+ * Quotes are linked to deals and products, and support audit tracking
+ * (created, updated, deleted, restored). They may also be marked as
+ * test records, in which case certain attributes may be prefixed.
+ */
 class Quote extends Model
 {
     /**
@@ -59,7 +70,7 @@ class Quote extends Model
     ];
 
     /**
-     * Deal the quote belongs to.
+     * Get the deal this quote belongs to.
      *
      * @return BelongsTo<Deal,Quote>
      */
@@ -69,7 +80,7 @@ class Quote extends Model
     }
 
     /**
-     * Get the user that created the product deal.
+     * Get the user that created the quote.
      *
      * @return BelongsTo<User,Quote>
      */
@@ -79,7 +90,7 @@ class Quote extends Model
     }
 
     /**
-     * Get the user that updated the product deal.
+     * Get the user that last updated the quote.
      *
      * @return BelongsTo<User,Quote>
      */
@@ -89,7 +100,7 @@ class Quote extends Model
     }
 
     /**
-     * Get the user that deleted the product deal.
+     * Get the user that deleted the quote.
      *
      * @return BelongsTo<User,Quote>
      */
@@ -99,7 +110,7 @@ class Quote extends Model
     }
 
     /**
-     * Get the user that restored the product deal.
+     * Get the user that restored the quote.
      *
      * @return BelongsTo<User,Quote>
      */
@@ -109,15 +120,17 @@ class Quote extends Model
     }
 
     /**
-     * Get the product for the quote.
+     * Get the products associated with the quote.
      *
-     * @return BelongToMany<Product>
+     * Includes pivot data such as quantity, price, and total.
+     *
+     * @return BelongsToMany<Product>
      */
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'quote_products')
             ->using(QuoteProduct::class)
-            ->withPivot(['quantity','price','total'])
+            ->withPivot(['quantity', 'price', 'total'])
             ->withTimestamps();
     }
 }

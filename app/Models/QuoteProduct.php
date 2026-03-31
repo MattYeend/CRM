@@ -5,6 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Represents a pivot record linking quotes and products.
+ *
+ * Stores line-item details for a product within a quote, including
+ * quantity, unit price, and total value. Supports soft deletion and
+ * audit tracking, allowing historical changes to be preserved.
+ *
+ * Additional metadata may be stored for extensibility, and records
+ * may be flagged as test data.
+ */
 class QuoteProduct extends Pivot
 {
     /**

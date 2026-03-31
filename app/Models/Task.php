@@ -11,6 +11,18 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Represents a task within the system.
+ *
+ * Tasks track actionable items assigned to users and may be associated
+ * with various entities (e.g. deals, companies, users, or other tasks)
+ * via a polymorphic relationship.
+ *
+ * Tasks support lifecycle states (pending, completed, cancelled),
+ * priority levels, due dates, and audit tracking. They may also be
+ * marked as test records, in which case certain attributes (e.g. title)
+ * are automatically prefixed.
+ */
 class Task extends Model
 {
     /**
@@ -23,61 +35,59 @@ class Task extends Model
         HasTestPrefix;
 
     /**
-     * Represents a task that is pending.
+     * Task is pending.
      */
     public const STATUS_PENDING = 'pending';
 
     /**
-     * Represents a task that has been complete.
+     * Task has been completed.
      */
     public const STATUS_COMPLETED = 'completed';
 
     /**
-     * Represents a task that has been cancelled.
+     * Task has been cancelled.
      */
     public const STATUS_CANCELLED = 'cancelled';
 
     /**
-     * Represents a task that is a low priority.
+     * Low priority task.
      */
     public const PRIORITY_LOW = 'low';
 
     /**
-     * Represents a task that is a medium priority.
+     * Medium priority task.
      */
     public const PRIORITY_MEDIUM = 'medium';
 
     /**
-     * Represents a task that is a high priority.
+     * High priority task.
      */
     public const PRIORITY_HIGH = 'high';
 
     /**
-     * The fully-qualified class name used as the taskabl type for Company
-     * attachments.
+     * Taskable type: Company.
      */
     public const TASKABLE_COMPANY = Company::class;
 
     /**
-     * The fully-qualified class name used as the taskable type for Deal
-     * attachments.
+     * Taskable type: Deal.
      */
     public const TASKABLE_DEAL = Deal::class;
 
     /**
-     * The fully-qualified class name used as the taskable type for Task
-     * attachments.
+     * Taskable type: Task.
      */
     public const TASKABLE_TASK = Task::class;
 
     /**
-     * The fully-qualified class name used as the taskable type for User
-     * attachments.
+     * Taskable type: User.
      */
     public const TASKABLE_USER = User::class;
 
     /**
-     * All valid taskable types that an attachment can be associated with.
+     * All valid taskable types.
+     *
+     * Suitable for validation and filtering.
      */
     public const TASKABLE_TYPES = [
         self::TASKABLE_COMPANY,
@@ -128,17 +138,9 @@ class Task extends Model
     ];
 
     /**
-     * Get the parent taskable model (deal, , company, etc.).
+     * Get the parent taskable model (e.g. Company, Deal, Task, or User).
      *
-     * @return MorphTo<
-     */
-    /**
-     * Get the polymorphic attachable model this taskable belongs to.
-     *
-     * The taskable may be a Company, Deal, Task, or User as defined
-     * in TASKABLE_TYPES.
-     *
-     * @return MorphTo<Model,Taskable>
+     * @return MorphTo<Model,Task>
      */
     public function taskable(): MorphTo
     {
@@ -156,7 +158,7 @@ class Task extends Model
     }
 
     /**
-     * Get the user who created the task.
+     * Get the user that created the task.
      *
      * @return BelongsTo<User,Task>
      */
@@ -166,7 +168,7 @@ class Task extends Model
     }
 
     /**
-     * Get the user who last updated the task.
+     * Get the user that last updated the task.
      *
      * @return BelongsTo<User,Task>
      */
@@ -176,7 +178,7 @@ class Task extends Model
     }
 
     /**
-     * Get the user who deleted the task.
+     * Get the user that deleted the task.
      *
      * @return BelongsTo<User,Task>
      */
@@ -196,7 +198,7 @@ class Task extends Model
     }
 
     /**
-     * Get all of the tasks attachments.
+     * Get all attachments associated with the task.
      *
      * @return MorphMany<Attachment>
      */
@@ -206,7 +208,7 @@ class Task extends Model
     }
 
     /**
-     * Get all of the tasks activities.
+     * Get all activities associated with the task.
      *
      * @return MorphMany<Activity>
      */
@@ -216,7 +218,7 @@ class Task extends Model
     }
 
     /**
-     * Get all of the tasks notes.
+     * Get all notes associated with the task.
      *
      * @return MorphMany<Note>
      */
@@ -226,82 +228,78 @@ class Task extends Model
     }
 
     /**
-     * Scope a query to only include tasks of a given status.
+     * Scope a query to tasks with a given status.
      *
-     * @param Builder $query
+     * @param  Builder<Task> $query The query builder instance.
+     * @param  string $status The task status.
      *
-     * @param string $status
-     *
-     * @return Builder
+     * @return Builder<Task> The modified query builder instance.
      */
-    public function scopeStatus($query, string $status): Builder
+    public function scopeStatus(Builder $query, string $status): Builder
     {
         return $query->where('status', $status);
     }
 
     /**
-     * Scope a query to only include tasks of a given priority.
+     * Scope a query to tasks with a given priority.
      *
-     * @param Builder $query
+     * @param  Builder<Task> $query The query builder instance.
+     * @param  string $priority The task priority.
      *
-     * @param string $priority
-     *
-     * @return Builder
+     * @return Builder<Task> The modified query builder instance.
      */
-    public function scopePriority($query, string $priority): Builder
+    public function scopePriority(Builder $query, string $priority): Builder
     {
         return $query->where('priority', $priority);
     }
 
     /**
-     * Scope a query to only include tasks due before a given date.
+     * Scope a query to tasks due before a given date.
      *
-     * @param Builder $query
+     * @param  Builder<Task> $query The query builder instance.
+     * @param  \DateTimeInterface|string $date The cutoff date.
      *
-     * @param \DateTime|string $date
-     *
-     * @return Builder
+     * @return Builder<Task> The modified query builder instance.
      */
-    public function scopeDueBefore($query, $date): Builder
+    public function scopeDueBefore(Builder $query, $date): Builder
     {
         return $query->where('due_at', '<', $date);
     }
 
     /**
-     * Scope a query to only include tasks due after a given date.
+     * Scope a query to tasks due after a given date.
      *
-     * @param Builder $query
+     * @param  Builder<Task> $query The query builder instance.
+     * @param  \DateTimeInterface|string $date The cutoff date.
      *
-     * @param \DateTime|string $date
-     *
-     * @return Builder
+     * @return Builder<Task> The modified query builder instance.
      */
-    public function scopeDueAfter($query, $date): Builder
+    public function scopeDueAfter(Builder $query, $date): Builder
     {
         return $query->where('due_at', '>', $date);
     }
 
     /**
-     * Scope a query to only include tasks assigned to a given user.
+     * Scope a query to tasks assigned to a given user.
      *
-     * @param Builder $query
+     * @param  Builder<Task> $query The query builder instance.
+     * @param  int $userId The user ID.
      *
-     * @param int $userId
-     *
-     * @return Builder
+     * @return Builder<Task> The modified query builder instance.
      */
-    public function scopeAssignedTo($query, int $userId): Builder
+    public function scopeAssignedTo(Builder $query, int $userId): Builder
     {
         return $query->where('assigned_to', $userId);
     }
 
     /**
-     * Get the task title, applies the test prefix when the task is marked
-     * as a test.
+     * Get the formatted task title.
      *
-     * @param  string|null  $value  The raw task title from the database.
+     * Applies a test prefix when the task is marked as a test record.
      *
-     * @return string
+     * @param  string|null $value The raw task title from the database.
+     *
+     * @return string The formatted task title.
      */
     public function getTitleAttribute($value): string
     {

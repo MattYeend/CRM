@@ -8,6 +8,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
+/**
+ * Represents a user role within the system.
+ *
+ * Roles define access levels and group permissions that can be assigned
+ * to users. Each role may be linked to multiple permissions and users,
+ * enabling flexible role-based access control (RBAC).
+ *
+ * Roles also support related activities such as attachments, tasks,
+ * notes, and audit tracking via associated models.
+ */
 class Role extends Model
 {
     /**
@@ -16,17 +26,17 @@ class Role extends Model
     use HasFactory;
 
     /**
-     * User role.
+     * Standard user role.
      */
     public const ROLE_USER = 1;
 
     /**
-     * Admin role.
+     * Administrator role.
      */
     public const ROLE_ADMIN = 2;
 
     /**
-     * Super Admin role.
+     * Super administrator role.
      */
     public const ROLE_SUPER_ADMIN = 3;
 
@@ -41,7 +51,7 @@ class Role extends Model
     ];
 
     /**
-     * The users that belong to the role.
+     * Get the users assigned to this role.
      *
      * @return HasMany<User>
      */
@@ -51,7 +61,7 @@ class Role extends Model
     }
 
     /**
-     * The permissions that belong to the role.
+     * Get the permissions associated with this role.
      *
      * @return BelongsToMany<Permission>
      */
@@ -61,7 +71,7 @@ class Role extends Model
     }
 
     /**
-     * Get all of the role attachments.
+     * Get all attachments associated with the role.
      *
      * @return MorphMany<Attachment>
      */
@@ -71,7 +81,7 @@ class Role extends Model
     }
 
     /**
-     * Get all of the role activities.
+     * Get all activities associated with the role.
      *
      * @return MorphMany<Activity>
      */
@@ -81,7 +91,7 @@ class Role extends Model
     }
 
     /**
-     * Get all of the role tasks.
+     * Get all tasks associated with the role.
      *
      * @return MorphMany<Task>
      */
@@ -91,7 +101,7 @@ class Role extends Model
     }
 
     /**
-     * Get all of the role notes.
+     * Get all notes associated with the role.
      *
      * @return MorphMany<Note>
      */
