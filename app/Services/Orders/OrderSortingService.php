@@ -5,10 +5,16 @@ namespace App\Services\Orders;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
+/**
+ * Applies sort order to Order queries.
+ *
+ * Validates the requested sort column against an allowlist and falls back
+ * to sorting by id descending when an invalid column is supplied.
+ */
 class OrderSortingService
 {
     /**
-     * Constants for allowed sorts
+     * The columns that may be used as sort targets.
      */
     private const ALLOWED_SORTS = [
         'id',
@@ -25,11 +31,15 @@ class OrderSortingService
     ];
 
     /**
-     * Apply sorting to the query.
+     * Apply sorting to the given query based on the request parameters.
      *
-     * @param Builder $query
+     * Validates sort_by against the allowlist, defaulting to 'id' if the
+     * value is not permitted. Accepts 'asc' or 'desc' for sort_dir,
+     * defaulting to 'desc'.
      *
-     * @param Request $request
+     * @param  Builder $query The Eloquent query builder instance to sort.
+     * @param  Request $request Incoming HTTP request carrying sort_by and
+     * sort_dir parameters.
      *
      * @return void
      */

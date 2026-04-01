@@ -4,12 +4,22 @@ namespace App\Services\Orders;
 
 use App\Models\Order;
 
+/**
+ * Handles soft deletion and restoration of Order records.
+ *
+ * Writes audit fields before delegating to Eloquent's soft-delete and
+ * restore methods, ensuring the deleted_by, deleted_at, restored_by, and
+ * restored_at columns are always populated.
+ */
 class OrderDestructorService
 {
     /**
      * Soft-delete a order.
      *
-     * @param Order $order
+     * Records the authenticated user and timestamp in the audit columns
+     * before soft-deleting the order.
+     *
+     * @param  Order $order The order instance to soft-delete.
      *
      * @return void
      */
@@ -26,11 +36,16 @@ class OrderDestructorService
     }
 
     /**
-     * Restore a trashed order.
+     * Restore a soft-deleted order.
      *
-     * @param int $id
+     * Looks up the order including trashed records, records the
+     * authenticated user and timestamp in the audit columns, then restores
+     * the order. Returns the order unchanged if it is not currently
+     * trashed.
      *
-     * @return Order
+     * @param  int $id The primary key of the soft-deleted order.
+     *
+     * @return Order The restored order instance.
      */
     public function restore(int $id): Order
     {

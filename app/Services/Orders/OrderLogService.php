@@ -6,18 +6,23 @@ use App\Models\Log;
 use App\Models\Order;
 use App\Models\User;
 
+/**
+ * Handles audit logging for Order lifecycle events.
+ *
+ * Each public method writes a structured log entry via the Log model for
+ * a specific order action, combining base order data with
+ * action-specific timestamp and actor fields.
+ */
 class OrderLogService
 {
     /**
-     * Log the creation of a Order.
+     * Log a order creation event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Order $order The order that was created.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Order $order The order was created.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function orderCreated(
         User $user,
@@ -39,15 +44,13 @@ class OrderLogService
     }
 
     /**
-     * Log the update of a Order.
+     * Log a order update event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Order $order The order that was updated.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Order $order The order was updated.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function orderUpdated(
         User $user,
@@ -69,15 +72,13 @@ class OrderLogService
     }
 
     /**
-     * Log the deletion of a Order.
+     * Log a order deletion event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Order $order The order that was deleted.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Order $order The order was deleted.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function orderDeleted(
         User $user,
@@ -99,15 +100,13 @@ class OrderLogService
     }
 
     /**
-     * Log the restoration of a Order.
+     * Log a order restoration event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Order $order The order that was restored.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Order $order The order was restored.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function orderRestored(
         User $user,
@@ -129,11 +128,11 @@ class OrderLogService
     }
 
     /**
-     * Prepare the base data for logging a Order.
+     * Build the base data array shared across all order log entries.
      *
-     * @param Order $order The order being logged.
+     * @param  Order $order The order being logged.
      *
-     * @return array The base data array.
+     * @return array The base fields extracted from the order.
      */
     protected function baseOrderData(Order $order): array
     {

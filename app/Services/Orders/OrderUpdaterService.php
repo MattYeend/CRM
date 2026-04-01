@@ -5,16 +5,26 @@ namespace App\Services\Orders;
 use App\Http\Requests\UpdateOrderRequest;
 use App\Models\Order;
 
+/**
+ * Handles updates to Order records.
+ *
+ * Validates incoming request data, assigns audit fields, and persists
+ * updates to the order.
+ */
 class OrderUpdaterService
 {
     /**
-     * Update the order using request data.
+     * Update an existing order.
      *
-     * @param UpdateOrderRequest $request
+     * Extracts validated data from the request, assigns the authenticated
+     * user and timestamp to audit fields, updates the order, and returns
+     * a fresh instance.
      *
-     * @param Order $order
+     * @param  UpdateOrderRequest $request The request containing
+     * validated order data.
+     * @param  Order $order The order to update.
      *
-     * @return Order
+     * @return Order The updated order instance.
      */
     public function update(
         UpdateOrderRequest $request,
