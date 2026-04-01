@@ -5,16 +5,26 @@ namespace App\Services\Products;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 
+/**
+ * Handles updates to Product records.
+ *
+ * Validates incoming request data, assigns audit fields, and persists
+ * updates to the product.
+ */
 class ProductUpdaterService
 {
     /**
-     * Update the product using request data.
+     * Update an existing product.
      *
-     * @param UpdateProductRequest $request
+     * Extracts validated data from the request, assigns the authenticated
+     * user and timestamp to audit fields, updates the product, and returns
+     * a fresh instance.
      *
-     * @param Product $product
+     * @param  UpdateProductRequest $request The request containing
+     * validated product data.
+     * @param  Product $product The product to update.
      *
-     * @return Product
+     * @return Product The updated product instance.
      */
     public function update(
         UpdateProductRequest $request,
@@ -33,13 +43,16 @@ class ProductUpdaterService
     }
 
     /**
-     * Update deals for products
+     * Update deal relationships on a product.
      *
-     * @param int $id
+     * Updates existing pivot records for deals associated with the product.
+     * Each deal may include quantity and price, which are used to recalculate
+     * the total value.
      *
-     * @param array $deals
+     * @param  int $productId The product identifier.
+     * @param  array $deals Array of deal data.
      *
-     * @return Product
+     * @return Product The updated product instance.
      */
     public function updateDeals(int $productId, array $deals): Product
     {
@@ -57,13 +70,14 @@ class ProductUpdaterService
     }
 
     /**
-     * Update quotes for products
+     * Update quote relationships on a product.
      *
-     * @param int $id
+     * Updates existing pivot records for quotes associated with the product.
      *
-     * @param array $quotes
+     * @param  int   $productId The product identifier.
+     * @param  array $quotes    Array of updated quote data.
      *
-     * @return Product
+     * @return Product The updated product instance.
      */
     public function updateQuotes(int $productId, array $quotes): Product
     {
@@ -83,13 +97,14 @@ class ProductUpdaterService
     }
 
     /**
-     * Update orders for products
+     * Update order relationships on a product.
      *
-     * @param int $id
+     * Updates existing pivot records for orders associated with the product.
      *
-     * @param array $orders
+     * @param  int   $productId The product identifier.
+     * @param  array $orders    Array of updated order data.
      *
-     * @return Product
+     * @return Product The updated product instance.
      */
     public function updateOrders(int $productId, array $orders): Product
     {

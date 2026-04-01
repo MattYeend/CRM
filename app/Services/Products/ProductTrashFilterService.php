@@ -5,14 +5,24 @@ namespace App\Services\Products;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
+/**
+ * Applies trash visibility filters to Product queries.
+ *
+ * Supports filtering for only trashed records or including trashed
+ * records alongside active ones.
+ */
 class ProductTrashFilterService
 {
     /**
-     * Apply trash filters to the query.
+     * Apply trash filters to the given query.
      *
-     * @param Builder $query
+     * If only_trashed is true, only soft-deleted records are returned.
+     * If with_trashed is true, both active and soft-deleted records are
+     * included. Otherwise, only active records are returned.
      *
-     * @param Request $request
+     * @param  Builder $query The Eloquent query builder instance.
+     * @param  Request $request Incoming HTTP request carrying trash
+     * filter parameters.
      *
      * @return void
      */

@@ -4,12 +4,22 @@ namespace App\Services\Products;
 
 use App\Models\Product;
 
+/**
+ * Handles soft deletion and restoration of Product records.
+ *
+ * Writes audit fields before delegating to Eloquent's soft-delete and
+ * restore methods, ensuring the deleted_by, deleted_at, restored_by, and
+ * restored_at columns are always populated.
+ */
 class ProductDestructorService
 {
     /**
      * Soft-delete a product.
      *
-     * @param Product $product
+     * Records the authenticated user and timestamp in the audit columns
+     * before soft-deleting the product.
+     *
+     * @param  Product $product The product instance to soft-delete.
      *
      * @return void
      */
@@ -29,11 +39,16 @@ class ProductDestructorService
     }
 
     /**
-     * Restore a trashed product.
+     * Restore a soft-deleted product.
      *
-     * @param int $id
+     * Looks up the product including trashed records, records the
+     * authenticated user and timestamp in the audit columns, then restores
+     * the product. Returns the product unchanged if it is not currently
+     * trashed.
      *
-     * @return Product
+     * @param  int $id The primary key of the soft-deleted product.
+     *
+     * @return Product The restored product instance.
      */
     public function restore(int $id): Product
     {
@@ -53,11 +68,11 @@ class ProductDestructorService
     }
 
     /**
-     * Detach quote from product.
+     * Detach all quotes from a product.
      *
-     * @param int $id
+     * @param  int $id The product identifier.
      *
-     * @return Product
+     * @return Product The updated product instance.
      */
     public function removeQuoteFromProduct(int $id): Product
     {
@@ -69,11 +84,11 @@ class ProductDestructorService
     }
 
     /**
-     * Detach quote from product.
+     * Detach all orders from a product.
      *
-     * @param int $id
+     * @param  int $id The product identifier.
      *
-     * @return Product
+     * @return Product The updated product instance.
      */
     public function removeOrderFromProduct(int $id): Product
     {
@@ -85,11 +100,11 @@ class ProductDestructorService
     }
 
     /**
-     * Detach quote from product.
+     * Detach all deals from a product.
      *
-     * @param int $id
+     * @param  int $id The product identifier.
      *
-     * @return Product
+     * @return Product The updated product instance.
      */
     public function removeDealFromProduct(int $id): Product
     {
@@ -101,11 +116,14 @@ class ProductDestructorService
     }
 
     /**
-     * Restore previously removed quote on product (pivot).
+     * Restore soft-deleted quote relationships on a product.
      *
-     * @param int $id
+     * Attempts to restore pivot records if the relationship
+     * supports soft deletes.
      *
-     * @return Product
+     * @param  int $id The product identifier.
+     *
+     * @return Product The updated product instance.
      */
     public function restoreQuoteOnProduct(int $id): Product
     {
@@ -121,11 +139,11 @@ class ProductDestructorService
     }
 
     /**
-     * Restore previously removed order on product (pivot).
+     * Restore soft-deleted order relationships on a product.
      *
-     * @param int $id
+     * @param  int $id The product identifier.
      *
-     * @return Product
+     * @return Product The updated product instance.
      */
     public function restoreOrderOnProduct(int $id): Product
     {
@@ -141,11 +159,11 @@ class ProductDestructorService
     }
 
     /**
-     * Restore previously removed deal on product (pivot).
+     * Restore soft-deleted deal relationships on a product.
      *
-     * @param int $id
+     * @param  int $id The product identifier.
      *
-     * @return Product
+     * @return Product The updated product instance.
      */
     public function restoreDealOnProduct(int $id): Product
     {

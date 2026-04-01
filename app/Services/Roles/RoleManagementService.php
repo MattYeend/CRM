@@ -4,14 +4,22 @@ namespace App\Services\Roles;
 
 use App\Models\Role;
 
+/**
+ * Handles role-related management operations.
+ *
+ * Responsible for coordinating updates to role relationships,
+ * such as syncing permissions.
+ */
 class RoleManagementService
 {
     /**
      * Sync permissions for the given role.
      *
-     * @param Role $role
+     * If the 'permissions' key exists in the provided data,
+     * the role's permissions will be synchronized accordingly.
      *
-     * @param array $data
+     * @param  Role  $role The role being updated.
+     * @param  array $data The data containing permission IDs.
      *
      * @return void
      */

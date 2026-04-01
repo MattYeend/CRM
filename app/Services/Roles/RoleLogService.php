@@ -6,18 +6,23 @@ use App\Models\Log;
 use App\Models\Role;
 use App\Models\User;
 
+/**
+ * Handles audit logging for Role lifecycle events.
+ *
+ * Each public method writes a structured log entry via the Log model for
+ * a specific role action, combining base role data with
+ * action-specific timestamp and actor fields.
+ */
 class RoleLogService
 {
     /**
-     * Log the creation of a Role.
+     * Log a role creation event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Role $role The role that was created.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Role $role The role was created.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function roleCreated(
         User $user,
@@ -39,15 +44,13 @@ class RoleLogService
     }
 
     /**
-     * Log the update of a Role.
+     * Log a role update event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Role $role The role that was updated.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Role $role The role was updated.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function roleUpdated(
         User $user,
@@ -69,15 +72,13 @@ class RoleLogService
     }
 
     /**
-     * Log the deletion of a Role.
+     * Log a role deletion event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Role $role The role that was deleted.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Role $role The role was deleted.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function roleDeleted(
         User $user,
@@ -99,15 +100,13 @@ class RoleLogService
     }
 
     /**
-     * Log the restoration of a Role.
+     * Log a role restoration event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Role $role The role that was restored.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Role $role The role was restored.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function roleRestored(
         User $user,
@@ -129,11 +128,11 @@ class RoleLogService
     }
 
     /**
-     * Prepare base data for Role logging.
+     * Build the base data array shared across all role log entries.
      *
-     * @param Role $role The role being logged.
+     * @param  Role $role The role being logged.
      *
-     * @return array The base data array.
+     * @return array The base fields extracted from the role.
      */
     protected function baseRoleData(Role $role): array
     {

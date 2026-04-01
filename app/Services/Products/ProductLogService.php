@@ -6,18 +6,23 @@ use App\Models\Log;
 use App\Models\Product;
 use App\Models\User;
 
+/**
+ * Handles audit logging for Product lifecycle events.
+ *
+ * Each public method writes a structured log entry via the Log model for
+ * a specific product action, combining base product data with
+ * action-specific timestamp and actor fields.
+ */
 class ProductLogService
 {
     /**
-     * Log the creation of a Product.
+     * Log a product creation event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Product $product The product that was created.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Product $product The product was created.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function productCreated(
         User $user,
@@ -39,15 +44,13 @@ class ProductLogService
     }
 
     /**
-     * Log the update of a Product.
+     * Log a product update event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Product $product The product that was updated.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Product $product The product was updated.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function productUpdated(
         User $user,
@@ -69,15 +72,13 @@ class ProductLogService
     }
 
     /**
-     * Log the deletion of a Product.
+     * Log a product deletion event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Product $product The product that was deleted.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Product $product The product was deleted.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function productDeleted(
         User $user,
@@ -99,15 +100,13 @@ class ProductLogService
     }
 
     /**
-     * Log the restoration of a Product.
+     * Log a product restoration event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Product $product The product that was restored.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Product $product The product was restored.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function productRestored(
         User $user,
@@ -129,11 +128,11 @@ class ProductLogService
     }
 
     /**
-     * Prepare the base data for logging a Product.
+     * Build the base data array shared across all product log entries.
      *
-     * @param Product $product The product being logged.
+     * @param  Product $product The product being logged.
      *
-     * @return array The base data array.
+     * @return array The base fields extracted from the product.
      */
     protected function baseProductData(Product $product): array
     {

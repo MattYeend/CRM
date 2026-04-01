@@ -5,14 +5,24 @@ namespace App\Services\Products;
 use App\Http\Requests\StoreProductRequest;
 use App\Models\Product;
 
+/**
+ * Handles the creation of new Product records.
+ *
+ * Extracts validated data from the request, stamps the creator and
+ * creation timestamp, and persists the new Product.
+ */
 class ProductCreatorService
 {
     /**
-     * Create a new product from request data.
+     * Create a new product from the validated request data.
      *
-     * @param StoreProductRequest $request
+     * Sets the created_by and created_at audit fields from the authenticated
+     * user before persisting the record.
      *
-     * @return Product
+     * @param  StoreProductRequest $request Validated request containing product
+     * data.
+     *
+     * @return Product The newly created product record.
      */
     public function create(StoreProductRequest $request): Product
     {
@@ -26,13 +36,16 @@ class ProductCreatorService
     }
 
     /**
-     * Create new deals for products
+     * Attach deals to a product.
      *
-     * @param int $id
+     * Syncs deal relationships without detaching existing ones.
+     * Each deal may include quantity and price, which are used
+     * to calculate the total value.
      *
-     * @param array $deals
+     * @param  int $productId The product identifier.
+     * @param  array $deals Array of deal data.
      *
-     * @return Product
+     * @return Product The updated product instance.
      */
     public function addDeals(int $productId, array $deals): Product
     {
@@ -52,13 +65,16 @@ class ProductCreatorService
     }
 
     /**
-     * Create new quotes for products
+     * Attach quotes to a product.
      *
-     * @param int $id
+     * Syncs quote relationships without detaching existing ones.
+     * Each quote may include quantity and price, which are used
+     * to calculate the total value.
      *
-     * @param array $quotes
+     * @param  int $productId The product identifier.
+     * @param  array $quotes Array of quote data.
      *
-     * @return Product
+     * @return Product The updated product instance.
      */
     public function addQuotes(int $productId, array $quotes): Product
     {
@@ -80,13 +96,16 @@ class ProductCreatorService
     }
 
     /**
-     * Create new quotes for products
+     * Attach orders to a product.
      *
-     * @param int $id
+     * Syncs order relationships without detaching existing ones.
+     * Each order may include quantity and price, which are used
+     * to calculate the total value.
      *
-     * @param array $orders
+     * @param  int $productId The product identifier.
+     * @param  array $orders Array of order data.
      *
-     * @return Product
+     * @return Product The updated product instance.
      */
     public function addOrders(int $productId, array $orders): Product
     {
