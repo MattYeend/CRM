@@ -6,18 +6,23 @@ use App\Models\Log;
 use App\Models\Quote;
 use App\Models\User;
 
+/**
+ * Handles audit logging for Quote lifecycle events.
+ *
+ * Each public method writes a structured log entry via the Log model for
+ * a specific quote action, combining base quote data with
+ * action-specific timestamp and actor fields.
+ */
 class QuoteLogService
 {
     /**
-     * Log the creation of a Quote.
+     * Log a quote creation event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Quote $quote The quote that was created.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Quote $quote The quote was created.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function quoteCreated(
         User $user,
@@ -39,15 +44,13 @@ class QuoteLogService
     }
 
     /**
-     * Log the update of a Quote.
+     * Log a quote update event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Quote $quote The quote that was updated.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Quote $quote The quote was updated.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function quoteUpdated(
         User $user,
@@ -69,15 +72,13 @@ class QuoteLogService
     }
 
     /**
-     * Log the deletion of a Quote.
+     * Log a quote deletion event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Quote $quote The quote that was deleted.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Quote $quote The quote was deleted.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function quoteDeleted(
         User $user,
@@ -99,15 +100,13 @@ class QuoteLogService
     }
 
     /**
-     * Log the restoration of a Quote.
+     * Log a quote restoration event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Quote $quote The quote that was restored.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Quote $quote The quote was restored.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function quoteRestored(
         User $user,
@@ -129,11 +128,11 @@ class QuoteLogService
     }
 
     /**
-     * Prepare base data for Quote logging.
+     * Build the base data array shared across all quote log entries.
      *
-     * @param Quote $quote The quote to extract data from.
+     * @param  Quote $quote The quote being logged.
      *
-     * @return array The base quote data.
+     * @return array The base fields extracted from the quote.
      */
     protected function baseQuoteData(Quote $quote): array
     {

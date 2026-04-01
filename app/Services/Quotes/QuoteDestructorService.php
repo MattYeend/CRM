@@ -4,12 +4,22 @@ namespace App\Services\Quotes;
 
 use App\Models\Quote;
 
+/**
+ * Handles soft deletion and restoration of Quote records.
+ *
+ * Writes audit fields before delegating to Eloquent's soft-delete and
+ * restore methods, ensuring the deleted_by, deleted_at, restored_by, and
+ * restored_at columns are always populated.
+ */
 class QuoteDestructorService
 {
     /**
      * Soft-delete a quote.
      *
-     * @param Quote $quote
+     * Records the authenticated user and timestamp in the audit columns
+     * before soft-deleting the quote.
+     *
+     * @param  Quote $quote The quote instance to soft-delete.
      *
      * @return void
      */
@@ -26,11 +36,16 @@ class QuoteDestructorService
     }
 
     /**
-     * Restore a trashed quote.
+     * Restore a soft-deleted quote.
      *
-     * @param int $id
+     * Looks up the quote including trashed records, records the
+     * authenticated user and timestamp in the audit columns, then restores
+     * the quote. Returns the quote unchanged if it is not currently
+     * trashed.
      *
-     * @return Quote
+     * @param  int $id The primary key of the soft-deleted quote.
+     *
+     * @return Quote The restored quote instance.
      */
     public function restore(int $id): Quote
     {

@@ -7,21 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 class OrderProductManagementService
 {
     /**
-     * Service responsible for creating new note records.
+     * Service responsible for creating new order product records.
      *
      * @var OrderProductCreatorService
      */
     private OrderProductCreatorService $creator;
 
     /**
-     * Service responsible for updating existing note records.
+     * Service responsible for updating existing order product records.
      *
      * @var OrderProductUpdaterService
      */
     private OrderProductUpdaterService $updater;
 
     /**
-     * Service responsible for soft-deleting and restoring note records.
+     * Service responsible for soft-deleting and restoring order product records.
      *
      * @var OrderProductDestructorService
      */
@@ -30,7 +30,7 @@ class OrderProductManagementService
     /**
      * Inject the required services into the management service.
      *
-     * @param  OrderProductCreatorService $creator Handles product attachment.
+     * @param  OrderProductCreatorService $creator Handles pivot creation.
      * @param  OrderProductUpdaterService $updater Handles pivot updates.
      * @param  OrderProductDestructorService $destructor Handles removal
      * and restoration.

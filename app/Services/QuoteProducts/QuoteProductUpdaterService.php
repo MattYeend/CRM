@@ -4,31 +4,37 @@ namespace App\Services\QuoteProducts;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Handles updates to product relationships on parent models.
+ *
+ * Updates pivot data such as quantity, price, and metadata for
+ * products already attached to the parent model.
+ */
 class QuoteProductUpdaterService
 {
     /**
-     * Update pivot data for products attached to a quote.
+     * Update pivot data for products attached to a parent model.
      *
-     * Updates the quantity, price, and meta fields for existing products
-     * on the pivot table.
+     * Iterates over the provided items and updates the pivot data for
+     * each associated product. Defaults are applied for missing values.
      *
-     * @param Model $quote The quote model whose products should be updated
-     * @param array $items Array of products to update with keys:
-     *                     - 'product_id' (int)
-     *                     - 'quantity' (int|null)
-     *                     - 'price' (float|null)
-     *                     - 'meta' (array|null)
+     * @param  Model $parent The parent model.
+     * @param  array $items Array of product data, each containing:
+     *                      - product_id (int)
+     *                      - quantity (int, optional)
+     *                      - price (float, optional)
+     *                      - meta (array|null, optional)
      *
      * @return void
      */
-    public function update(Model $quote, array $items): void
+    public function update(Model $parent, array $items): void
     {
         foreach ($items as $item) {
             $quantity = $item['quantity'] ?? 1;
             $price = $item['price'] ?? 0;
             $meta = $item['meta'] ?? null;
 
-            $quote->products()->updateExistingPivot($item['product_id'], [
+            $parent->products()->updateExistingPivot($item['product_id'], [
                 'quantity' => $quantity,
                 'price' => $price,
                 'meta' => $meta,

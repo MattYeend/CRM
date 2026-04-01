@@ -4,34 +4,43 @@ namespace App\Services\QuoteProducts;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Handles removal and restoration of product relationships on parent models.
+ *
+ * Supports detaching products from a parent model and restoring pivot
+ * records when soft deletes are enabled on the pivot table.
+ */
 class QuoteProductDestructorService
 {
     /**
-     * Remove a product from a quote.
+     * Remove a product relationship from a parent model.
      *
-     * @param Model $quote The quote model
-     * @param int $productId The ID of the product to remove
+     * Detaches the specified product from the parent model.
+     *
+     * @param  Model $parent The parent model.
+     * @param  int $productId The ID of the product to remove.
      *
      * @return void
      */
-    public function remove(Model $quote, int $productId): void
+    public function remove(Model $parent, int $productId): void
     {
-        $quote->products()->detach($productId);
+        $parent->products()->detach($productId);
     }
 
     /**
-     * Restore a previously removed product from a quote.
+     * Restore a previously removed product relationship.
      *
-     * Works only if the pivot uses soft deletes.
+     * Attempts to locate a soft-deleted pivot record and restore it
+     * if the pivot model supports soft deletes.
      *
-     * @param Model $quote The quote model
-     * @param int $productId The ID of the product to restore
+     * @param  Model $parent The parent model.
+     * @param  int $productId The ID of the product to restore.
      *
      * @return void
      */
-    public function restore(Model $quote, int $productId): void
+    public function restore(Model $parent, int $productId): void
     {
-        $pivot = $quote->products()
+        $pivot = $parent->products()
             ->withTrashed()
             ->wherePivot('product_id', $productId)
             ->first();

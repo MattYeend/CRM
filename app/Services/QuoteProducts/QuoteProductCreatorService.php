@@ -4,30 +4,38 @@ namespace App\Services\QuoteProducts;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Handles creation of product relationships on parent models.
+ *
+ * Attaches one or more products to a parent model (e.g. Deal, Order, Quote)
+ * via a pivot table, including quantity, price, and optional metadata.
+ */
 class QuoteProductCreatorService
 {
     /**
-     * Attach product(s) to a quote.
+     * Attach product(s) to a parent model.
      *
-     * Uses `syncWithoutDetaching` to avoid removing existing pivot relations.
+     * Iterates over the provided items and attaches each product to the
+     * parent model without removing existing relationships. Defaults are
+     * applied for missing quantity, price, and meta values.
      *
-     * @param Model $quote The quote model to attach products to
-     * @param array $items Array of products with keys:
-     *                     - 'product_id' (int) : Product ID
-     *                     - 'quantity' (int|null) : Quantity (default 1)
-     *                     - 'price' (float|null) : Price (default 0)
-     *                     - 'meta' (array|null) : Optional metadata
+     * @param  Model $parent The parent model to attach products to.
+     * @param  array $items Array of product data, each containing:
+     *                      - product_id (int)
+     *                      - quantity (int, optional)
+     *                      - price (float, optional)
+     *                      - meta (array|null, optional)
      *
      * @return void
      */
-    public function create(Model $quote, array $items): void
+    public function create(Model $parent, array $items): void
     {
         foreach ($items as $item) {
             $quantity = $item['quantity'] ?? 1;
             $price = $item['price'] ?? 0;
             $meta = $item['meta'] ?? null;
 
-            $quote->products()->syncWithoutDetaching([
+            $parent->products()->syncWithoutDetaching([
                 $item['product_id'] => [
                     'quantity' => $quantity,
                     'price' => $price,
