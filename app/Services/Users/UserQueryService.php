@@ -18,8 +18,8 @@ class UserQueryService
 {
     /**
      * Service responsible for applying sort order.
-      *
-      * @var UserSortingService
+     *
+     * @var UserSortingService
      */
     private UserSortingService $sorting;
 

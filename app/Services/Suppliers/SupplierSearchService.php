@@ -18,7 +18,8 @@ class SupplierSearchService
      * Checks request query parameters and applies filtering conditions
      * to the given Eloquent query builder.
      *
-     * @param Builder $query   The Eloquent query builder instance for suppliers.
+     * @param Builder $query   The Eloquent query builder instance for
+     * suppliers.
      * @param Request $request The HTTP request containing search parameters.
      *
      * @return void

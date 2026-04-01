@@ -58,8 +58,8 @@ class SupplierManagementService
     /**
      * Create a new supplier.
      *
-     * @param  StoreSupplierRequest $request Validated request containing supplier
-     * data.
+     * @param  StoreSupplierRequest $request Validated request containing
+     * supplier data.
      *
      * @return Supplier The newly created supplier.
      */

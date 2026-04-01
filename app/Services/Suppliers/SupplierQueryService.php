@@ -17,8 +17,8 @@ class SupplierQueryService
 {
     /**
      * Service responsible for applying the search.
-      *
-      * @var SupplierSearchService
+     *
+     * @var SupplierSearchService
      */
     private SupplierSearchService $search;
 
@@ -57,7 +57,7 @@ class SupplierQueryService
     /**
      * Return a paginated list of suppliers with search, sorting,
      * and trash filters applied.
-     * 
+     *
      * The per_page value is clamped between 1 and 100. All active query
      * string pameters are appended to the paginator links.
      *

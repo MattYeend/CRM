@@ -59,7 +59,7 @@ class TaskManagementService
      * Create a new task.
      *
      * @param  StoreTaskRequest $request Validated request containing task data.
-     * 
+     *
      * @return Task The newly created task.
      */
     public function store(StoreTaskRequest $request): Task

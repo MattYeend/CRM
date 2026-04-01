@@ -4,7 +4,6 @@ namespace App\Services\Users;
 
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
 
 /**
  * Handles updates to User records.
@@ -54,7 +53,7 @@ class UserUpdaterService
         $this->avatarUpdater = $avatarUpdater;
         $this->roleUpdater = $roleUpdater;
     }
-    
+
     /**
      * Update an existing user.
      *
@@ -62,7 +61,8 @@ class UserUpdaterService
      * user and timestamp to audit fields, updates the user, and returns
      * a fresh instance.
      *
-     * @param  UpdateUserRequest $request The request containing validated user data.
+     * @param  UpdateUserRequest $request The request containing validated
+     * user data.
      * @param  User $user The user to update.
      *
      * @return User The updated user instance.

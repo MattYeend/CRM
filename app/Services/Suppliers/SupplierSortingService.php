@@ -44,7 +44,7 @@ class SupplierSortingService
      * @param  Builder $query The Eloquent query builder instance to sort.
      * @param  Request $request Incoming HTTP request carrying sort_by and
      * sort_dir parameters.
-     * 
+     *
      * @return void
      */
     public function applySorting($query, Request $request): void

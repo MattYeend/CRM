@@ -23,8 +23,8 @@ class UserAvatarUpdater
      * deleted from the public disk before the new file is stored and its
      * path written back into the data array.
      *
-     * @param  Request|UpdateUserRequest $request Incoming HTTP request; checked for an avatar
-     * file upload.
+     * @param  Request|UpdateUserRequest $request Incoming HTTP request;
+     * checked for an avatar file upload.
      * @param  User $user The user whose avatar may need to be replaced.
      * @param  array $data The validated data array, passed by reference so
      * the avatar path can be injected directly.

@@ -19,8 +19,8 @@ class SupplierCreatorService
      * Sets the created_by and created_at audit fields from the authenticated
      * user before persisting the record.
      *
-     * @param  StoreSupplierRequest $request Validated request containing supplier
-     * data.
+     * @param  StoreSupplierRequest $request Validated request containing
+     * supplier data.
      *
      * @return Supplier The newly created supplier record.
      */
