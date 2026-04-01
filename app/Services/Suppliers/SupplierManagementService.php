@@ -6,12 +6,45 @@ use App\Http\Requests\StoreSupplierRequest;
 use App\Http\Requests\UpdateSupplierRequest;
 use App\Models\Supplier;
 
+/**
+ * Orchestrates supplier lifecycle operations by delegating to focused
+ * sub-services.
+ *
+ * Acts as the single entry point for supplier create, update, delete, and
+ * restore operations, keeping controllers decoupled from the underlying
+ * service implementations.
+ */
 class SupplierManagementService
 {
+    /**
+     * Service responsible for creating new supplier records.
+     *
+     * @var SupplierCreatorService
+     */
     private SupplierCreatorService $creator;
+
+    /**
+     * Service responsible for updating existing supplier records.
+     *
+     * @var SupplierUpdaterService
+     */
     private SupplierUpdaterService $updater;
+
+    /**
+     * Service responsible for soft-deleting and restoring supplier records.
+     *
+     * @var SupplierDestructorService
+     */
     private SupplierDestructorService $destructor;
 
+    /**
+     * Inject the required services into the management service.
+     *
+     * @param  SupplierCreatorService $creator Handles supplier creation.
+     * @param  SupplierUpdaterService $updater Handles supplier updates.
+     * @param  SupplierDestructorService $destructor Handles supplier deletion
+     * and restoration.
+     */
     public function __construct(
         SupplierCreatorService $creator,
         SupplierUpdaterService $updater,
@@ -25,9 +58,10 @@ class SupplierManagementService
     /**
      * Create a new supplier.
      *
-     * @param StoreSupplierRequest $request
+     * @param  StoreSupplierRequest $request Validated request containing supplier
+     * data.
      *
-     * @return Supplier
+     * @return Supplier The newly created supplier.
      */
     public function store(StoreSupplierRequest $request): Supplier
     {
@@ -37,11 +71,12 @@ class SupplierManagementService
     /**
      * Update an existing supplier.
      *
-     * @param UpdateSupplierRequest $request
+     * @param UpdateSupplierRequest $request Validated request containing
+     * updated supplier data.
      *
-     * @param Supplier $supplier
+     * @param Supplier $supplier The supplier instance to update.
      *
-     * @return Supplier
+     * @return Supplier The updated supplier.
      */
     public function update(
         UpdateSupplierRequest $request,
@@ -51,9 +86,11 @@ class SupplierManagementService
     }
 
     /**
-     * Delete a supplier (soft delete).
+     * Soft-delete a supplier.
      *
-     * @param Supplier $supplier
+     * Delegates to the destructor service to perform a soft-delete.
+     *
+     * @param  Supplier $supplier The supplier to delete.
      *
      * @return void
      */
@@ -63,11 +100,11 @@ class SupplierManagementService
     }
 
     /**
-     * Restore a soft-deleted supplier
+     * Restore a soft-deleted supplier.
      *
-     * @param int $id
+     * @param int $id The primary key of the soft-deleted supplier.
      *
-     * @return Supplier
+     * @return Supplier The restored supplier.
      */
     public function restore(int $id): Supplier
     {

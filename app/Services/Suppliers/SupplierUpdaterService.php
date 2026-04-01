@@ -5,16 +5,26 @@ namespace App\Services\Suppliers;
 use App\Http\Requests\UpdateSupplierRequest;
 use App\Models\Supplier;
 
+/**
+ * Handles updates to Supplier records.
+ *
+ * Validates incoming request data, assigns audit fields, and persists
+ * updates to the supplier.
+ */
 class SupplierUpdaterService
 {
     /**
-     * Update the supplier using request data.
+     * Update an existing supplier.
      *
-     * @param UpdateSupplierRequest $request
+     * Extracts validated data from the request, assigns the authenticated
+     * user and timestamp to audit fields, updates the supplier, and returns
+     * a fresh instance.
      *
-     * @param Supplier $supplier
+     * @param  UpdateSupplierRequest $request The request containing
+     * validated supplier data.
+     * @param  Supplier $supplier The supplier to update.
      *
-     * @return Supplier
+     * @return Supplier The updated supplier instance.
      */
     public function update(
         UpdateSupplierRequest $request,

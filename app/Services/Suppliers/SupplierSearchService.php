@@ -5,13 +5,21 @@ namespace App\Services\Suppliers;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
+/**
+ * Handles search filtering for Supplier queries.
+ *
+ * Currently supports filtering by name, code, and email.
+ */
 class SupplierSearchService
 {
-    /** Apply search to the query.
+    /**
+     * Apply search filters to a Supplier query.
      *
-     * @param Builder $query
+     * Checks request query parameters and applies filtering conditions
+     * to the given Eloquent query builder.
      *
-     * @param Request $request
+     * @param Builder $query   The Eloquent query builder instance for suppliers.
+     * @param Request $request The HTTP request containing search parameters.
      *
      * @return void
      */

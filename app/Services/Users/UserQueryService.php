@@ -7,10 +7,36 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
+/**
+ * Handles read queries for User records.
+ *
+ * Delegates searching, sorting, and trash filtering to dedicated
+ * sub-services and returns paginated or single user results with
+ * the appropriate relationships loaded.
+ */
 class UserQueryService
 {
+    /**
+     * Service responsible for applying sort order.
+      *
+      * @var UserSortingService
+     */
     private UserSortingService $sorting;
+
+    /**
+     * Service responsible for applying trash visibility filters.
+     *
+     * @var UserTrashFilterService
+     */
     private UserTrashFilterService $trashFilter;
+
+    /**
+     * Inject the required services into the query service.
+     *
+     * @param  UserSortingService $sorting Handles sort order.
+     * @param  UserTrashFilterService $trashFilter Handles
+     * trash filtering.
+     */
     public function __construct(
         UserSortingService $sorting,
         UserTrashFilterService $trashFilter,
@@ -20,11 +46,16 @@ class UserQueryService
     }
 
     /**
-     * Return paginated users with roles, applying filters/sorting.
+     * Return a paginated list of users with search, sorting,
+     * and trash filters applied.
      *
-     * @param Request $request
+     * The per_page value is clamped between 1 and 100. All active query
+     * string parameters are appended to the paginator links.
      *
-     * @return LengthAwarePaginator
+     * @param  Request $request Incoming HTTP request; may carry search,
+     * sort, filter, and pagination params.
+     *
+     * @return LengthAwarePaginator Paginated users item results.
      */
     public function list(Request $request): LengthAwarePaginator
     {
@@ -52,11 +83,12 @@ class UserQueryService
     }
 
     /**
-     * Return a single user with roles loaded.
+     * Return a single user with related data loaded.
      *
-     * @param User $user
+     * @param  User $user The route-model-bound user
+     * instance.
      *
-     * @return array
+     * @return User The user with relationships loaded.
      */
     public function show(User $user): array
     {
@@ -64,11 +96,14 @@ class UserQueryService
     }
 
     /**
-     * Format a user into an array with role, job title, and permissions.
+     * Transform a user model into a structured array.
      *
-     * @param User $user
+     * Includes basic user attributes along with related role, job title,
+     * and computed permission flags based on authorization policies.
      *
-     * @return array
+     * @param  User $user The user instance to format.
+     *
+     * @return array<string,mixed> The formatted user data.
      */
     private function formatUser(User $user): array
     {

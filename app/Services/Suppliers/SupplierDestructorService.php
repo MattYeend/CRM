@@ -4,12 +4,22 @@ namespace App\Services\Suppliers;
 
 use App\Models\Supplier;
 
+/**
+ * Handles soft deletion and restoration of Supplier records.
+ *
+ * Writes audit fields before delegating to Eloquent's soft-delete and
+ * restore methods, ensuring the deleted_by, deleted_at, restored_by, and
+ * restored_at columns are always populated.
+ */
 class SupplierDestructorService
 {
     /**
      * Soft-delete a supplier.
      *
-     * @param Supplier $supplier
+     * Records the authenticated user and timestamp in the audit columns
+     * before soft-deleting the supplier.
+     *
+     * @param  Supplier $supplier The supplier instance to soft-delete.
      *
      * @return void
      */
@@ -26,11 +36,16 @@ class SupplierDestructorService
     }
 
     /**
-     * Restore a trashed supplier.
+     * Restore a soft-deleted supplier.
      *
-     * @param int $id
+     * Looks up the supplier including trashed records, records the
+     * authenticated user and timestamp in the audit columns, then restores
+     * the supplier. Returns the supplier unchanged if it is not currently
+     * trashed.
      *
-     * @return Supplier
+     * @param  int $id The primary key of the soft-deleted supplier.
+     *
+     * @return Supplier The restored supplier instance.
      */
     public function restore(int $id): Supplier
     {

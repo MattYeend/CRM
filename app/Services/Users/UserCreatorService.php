@@ -6,12 +6,24 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
+/**
+ * Handles the creation of new User records.
+ *
+ * Extracts validated data from the request, stamps the creator and
+ * creation timestamp, and persists the new User.
+ */
 class UserCreatorService
 {
     /**
-     * Create a new user from request data.
+     * Create a new user from the validated request data.
      *
-     * @param Request $request
+     * Sets the created_by and created_at audit fields from the authenticated
+     * user before persisting the record. Also handles avatar file upload
+     * if provided.
+     *
+     * @param  Request $request Validated request containing user data.
+     *
+     * @return User The newly created user record.
      */
     public function create(Request $request): User
     {

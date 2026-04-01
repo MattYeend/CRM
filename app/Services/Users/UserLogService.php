@@ -5,19 +5,26 @@ namespace App\Services\Users;
 use App\Models\Log;
 use App\Models\User;
 
+/**
+ * Handles audit logging for User lifecycle events.
+ *
+ * Each public method writes a structured log entry via the Log model for
+ * a specific user action, combining base user data with action-specific
+ * timestamp and actor fields. Both the actor and actor ID are nullable to
+ * support system-initiated events where no authenticated user is present.
+ */
 class UserLogService
 {
     /**
-     * Log the creation of a User.
+     * Log a user creation event.
      *
-     * @param User|null $actor The user that created the user (nullable).
+     * @param  User|null $actor The user who performed the action, or null for
+     * system-initiated creation.
+     * @param  int|null $actorId The ID of the user who performed the action,
+     * or null for system-initiated creation.
+     * @param  User $user The user that was created.
      *
-     * @param int|null $actorId The ID of the user who performed the
-     * action (nullable).
-     *
-     * @param User $user The user being logged.
-     *
-     * @return array The created log payload.
+     * @return array The structured data written to the log entry.
      */
     public function userCreated(
         ?User $actor,
@@ -39,16 +46,15 @@ class UserLogService
     }
 
     /**
-     * Log the update of a User.
+     * Log a user update event.
      *
-     * @param User|null $actor The user that updated the user (nullable).
+     * @param  User|null $actor The user who performed the action, or null for
+     * system-initiated updates.
+     * @param  int|null $actorId The ID of the user who performed the action,
+     * or null for system-initiated updates.
+     * @param  User $user The user that was updated.
      *
-     * @param int|null $actorId The ID of the user who performed the
-     * action (nullable).
-     *
-     * @param User $user The user being logged.
-     *
-     * @return array The updated log payload.
+     * @return array The structured data written to the log entry.
      */
     public function userUpdated(
         ?User $actor,
@@ -70,16 +76,15 @@ class UserLogService
     }
 
     /**
-     * Log the deletion of a User.
+     * Log a user deletion event.
      *
-     * @param User|null $actor The user that deleted the user (nullable).
+     * @param  User|null $actor The user who performed the action, or null for
+     * system-initiated deletion.
+     * @param  int|null $actorId The ID of the user who performed the action,
+     * or null for system-initiated deletion.
+     * @param  User $user The user that was deleted.
      *
-     * @param int|null $actorId The ID of the user who performed the
-     * action (nullable).
-     *
-     * @param User $user The user being logged.
-     *
-     * @return array The deleted log payload.
+     * @return array The structured data written to the log entry.
      */
     public function userDeleted(
         ?User $actor,
@@ -101,16 +106,15 @@ class UserLogService
     }
 
     /**
-     * Log the verification of a User.
+     * Log a user email verification event.
      *
-     * @param User|null $actor The user that verified the user (nullable).
+     * @param  User|null $actor The user who performed the action, or null for
+     * system-initiated verification.
+     * @param  int|null $actorId The ID of the user who performed the action,
+     * or null for system-initiated verification.
+     * @param  User $user The user that was verified.
      *
-     * @param int|null $actorId The ID of the user who performed the
-     * action (nullable).
-     *
-     * @param User $user The user being logged.
-     *
-     * @return array The verified log payload.
+     * @return array The structured data written to the log entry.
      */
     public function userVerified(
         ?User $actor,
@@ -132,16 +136,15 @@ class UserLogService
     }
 
     /**
-     * Log the restoration of a User.
+     * Log a user restoration event.
      *
-     * @param User|null $actor The user that restored the user (nullable).
+     * @param  User|null $actor The user who performed the action, or null for
+     * system-initiated restoration.
+     * @param  int|null $actorId The ID of the user who performed the action,
+     * or null for system-initiated restoration.
+     * @param  User $user The user that was restored.
      *
-     * @param int|null $actorId The ID of the user who performed the
-     * action (nullable).
-     *
-     * @param User $user The user being logged.
-     *
-     * @return array The restored log payload.
+     * @return array The structured data written to the log entry.
      */
     public function userRestored(
         ?User $actor,
@@ -163,14 +166,15 @@ class UserLogService
     }
 
     /**
-     * Prepare base user data for logging.
+     * Build the base data array shared across all user log entries.
      *
-     * Accepts nullable User and returns a safe array even when the
-     * model is missing.
+     * Returns a safe array of null values when the user model is not present,
+     * supporting system-initiated events where no user record is available.
      *
-     * @param User|null $user
+     * @param  User|null $user The user being logged, or null.
      *
-     * @return array
+     * @return array The base fields extracted from the user, or null-filled
+     * defaults.
      */
     protected function baseUserData(?User $user): array
     {

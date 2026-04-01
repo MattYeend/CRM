@@ -5,16 +5,26 @@ namespace App\Services\Tasks;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
 
+/**
+ * Handles updates to Task records.
+ *
+ * Validates incoming request data, assigns audit fields, and persists
+ * updates to the task.
+ */
 class TaskUpdaterService
 {
     /**
-     * Update the task using request data.
+     * Update an existing task.
      *
-     * @param UpdateTaskRequest $request
+     * Extracts validated data from the request, assigns the authenticated
+     * user and timestamp to audit fields, updates the task, and returns
+     * a fresh instance.
      *
-     * @param Task $task
+     * @param  UpdateTaskRequest $request The request containing
+     * validated task data.
+     * @param  Task $task The task to update.
      *
-     * @return Task
+     * @return Task The updated task instance.
      */
     public function update(
         UpdateTaskRequest $request,

@@ -6,18 +6,23 @@ use App\Models\Log;
 use App\Models\Supplier;
 use App\Models\User;
 
+/**
+ * Handles audit logging for Supplier lifecycle events.
+ *
+ * Each public method writes a structured log entry via the Log model for
+ * a specific supplier action, combining base supplier data with
+ * action-specific timestamp and actor fields.
+ */
 class SupplierLogService
 {
     /**
-     * Log the creation of a Supplier.
+     * Log a supplier creation event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Supplier $supplier The supplier that was created.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Supplier $supplier The supplier was created.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function supplierCreated(
         User $user,
@@ -39,15 +44,13 @@ class SupplierLogService
     }
 
     /**
-     * Log the update of a Supplier.
+     * Log a supplier update event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Supplier $supplier The supplier that was updated.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Supplier $supplier The supplier was updated.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function supplierUpdated(
         User $user,
@@ -69,15 +72,13 @@ class SupplierLogService
     }
 
     /**
-     * Log the deletion of a Supplier.
+     * Log a supplier deletion event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Supplier $supplier The supplier that was deleted.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Supplier $supplier The supplier was deleted.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function supplierDeleted(
         User $user,
@@ -99,15 +100,13 @@ class SupplierLogService
     }
 
     /**
-     * Log the restoration of a Supplier.
+     * Log a supplier restoration event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Supplier $supplier The supplier that was restored.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Supplier $supplier The supplier was restored.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function supplierRestored(
         User $user,
@@ -129,11 +128,14 @@ class SupplierLogService
     }
 
     /**
-     * Prepare the base data for logging a Supplier.
+     * Build the base data array shared across all supplier log entries.
      *
-     * @param Supplier $supplier The supplier being logged.
+     * Merges all data sub-groups into a single array covering identity,
+     * address, pricing, contact, flags, and metadata.
      *
-     * @return array The base data array.
+     * @param  Supplier $supplier The supplier being logged.
+     *
+     * @return array The complete base data array.
      */
     protected function baseSupplierData(Supplier $supplier): array
     {
@@ -149,9 +151,9 @@ class SupplierLogService
     }
 
     /**
-     * Base data
+     * Build the primary key data for the log entry.
      *
-     * @param Supplier $supplier The supplier being logged.
+     * @param  Supplier $supplier The supplier being logged.
      *
      * @return array
      */
@@ -163,9 +165,9 @@ class SupplierLogService
     }
 
     /**
-     * Identify data
+     * Build the identity and contact information data for the log entry.
      *
-     * @param Supplier $supplier The supplier being logged.
+     * @param  Supplier $supplier The supplier being logged.
      *
      * @return array
      */
@@ -181,9 +183,9 @@ class SupplierLogService
     }
 
     /**
-     * Address data
+     * Build the postal address data for the log entry.
      *
-     * @param Supplier $supplier The supplier being logged.
+     * @param  Supplier $supplier The supplier being logged.
      *
      * @return array
      */
@@ -200,9 +202,9 @@ class SupplierLogService
     }
 
     /**
-     * Pricing data
+     * Build the pricing, payment, and tax data for the log entry.
      *
-     * @param Supplier $supplier The supplier being logged.
+     * @param  Supplier $supplier The supplier being logged.
      *
      * @return array
      */
@@ -216,9 +218,9 @@ class SupplierLogService
     }
 
     /**
-     * Contact data
+     * Build the primary contact person data for the log entry.
      *
-     * @param Supplier $supplier The supplier being logged.
+     * @param  Supplier $supplier The supplier being logged.
      *
      * @return array
      */
@@ -232,9 +234,9 @@ class SupplierLogService
     }
 
     /**
-     * Flag data
+     * Build the boolean flag and notes data for the log entry.
      *
-     * @param Supplier $supplier The supplier being logged.
+     * @param  Supplier $supplier The supplier being logged.
      *
      * @return array
      */
@@ -248,9 +250,9 @@ class SupplierLogService
     }
 
     /**
-     * Meta data
+     * Build the metadata for the log entry.
      *
-     * @param Supplier $supplier The supplier being logged.
+     * @param  Supplier $supplier The supplier being logged.
      *
      * @return array
      */

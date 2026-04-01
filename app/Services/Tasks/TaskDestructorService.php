@@ -4,12 +4,22 @@ namespace App\Services\Tasks;
 
 use App\Models\Task;
 
+/**
+ * Handles the soft-deletion and restoration of Task records.
+ *
+ * Writes audit fields before delegating to Eloquent's soft-delete and
+ * restore methods, ensuring the deleted_by, deleted_at, restored_by, and
+ * restored_at columns are always populated.
+ */
 class TaskDestructorService
 {
     /**
      * Soft-delete a task.
      *
-     * @param Task $task
+     * Records the authenticated user and timestamp in the audit columns
+     * before soft-deleting the task.
+     *
+     * @param Task $task The task instance to soft-delete.
      *
      * @return void
      */
@@ -26,11 +36,16 @@ class TaskDestructorService
     }
 
     /**
-     * Restore a trashed task.
+     * Restore a soft-deleted task.
      *
-     * @param int $id
+     * Looks up the task including trashed records, records the
+     * authenticated user and timestamp in the audit columns, then restores
+     * the task. Returns the task unchanged if it is not currently
+     * trashed.
      *
-     * @return Task
+     * @param int $id The primary key of the soft-deleted task.
+     *
+     * @return Task The restored task instance.
      */
     public function restore(int $id): Task
     {

@@ -6,18 +6,23 @@ use App\Models\Log;
 use App\Models\Task;
 use App\Models\User;
 
+/**
+ * Handles audit logging for Task lifecycle events.
+ *
+ * Each public method writes a structured log entry via the Log model for
+ * a specific task action, combining base task data with
+ * action-specific timestamp and actor fields.
+ */
 class TaskLogService
 {
     /**
-     * Log the creation of a Task.
+     * Log a task creation event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Task $task The task that was created.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Task $task The task was created.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function taskCreated(
         User $user,
@@ -39,15 +44,13 @@ class TaskLogService
     }
 
     /**
-     * Log the update of a Task.
+     * Log a task update event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Task $task The task that was updated.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Task $task The task was updated.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function taskUpdated(
         User $user,
@@ -69,15 +72,13 @@ class TaskLogService
     }
 
     /**
-     * Log the deletion of a Task.
+     * Log a task deletion event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Task $task The task that was deleted.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Task $task The task was deleted.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function taskDeleted(
         User $user,
@@ -99,15 +100,13 @@ class TaskLogService
     }
 
     /**
-     * Log the restoration of a Task.
+     * Log a task restoration event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Task $task The task that was restored.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Task $task The task was restored.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function taskRestored(
         User $user,
@@ -129,15 +128,13 @@ class TaskLogService
     }
 
     /**
-     * Log the completion of a Task.
+     * Log a task completion event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Task $task The task that was completed.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Task $task The task was completed.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function taskCompleted(
         User $user,
@@ -159,15 +156,13 @@ class TaskLogService
     }
 
     /**
-     * Log the reopening of a Task.
+     * Log a task reopening event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Task $task The task that was reopened.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Task $task The task was reopened.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function taskReopened(
         User $user,
@@ -189,9 +184,9 @@ class TaskLogService
     }
 
     /**
-     * Prepare base data for Task logging.
+     * Build the base data array shared across all task log entries.
      *
-     * @param Task $task The task to extract data from.
+     * @param  Task $task The task to extract data from.
      *
      * @return array The base task data.
      */
