@@ -31,7 +31,8 @@ class PipelineStageManagementService
     private PipelineStageUpdaterService $updater;
 
     /**
-     * Service responsible for soft-deleting and restoring pipeline stage records.
+     * Service responsible for soft-deleting and restoring pipeline
+     * stage records.
      *
      * @var PipelineStageDestructorService
      */
@@ -40,10 +41,12 @@ class PipelineStageManagementService
     /**
      * Inject the required services into the management service.
      *
-     * @param  PipelineStageCreatorService $creator Handles pipeline stage creation.
-     * @param  PipelineStageUpdaterService $updater Handles pipeline stage updates.
-     * @param  PipelineStageDestructorService $destructor Handles pipeline stage deletion
-     * and restoration.
+     * @param  PipelineStageCreatorService $creator Handles pipeline
+     * stage creation.
+     * @param  PipelineStageUpdaterService $updater Handles pipeline
+     * stage updates.
+     * @param  PipelineStageDestructorService $destructor Handles pipeline
+     * stage deletion and restoration.
      */
     public function __construct(
         PipelineStageCreatorService $creator,
@@ -58,8 +61,8 @@ class PipelineStageManagementService
     /**
      * Create a new pipeline stage.
      *
-     * @param  StorePipelineStageRequest $request Validated request containing pipeline stage
-     * data.
+     * @param  StorePipelineStageRequest $request Validated request containing
+     * pipeline stage data.
      *
      * @return PipelineStage The newly created pipeline stage.
      */
@@ -73,7 +76,8 @@ class PipelineStageManagementService
      *
      * @param  UpdatePipelineStageRequest $request Validated request containing
      * updated pipeline stage data.
-     * @param  PipelineStage $pipelineStage The pipeline stage instance to update.
+     * @param  PipelineStage $pipelineStage The pipeline stage instance to
+     * update.
      *
      * @return PipelineStage The updated pipeline stage.
      */

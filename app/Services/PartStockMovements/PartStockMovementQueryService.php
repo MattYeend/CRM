@@ -59,14 +59,18 @@ class PartStockMovementQueryService
     }
 
     /**
-     * Return a single part stock movement with all relevant relationships loaded.
+     * Return a single part stock movement with all relevant relationships
+     * loaded.
      *
-     * @param  PartStockMovement $partStockMovement The route-model-bound part instance.
+     * @param  PartStockMovement $partStockMovement The route-model-bound
+     * part instance.
      *
-     * @return PartStockMovement The part stock movement with relationships loaded.
+     * @return PartStockMovement The part stock movement with relationships
+     * loaded.
      */
-    public function show(PartStockMovement $partStockMovement): PartStockMovement
-    {
+    public function show(
+        PartStockMovement $partStockMovement
+    ): PartStockMovement {
         return $partStockMovement;
     }
 }

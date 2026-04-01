@@ -19,7 +19,8 @@ class PartCategoryDestructorService
      * Records the authenticated user and timestamp in the audit columns
      * before soft-deleting the part category.
      *
-     * @param  PartCategory $partCategory The part category instance to soft-delete.
+     * @param  PartCategory $partCategory The part category instance
+     * to soft-delete.
      *
      * @return void
      */

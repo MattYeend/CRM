@@ -21,7 +21,8 @@ class QuoteProductManagementService
     private QuoteProductUpdaterService $updater;
 
     /**
-     * Service responsible for soft-deleting and restoring quote product records.
+     * Service responsible for soft-deleting and restoring quote product
+     * records.
      *
      * @var QuoteProductDestructorService
      */

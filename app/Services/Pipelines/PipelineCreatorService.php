@@ -19,8 +19,8 @@ class PipelineCreatorService
      * Sets the created_by and created_at audit fields from the authenticated
      * user before persisting the record.
      *
-     * @param  StorePipelineRequest $request Validated request containing pipeline
-     * data.
+     * @param  StorePipelineRequest $request Validated request containing
+     * pipeline data.
      *
      * @return Pipeline The newly created pipelin record.
      */

@@ -19,8 +19,8 @@ class PipelineStageCreatorService
      * Sets the created_by and created_at audit fields from the authenticated
      * user before persisting the record.
      *
-     * @param  StorePipelineStageRequest $request Validated request containing pipeline
-     * stage data.
+     * @param  StorePipelineStageRequest $request Validated request
+     * containing pipeline stage data.
      *
      * @return PipelineStage The newly created pipeline stage record.
      */

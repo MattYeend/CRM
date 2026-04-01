@@ -24,7 +24,8 @@ class PartStockMovementCreatorService
      * below zero. Persists the movement and updates the part quantity.
      *
      * @param  Part $part The part whose stock is being modified.
-     * @param  StorePartStockMovementRequest $request Validated request containing movement data.
+     * @param  StorePartStockMovementRequest $request Validated request
+     * containing movement data.
      *
      * @return PartStockMovement The newly created stock movement record.
      *

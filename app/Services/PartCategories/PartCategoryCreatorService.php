@@ -19,8 +19,8 @@ class PartCategoryCreatorService
      * Sets the created_by and created_at audit fields from the authenticated
      * user before persisting the record.
      *
-     * @param  StorePartCategoryRequest $request Validated request containing part
-     * category data.
+     * @param  StorePartCategoryRequest $request Validated request containing
+     * part category data.
      *
      * @return PartCategory The newly created part category record.
      */

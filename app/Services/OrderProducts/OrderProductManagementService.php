@@ -21,7 +21,8 @@ class OrderProductManagementService
     private OrderProductUpdaterService $updater;
 
     /**
-     * Service responsible for soft-deleting and restoring order product records.
+     * Service responsible for soft-deleting and restoring order product
+     * records.
      *
      * @var OrderProductDestructorService
      */

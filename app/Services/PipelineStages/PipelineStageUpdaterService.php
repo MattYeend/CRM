@@ -17,8 +17,8 @@ class PipelineStageUpdaterService
      * Update an existing pipeline stage.
      *
      * Extracts validated data from the request, assigns the authenticated
-     * user and timestamp to audit fields, updates the pipeline stage, and returns
-     * a fresh instance.
+     * user and timestamp to audit fields, updates the pipeline stage, and
+     * returns a fresh instance.
      *
      * @param  UpdatePipelineStageRequest $request The request containing
      * validated pipeline stage data.

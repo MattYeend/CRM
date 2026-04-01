@@ -97,7 +97,8 @@ class PipelineStageLogService
      *
      * @param  User $user The user who performed the action.
      * @param  int $userId The ID of the user who performed the action.
-     * @param  PipelineStage $pipelineStage The pipeline stage that was restored.
+     * @param  PipelineStage $pipelineStage The pipeline stage that
+     * was restored.
      *
      * @return array The structured data written to the log entry.
      */

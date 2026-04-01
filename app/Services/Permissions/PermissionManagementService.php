@@ -42,8 +42,8 @@ class PermissionManagementService
      *
      * @param  PermissionCreatorService $creator Handles permission creation.
      * @param  PermissionUpdaterService $updater Handles permission updates.
-     * @param  PermissionDestructorService $destructor Handles permission deletion
-     * and restoration.
+     * @param  PermissionDestructorService $destructor Handles permission
+     * deletion and restoration.
      */
     public function __construct(
         PermissionCreatorService $creator,
@@ -58,8 +58,8 @@ class PermissionManagementService
     /**
      * Create a new permission.
      *
-     * @param  StorePermissionRequest $request Validated request containing permission
-     * data.
+     * @param  StorePermissionRequest $request Validated request containing
+     * permission data.
      *
      * @return Permission The newly created permission.
      */

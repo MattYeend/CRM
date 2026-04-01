@@ -19,7 +19,8 @@ class PipelineStageDestructorService
      * Records the authenticated user and timestamp in the audit columns
      * before soft-deleting the pipeline stage.
      *
-     * @param  PipelineStage $pipelineStage The pipeline stage instance to soft-delete.
+     * @param  PipelineStage $pipelineStage The pipeline stage instance
+     * to soft-delete.
      *
      * @return void
      */
@@ -40,8 +41,8 @@ class PipelineStageDestructorService
      *
      * Looks up the pipeline stage including trashed records, records the
      * authenticated user and timestamp in the audit columns, then restores
-     * the pipeline stage. Returns the pipeline stage unchanged if it is not currently
-     * trashed.
+     * the pipeline stage. Returns the pipeline stage unchanged if it
+     * is not currently trashed.
      *
      * @param  int $id The primary key of the soft-deleted pipeline stage.
      *

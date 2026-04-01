@@ -34,7 +34,7 @@ class PipelineManagementService
      * Service responsible for soft-deleting and restoring pipeline records.
      *
      * @var PipelineDestructorService
-     */    
+     */
     private PipelineDestructorService $destructor;
 
     /**
@@ -58,8 +58,8 @@ class PipelineManagementService
     /**
      * Create a new pipeline.
      *
-     * @param  StorePipelineRequest $request Validated request containing pipeline
-     * data.
+     * @param  StorePipelineRequest $request Validated request containing
+     * pipeline data.
      *
      * @return Pipeline The newly created pipeline.
      */
