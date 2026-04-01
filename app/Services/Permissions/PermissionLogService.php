@@ -6,18 +6,23 @@ use App\Models\Log;
 use App\Models\Permission;
 use App\Models\User;
 
+/**
+ * Handles audit logging for Permission lifecycle events.
+ *
+ * Each public method writes a structured log entry via the Log model for
+ * a specific permission action, combining base permission data with
+ * action-specific timestamp and actor fields.
+ */
 class PermissionLogService
 {
     /**
-     * Log the creation of a Permission.
+     * Log a permission creation event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Permission $permission The permission that was created.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Permission $permission The permission was created.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function permissionCreated(
         User $user,
@@ -39,15 +44,13 @@ class PermissionLogService
     }
 
     /**
-     * Log the update of a Permission.
+     * Log a permission update event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Permission $permission The permission that was updated.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Permission $permission The permission was updated.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function permissionUpdated(
         User $user,
@@ -69,15 +72,13 @@ class PermissionLogService
     }
 
     /**
-     * Log the deletion of a Permission.
+     * Log a permission deletion event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Permission $permission The permission that was deleted.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Permission $permission The permission was deleted.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function permissionDeleted(
         User $user,
@@ -99,15 +100,13 @@ class PermissionLogService
     }
 
     /**
-     * Log the restoration of a Permission.
+     * Log a permission restoration event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Permission $permission The permission that was restored.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Permission $permission The permission was restored.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function permissionRestored(
         User $user,
@@ -129,11 +128,11 @@ class PermissionLogService
     }
 
     /**
-     * Prepare the base data for logging a Permission.
+     * Build the base data array shared across all permission log entries.
      *
-     * @param Permission $permission The permission being logged.
+     * @param  Permission $permission The permission being logged.
      *
-     * @return array The base data array.
+     * @return array The base fields extracted from the permission.
      */
     protected function basePermissionData(Permission $permission): array
     {

@@ -5,16 +5,26 @@ namespace App\Services\Permissions;
 use App\Http\Requests\UpdatePermissionRequest;
 use App\Models\Permission;
 
+/**
+ * Handles updates to Permission records.
+ *
+ * Validates incoming request data, assigns audit fields, and persists
+ * updates to the permission.
+ */
 class PermissionUpdaterService
 {
     /**
-     * Update the permission using request data.
+     * Update an existing permission.
      *
-     * @param UpdatePermissionRequest $request
+     * Extracts validated data from the request, assigns the authenticated
+     * user and timestamp to audit fields, updates the permission, and returns
+     * a fresh instance.
      *
-     * @param Permission $permission
+     * @param  UpdatePermissionRequest $request The request containing
+     * validated permission data.
+     * @param  Permission $permission The permission to update.
      *
-     * @return Permission
+     * @return Permission The updated permission instance.
      */
     public function update(
         UpdatePermissionRequest $request,

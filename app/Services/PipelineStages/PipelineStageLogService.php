@@ -9,15 +9,13 @@ use App\Models\User;
 class PipelineStageLogService
 {
     /**
-     * Log the creation of a Pipeline Stage.
+     * Log a pipeline stage creation event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  PipelineStage $pipelineStage The pipeline stage that was created.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param PipelineStage $pipelineStage The pipeline stage was created.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function pipelineStageCreated(
         User $user,
@@ -39,15 +37,13 @@ class PipelineStageLogService
     }
 
     /**
-     * Log the update of a Pipeline Stage.
+     * Log a pipeline stage update event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  PipelineStage $pipelineStage The pipeline stage that was updated.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param PipelineStage $pipelineStage The pipeline stage was updated.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function pipelineStageUpdated(
         User $user,
@@ -69,15 +65,13 @@ class PipelineStageLogService
     }
 
     /**
-     * Log the deletion of a Pipeline Stage.
+     * Log a pipeline stage deletion event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  PipelineStage $pipelineStage The pipeline stage that was deleted.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param PipelineStage $pipelineStage The pipeline stage was deleted.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function pipelineStageDeleted(
         User $user,
@@ -99,15 +93,13 @@ class PipelineStageLogService
     }
 
     /**
-     * Log the restoration of a Pipeline Stage.
+     * Log a pipeline stage restoration event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  PipelineStage $pipelineStage The pipeline stage that was restored.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param PipelineStage $pipelineStage The pipeline stage was restored.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function pipelineStageRestored(
         User $user,
@@ -129,11 +121,11 @@ class PipelineStageLogService
     }
 
     /**
-     * Prepare the base data for logging a Pipeline Stage.
+     * Build the base data array shared across all pipeline stage log entries.
      *
-     * @param PipelineStage $pipelineStage The pipeline stage being logged.
+     * @param  PipelineStage $pipelineStage The pipeline stage being logged.
      *
-     * @return array The base data for the log entry.
+     * @return array The base fields extracted from the pipeline stage.
      */
     protected function basePipelineStageData(
         PipelineStage $pipelineStage

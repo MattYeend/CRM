@@ -8,16 +8,27 @@ use App\Models\Part;
 use App\Models\PartStockMovement;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Handles creation of PartStockMovement records.
+ *
+ * Validates stock constraints, calculates quantity changes,
+ * and persists both the movement and updated part quantity
+ * within a database transaction.
+ */
 class PartStockMovementCreatorService
 {
     /**
-     * Create a new part stock movement from request data.
+     * Create a new part stock movement.
      *
-     * @param Part $part
+     * Calculates the resulting stock level and ensures it does not fall
+     * below zero. Persists the movement and updates the part quantity.
      *
-     * @param StorePartStockMovementRequest $request
+     * @param  Part $part The part whose stock is being modified.
+     * @param  StorePartStockMovementRequest $request Validated request containing movement data.
      *
-     * @return PartStockMovement
+     * @return PartStockMovement The newly created stock movement record.
+     *
+     * @throws InsufficientStock If the resulting stock would be negative.
      */
     public function create(
         Part $part,
@@ -25,6 +36,7 @@ class PartStockMovementCreatorService
     ): PartStockMovement {
         $data = $request->validated();
         $createdBy = $request->user()->id;
+
         $quantityBefore = $part->quantity;
         $quantityAfter = $quantityBefore + $data['quantity'];
 
@@ -42,17 +54,16 @@ class PartStockMovementCreatorService
     }
 
     /**
-     * Persist the movement and update part quantity in a transaction.
+     * Persist the stock movement and update the part quantity.
      *
-     * @param Part $part
+     * Executes within a database transaction to ensure consistency
+     * between the movement record and the part's stock level.
      *
-     * @param array $data
-     *
-     * @param int $createdBy
-     *
-     * @param int $quantityBefore
-     *
-     * @param int $quantityAfter
+     * @param  Part $part
+     * @param  array $data
+     * @param  int $createdBy
+     * @param  int $quantityBefore
+     * @param  int $quantityAfter
      *
      * @return PartStockMovement
      */

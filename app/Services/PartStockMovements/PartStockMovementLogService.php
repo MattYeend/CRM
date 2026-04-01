@@ -6,19 +6,22 @@ use App\Models\Log;
 use App\Models\PartStockMovement;
 use App\Models\User;
 
+/**
+ * Handles logging of PartStockMovement actions.
+ *
+ * Responsible for building structured log data and delegating
+ * persistence to the Log model.
+ */
 class PartStockMovementLogService
 {
     /**
-     * Log the creation of a Part Stock Movement.
+     * Log the creation of a part stock movement.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user performing the action.
+     * @param  int $userId The ID of the user performing the action.
+     * @param  PartStockMovement $partStockMovement The movement being logged.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param PartStockMovement $partStockMovement The partStockMovement
-     * was created.
-     *
-     * @return Log The created log entry.
+     * @return array The structured log data.
      */
     public function partStockMovementCreated(
         User $user,
@@ -40,12 +43,11 @@ class PartStockMovementLogService
     }
 
     /**
-     * Prepare the base data for logging a Part Stock Movement.
+     * Build base data for part stock movement logs.
      *
-     * @param PartStockMovement $partStockMovement The part$partStockMovement
-     * being logged.
+     * @param  PartStockMovement $partStockMovement
      *
-     * @return array The base data array.
+     * @return array
      */
     protected function basePartStockMovementData(
         PartStockMovement $partStockMovement

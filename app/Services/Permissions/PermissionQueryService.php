@@ -6,10 +6,36 @@ use App\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
+/**
+ * Handles read queries for Permission records.
+ *
+ * Delegates searching, sorting, and trash filtering to dedicated
+ * sub-services and returns paginated or single permission results with
+ * the appropriate relationships loaded.
+ */
 class PermissionQueryService
 {
+    /**
+     * Service responsible for applying sort order.
+     *
+     * @var PermissionSortingService
+     */
     private PermissionSortingService $sorting;
+
+    /**
+     * Service responsible for applying trash visibility filters.
+     *
+     * @var PermissionTrashFilterService
+     */
     private PermissionTrashFilterService $trashFilter;
+
+    /**
+     * Inject the required services into the query service.
+     *
+     * @param  PermissionSortingService $sorting Handles sort order.
+     * @param  PermissionTrashFilterService $trashFilter Handles
+     * trash filtering.
+     */
     public function __construct(
         PermissionSortingService $sorting,
         PermissionTrashFilterService $trashFilter,
@@ -19,11 +45,16 @@ class PermissionQueryService
     }
 
     /**
-     * Return paginated permission, applying filters/sorting.
+     * Return a paginated list of permissions with search, sorting,
+     * and trash filters applied.
      *
-     * @param Request $request
+     * The per_page value is clamped between 1 and 100. All active query
+     * string parameters are appended to the paginator links.
      *
-     * @return LengthAwarePaginator
+     * @param  Request $request Incoming HTTP request; may carry search,
+     * sort, filter, and pagination params.
+     *
+     * @return LengthAwarePaginator Paginated permissions item results.
      */
     public function list(Request $request): LengthAwarePaginator
     {
@@ -41,11 +72,12 @@ class PermissionQueryService
     }
 
     /**
-     * Return a single permission.
+     * Return a single permission with related data loaded.
      *
-     * @param Permission $permission
+     * @param  Permission $ordpermissioner The route-model-bound permission
+     * instance.
      *
-     * @return Permission
+     * @return Permission The permission with relationships loaded.
      */
     public function show(Permission $permission): Permission
     {

@@ -6,18 +6,23 @@ use App\Models\Log;
 use App\Models\Pipeline;
 use App\Models\User;
 
+/**
+ * Handles audit logging for Pipeline lifecycle events.
+ *
+ * Each public method writes a structured log entry via the Log model for
+ * a specific pipeline action, combining base pipeline data with
+ * action-specific timestamp and actor fields.
+ */
 class PipelineLogService
 {
     /**
-     * Log the creation of a Pipeline.
+     * Log a pipeline creation event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Pipeline $pipeline The pipeline that was created.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Pipeline $pipeline The pipeline was created.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function pipelineCreated(
         User $user,
@@ -39,15 +44,13 @@ class PipelineLogService
     }
 
     /**
-     * Log the update of a Pipeline.
+     * Log a pipeline update event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Pipeline $pipeline The pipeline that was updated.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Pipeline $pipeline The pipeline was updated.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function pipelineUpdated(
         User $user,
@@ -69,15 +72,13 @@ class PipelineLogService
     }
 
     /**
-     * Log the deletion of a Pipeline.
+     * Log a pipeline deletion event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Pipeline $pipeline The pipeline that was deleted.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Pipeline $pipeline The pipeline was deleted.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function pipelineDeleted(
         User $user,
@@ -99,15 +100,13 @@ class PipelineLogService
     }
 
     /**
-     * Log the restoration of a Pipeline.
+     * Log a pipeline restoration event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Pipeline $pipeline The pipeline that was restored.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Pipeline $pipeline The pipeline was restored.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function pipelineRestored(
         User $user,
@@ -129,11 +128,11 @@ class PipelineLogService
     }
 
     /**
-     * Prepare base data for Pipeline logs.
+     * Build the base data array shared across all pipeline log entries.
      *
-     * @param Pipeline $pipeline The pipeline being logged.
+     * @param  Pipeline $pipeline The pipeline being logged.
      *
-     * @return array The base data for logging.
+     * @return array The base fields extracted from the pipeline.
      */
     protected function basePipelineData(Pipeline $pipeline): array
     {
