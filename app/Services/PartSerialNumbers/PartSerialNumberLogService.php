@@ -6,18 +6,24 @@ use App\Models\Log;
 use App\Models\PartSerialNumber;
 use App\Models\User;
 
+/**
+ * Handles audit logging for PartSerialNumber lifecycle events.
+ *
+ * Each public method writes a structured log entry via the Log model for
+ * a specific part serial number action, combining base part serial number
+ * data with action-specific timestamp and actor fields.
+ */
 class PartSerialNumberLogService
 {
     /**
-     * Log the creation of a Part Serial Number.
+     * Log a part serial number creation event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  PartSerialNumber $partSerialNumber The part serial number that
+     * was created.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param PartSerialNumber $partSerialNumber The part was created.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function partSerialNumberCreated(
         User $user,
@@ -39,15 +45,14 @@ class PartSerialNumberLogService
     }
 
     /**
-     * Log the update of a Part Serial Number.
+     * Log a part serial number update event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  PartSerialNumber $partSerialNumber The part serial number that
+     * was updated.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param PartSerialNumber $partSerialNumber The part was updated.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function partSerialNumberUpdated(
         User $user,
@@ -69,15 +74,14 @@ class PartSerialNumberLogService
     }
 
     /**
-     * Log the deletion of a Part Serial Number.
+     * Log a part serial number deletion event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  PartSerialNumber $partSerialNumber The part serial number that
+     * was deleted.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param PartSerialNumber $partSerialNumber The part was deleted.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function partSerialNumberDeleted(
         User $user,
@@ -99,15 +103,14 @@ class PartSerialNumberLogService
     }
 
     /**
-     * Log the restoration of a Part Serial Number.
+     * Log a part serial number restoration event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  PartSerialNumber $partSerialNumber The part serial number that
+     * was restored.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param PartSerialNumber $partSerialNumberThe part was restored.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function partSerialNumberRestored(
         User $user,
@@ -129,11 +132,13 @@ class PartSerialNumberLogService
     }
 
     /**
-     * Prepare the base data for logging a Part Serial Number.
+     * Build the base data array shared across all part serial number log
+     * entries.
      *
-     * @param PartSerialNumber $partSerialNumber The part being logged.
+     * @param  PartSerialNumber $partSerialNumber The part serial number being
+     * logged.
      *
-     * @return array The base data array.
+     * @return array The base fields extracted from the part serial number.
      */
     protected function basePartSerialNumberData(
         PartSerialNumber $partSerialNumber
