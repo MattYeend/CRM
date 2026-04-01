@@ -6,18 +6,23 @@ use App\Models\Log;
 use App\Models\PartCategory;
 use App\Models\User;
 
+/**
+ * Handles audit logging for PartCategory lifecycle events.
+ *
+ * Each public method writes a structured log entry via the Log model for
+ * a specific part category action, combining base part category data with
+ * action-specific timestamp and actor fields.
+ */
 class PartCategoryLogService
 {
     /**
-     * Log the creation of a Part Category.
+     * Log a partCategory creation event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  PartCategory $partCategory The part category that was created.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param PartCategory $partCategory The part was created.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function partCategoryCreated(
         User $user,
@@ -39,15 +44,13 @@ class PartCategoryLogService
     }
 
     /**
-     * Log the update of a Part Category.
+     * Log a part category update event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  PartCategory $partCategory The part category that was updated.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param PartCategory $partCategory The part was updated.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function partCategoryUpdated(
         User $user,
@@ -69,15 +72,13 @@ class PartCategoryLogService
     }
 
     /**
-     * Log the deletion of a Part Category.
+     * Log a part category deletion event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  PartCategory $partCategory The part category that was deleted.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param PartCategory $partCategory The part was deleted.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function partCategoryDeleted(
         User $user,
@@ -99,15 +100,13 @@ class PartCategoryLogService
     }
 
     /**
-     * Log the restoration of a Part Category.
+     * Log a part category restoration event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  PartCategory $partCategory The part category that was restored.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param PartCategory $partCategory The part was restored.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function partCategoryRestored(
         User $user,
@@ -129,11 +128,11 @@ class PartCategoryLogService
     }
 
     /**
-     * Prepare the base data for logging a Part Category.
+     * Build the base data array shared across all part category log entries.
      *
-     * @param PartCategory $partCategory The part being logged.
+     * @param  PartCategory $partCategory The part category being logged.
      *
-     * @return array The base data array.
+     * @return array The base fields extracted from the part category.
      */
     protected function basePartCategoryData(PartCategory $partCategory): array
     {

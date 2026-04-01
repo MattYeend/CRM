@@ -6,18 +6,25 @@ use App\Models\Log;
 use App\Models\Part;
 use App\Models\User;
 
+/**
+ * Handles audit logging for Part lifecycle events.
+ *
+ * Each public method writes a structured log entry via the Log model for
+ * a specific part action, combining base part data with action-specific
+ * timestamp and actor fields. Base part data is composed from focused private
+ * methods covering identity, relationships, physical attributes, pricing,
+ * inventory, flags, and metadata.
+ */
 class PartLogService
 {
     /**
-     * Log the creation of a Part.
+     * Log a part creation event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Part $part The part that was created.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Part $part The part was created.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function partCreated(
         User $user,
@@ -39,15 +46,13 @@ class PartLogService
     }
 
     /**
-     * Log the update of a Part.
+     * Log a part update event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Part $part The part that was updated.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Part $part The part was updated.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function partUpdated(
         User $user,
@@ -69,15 +74,13 @@ class PartLogService
     }
 
     /**
-     * Log the deletion of a Part.
+     * Log a part deletion event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Part $part The part that was deleted.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Part $part The part was deleted.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function partDeleted(
         User $user,
@@ -99,15 +102,13 @@ class PartLogService
     }
 
     /**
-     * Log the restoration of a Part.
+     * Log a part restoration event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  Part $part The part that was restored.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param Part $part The part was restored.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function partRestored(
         User $user,
@@ -129,11 +130,15 @@ class PartLogService
     }
 
     /**
-     * Prepare the base data for logging a Part.
+     * Build the base data array shared across all part log entries.
      *
-     * @param Part $part The part being logged.
+     * Merges all data sub-groups into a single array covering identity,
+     * relationships, physical attributes, pricing, inventory, flags, and
+     * metadata.
      *
-     * @return array The base data array.
+     * @param  Part $part The part being logged.
+     *
+     * @return array The complete base data array.
      */
     protected function basePartData(Part $part): array
     {
@@ -150,9 +155,9 @@ class PartLogService
     }
 
     /**
-     * Base data
+     * Build the primary key data for the log entry.
      *
-     * @param Part $part The part being logged.
+     * @param  Part $part The part being logged.
      *
      * @return array
      */
@@ -164,9 +169,12 @@ class PartLogService
     }
 
     /**
-     * Relationship data
+     * Build the relationship data for the log entry.
      *
-     * @param Part $part The part being logged.
+     * Includes product, category, and supplier IDs, and conditionally
+     * includes category name and slug when the relationship is loaded.
+     *
+     * @param  Part $part The part being logged.
      *
      * @return array
      */
@@ -185,9 +193,9 @@ class PartLogService
     }
 
     /**
-     * Identify data
+     * Build the identity and classification data for the log entry.
      *
-     * @param Part $part The part being logged.
+     * @param  Part $part The part being logged.
      *
      * @return array
      */
@@ -208,9 +216,9 @@ class PartLogService
     }
 
     /**
-     * Phyiscal data
+     * Build the physical dimension and material data for the log entry.
      *
-     * @param Part $part The part being logged.
+     * @param  Part $part The part being logged.
      *
      * @return array
      */
@@ -228,9 +236,9 @@ class PartLogService
     }
 
     /**
-     * Pricing data
+     * Build the pricing and tax data for the log entry.
      *
-     * @param Part $part The part being logged.
+     * @param  Part $part The part being logged.
      *
      * @return array
      */
@@ -247,9 +255,9 @@ class PartLogService
     }
 
     /**
-     * Inventory data
+     * Build the stock level and warehouse location data for the log entry.
      *
-     * @param Part $part The part being logged.
+     * @param  Part $part The part being logged.
      *
      * @return array
      */
@@ -268,9 +276,9 @@ class PartLogService
     }
 
     /**
-     * Flag data
+     * Build the boolean feature and state flag data for the log entry.
      *
-     * @param Part $part The part being logged.
+     * @param  Part $part The part being logged.
      *
      * @return array
      */
@@ -288,9 +296,9 @@ class PartLogService
     }
 
     /**
-     * Meta data
+     * Build the metadata for the log entry.
      *
-     * @param Part $part The part being logged.
+     * @param  Part $part The part being logged.
      *
      * @return array
      */

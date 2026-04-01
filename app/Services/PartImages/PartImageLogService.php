@@ -6,18 +6,23 @@ use App\Models\Log;
 use App\Models\PartImage;
 use App\Models\User;
 
+/**
+ * Handles audit logging for PartImage lifecycle events.
+ *
+ * Each public method writes a structured log entry via the Log model for
+ * a specific part image action, combining base part image data with
+ * action-specific timestamp and actor fields.
+ */
 class PartImageLogService
 {
     /**
-     * Log the creation of a Part Image.
+     * Log a part image creation event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  PartImage $partImage The part image that was created.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param PartImage $partImage The part was created.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function partImageCreated(
         User $user,
@@ -39,15 +44,13 @@ class PartImageLogService
     }
 
     /**
-     * Log the update of a Part Image.
+     * Log a part image update event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  PartImage $partImage The part image that was updated.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param PartImage $partImage The part was updated.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function partImageUpdated(
         User $user,
@@ -69,15 +72,13 @@ class PartImageLogService
     }
 
     /**
-     * Log the deletion of a Part Image.
+     * Log a part image deletion event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  PartImage $partImage The part image that was deleted.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param PartImage $partImage The part was deleted.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function partImageDeleted(
         User $user,
@@ -99,15 +100,13 @@ class PartImageLogService
     }
 
     /**
-     * Log the restoration of a Part Image.
+     * Log a part image restoration event.
      *
-     * @param User $user The user being logged.
+     * @param  User $user The user who performed the action.
+     * @param  int $userId The ID of the user who performed the action.
+     * @param  PartImage $partImage The part image that was restored.
      *
-     * @param int $userId The ID of the user who performed the action.
-     *
-     * @param PartImage $partImage The part was restored.
-     *
-     * @return Log The created log entry.
+     * @return array The structured data written to the log entry.
      */
     public function partImageRestored(
         User $user,
@@ -129,11 +128,11 @@ class PartImageLogService
     }
 
     /**
-     * Prepare the base data for logging a PartImage.
+     * Build the base data array shared across all part image log entries.
      *
-     * @param PartImage $partImage The part image being logged.
+     * @param  PartImage $partImage The part image being logged.
      *
-     * @return array The base data array.
+     * @return array The base fields extracted from the part image.
      */
     protected function basePartImageData(PartImage $partImage): array
     {
