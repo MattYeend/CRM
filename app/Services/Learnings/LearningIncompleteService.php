@@ -24,10 +24,10 @@ class LearningIncompleteService
         $userId = auth()->id();
 
         $learning->users()->updateExistingPivot($userId, [
-            'is_complete'  => false,
+            'is_complete' => false,
             'completed_at' => null,
-            'score'        => null,
-            'updated_by'   => $userId,
+            'score' => null,
+            'updated_by' => $userId,
         ]);
 
         return $learning->fresh();

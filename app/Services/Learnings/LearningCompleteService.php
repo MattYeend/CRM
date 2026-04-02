@@ -21,6 +21,7 @@ class LearningCompleteService
      *
      * @param  Learning $learning
      * @param  int|null $score The user's score (0–100), if applicable.
+     *
      * @return Learning
      *
      * @throws HttpException
@@ -33,9 +34,14 @@ class LearningCompleteService
             $learning->pass_score !== null
             && ($score === null || $score < $learning->pass_score)
         ) {
-            abort(422, 'Score of ' . $score . ' does not meet the pass score of ' . $learning->pass_score . '.');
+            $passScore = $learning->pass_score;
+            abort(422, sprintf(
+                'Score of %s does not meet the pass score of %s.',
+                $score,
+                $passScore,
+            ));
         }
-    
+
         $learning->users()->updateExistingPivot($userId, [
             'is_complete' => true,
             'completed_at' => now(),

@@ -234,7 +234,10 @@ class LearningController extends Controller
             $learning,
         );
 
-        $learning = $this->management->complete($learning, $request->integer('score'));
+        $learning = $this->management->complete(
+            $learning,
+            $request->integer('score')
+        );
 
         return response()->json($learning);
     }
