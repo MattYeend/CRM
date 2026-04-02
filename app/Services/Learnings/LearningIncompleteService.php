@@ -13,19 +13,23 @@ use App\Models\Learning;
 class LearningIncompleteService
 {
     /**
-     * Mark a learning as incomplete for the current user.
+     * Revert a learning to incomplete for the authenticated user.
      *
-     * @param  Learning $learning The learning to mark as incomplete.
+     * @param  Learning $learning
      *
-     * @return Learning The updated learning instance.
+     * @return Learning
      */
     public function incomplete(Learning $learning): Learning
     {
-        $learning->users()->updateExistingPivot(auth()->id(), [
-            'is_complete' => false,
+        $userId = auth()->id();
+
+        $learning->users()->updateExistingPivot($userId, [
+            'is_complete'  => false,
             'completed_at' => null,
+            'score'        => null,
+            'updated_by'   => $userId,
         ]);
 
-        return $learning;
+        return $learning->fresh();
     }
 }

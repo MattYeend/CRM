@@ -49,6 +49,7 @@ class Learning extends Model
         'title',
         'description',
         'date',
+        'pass_score',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -67,6 +68,7 @@ class Learning extends Model
      * @var array<string,string>
      */
     protected $casts = [
+        'pass_score' => 'integer',
         'is_test' => 'boolean',
         'meta' => 'array',
         'date' => 'date',
@@ -150,7 +152,7 @@ class Learning extends Model
             ->using(LearningUser::class)
             ->withPivot([
                 'is_complete', 'user_id', 'completed_at', 'is_test', 'meta',
-                'created_by', 'updated_by',
+                'created_by', 'updated_by', 'score',
             ])
             ->withTimestamps();
     }

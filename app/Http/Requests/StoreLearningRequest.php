@@ -57,6 +57,7 @@ class StoreLearningRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
+            'pass_score' => 'nullable|integer|min:0|max:100',
         ];
     }
 

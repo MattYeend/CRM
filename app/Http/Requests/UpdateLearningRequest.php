@@ -58,6 +58,7 @@ class UpdateLearningRequest extends FormRequest
     {
         return [
             'title' => 'sometimes|string|max:255',
+            'pass_score' => 'nullable|integer|min:0|max:100',
         ];
     }
 

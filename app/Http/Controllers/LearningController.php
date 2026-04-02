@@ -222,6 +222,10 @@ class LearningController extends Controller
     {
         $this->authorize('complete', $learning);
 
+        $request->validate([
+            'score' => 'nullable|integer|min:0|max:100',
+        ]);
+
         $user = $request->user();
 
         $this->logger->learningComplete(
@@ -230,7 +234,7 @@ class LearningController extends Controller
             $learning,
         );
 
-        $learning = $this->management->complete($learning);
+        $learning = $this->management->complete($learning, $request->integer('score'));
 
         return response()->json($learning);
     }

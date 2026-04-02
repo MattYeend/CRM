@@ -3,6 +3,7 @@
 namespace App\Services\Learnings;
 
 use App\Models\Learning;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * Handles marking a learning as completed for the authenticated user.
@@ -13,17 +14,33 @@ use App\Models\Learning;
 class LearningCompleteService
 {
     /**
-     * Mark a learning as complete for the current user.
+     * Mark a learning as complete for the authenticated user.
      *
-     * @param  Learning $learning The learning to mark as complete.
+     * If the learning has a pass_score set, the user's score on the pivot
+     * must meet or exceed it. Throws a 422 if the score is insufficient.
      *
-     * @return Learning The updated learning instance.
+     * @param  Learning $learning
+     * @param  int|null $score The user's score (0–100), if applicable.
+     * @return Learning
+     *
+     * @throws HttpException
      */
-    public function complete(Learning $learning): Learning
+    public function complete(Learning $learning, ?int $score = null): Learning
     {
-        $learning->users()->updateExistingPivot(auth()->id(), [
+        $userId = auth()->id();
+
+        if (
+            $learning->pass_score !== null
+            && ($score === null || $score < $learning->pass_score)
+        ) {
+            abort(422, 'Score of ' . $score . ' does not meet the pass score of ' . $learning->pass_score . '.');
+        }
+    
+        $learning->users()->updateExistingPivot($userId, [
             'is_complete' => true,
             'completed_at' => now(),
+            'score' => $score,
+            'updated_by' => $userId,
         ]);
 
         return $learning;

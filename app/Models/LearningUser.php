@@ -30,6 +30,7 @@ class LearningUser extends Pivot
         'user_id',
         'is_complete',
         'completed_at',
+        'score',
         'is_test',
         'meta',
         'created_by',
@@ -42,6 +43,7 @@ class LearningUser extends Pivot
      * @var array<string,string>
      */
     protected $casts = [
+        'score' => 'integer',
         'is_test' => 'boolean',
         'meta' => 'array',
         'created_at' => 'datetime',
