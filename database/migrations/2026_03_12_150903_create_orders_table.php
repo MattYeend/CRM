@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('assigned_to')->constrained()->cascadeOnDelete();
             $table->foreignId('deal_id')->nullable()->constrained('deals')->nullOnDelete();
             $table->decimal('amount', 10, 2)->default(0);
             $table->string('currency', 3)->default('GBP');

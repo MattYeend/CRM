@@ -69,7 +69,7 @@ class Activity extends Model
      * @var array<int,string>
      */
     protected $fillable = [
-        'user_id',
+        'assigned_to',
         'type',
         'subject_type',
         'subject_id',

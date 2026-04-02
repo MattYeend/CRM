@@ -19,7 +19,7 @@ class ActivitySortingService
      */
     private const ALLOWED_SORTS = [
         'id',
-        'user_id',
+        'assigned_to',
         'type',
         'subject_type',
         'description',

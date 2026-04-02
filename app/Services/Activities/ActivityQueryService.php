@@ -103,7 +103,7 @@ class ActivityQueryService
     {
         return [
             'id' => $activity->id,
-            'user_id' => $activity->user_id,
+            'assigned_to' => $activity->assigned_to,
             'username' => $activity->user?->name,
             'type' => $activity->type,
             'subject_type' => $activity->subject_type,

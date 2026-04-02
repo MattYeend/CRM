@@ -49,7 +49,7 @@ test('index returns paginated activities and respects per_page query', function 
     $subject = User::factory()->create();
 
     Activity::factory()->count(15)->create([
-        'user_id' => $this->auth->id,
+        'assigned_to' => $this->auth->id,
         'subject_type' => User::class,
         'subject_id' => $subject->id,
     ]);
@@ -68,7 +68,7 @@ test('index returns paginated activities and respects per_page query', function 
 test('index returns all activities when no pagination specified', function () {
     $subject = User::factory()->create();
     Activity::factory()->count(3)->create([
-        'user_id' => $this->auth->id,
+        'assigned_to' => $this->auth->id,
         'subject_type' => User::class,
         'subject_id' => $subject->id,
     ]);
@@ -104,7 +104,7 @@ test('show returns the activity with user and subject relationships loaded', fun
     $subject = User::factory()->create();
 
     $activity = Activity::factory()->create([
-        'user_id' => $user->id,
+        'assigned_to' => $user->id,
         'subject_type' => 'user',
         'subject_id' => $subject->id,
         'type' => 'sample-type',
@@ -128,7 +128,7 @@ test('show returns the activity with user and subject relationships loaded', fun
         'subject_type',
         'subject_name',
         'username',
-        'user_id',
+        'assigned_to',
         'permissions' => ['view', 'update', 'delete'],
     ]);
 });
@@ -138,7 +138,7 @@ test('show returns 403 when user lacks permission', function () {
     $subject = User::factory()->create();
 
     $activity = Activity::factory()->create([
-        'user_id' => $user->id,
+        'assigned_to' => $user->id,
         'subject_type' => 'user',
         'subject_id' => $subject->id,
         'type' => 'sample-type',
@@ -173,7 +173,7 @@ test('store creates an activity with valid payload and returns 201', function ()
     $user = User::factory()->create();
 
     $payload = [
-        'user_id' => $user->id,
+        'assigned_to' => $user->id,
         'type' => 'created-thing',
         'subject_type' => 'user',
         'subject_id' => $user->id,
@@ -187,7 +187,7 @@ test('store creates an activity with valid payload and returns 201', function ()
     $response->assertJsonFragment(['type' => 'created-thing', 'description' => 'Created an example thing']);
 
     $this->assertDatabaseHas('activities', [
-        'user_id' => $user->id,
+        'assigned_to' => $user->id,
         'type' => 'created-thing',
         'description' => 'Created an example thing',
     ]);
@@ -198,7 +198,7 @@ test('store returns 403 when user lacks permission', function () {
     $subject = User::factory()->create();
 
     $activity = Activity::factory()->create([
-        'user_id' => $user->id,
+        'assigned_to' => $user->id,
         'subject_type' => 'user',
         'subject_id' => $subject->id,
         'type' => 'sample-type',
@@ -236,7 +236,7 @@ test('update modifies allowed fields and returns the updated activity', function
     $subject = User::factory()->create();
 
     $activity = Activity::factory()->create([
-        'user_id' => $this->auth->id,
+        'assigned_to' => $this->auth->id,
         'subject_type' => User::class,
         'subject_id' => $subject->id,
         'type' => 'old-type',
@@ -266,7 +266,7 @@ test('update returns 403 when user lacks permission', function () {
     $subject = User::factory()->create();
 
     $activity = Activity::factory()->create([
-        'user_id' => $this->auth->id,
+        'assigned_to' => $this->auth->id,
         'subject_type' => User::class,
         'subject_id' => $subject->id,
         'type' => 'old-type',
@@ -302,7 +302,7 @@ test('destroy deletes the activity and returns 204', function () {
     $subject = User::factory()->create();
 
     $activity = Activity::factory()->create([
-        'user_id' => $this->auth->id,
+        'assigned_to' => $this->auth->id,
         'subject_type' => User::class,
         'subject_id' => $subject->id,
     ]);
@@ -320,7 +320,7 @@ test('destroy returns 403 when user lacks permission', function () {
     $subject = User::factory()->create();
 
     $activity = Activity::factory()->create([
-        'user_id' => $this->auth->id,
+        'assigned_to' => $this->auth->id,
         'subject_type' => User::class,
         'subject_id' => $subject->id,
     ]);
@@ -353,7 +353,7 @@ test('restore deleted activity', function () {
     $subject = User::factory()->create();
 
     $activity = Activity::factory()->create([
-        'user_id' => $this->auth->id,
+        'assigned_to' => $this->auth->id,
         'subject_type' => User::class,
         'subject_id' => $subject->id,
     ]);
@@ -378,7 +378,7 @@ test('restore returns 403 when user lacks permission', function () {
     $subject = User::factory()->create();
 
     $activity = Activity::factory()->create([
-        'user_id' => $this->auth->id,
+        'assigned_to' => $this->auth->id,
         'subject_type' => User::class,
         'subject_id' => $subject->id,
     ]);    $user = User::factory()->create();
@@ -405,7 +405,7 @@ test('restore returns 404 when activity is not deleted', function () {
     $subject = User::factory()->create();
 
     $activity = Activity::factory()->create([
-        'user_id' => $this->auth->id,
+        'assigned_to' => $this->auth->id,
         'subject_type' => User::class,
         'subject_id' => $subject->id,
     ]);

@@ -34,7 +34,7 @@ class ActivityFactory extends Factory
 
         if (! $subject) {
             return [
-                'user_id' => null,
+                'assigned_to' => null,
                 'type' => 'generic',
                 'subject_type' => $alias,
                 'subject_id' => null,
@@ -46,7 +46,7 @@ class ActivityFactory extends Factory
         }
 
         return [
-            'user_id' => User::inRandomOrder()->first()?->id ?? User::factory()->create()->id,
+            'assigned_to' => User::inRandomOrder()->first()?->id ?? User::factory()->create()->id,
             'type' => 'generic',
             'subject_type' => $alias,
             'subject_id' => $subject->id,

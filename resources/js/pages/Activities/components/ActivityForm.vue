@@ -12,7 +12,7 @@ interface Activity {
     description: string
     subject_type?: string
     subject_id?: number
-    user_id?: number
+    assigned_to?: number
 }
 
 const props = defineProps<{
@@ -32,7 +32,7 @@ const form = useForm({
     description: props.activity?.description ?? '',
     subject_type: normalizeSubjectType(props.activity?.subject_type) ?? '',
     subject_id: props.activity?.subject_id ?? null as number | null,
-    selected_user_id: props.activity?.user_id ?? null as number | null,
+    selected_assigned_to: props.activity?.assigned_to ?? null as number | null,
 })
 
 const subjectOptions = ref<{ id: number; name: string }[]>([])
@@ -91,8 +91,8 @@ onMounted(async () => {
             name: user.name ?? user.email ?? `#${user.id}`,
         }))
 
-        if (props.activity?.user_id) {
-            form.selected_user_id = props.activity.user_id
+        if (props.activity?.assigned_to) {
+            form.selected_assigned_to = props.activity.assigned_to
         }
     } catch (err) {
         console.error('Failed to load users:', err)
@@ -107,8 +107,8 @@ async function submit() {
         const formData = new FormData()
         Object.entries(form.data()).forEach(([key, value]) => {
             if (value !== null && value !== undefined) {
-                if (key === 'selected_user_id') {
-                    formData.append('user_id', String(value))
+                if (key === 'selected_assigned_to') {
+                    formData.append('assigned_to', String(value))
                 } else {
                     formData.append(key, String(value))
                 }

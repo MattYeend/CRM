@@ -108,7 +108,7 @@ test('show returns a single order', function () {
 
     $response->assertJsonStructure([
         'id',
-        'user_id',
+        'assigned_to',
         'amount',
         'currency',
         'status',
@@ -152,7 +152,7 @@ test('store creates a new order and returns 201', function () {
     $deal = Deal::factory()->create();
 
     $payload = [
-        'user_id' => $user->id,
+        'assigned_to' => $user->id,
         'deal_id' => $deal->id,
         'amount' => 120.50,
         'currency' => 'USD',
