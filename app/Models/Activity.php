@@ -101,13 +101,13 @@ class Activity extends Model
     ];
 
     /**
-     * Get the user that owns the activity.
+     * Get the user that is assigned the activity.
      *
      * @return BelongsTo<User,Activity>
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'assigned_to');
     }
 
     /**
