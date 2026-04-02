@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Cache;
  * - clearPermissionCache(): Clear the cached permissions for the user.
  * Note: The actual implementation of these methods is not provided here, as this trait serves as a placeholder for user helper methods that can be defined as needed.
  */
-trait UserHelpersTrait
+trait UserHelpers
 {
     /**
      * Determine whether the user is a super administrator.

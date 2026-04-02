@@ -32,7 +32,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * - tasking(): Defines a polymorphic one-to-many relationship with the Task model, allowing access to all tasks where the user is the taskable entity.
  * - note(): Defines a polymorphic one-to-many relationship with the Note model, allowing access to all notes where the user is the notable entity.
  */
-trait UserRelationshipsTrait
+trait UserRelationships
 {
     /**
      * Get the role assigned to the user.

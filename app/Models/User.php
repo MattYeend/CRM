@@ -5,9 +5,9 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Traits\HasTestPrefix;
-use App\Traits\UserHelpersTrait;
-use App\Traits\UserRelationshipsTrait;
-use App\Traits\UserScopesTrait;
+use App\Traits\UserHelpers;
+use App\Traits\UserRelationships;
+use App\Traits\UserScopes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -38,9 +38,9 @@ class User extends Authenticatable
      * @use HasApiTokens<\Laravel\Sanctum\HasApiTokens>
      * @use Billable<\Laravel\Cashier\Billable>
      * @use HasTestPrefix<\App\Traits\HasTestPrefix>
-     * @use UserRelationshipsTrait<\App\Traits\UserRelationshipsTrait>
-     * @use UserHelpersTrait<\App\Traits\UserHelpersTrait>
-     * @use UserScopesTrait<\App\Traits\UserScopesTrait>
+     * @use UserRelationships<\App\Traits\UserRelationships>
+     * @use UserHelpers<\App\Traits\UserHelpers>
+     * @use UserScopes<\App\Traits\UserScopes>
      */
     use HasFactory,
         Notifiable,
@@ -49,9 +49,9 @@ class User extends Authenticatable
         HasApiTokens,
         Billable,
         HasTestPrefix,
-        UserRelationshipsTrait,
-        UserHelpersTrait,
-        UserScopesTrait;
+        UserRelationships,
+        UserHelpers,
+        UserScopes;
 
     /**
      * The attributes that are mass assignable.

@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
  * - scopeReal(): Scope a query to exclude users that are marked as test records, allowing for filtering of only real user records in the system.
  * Note: The role IDs used in the scope methods are based on constants defined in the Role model, ensuring that the scopes remain consistent with the defined roles in the system.
  */
-trait UserScopesTrait
+trait UserScopes
 {
     /**
      * Scope a query to only include admin users.
