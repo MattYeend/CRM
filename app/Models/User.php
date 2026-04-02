@@ -5,9 +5,9 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Traits\HasTestPrefix;
-use App\Traits\UserHelpers;
-use App\Traits\UserRelationships;
-use App\Traits\UserScopes;
+use App\Traits\User\UserHelpers;
+use App\Traits\User\UserRelationships;
+use App\Traits\User\UserScopes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -38,9 +38,9 @@ class User extends Authenticatable
      * @use HasApiTokens<\Laravel\Sanctum\HasApiTokens>
      * @use Billable<\Laravel\Cashier\Billable>
      * @use HasTestPrefix<\App\Traits\HasTestPrefix>
-     * @use UserRelationships<\App\Traits\UserRelationships>
-     * @use UserHelpers<\App\Traits\UserHelpers>
-     * @use UserScopes<\App\Traits\UserScopes>
+     * @use UserRelationships<\App\Traits\User\UserRelationships>
+     * @use UserHelpers<\App\Traits\User\UserHelpers>
+     * @use UserScopes<\App\Traits\User\UserScopes>
      */
     use HasFactory,
         Notifiable,
