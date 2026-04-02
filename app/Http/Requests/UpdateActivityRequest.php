@@ -76,7 +76,7 @@ class UpdateActivityRequest extends FormRequest
     /**
      * Validation rules for core activity fields.
      *
-     * All fields are optional on update; user_id must reference an existing
+     * All fields are optional on update; assigned_to must reference an existing
      * user when provided.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
@@ -85,7 +85,7 @@ class UpdateActivityRequest extends FormRequest
     {
         return [
             'type' => 'sometimes|string',
-            'user_id' => [
+            'assigned_to' => [
                 'nullable',
                 'integer',
                 Rule::exists('users', 'id'),

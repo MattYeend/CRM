@@ -80,8 +80,7 @@ class StoreActivityRequest extends FormRequest
     {
         return [
             'type' => 'required|string',
-            'user_id' => ['nullable', 'integer', 'exists:users,id'],
-            'user_id' => [
+            'assigned_to' => [
                 'nullable',
                 'integer',
                 Rule::exists('users', 'id'),

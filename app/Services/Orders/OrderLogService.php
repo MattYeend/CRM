@@ -140,7 +140,7 @@ class OrderLogService
 
         return [
             'id' => $order->id,
-            'user_id' => $userId,
+            'assigned_to' => $userId,
             'amount' => $order->amount,
             'currency' => $order->currency,
             'status' => $order->status,

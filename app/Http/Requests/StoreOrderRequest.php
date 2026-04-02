@@ -67,7 +67,7 @@ class StoreOrderRequest extends FormRequest
     /**
      * Validation rules for required deal and user associations.
      *
-     * Ensures both deal_id and user_id reference existing records.
+     * Ensures both deal_id and assigned_to reference existing records.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -79,7 +79,7 @@ class StoreOrderRequest extends FormRequest
                 'integer',
                 Rule::exists('deals', 'id'),
             ],
-            'user_id' => [
+            'assigned_to' => [
                 'required',
                 'integer',
                 Rule::exists('users', 'id'),

@@ -51,7 +51,7 @@ class Order extends Model
      */
     protected $fillable = [
         'deal_id',
-        'user_id',
+        'assigned_to',
         'amount',
         'currency',
         'status',

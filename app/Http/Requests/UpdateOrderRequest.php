@@ -76,7 +76,7 @@ class UpdateOrderRequest extends FormRequest
     private function relationshipBaseRules(): array
     {
         return [
-            'user_id' => [
+            'assigned_to' => [
                 'sometimes',
                 'integer',
                 Rule::exists('users', 'id'),

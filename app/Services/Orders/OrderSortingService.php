@@ -18,7 +18,7 @@ class OrderSortingService
      */
     private const ALLOWED_SORTS = [
         'id',
-        'user_id',
+        'assigned_to',
         'amount',
         'currency',
         'status',

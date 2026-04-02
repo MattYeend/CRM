@@ -40,7 +40,7 @@ const form = props.form
                 </option>
             </select>
             <p v-if="form.errors.selected_assigned_to" class="text-red-500 text-sm">
-                {{ form.errors.selected_user_id }}
+                {{ form.errors.selected_assigned_to }}
             </p>
         </div>
     </div>

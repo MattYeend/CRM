@@ -20,7 +20,7 @@ class OrderFactory extends Factory
         $amount = fake()->randomFloat(2, 50, 1000);
 
         return [
-            'user_id' => User::inRandomOrder()->first()?->id,
+            'assigned_to' => User::inRandomOrder()->first()?->id,
             'deal_id' => null, 
             'amount' => fake()->randomFloat(2, 50, 1000),
             'currency' => fake()->randomElement(['GBP', 'USD', 'EUR']),
