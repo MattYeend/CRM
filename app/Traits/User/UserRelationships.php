@@ -51,6 +51,74 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * - note(): Defines a polymorphic one-to-many relationship with the Note
  *      model, allowing access to all notes where the user is the notable
  *      entity.
+ * - createdTasks(): Defines a has-many relationship with the Task model,
+ *     allowing access to all tasks where the user is the creator.
+ * - assignedTasks(): Defines a has-many relationship with the Task model,
+ *      allowing access to all tasks where the user is the assignee.
+ * - createdActivities(): Defines a has-many relationship with the Activity
+ *      model, allowing access to all activities where the user is the
+ *      creator.
+ * - assignedActivities(): Defines a has-many relationship with the Activity
+ *      model, allowing access to all activities where the user is the
+ *      assignee.
+ * - createdOrders(): Defines a has-many relationship with the Order model,
+ *      allowing access to all orders where the user is the creator.
+ * - ownedDeals(): Defines a has-many relationship with the Deal model, allowing
+ *      access to all deals where the user is the owner.
+ * - leads(): Defines a has-many relationship with the Lead model, allowing
+ *      access to all leads where the user is the assignee.
+ * - createdLearning(): Defines a has-many relationship with the Learning model,
+ *      allowing access to all learning records where the user is the creator.
+ * - assignedLearning(): Defines a many-to-many relationship with the Learning
+ *      model through the LearningUser pivot model, allowing access to all
+ *      learnings associated with the user along with additional pivot data,
+ *      specifically focusing on the learnings assigned to the user as opposed
+ *      to those created by the user.
+ *
+ * Note: The actual implementation of these relationships is
+ * provided in the trait, and they are intended to be used as
+ * part of the User model's functionality. This trait should
+ * be used in conjunction with the UserHelpers trait to provide
+ * a complete set of features for the User model. The User model
+ * itself should also use the HasTestPrefix trait to enable
+ * test prefixing functionality for user-related records.
+ * The relationships defined here can be used in Eloquent queries
+ * and model interactions to easily access related data, improving
+ * the efficiency and clarity of code that interacts with users
+ * and their associated models.
+ * Example usage of these relationships in code might look like:
+ * ```php
+ * $user = User::find(1);
+ * $role = $user->role; // Get the user's role
+ * $jobTitle = $user->jobTitle; // Get the user's job title
+ * $deals = $user->deals; // Get all deals owned by the user
+ * $tasks = $user->tasks; // Get all tasks assigned to the user
+ * $notes = $user->notes; // Get all notes created by the user
+ * $learnings = $user->learnings; // Get all learnings associated
+ * with the user
+ * $attachments = $user->attachment; // Get all attachments for the user
+ * $activities = $user->activity; // Get all activities for the user
+ * $tasking = $user->tasking; // Get all tasks where the user is the
+ * taskable entity
+ * $note = $user->note; // Get all notes where the user is the notable
+ * entity
+ * $createdTasks = $user->createdTasks; // Get all tasks created by
+ * the user
+ * $assignedTasks = $user->assignedTasks; // Get all tasks assigned to
+ * the user
+ * $createdActivities = $user->createdActivities; // Get all activities
+ * created by the user
+ * $assignedActivities = $user->assignedActivities; // Get all activities
+ * assigned to the user
+ * $createdOrders = $user->createdOrders; // Get all orders created by
+ * the user
+ * $ownedDeals = $user->ownedDeals; // Get all deals owned by the user
+ * $leads = $user->leads; // Get all leads assigned to the user
+ * $createdLearning = $user->createdLearning; // Get all learning records
+ * created by the user
+ * $assignedLearning = $user->assignedLearning; // Get all learning records
+ * assigned to the user
+ * ```
  */
 trait UserRelationships
 {

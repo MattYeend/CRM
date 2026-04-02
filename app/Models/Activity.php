@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\Activity\ActivityHelpers;
+use App\Traits\Activity\ActivityRelationships;
+use App\Traits\Activity\ActivityScopes;
 use App\Traits\HasTestPrefix;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -27,7 +27,10 @@ class Activity extends Model
      */
     use HasFactory,
         SoftDeletes,
-        HasTestPrefix;
+        HasTestPrefix,
+        ActivityHelpers,
+        ActivityRelationships,
+        ActivityScopes;
 
     /**
      * The fully-qualified class name used as the subject type for Company
@@ -99,99 +102,6 @@ class Activity extends Model
         'deleted_at' => 'datetime',
         'restored_at' => 'datetime',
     ];
-
-    /**
-     * Get the user that is assigned the activity.
-     *
-     * @return BelongsTo<User,Activity>
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'assigned_to');
-    }
-
-    /**
-     * Get the polymorphic subject model this activity belongs to.
-     *
-     * The subject may be a Company, Deal, Task, or User as defined
-     * in ACTIVITY_TYPES.
-     *
-     * @return MorphTo<Model,Activity>
-     */
-    public function subject(): MorphTo
-    {
-        return $this->morphTo();
-    }
-
-    /**
-     * Get the user that created the activity.
-     *
-     * @return BelongsTo<User,Activity>
-     */
-    public function creator(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
-    /**
-     * Get the user that updated the activity.
-     *
-     * @return BelongsTo<User,Activity>
-     */
-    public function updater(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'updated_by');
-    }
-
-    /**
-     * Get the user that deleted the activity.
-     *
-     * @return BelongsTo<User,Activity>
-     */
-    public function deleter(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'deleted_by');
-    }
-
-    /**
-     * Get the user that restored the activity.
-     *
-     * @return BelongsTo<User,Activity>
-     */
-    public function restorer(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'restored_by');
-    }
-
-    /**
-     * Get all attachments associated with the activity.
-     *
-     * @return MorphMany<Attachment>
-     */
-    public function attachments(): MorphMany
-    {
-        return $this->morphMany(Attachment::class, 'attachable');
-    }
-
-    /**
-     * Get all tasks associated with the activity.
-     *
-     * @return MorphMany<Task>
-     */
-    public function tasks(): MorphMany
-    {
-        return $this->morphMany(Task::class, 'taskable');
-    }
-
-    /**
-     * Get all notes associated with the activity.
-     *
-     * @return MorphMany<Note>
-     */
-    public function notes(): MorphMany
-    {
-        return $this->morphMany(Note::class, 'notable');
-    }
 
     /**
      * Get the activity type, applying the test prefix when marked as a test.

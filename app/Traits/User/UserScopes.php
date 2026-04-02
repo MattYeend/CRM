@@ -22,6 +22,16 @@ use Illuminate\Database\Eloquent\Builder;
  * Note: The role IDs used in the scope methods are based on constants defined
  * in the Role model, ensuring that the scopes remain consistent with the
  * defined roles in the system.
+ *
+ * Example usage of these scopes in a query might look like:
+ * ```php
+ * $admins = User::admins()->get(); // Get all administrator users
+ * $superAdmins = User::superAdmins()->get(); // Get all super administrator
+ * users
+ * $standardUsers = User::standardUsers()->get(); // Get all standard users
+ * $realUsers = User::real()->get(); // Get all users that are not marked
+ * as test records
+ * ```
  */
 trait UserScopes
 {

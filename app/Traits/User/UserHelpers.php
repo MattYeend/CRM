@@ -26,6 +26,29 @@ use Illuminate\Support\Facades\Cache;
  * Note: The actual implementation of these methods is not provided here,
  * as this trait serves as a placeholder for user helper methods that
  * can be defined as needed.
+ *
+ * Note: This trait assumes that the User model has a relationship defined
+ * to the Role model (e.g., a 'role' method that returns a
+ * BelongsTo relationship),
+ * and that the Role model has a relationship to its permissions
+ * (e.g., a 'permissions' method that returns a collection of Permission
+ * models). The methods in this trait rely on these relationships to
+ * function correctly.
+ * Example usage of these methods in code might look like:
+ * ```php
+ * $user = User::find(1);
+ * if ($user->isSuperAdmin()) {
+ *   // User has super administrator privileges
+ * } elseif ($user->isAdmin()) {
+ *  // User has administrator privileges
+ * } elseif ($user->isUser()) {
+ * // User has standard user privileges
+ * }
+ * if ($user->hasPermission('edit_posts')) {
+ * // User has permission to edit posts
+ * }
+ * $user->clearPermissionCache(); // Clear cached permissions if needed
+ * ```
  */
 trait UserHelpers
 {
@@ -165,5 +188,26 @@ trait UserHelpers
     public function clearPermissionCache(): void
     {
         Cache::forget("user_permissions_{$this->id}");
+    }
+
+    /**
+     * Get the formatted user name.
+     *
+     * Applies a test prefix when the user is marked as a test record.
+     *
+     * This accessor method formats the user's name by applying a test prefix
+     * if the user is marked as a test record. The prefixTest() method is
+     * assumed to be defined elsewhere in the User model or a related trait,
+     * and it adds a specific prefix to the name when the user is a test
+     * record. This allows for easy identification of test users in the
+     * system while maintaining the original name format for real users.
+     *
+     * @param  string|null $value The raw user name from the database.
+     *
+     * @return string The formatted user name.
+     */
+    public function getNameAttribute($value): string
+    {
+        return $this->prefixTest($value);
     }
 }

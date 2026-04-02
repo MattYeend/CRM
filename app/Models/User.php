@@ -27,6 +27,10 @@ use Laravel\Sanctum\HasApiTokens;
  * Permissions are derived from the user's role and cached for performance.
  * Users may also be marked as test records, in which case certain
  * attributes (e.g. name) are automatically prefixed.
+ *
+ * This model includes traits for factory support, notifications, two-factor
+ * authentication, soft deletes, API tokens, billing, and custom user helper
+ * methods, relationships, and scopes.
  */
 class User extends Authenticatable
 {
@@ -110,20 +114,6 @@ class User extends Authenticatable
         'deleted_at' => 'datetime',
         'restored_at' => 'datetime',
     ];
-
-    /**
-     * Get the formatted user name.
-     *
-     * Applies a test prefix when the user is marked as a test record.
-     *
-     * @param  string|null $value The raw user name from the database.
-     *
-     * @return string The formatted user name.
-     */
-    public function getNameAttribute($value): string
-    {
-        return $this->prefixTest($value);
-    }
 
     /**
      * The "booted" method of the model.
