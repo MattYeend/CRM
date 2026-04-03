@@ -45,8 +45,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * $items = $invoice->items; // Get all line items on the invoice
  * $creator = $invoice->creator; // Get the user that created the invoice
  * $updater = $invoice->updater; // Get the user that last updated the invoice
- * $deleter = $invoice->deleter; // Get the user that deleted the invoice (if applicable)
- * $restorer = $invoice->restorer; // Get the user that restored the invoice (if applicable)
+ * $deleter = $invoice->deleter; // Get the user that deleted the invoice
+ *  (if applicable)
+ * $restorer = $invoice->restorer; // Get the user that restored the invoice
+ *  (if applicable)
  * $attachments = $invoice->attachments; // Get all attachments for the invoice
  * $activities = $invoice->activities; // Get all activities for the invoice
  * $tasks = $invoice->tasks; // Get all tasks for the invoice
@@ -481,12 +483,15 @@ class Invoice extends Model
      * Values should match one of the STATUS_* constants defined on this model.
      *
      * @param  Builder<Invoice> $query The query builder instance.
-     * @param  string|array<int,string> $status The status or statuses to filter by.
+     * @param  string|array<int,string> $status The status or statuses to
+     * filter by.
      *
      * @return Builder<Invoice> The modified query builder instance.
      */
-    public function scopeWithStatus(Builder $query, string|array $status): Builder
-    {
+    public function scopeWithStatus(
+        Builder $query,
+        string|array $status
+    ): Builder {
         return is_array($status)
             ? $query->whereIn('status', $status)
             : $query->where('status', $status);
@@ -536,12 +541,15 @@ class Invoice extends Model
      * currency codes. Applies a where or whereIn clause accordingly.
      *
      * @param  Builder<Invoice> $query The query builder instance.
-     * @param  string|array<int,string> $currency The currency code or codes to filter by.
+     * @param  string|array<int,string> $currency The currency code or
+     * codes to filter by.
      *
      * @return Builder<Invoice> The modified query builder instance.
      */
-    public function scopeInCurrency(Builder $query, string|array $currency): Builder
-    {
+    public function scopeInCurrency(
+        Builder $query,
+        string|array $currency
+    ): Builder {
         return is_array($currency)
             ? $query->whereIn('currency', $currency)
             : $query->where('currency', $currency);

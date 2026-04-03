@@ -480,12 +480,15 @@ class Deal extends Model
      * Values should match one of the STATUS_* constants defined on this model.
      *
      * @param  Builder<Deal> $query The query builder instance.
-     * @param  string|array<int,string> $status The status or statuses to filter by.
+     * @param  string|array<int,string> $status The status or statuses to
+     * filter by.
      *
      * @return Builder<Deal> The modified query builder instance.
      */
-    public function scopeWithStatus(Builder $query, string|array $status): Builder
-    {
+    public function scopeWithStatus(
+        Builder $query,
+        string|array $status
+    ): Builder {
         return is_array($status)
             ? $query->whereIn('status', $status)
             : $query->where('status', $status);
@@ -583,12 +586,15 @@ class Deal extends Model
      * currency codes. Applies a where or whereIn clause accordingly.
      *
      * @param  Builder<Deal> $query The query builder instance.
-     * @param  string|array<int,string> $currency The currency code or codes to filter by.
+     * @param  string|array<int,string> $currency The currency code
+     * or codes to filter by.
      *
      * @return Builder<Deal> The modified query builder instance.
      */
-    public function scopeInCurrency(Builder $query, string|array $currency): Builder
-    {
+    public function scopeInCurrency(
+        Builder $query,
+        string|array $currency
+    ): Builder {
         return is_array($currency)
             ? $query->whereIn('currency', $currency)
             : $query->where('currency', $currency);

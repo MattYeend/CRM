@@ -32,8 +32,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * $product = $lineItem->product; // Get the associated product
  * $creator = $lineItem->creator; // Get the user that created the record
  * $updater = $lineItem->updater; // Get the user that last updated the record
- * $deleter = $lineItem->deleter; // Get the user that deleted the record (if applicable)
- * $restorer = $lineItem->restorer; // Get the user that restored the record (if applicable)
+ * $deleter = $lineItem->deleter; // Get the user that deleted the record
+ *  (if applicable)
+ * $restorer = $lineItem->restorer; // Get the user that restored the record
+ *  (if applicable)
  * ```
  *
  * Accessor methods include:
@@ -60,7 +62,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Example usage of query scopes:
  * ```php
  * $items = DealProduct::forDeal($dealId)->get(); // Line items on a deal
- * $entries = DealProduct::forProduct($productId)->get(); // All entries for a product
+ * $entries = DealProduct::forProduct($productId)->get(); // All entries
+ *  for a product
  * $real = DealProduct::real()->get(); // Exclude test records
  * ```
  */

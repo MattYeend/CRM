@@ -14,92 +14,158 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * Represents a sales lead within the CRM.
  *
- * A lead captures prospective contact information and is optionally owned
- * and assigned to users. Leads can be converted into Deal records via the
- * convertToDeal method once they are ready to progress through the pipeline.
+ * A lead captures prospective contact information and is
+ * optionally owned and assigned to users. Leads can be
+ * converted into Deal records via the convertToDeal
+ * method once they are ready to progress through the pipeline.
  *
  * Relationships defined in this model include:
- * - owner(): BelongsTo relationship to the User that owns the lead.
- * - assignedTo(): BelongsTo relationship to the User that is assigned to the lead.
- * - creator(): BelongsTo relationship to the User that created the lead.
- * - updater(): BelongsTo relationship to the User that last updated the lead.
- * - deleter(): BelongsTo relationship to the User that deleted the lead (if soft-deleted).
- * - restorer(): BelongsTo relationship to the User that restored the lead (if soft-deleted).
- * - attachments(): MorphMany relationship to Attachment records associated with the lead.
- * - activities(): MorphMany relationship to Activity records associated with the lead.
- * - tasks(): MorphMany relationship to Task records associated with the lead.
- * - notes(): MorphMany relationship to Note records associated with the lead.
+ * - owner(): BelongsTo relationship to the User that owns the
+ *      lead.
+ * - assignedTo(): BelongsTo relationship to the User that is
+ *      assigned to the lead.
+ * - creator(): BelongsTo relationship to the User that created
+ *      the lead.
+ * - updater(): BelongsTo relationship to the User that last
+ *      updated the lead.
+ * - deleter(): BelongsTo relationship to the User that deleted
+ *      the lead (if soft-deleted).
+ * - restorer(): BelongsTo relationship to the User that restored
+ *      the lead (if soft-deleted).
+ * - attachments(): MorphMany relationship to Attachment records
+ *      associated with the lead.
+ * - activities(): MorphMany relationship to Activity records
+ *      associated with the lead.
+ * - tasks(): MorphMany relationship to Task records associated
+ *      with the lead.
+ * - notes(): MorphMany relationship to Note records associated
+ *      with the lead.
  * Example usage of relationships:
  * ```php
  * $lead = Lead::find(1);
  * $owner = $lead->owner; // Get the owner of the lead
- * $assignedUser = $lead->assignedTo; // Get the user assigned to the lead
- * $creator = $lead->creator; // Get the user that created the lead
- * $updater = $lead->updater; // Get the user that last updated the lead
- * $deleter = $lead->deleter; // Get the user that deleted the lead (if applicable)
- * $restorer = $lead->restorer; // Get the user that restored the lead (if applicable)
- * $attachments = $lead->attachments; // Get all attachments for the lead
- * $activities = $lead->activities; // Get all activities for the lead
+ * $assignedUser = $lead->assignedTo; // Get the user assigned
+ *  to the lead
+ * $creator = $lead->creator; // Get the user that created the
+ *  lead
+ * $updater = $lead->updater; // Get the user that last updated
+ *  the lead
+ * $deleter = $lead->deleter; // Get the user that deleted the
+ *  lead (if applicable)
+ * $restorer = $lead->restorer; // Get the user that restored
+ *  the lead (if applicable)
+ * $attachments = $lead->attachments; // Get all attachments
+ *  for the lead
+ * $activities = $lead->activities; // Get all activities for
+ *  the lead
  * $tasks = $lead->tasks; // Get all tasks for the lead
  * $notes = $lead->notes; // Get all notes for the lead
  * ```
  *
  * Accessor methods include:
- * - getTitleAttribute(): Returns the lead title, applying a test prefix if marked as a test.
- * - getFullNameAttribute(): Returns the full name by concatenating first and last name.
- * - getDisplayNameAttribute(): Returns the display name, which is the full name if available, otherwise the email.
- * - getContactInfoAttribute(): Returns a formatted string combining email and phone number.
- * - getSourceAttribute(): Returns the lead source, applying a test prefix if marked as a test.
- * - getAgeInDaysAttribute(): Returns the age of the lead in days since creation.
- * - getIsStaleAttribute(): Returns a boolean indicating whether the lead is considered stale based on last update time.
- * - getIsHotAttribute(): Returns a boolean indicating whether the lead is considered hot based on last update time.
- * - getIsEligibleForConversionAttribute(): Returns a boolean indicating whether the lead is eligible for conversion based on activity history.
- * - getIsHighPriorityAttribute(): Returns a boolean indicating whether the lead is considered high priority based on last update time and contact activity.
- * - getIsLowPriorityAttribute(): Returns a boolean indicating whether the lead is considered low priority based on last update time and contact activity.
+ * - getTitleAttribute(): Returns the lead title, applying a test
+ *      prefix if marked as a test.
+ * - getFullNameAttribute(): Returns the full name by concatenating
+ *      first and last name.
+ * - getDisplayNameAttribute(): Returns the display name, which is
+ *      the full name if available, otherwise the email.
+ * - getContactInfoAttribute(): Returns a formatted string combining
+ *      email and phone number.
+ * - getSourceAttribute(): Returns the lead source, applying a
+ *      test prefix if marked as a test.
+ * - getAgeInDaysAttribute(): Returns the age of the lead in days
+ *      since creation.
+ * - getIsStaleAttribute(): Returns a boolean indicating whether
+ *      the lead is considered stale based on last update time.
+ * - getIsHotAttribute(): Returns a boolean indicating whether
+ *      the lead is considered hot based on last update time.
+ * - getIsEligibleForConversionAttribute(): Returns a boolean
+ *      indicating whether the lead is eligible for conversion
+ *      based on activity history.
+ * - getIsHighPriorityAttribute(): Returns a boolean indicating
+ *      whether the lead is considered high priority based on
+ *      last update time and contact activity.
+ * - getIsLowPriorityAttribute(): Returns a boolean indicating
+ *      whether the lead is considered low priority based on
+ *      last update time and contact activity.
  * Example usage of accessors:
  * ```php
  * $lead = Lead::find(1);
- * $title = $lead->title; // Get the lead title with test prefix if applicable
+ * $title = $lead->title; // Get the lead title with test prefix
+ *  if applicable
  * $fullName = $lead->full_name; // Get the full name of the lead
- * $displayName = $lead->display_name; // Get the display name of the lead
- * $contactInfo = $lead->contact_info; // Get the formatted contact info
- * $source = $lead->source; // Get the lead source with test prefix if applicable
- * $ageInDays = $lead->age_in_days; // Get the age of the lead in days
- * $isStale = $lead->is_stale; // Check if the lead is considered stale
+ * $displayName = $lead->display_name; // Get the display name of
+ *  the lead
+ * $contactInfo = $lead->contact_info; // Get the formatted contact
+ *  info
+ * $source = $lead->source; // Get the lead source with test prefix
+ *  if applicable
+ * $ageInDays = $lead->age_in_days; // Get the age of the lead in
+ *  days
+ * $isStale = $lead->is_stale; // Check if the lead is considered
+ *  stale
  * $isHot = $lead->is_hot; // Check if the lead is considered hot
- * $isEligibleForConversion = $lead->is_eligible_for_conversion; // Check if the lead is eligible for conversion
- * $isHighPriority = $lead->is_high_priority; // Check if the lead is considered high priority
- * $isLowPriority = $lead->is_low_priority; // Check if the lead is considered low priority
+ * $isEligibleForConversion = $lead->is_eligible_for_conversion;
+ *  // Check if the lead is eligible for conversion
+ * $isHighPriority = $lead->is_high_priority; // Check if the lead
+ *  is considered high priority
+ * $isLowPriority = $lead->is_low_priority; // Check if the lead is
+ *  considered low priority
  * ```
  *
  * Query scopes include:
- * - scopeStale($query): Filter the query to only include leads that are considered stale.
- * - scopeHot($query): Filter the query to only include leads that are considered hot.
- * - scopeEligibleForConversion($query): Filter the query to only include leads that are eligible for conversion.
- * - scopeHighPriority($query): Filter the query to only include leads that are considered high priority.
- * - scopeLowPriority($query): Filter the query to only include leads that are considered low priority.
- * - scopeConverted($query): Filter the query to only include leads that have been converted to deals.
- * - scopeUnconverted($query): Filter the query to only include leads that have not been converted to deals.
- * - scopeContacted($query): Filter the query to only include leads that have been contacted.
- * - scopeUncontacted($query): Filter the query to only include leads that have not been contacted.
- * - scopeOwnedBy($query, $userId): Filter the query to only include leads owned by a specific user.
- * - scopeAssignedTo($query, $userId): Filter the query to only include leads assigned to a specific user.
- * - scopeFromSource($query, $source): Filter the query to only include leads from a specific source channel.
- * - scopeReal($query): Filter the query to only include non-test leads.
+ * - scopeStale($query): Filter the query to only include leads that are
+ *      considered stale.
+ * - scopeHot($query): Filter the query to only include leads that are
+ *      considered hot.
+ * - scopeEligibleForConversion($query): Filter the query to only include
+ *      leads that are eligible for conversion.
+ * - scopeHighPriority($query): Filter the query to only include leads
+ *      that are considered high priority.
+ * - scopeLowPriority($query): Filter the query to only include leads
+ *      that are considered low priority.
+ * - scopeConverted($query): Filter the query to only include leads that
+ *      have been converted to deals.
+ * - scopeUnconverted($query): Filter the query to only include leads
+ *      that have not been converted to deals.
+ * - scopeContacted($query): Filter the query to only include leads that
+ *      have been contacted.
+ * - scopeUncontacted($query): Filter the query to only include leads
+ *      that have not been contacted.
+ * - scopeOwnedBy($query, $userId): Filter the query to only include
+ *      leads owned by a specific user.
+ * - scopeAssignedTo($query, $userId): Filter the query to only
+ *      include leads assigned to a specific user.
+ * - scopeFromSource($query, $source): Filter the query to only
+ *      include leads from a specific source channel.
+ * - scopeReal($query): Filter the query to only include non-test
+ *      leads.
  * Example usage of query scopes:
  * ```php
- * $staleLeads = Lead::stale()->get(); // Get leads that are considered stale
- * $hotLeads = Lead::hot()->get(); // Get leads that are considered hot
- * $eligibleLeads = Lead::eligibleForConversion()->get(); // Get leads eligible for conversion
- * $highPriorityLeads = Lead::highPriority()->get(); // Get leads that are considered high priority
- * $lowPriorityLeads = Lead::lowPriority()->get(); // Get leads that are considered low priority
- * $convertedLeads = Lead::converted()->get(); // Get leads that have been converted to deals
- * $unconvertedLeads = Lead::unconverted()->get(); // Get leads that have not been converted to deals
- * $contactedLeads = Lead::contacted()->get(); // Get leads that have been contacted
- * $uncontactedLeads = Lead::uncontacted()->get(); // Get leads that have not been contacted
- * $ownedLeads = Lead::ownedBy($userId)->get(); // Get leads owned by a specific user
- * $assignedLeads = Lead::assignedTo($userId)->get(); // Get leads assigned to a specific user
- * $sourceLeads = Lead::fromSource($source)->get(); // Get leads from a specific source channel
+ * $staleLeads = Lead::stale()->get(); // Get leads that are considered
+ *  stale
+ * $hotLeads = Lead::hot()->get(); // Get leads that are considered
+ *  hot
+ * $eligibleLeads = Lead::eligibleForConversion()->get(); // Get
+ *  leads eligible for conversion
+ * $highPriorityLeads = Lead::highPriority()->get(); // Get leads
+ *  that are considered high priority
+ * $lowPriorityLeads = Lead::lowPriority()->get(); // Get leads
+ *  that are considered low priority
+ * $convertedLeads = Lead::converted()->get(); // Get leads that
+ *  have been converted to deals
+ * $unconvertedLeads = Lead::unconverted()->get(); // Get leads
+ *  that have not been converted to deals
+ * $contactedLeads = Lead::contacted()->get(); // Get leads that
+ *  have been contacted
+ * $uncontactedLeads = Lead::uncontacted()->get(); // Get leads
+ *  that have not been contacted
+ * $ownedLeads = Lead::ownedBy($userId)->get(); // Get leads owned
+ *  by a specific user
+ * $assignedLeads = Lead::assignedTo($userId)->get(); // Get leads
+ *  assigned to a specific user
+ * $sourceLeads = Lead::fromSource($source)->get(); // Get leads
+ *  from a specific source channel
  * $realLeads = Lead::real()->get(); // Get non-test leads
  * ```
  */
@@ -447,7 +513,8 @@ class Lead extends Model
     }
 
     /**
-     * Scope a query to only include leads that have not been converted to deals.
+     * Scope a query to only include leads that have not been converted
+     * to deals.
      *
      * @param  Builder<Lead> $query The query builder instance.
      *
@@ -515,7 +582,8 @@ class Lead extends Model
     }
 
     /**
-     * Scope a query to only include leads that are sourced from a specific channel.
+     * Scope a query to only include leads that are sourced from a specific
+     * channel.
      *
      * @param  Builder<Lead> $query The query builder instance.
      * @param  string $source The source channel to filter by.

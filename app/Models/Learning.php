@@ -37,7 +37,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * $learning = Learning::find(1);
  * $questions = $learning->questions; // Get all questions for this learning
  * $users = $learning->users; // Get all users assigned to this learning
- * $attachments = $learning->attachments; // Get all attachments for this learning
+ * $attachments = $learning->attachments; // Get all attachments for this
+ *  learning
  * $activities = $learning->activities; // Get all activities for this learning
  * $tasks = $learning->tasks; // Get all tasks for this learning
  * $notes = $learning->notes; // Get all notes for this learning
@@ -48,23 +49,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      if the learning is marked as a test.
  * - getDescriptionAttribute(): Returns the learning description, defaulting to
  *      an empty string if null.
- * - getMetaTitleAttribute(): Returns the meta title from the meta JSON, defaulting
- *      to an empty string if not set.
- * - getMetaDescriptionAttribute(): Returns the meta description from the meta JSON, defaulting
- *      to an empty string if not set.
- * - getMetaKeywordsAttribute(): Returns the meta keywords from the meta JSON, defaulting
- *      to an empty string if not set.
- * - getMetaAuthorAttribute(): Returns the meta author from the meta JSON, defaulting
- *      to an empty string if not set.
+ * - getMetaTitleAttribute(): Returns the meta title from the meta JSON,
+ *      defaulting to an empty string if not set.
+ * - getMetaDescriptionAttribute(): Returns the meta description from the
+ *      meta JSON, defaulting to an empty string if not set.
+ * - getMetaKeywordsAttribute(): Returns the meta keywords from the meta JSON,
+ *      defaulting to an empty string if not set.
+ * - getMetaAuthorAttribute(): Returns the meta author from the meta JSON,
+ *      defaulting to an empty string if not set.
  * Example usage of accessors:
  * ```php
  * $learning = Learning::find(1);
- * $title = $learning->title; // Get the learning title with test prefix if applicable
+ * $title = $learning->title; // Get the learning title with test prefix if
+ *  applicable
  * $description = $learning->description; // Get the learning description
  * $metaTitle = $learning->meta_title; // Get the meta title from the meta JSON
- * $metaDescription = $learning->meta_description; // Get the meta description from the meta JSON
- * $metaKeywords = $learning->meta_keywords; // Get the meta keywords from the meta JSON
- * $metaAuthor = $learning->meta_author; // Get the meta author from the meta JSON
+ * $metaDescription = $learning->meta_description; // Get the meta description
+ *  from the meta JSON
+ * $metaKeywords = $learning->meta_keywords; // Get the meta keywords from the
+ *  meta JSON
+ * $metaAuthor = $learning->meta_author; // Get the meta author from the meta
+ *  JSON
  * ```
  *
  * Query scopes include:
@@ -77,9 +82,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * - scopeReal($query): Filter the query to only include non-test learnings.
  * Example usage of query scopes:
  * ```php
- * $assigned = Learning::forUser($userId)->get(); // Learnings assigned to a user
- * $completed = Learning::completedForUser($userId)->get(); // Learnings completed by a user
- * $incomplete = Learning::incompleteForUser($userId)->get(); // Learnings not yet completed by a user
+ * $assigned = Learning::forUser($userId)->get(); // Learnings assigned to
+ *  a user
+ * $completed = Learning::completedForUser($userId)->get(); // Learnings
+ *  completed by a user
+ * $incomplete = Learning::incompleteForUser($userId)->get(); // Learnings
+ *  not yet completed by a user
  * $real = Learning::real()->get(); // Exclude test learnings
  * ```
  */
@@ -276,7 +284,8 @@ class Learning extends Model
     /**
      * Get the learning description.
      *
-     * @param  string|null $value The raw learning description from the database.
+     * @param  string|null $value The raw learning description from the
+     * database.
      *
      * @return string
      */
@@ -288,7 +297,8 @@ class Learning extends Model
     /**
      * Get the learning meta title.
      *
-     * @param  string|null $value The raw learning meta title from the database.
+     * @param  string|null $value The raw learning meta title from the
+     * database.
      *
      * @return string
      */
@@ -300,7 +310,8 @@ class Learning extends Model
     /**
      * Get the learning meta description.
      *
-     * @param  string|null $value The raw learning meta description from the database.
+     * @param  string|null $value The raw learning meta description from the
+     * database.
      *
      * @return string
      */
@@ -312,7 +323,8 @@ class Learning extends Model
     /**
      * Get the learning meta keywords.
      *
-     * @param  string|null $value The raw learning meta keywords from the database.
+     * @param  string|null $value The raw learning meta keywords from the
+     * database.
      *
      * @return string
      */
@@ -324,7 +336,8 @@ class Learning extends Model
     /**
      * Get the learning meta author.
      *
-     * @param  string|null $value The raw learning meta author from the database.
+     * @param  string|null $value The raw learning meta author from the
+     * database.
      *
      * @return string
      */
@@ -342,8 +355,10 @@ class Learning extends Model
      *
      * @return Builder The modified query builder instance.
      */
-    public function scopeForUser(Builder $query, int $userId): Builder
-    {
+    public function scopeForUser(
+        Builder $query,
+        int $userId
+    ): Builder {
         return $query->whereHas('users', function ($q) use ($userId) {
             $q->where('users.id', $userId);
         });
@@ -358,8 +373,10 @@ class Learning extends Model
      *
      * @return Builder The modified query builder instance.
      */
-    public function scopeCompletedForUser(Builder $query, int $userId): Builder
-    {
+    public function scopeCompletedForUser(
+        Builder $query,
+        int $userId
+    ): Builder {
         return $query->whereHas('users', function ($q) use ($userId) {
             $q->where('users.id', $userId)
                 ->wherePivot('is_complete', true);
@@ -367,8 +384,8 @@ class Learning extends Model
     }
 
     /**
-     * Scope a query to only include learnings not yet completed by a given
-     * user.
+     * Scope a query to only include learnings not yet completed
+     * by a given user.
      *
      * @param  Builder $query The query builder instance.
      *
@@ -376,8 +393,10 @@ class Learning extends Model
      *
      * @return Builder The modified query builder instance.
      */
-    public function scopeIncompleteForUser(Builder $query, int $userId): Builder
-    {
+    public function scopeIncompleteForUser(
+        Builder $query,
+        int $userId
+    ): Builder {
         return $query->whereHas('users', function ($q) use ($userId) {
             $q->where('users.id', $userId)
                 ->wherePivot('is_complete', false);

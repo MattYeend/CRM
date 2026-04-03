@@ -22,31 +22,46 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * ```
  *
  * Accessor methods include:
- * - getAnswerAttribute(): Returns the answer text, optionally formatted.
- * - getIsCorrectAttribute(): Returns whether the answer is correct as a boolean.
- * - getCorrectLabelAttribute(): Returns a human-readable label for the answer correctness.
+ * - getAnswerAttribute(): Returns the answer text, optionally
+ *      formatted.
+ * - getIsCorrectAttribute(): Returns whether the answer is correct
+ *      as a boolean.
+ * - getCorrectLabelAttribute(): Returns a human-readable label for
+ *      the answer correctness.
  * Example usage of accessors:
  * ```php
  * $answer = LearningAnswer::find(1);
  * $answerText = $answer->answer; // Get the answer text
- * $isCorrect = $answer->is_correct; // Check if this answer is correct
- * $correctLabel = $answer->correct_label; // Get "Correct" or "Incorrect"
+ * $isCorrect = $answer->is_correct; // Check if this answer is
+ *  correct
+ * $correctLabel = $answer->correct_label; // Get "Correct" or
+ *  "Incorrect"
  * ```
  *
  * Query scopes include:
- * - scopeAnswerOptions($query, $questionId): Filter answers by question ID.
- * - scopeIncorrect($query): Filter answers to only include incorrect ones.
- * - scopeForQuestion($query, $questionId): Filter answers for a specific question.
- * - scopeIsCorrect($query): Filter answers to only include correct ones.
- * - scopeIsIncorrect($query): Filter answers to only include incorrect ones.
+ * - scopeAnswerOptions($query, $questionId): Filter answers
+ *      by question ID.
+ * - scopeIncorrect($query): Filter answers to only include
+ *      incorrect ones.
+ * - scopeForQuestion($query, $questionId): Filter answers for
+ *      a specific question.
+ * - scopeIsCorrect($query): Filter answers to only include
+ *      correct ones.
+ * - scopeIsIncorrect($query): Filter answers to only include
+ *      incorrect ones.
  * Example usage of query scopes:
  * ```php
  * $questionId = 1;
- * $answerOptions = LearningAnswer::answerOptions($questionId)->get(); // Get all answers for a question
- * $incorrectAnswers = LearningAnswer::incorrect()->get(); // Get all incorrect answers
- * $answersForQuestion = LearningAnswer::forQuestion($questionId)->get(); // Get answers for a specific question
- * $correctAnswers = LearningAnswer::isCorrect()->get(); // Get all correct answers
- * $incorrectAnswers = LearningAnswer::isIncorrect()->get(); // Get all incorrect answers
+ * $answerOptions = LearningAnswer::answerOptions($questionId)
+ *  ->get(); // Get all answers for a question
+ * $incorrectAnswers = LearningAnswer::incorrect()->get(); // Get
+ *  all incorrect answers
+ * $answersForQuestion = LearningAnswer::forQuestion($questionId)
+ *  ->get(); // Get answers for a specific question
+ * $correctAnswers = LearningAnswer::isCorrect()->get();
+ *  // Get all correct answers
+ * $incorrectAnswers = LearningAnswer::isIncorrect()->get();
+ *  // Get all incorrect answers
  * ```
  */
 class LearningAnswer extends Model
@@ -117,7 +132,8 @@ class LearningAnswer extends Model
      * @param Builder<LearningAnswer> $query The query builder instance.
      * @param int $questionId The ID of the question to filter by.
      *
-     * @return Builder<LearningAnswer> The query builder with the question scope applied.
+     * @return Builder<LearningAnswer> The query builder with the question
+     * scope applied.
      */
     public function scopeAnswerOptions(Builder $query, int $questionId): Builder
     {
@@ -129,7 +145,8 @@ class LearningAnswer extends Model
      *
      * @param Builder<LearningAnswer> $query The query builder instance.
      *
-     * @return Builder<LearningAnswer> The query builder with the incorrect answer scope applied.
+     * @return Builder<LearningAnswer> The query builder with the incorrect
+     * answer scope applied.
      */
     public function scopeIncorrect(Builder $query): Builder
     {
@@ -142,7 +159,8 @@ class LearningAnswer extends Model
      * @param Builder<LearningAnswer> $query The query builder instance.
      * @param int $questionId The ID of the question to filter by.
      *
-     * @return Builder<LearningAnswer> The query builder with the question scope applied.
+     * @return Builder<LearningAnswer> The query builder with the question
+     * scope applied.
      */
     public function scopeForQuestion(Builder $query, int $questionId): Builder
     {
@@ -154,7 +172,8 @@ class LearningAnswer extends Model
      *
      * @param Builder<LearningAnswer> $query The query builder instance.
      *
-     * @return Builder<LearningAnswer> The query builder with the correct answer scope applied.
+     * @return Builder<LearningAnswer> The query builder with the correct
+     * answer scope applied.
      */
     public function scopeIsCorrect(Builder $query): Builder
     {

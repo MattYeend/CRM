@@ -32,10 +32,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * ```php
  * $jobTitle = JobTitle::find(1);
  * $users = $jobTitle->users; // Get all users holding this title
- * $creator = $jobTitle->creator; // Get the user that created this record
- * $updater = $jobTitle->updater; // Get the user that last updated this record
- * $deleter = $jobTitle->deleter; // Get the user that deleted this record (if applicable)
- * $restorer = $jobTitle->restorer; // Get the user that restored this record (if applicable)
+ * $creator = $jobTitle->creator; // Get the user that created this
+ *  record
+ * $updater = $jobTitle->updater; // Get the user that last updated
+ *  this record
+ * $deleter = $jobTitle->deleter; // Get the user that deleted this
+ *  record (if applicable)
+ * $restorer = $jobTitle->restorer; // Get the user that restored this
+ *  record (if applicable)
  * ```
  *
  * Accessor methods include:
@@ -52,10 +56,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Example usage of accessors:
  * ```php
  * $jobTitle = JobTitle::find(1);
- * $title = $jobTitle->title; // Get the title with test prefix if applicable
- * $isCsuite = $jobTitle->is_csuite; // Check if this is a C-Suite title
- * $isDirector = $jobTitle->is_director; // Check if this is a director-level title
- * $userCount = $jobTitle->user_count; // Get the number of users with this title
+ * $title = $jobTitle->title; // Get the title with test prefix if
+ *  applicable
+ * $isCsuite = $jobTitle->is_csuite; // Check if this is a C-Suite
+ *  title
+ * $isDirector = $jobTitle->is_director; // Check if this is a
+ *  director-level title
+ * $userCount = $jobTitle->user_count; // Get the number of users with
+ *  this title
  * ```
  *
  * Query scopes include:
@@ -277,7 +285,11 @@ class JobTitle extends Model
      */
     public function getIsCsuiteAttribute(): bool
     {
-        return in_array($this->attributes['title'] ?? '', self::GROUP_C_SUITE, true);
+        return in_array(
+            $this->attributes['title'] ?? '',
+            self::GROUP_C_SUITE,
+            true
+        );
     }
 
     /**
@@ -289,7 +301,11 @@ class JobTitle extends Model
      */
     public function getIsExecutiveAttribute(): bool
     {
-        return in_array($this->attributes['title'] ?? '', self::GROUP_EXECUTIVE, true);
+        return in_array(
+            $this->attributes['title'] ?? '',
+            self::GROUP_EXECUTIVE,
+            true
+        );
     }
 
     /**
@@ -303,7 +319,11 @@ class JobTitle extends Model
      */
     public function getIsDirectorAttribute(): bool
     {
-        return in_array($this->attributes['title'] ?? '', self::GROUP_DIRS, true);
+        return in_array(
+            $this->attributes['title'] ?? '',
+            self::GROUP_DIRS,
+            true
+        );
     }
 
     /**
