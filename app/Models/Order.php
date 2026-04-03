@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * and lifecycle status. Exposes a markAsPaid convenience method and a
  * scopePaid query scope for filtering paid orders. Products are associated
  * via the order_products pivot table.
- * 
+ *
  * Relationships defined in this model include:
  * - user(): The user that owns the order.
  * - deal(): The deal associated with the order.
@@ -37,7 +37,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * $deleter = $order->deleter; // Get the user that deleted this order (if applicable)
  * $restorer = $order->restorer; // Get the user that restored this order (if applicable)
  * ```
- * 
+ *
  * Helper methods include:
  * - getMarkAsPaid(): Mark the order as paid and record the payment timestamp.
  * - getMarkAsFailed(): Mark the order as failed and record the payment timestamp.
@@ -49,7 +49,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * $order->markAsFailed(); // Mark the order as failed
  * $order->markAsPending(); // Mark the order as pending
  * ```
- * 
+ *
  * Query scopes include:
  * - scopePending($query): Filter the query to only include pending orders.
  * - scopeFailed($query): Filter the query to only include failed orders.

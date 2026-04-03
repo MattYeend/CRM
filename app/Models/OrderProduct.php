@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * Stores the quantity, unit price, and line total for each product on an
  * order, along with the standard audit and soft-delete tracking columns.
- * 
+ *
  * Relationships defined in this model include:
  * - order(): The order that this product entry belongs to.
  * - product(): The product that this order entry belongs to.
@@ -31,7 +31,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * $deleter = $orderProduct->deleter; // Get the user that deleted the record (if applicable)
  * $restorer = $orderProduct->restorer; // Get the user that restored the record (if applicable)
  * ```
- * 
+ *
  * Accessor methods include:
  * - getFormattedPriceAttribute(): Returns the unit price formatted to two decimal places as a string.
  * - getFormattedTotalAttribute(): Returns the line item total formatted to two decimal places as a string.
@@ -43,7 +43,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * $total = $orderProduct->formatted_total; // e.g. "59.97"
  * $calculatedTotal = $orderProduct->calculated_total; // e.g. 59.97 (quantity * price)
  * ```
- * 
+ *
  * Query scopes include:
  * - scopeForOrder($query, $orderId): Filter the query to only include line items for a given order ID.
  * - scopeForProduct($query, $productId): Filter the query to only include line items for a given product ID.
@@ -126,7 +126,7 @@ class OrderProduct extends Pivot
 
     /**
      * Get the user that created the record.
-     * 
+     *
      * @return BelongsTo<User,OrderProduct>
      */
     public function creator(): BelongsTo
@@ -136,7 +136,7 @@ class OrderProduct extends Pivot
 
     /**
      * Get the user that updated the record.
-     * 
+     *
      * @return BelongsTo<User,OrderProduct>
      */
     public function updater(): BelongsTo
@@ -146,7 +146,7 @@ class OrderProduct extends Pivot
 
     /**
      * Get the user that deleted the record.
-     * 
+     *
      * @return BelongsTo<User,OrderProduct>
      */
     public function deleter(): BelongsTo
@@ -156,7 +156,7 @@ class OrderProduct extends Pivot
 
     /**
      * Get the user that restored the record.
-     * 
+     *
      * @return BelongsTo<User,OrderProduct>
      */
     public function restorer(): BelongsTo

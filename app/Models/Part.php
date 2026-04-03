@@ -82,7 +82,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * $bomCost = $part->bom_cost; // Get the total BOM cost for this part
  * $hasBom = $part->has_bom; // Check if this part has an associated bill of materials
  * ```
- * 
+ *
  * Query scopes include:
  * - scopeActive($query): Filter to only active parts.
  * - scopeLowStock($query): Filter to parts where quantity is at or below the reorder point.
@@ -532,13 +532,12 @@ class Part extends Model
      *
      * @return float The summed cost of all BOM lines.
      */
-    private function getSumBomLineCosts(array $visited): float
+    public function getSumBomLineCosts(array $visited): float
     {
         return $this->billOfMaterials->sum(
             fn ($bom) => $bom->totalCost($visited) ?? 0
         );
     }
-
 
     /**
      * Scope a query to only include active parts.
@@ -592,7 +591,7 @@ class Part extends Model
         return $query->where('type', $type);
     }
 
-     /**
+    /**
      * Scope a query to only include parts of a given status.
      *
      * @param  Builder $query The query builder instance.
