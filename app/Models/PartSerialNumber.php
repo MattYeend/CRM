@@ -30,9 +30,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * ```
  *
  * Helper methods include:
- * - isExpired(): Returns true if the current date
+ * - getIsExpired(): Returns true if the current date
  *      is past the expiry date.
- * - isExpiringSoon($days = 30): Returns true if the
+ * - getIsExpiringSoon($days = 30): Returns true if the
  *      expiry date is within the next $days.
  * - getSerialNumberAttribute($value): Accessor that
  *      applies a test prefix to the serial number
@@ -40,9 +40,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Example usage of helper methods:
  * ```php
  * $serial = PartSerialNumber::find(1);
- * if ($serial->isExpired()) {
- *  // This serial number is expired
- * } elseif ($serial->isExpiringSoon()) {
+ * if ($serial->is_expired) {
+ * // This serial number is expired
+ * } elseif ($serial->is_expiring_soon) {
  * // This serial number is expiring soon
  * }
  * $formattedSerial = $serial->serial_number; // Get
@@ -170,7 +170,7 @@ class PartSerialNumber extends Model
      *
      * @return bool
      */
-    public function isExpired(): bool
+    public function getIsExpired(): bool
     {
         return $this->expires_at && $this->expires_at->isPast();
     }
@@ -184,7 +184,7 @@ class PartSerialNumber extends Model
      *
      * @return bool
      */
-    public function isExpiringSoon(int $days = 30): bool
+    public function getIsExpiringSoon(int $days = 30): bool
     {
         return $this->expires_at
             && $this->expires_at->isFuture()

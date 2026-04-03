@@ -52,17 +52,17 @@ use Illuminate\Support\Facades\Storage;
  * ```
  *
  * Helper methods include:
- * - isPrimary(): Returns true if this image is marked as the primary image
+ * - getIsPrimary(): Returns true if this image is marked as the primary image
  *      for its part.
- * - isTestImage(): Returns true if this image is marked as a test image.
+ * - getIsTestImage(): Returns true if this image is marked as a test image.
  * Example usage of helper methods:
  * ```php
  * $image = PartImage::find(1);
- * if ($image->isPrimary()) {
- *   // This is the primary image for its part
+ * if ($image->is_primary) {
+ *   // This is the primary image for the part
  * }
- * if ($image->isTestImage()) {
- *  // This is a test image
+ * if ($image->is_test_image) {
+ *  // This image is marked as a test image
  * }
  * ```
  * * Query scopes include:
@@ -235,7 +235,7 @@ class PartImage extends Model
      *
      * @return bool
      */
-    public function isPrimary(): bool
+    public function getIsPrimary(): bool
     {
         return $this->is_primary;
     }
@@ -250,7 +250,7 @@ class PartImage extends Model
      *
      * @return bool
      */
-    public function isTestImage(): bool
+    public function getIsTestImage(): bool
     {
         return $this->is_test;
     }

@@ -123,10 +123,6 @@ class QuoteProduct extends Pivot
         'restored_at' => 'datetime',
     ];
 
-    // -------------------------------------------------------------------------
-    // Relationships
-    // -------------------------------------------------------------------------
-
     /**
      * Get the quote this line item belongs to.
      *

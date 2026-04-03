@@ -27,17 +27,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * ```
  *
  * Helper methods include:
- * - isInbound(): Returns true if the movement type is 'in' or 'return',
+ * - getIsInbound(): Returns true if the movement type is 'in' or 'return',
  *      indicating it adds stock.
- * - isOutbound(): Returns true if the movement type is 'out', indicating it
+ * - getIsOutbound(): Returns true if the movement type is 'out', indicating it
  *      removes stock.
  * Example usage of helper methods:
  * ```php
  * $movement = PartStockMovement::find(1);
- * if ($movement->isInbound()) {
- *   // This movement adds stock
- * } elseif ($movement->isOutbound()) {
- *  // This movement removes stock
+ * if ($movement->is_inbound) {
+ *  // This movement adds stock
+ * } elseif ($movement->is_outbound) {
+ * // This movement removes stock
  * }
  * ```
  *
@@ -167,7 +167,7 @@ class PartStockMovement extends Model
      *
      * @return bool
      */
-    public function isInbound(): bool
+    public function getIsInbound(): bool
     {
         return in_array($this->type, [self::TYPE_IN, self::TYPE_RETURN]);
     }
@@ -179,7 +179,7 @@ class PartStockMovement extends Model
      *
      * @return bool
      */
-    public function isOutbound(): bool
+    public function getIsOutbound(): bool
     {
         return $this->type === self::TYPE_OUT;
     }

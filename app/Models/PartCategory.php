@@ -17,6 +17,45 @@ use Illuminate\Support\Str;
  * Categories may be nested via a self-referential parent/children
  * relationship. A URL-friendly slug is automatically generated from the
  * category name on creation and regenerated whenever the name changes.
+ *
+ * Relationships defined in this model include:
+ * - parent(): The parent category of this category (if any).
+ * - children(): The child categories belonging to this category.
+ * - parts(): The parts belonging to this category.
+ * - creator(): The user that created the category.
+ * - updater(): The user that last updated the category.
+ * - deleter(): The user that deleted the category (if soft-deleted).
+ * - restorer(): The user that restored the category (if soft-deleted).
+ * Example usage of relationships:
+ * ```php
+ * $category = PartCategory::find(1);
+ * $parent = $category->parent; // Get the parent category
+ * $children = $category->children; // Get the child categories
+ * $parts = $category->parts; // Get the parts in this category
+ * $creator = $category->creator; // Get the user that created this category
+ * $updater = $category->updater; // Get the user that last updated this category
+ * $deleter = $category->deleter; // Get the user that deleted this category (if applicable)
+ * $restorer = $category->restorer; // Get the user that restored this category (if applicable)
+ * ```
+ *
+ * Accessor methods include:
+ * - getSlugAttribute(): Returns the URL-friendly slug for the category, generated from the name.
+ * - getFullPathAttribute(): Returns the full hierarchical path of the category as a string, showing its position in the hierarchy.
+ * Example usage of accessors:
+ * ```php
+ * $category = PartCategory::find(1);
+ * $slug = $category->slug; // Get the slug for this category
+ * $fullPath = $category->full_path; // Get the full hierarchical path for this category
+ * ```
+ *
+ * Query scopes include:
+ * - scopeWithName($query, $name): Filter categories by a specific name.
+ * - scopeReal($query): Filter the query to only include non-test categories.
+ * Example usage of query scopes:
+ * ```php
+ * $categoriesWithName = PartCategory::withName('Screws')->get(); // Get categories with the name "Screws"
+ * $realCategories = PartCategory::real()->get(); // Get all non-test categories
+ * ```
  */
 class PartCategory extends Model
 {
@@ -135,6 +174,36 @@ class PartCategory extends Model
     }
 
     /**
+     * Get the URL-friendly slug for the category.
+     *
+     * The slug is automatically generated from the category name on creation and
+     * regenerated whenever the name changes. It is used for clean URLs and should be
+     * unique across categories to avoid conflicts.
+     *
+     * @return string The slug for the category.
+     */
+    public function getSlugAttribute(): string
+    {
+        return Str::slug($this->name);
+    }
+
+    /**
+     * Get the full hierarchical path of the category as a string.
+     *
+     * This accessor builds a string representation of the category's position in the
+     * hierarchy by concatenating the names of its ancestors and itself, separated by
+     * " > ". For example, a category "Screws" under "Fasteners" would return "Fasteners > Screws".
+     * This is useful for displaying the category in a user-friendly format that shows its context within the hierarchy.
+     *
+     * @return string The full hierarchical path of the category.
+     */
+    public function getFullPathAttribute(): string
+    {
+        $ancestors = $this->ancestors()->pluck('name')->toArray();
+        return implode(' > ', array_merge($ancestors, [$this->name]));
+    }
+
+    /**
      * Scope a query to get part categories with a name matching the given
      * value.
      *
@@ -143,6 +212,10 @@ class PartCategory extends Model
      *
      * @return Builder<PartCategory> The modified query builder instance.
      */
+    public function scopeWithName(Builder $query, string $name): Builder
+    {
+        return $query->where('name', $name);
+    }
 
     /**
      * Scope a query to only include non-test categories.

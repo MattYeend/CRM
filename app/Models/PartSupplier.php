@@ -43,11 +43,14 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  *      two decimal places as a string.
  * - getIsPreferredAttribute(): Returns a boolean indicating whether this
  *      supplier is the preferred source for the associated part.
+ * - getTotalCostFor(int $quantity): Calculates the total cost for a given
+ *     quantity based on the stored unit cost.
  * Example usage of accessors:
  * ```php
  * $pivot = PartSupplier::find(1);
  * $cost = $pivot->formatted_unit_cost; // e.g. "12.50"
  * $isPreferred = $pivot->is_preferred; // Check if preferred supplier
+ * $totalCost = $pivot->getTotalCostFor(100); // Get total cost for 100 units
  * ```
  *
  * Query scopes include:
@@ -202,7 +205,7 @@ class PartSupplier extends Pivot
      *
      * @return float
      */
-    public function totalCostFor(int $quantity): float
+    public function getTotalCostFor(int $quantity): float
     {
         return $quantity * (float) $this->unit_cost;
     }

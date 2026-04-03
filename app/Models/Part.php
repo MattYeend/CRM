@@ -64,25 +64,23 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * ```
  *
  * Helper methods include:
- * - isLowStock(): Returns true if the part's quantity is at or below the reorder point.
- * - isOutOfStock(): Returns true if the part's quantity is zero.
- * - marginPercentage(): Calculates the profit margin percentage based on price and cost price.
- * - bomCost(): Recursively calculates the total cost of the part based on its bill of materials, including sub-assemblies.
- * - hasBom(): Returns true if the part has any associated bill of materials entries.
+ * - getIsLowStock(): Returns true if the part's quantity is at or below the reorder point.
+ * - getIsOutOfStock(): Returns true if the part's quantity is zero.
+ * - getMarginPercentage(): Calculates the profit margin percentage based on price and cost price.
+ * - getBomCost(): Recursively calculates the total cost of the part based on its bill of materials, including sub-assemblies.
+ * - getHasBom(): Returns true if the part has any associated bill of materials entries.
  * Example usage of helper methods:
  * ```php
  * $part = Part::find(1);
- * if ($part->isLowStock()) {
- *  // Part is low on stock
+ * if ($part->is_low_stock) {
+ *   // This part is low on stock
  * }
- * if ($part->isOutOfStock()) {
- * // Part is out of stock
+ * if ($part->is_out_of_stock) {
+ *  // This part is out of stock
  * }
- * $margin = $part->marginPercentage(); // Get the profit margin percentage
- * $bomCost = $part->bomCost(); // Get the total BOM cost for the part
- * if ($part->hasBom()) {
- * // This part has a bill of materials
- * }
+ * $margin = $part->margin_percentage; // Get the profit margin percentage
+ * $bomCost = $part->bom_cost; // Get the total BOM cost for this part
+ * $hasBom = $part->has_bom; // Check if this part has an associated bill of materials
  * ```
  * 
  * Query scopes include:
@@ -97,6 +95,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * - scopeSerialised($query): Filter to parts that are marked as serialised.
  * - scopeBatchTracked($query): Filter to parts that are marked as batch tracked.
  * - scopeReal($query): Filter to parts that are not marked as test data.
+ * - scopeOfType($query, $type): Filter to parts of a specific type (e.g. 'raw_material').
+ * - scopeOfStatus($query, $status): Filter to parts of a specific status (e.g. 'active').
  * Example usage of query scopes:
  * ```php
  * $activeParts = Part::active()->get(); // Get all active parts
@@ -110,6 +110,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * $serialisedParts = Part::serialised()->get(); // Get all parts that are serialised
  * $batchTrackedParts = Part::batchTracked()->get(); // Get all parts that are batch tracked
  * $realParts = Part::real()->get(); // Get all parts that are not test data
+ * $searchResults = Part::search('Widget')->get(); // Get all parts matching the search term "Widget"
  * ```
  */
 class Part extends Model
@@ -454,7 +455,7 @@ class Part extends Model
      *
      * @return bool
      */
-    public function isLowStock(): bool
+    public function getIsLowStock(): bool
     {
         return $this->reorder_point && $this->quantity <= $this->reorder_point;
     }
@@ -464,7 +465,7 @@ class Part extends Model
      *
      * @return bool
      */
-    public function isOutOfStock(): bool
+    public function getIsOutOfStock(): bool
     {
         return $this->quantity === 0;
     }
@@ -476,7 +477,7 @@ class Part extends Model
      *
      * @return float|null The margin as a percentage, or null if unavailable.
      */
-    public function marginPercentage(): ?float
+    public function getMarginPercentage(): ?float
     {
         if (! $this->cost_price) {
             return null;
@@ -500,7 +501,7 @@ class Part extends Model
      *
      * @return float|null The total BOM cost, or null if unresolvable.
      */
-    public function bomCost(array $visited = []): ?float
+    public function getBomCost(array $visited = []): ?float
     {
         if (in_array($this->id, $visited)) {
             return 0;
@@ -518,7 +519,7 @@ class Part extends Model
      *
      * @return bool
      */
-    public function hasBom(): bool
+    public function getHasBom(): bool
     {
         return $this->billOfMaterials()->exists();
     }
@@ -531,7 +532,7 @@ class Part extends Model
      *
      * @return float The summed cost of all BOM lines.
      */
-    private function sumBomLineCosts(array $visited): float
+    private function getSumBomLineCosts(array $visited): float
     {
         return $this->billOfMaterials->sum(
             fn ($bom) => $bom->totalCost($visited) ?? 0
@@ -694,13 +695,39 @@ class Part extends Model
      * inventory reporting, cost analysis, and production planning by excluding any
      * parts that are created for testing purposes and not actually used in the
      * manufacturing or sales processes.
-      *
-      * @param  Builder $query The query builder instance.
-      *
-      * @return Builder The modified query builder instance.
-      */
+     *
+     * @param  Builder $query The query builder instance.
+     *
+     * @return Builder The modified query builder instance.
+     */
     public function scopeReal(Builder $query): Builder
     {
         return $query->where('is_test', false);
-     }
+    }
+
+    /**
+     * Scope a search query to filter parts by a search term.
+     *
+     * Filters parts where the SKU, part number, name, or description contains the
+     * search term. Useful for implementing search functionality in the UI, allowing
+     * users to quickly find parts based on common identifiers or keywords.
+     * The search is case-insensitive and matches partial terms, making it flexible for
+     * finding relevant parts even with incomplete information.
+     *
+     * @param  Builder $query The query builder instance.
+     * @param  string $term  The search term to filter by.
+     *
+     * @return Builder The modified query builder instance.
+     */
+    public function scopeSearch(Builder $query, string $term): Builder
+    {
+        $like = '%' . $term . '%';
+
+        return $query->where(function ($q) use ($like) {
+            $q->where('sku', 'like', $like)
+                ->orWhere('part_number', 'like', $like)
+                ->orWhere('name', 'like', $like)
+                ->orWhere('description', 'like', $like);
+        });
+    }
 }
