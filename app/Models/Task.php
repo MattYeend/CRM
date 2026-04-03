@@ -22,6 +22,78 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * priority levels, due dates, and audit tracking. They may also be
  * marked as test records, in which case certain attributes (e.g. title)
  * are automatically prefixed.
+ *
+ * Relationships defined in this model include:
+ * - taskable(): Polymorphic belongs-to relationship to the parent entity
+ *      (Company, Deal, Task, or User) the task is associated with.
+ * - assignee(): Belongs-to relationship to the User assigned to the task.
+ * - creator(): Belongs-to relationship to the User who created the task.
+ * - updater(): Belongs-to relationship to the User who last updated the
+ *      task.
+ * - deleter(): Belongs-to relationship to the User who deleted the task
+ *      (if soft-deleted).
+ * - restorer(): Belongs-to relationship to the User who restored the task
+ *      (if soft-deleted).
+ * - attachments(): Polymorphic one-to-many relationship to Attachment
+ *      records associated with the task.
+ * - activities(): Polymorphic one-to-many relationship to Activity records
+ *      associated with the task.
+ * - notes(): Polymorphic one-to-many relationship to Note records
+ *      associated with the task.
+ * Example usage of relationships:
+ * ```php
+ * $task = Task::find(1);
+ * $parent = $task->taskable; // Get the parent entity (Company, Deal, etc.)
+ * $assignee = $task->assignee; // Get the assigned user
+ * $creator = $task->creator; // Get the user that created the task
+ * $notes = $task->notes; // Get all notes for the task
+ * ```
+ *
+ * Accessor methods include:
+ * - getTitleAttribute(): Returns the task title, applying a test prefix
+ *      if the task is marked as a test record.
+ * - getIsOverdueAttribute(): Returns a boolean indicating whether the
+ *      task is past its due date and not yet completed or cancelled.
+ * - getIsPendingAttribute(): Returns a boolean indicating whether the
+ *      task has a pending status.
+ * - getIsCompletedAttribute(): Returns a boolean indicating whether the
+ *      task has a completed status.
+ * - getIsCancelledAttribute(): Returns a boolean indicating whether the
+ *      task has a cancelled status.
+ * Example usage of accessors:
+ * ```php
+ * $task = Task::find(1);
+ * $title = $task->title; // Get the title with test prefix if applicable
+ * $isOverdue = $task->is_overdue; // Check if the task is past its due date
+ * $isPending = $task->is_pending; // Check if the task is pending
+ * $isCompleted = $task->is_completed; // Check if the task is completed
+ * ```
+ *
+ * Query scopes include:
+ * - scopeStatus($query, $status): Filter the query to only include tasks
+ *      with a given status.
+ * - scopePriority($query, $priority): Filter the query to only include
+ *      tasks with a given priority.
+ * - scopeDueBefore($query, $date): Filter the query to only include tasks
+ *      due before a given date.
+ * - scopeDueAfter($query, $date): Filter the query to only include tasks
+ *      due after a given date.
+ * - scopeAssignedTo($query, $userId): Filter the query to only include
+ *      tasks assigned to a given user.
+ * - scopePending($query): Filter the query to only include pending tasks.
+ * - scopeCompleted($query): Filter the query to only include completed tasks.
+ * - scopeCancelled($query): Filter the query to only include cancelled tasks.
+ * - scopeOverdue($query): Filter the query to only include tasks that are
+ *      past their due date and not yet completed or cancelled.
+ * - scopeReal($query): Filter the query to only include non-test tasks.
+ * Example usage of query scopes:
+ * ```php
+ * $pending = Task::pending()->get(); // Get all pending tasks
+ * $overdue = Task::overdue()->get(); // Get all overdue tasks
+ * $highPrio = Task::priority('high')->get(); // Get high-priority tasks
+ * $myTasks = Task::assignedTo($userId)->get(); // Get tasks for a user
+ * $realTasks = Task::real()->get(); // Exclude test records
+ * ```
  */
 class Task extends Model
 {
@@ -228,6 +300,69 @@ class Task extends Model
     }
 
     /**
+     * Get the formatted task title.
+     *
+     * Applies a test prefix when the task is marked as a test record.
+     *
+     * @param  string|null  $value  The raw task title from the database.
+     *
+     * @return string The formatted task title.
+     */
+    public function getTitleAttribute($value): string
+    {
+        return $this->prefixTest($value);
+    }
+
+    /**
+     * Determine whether the task is overdue.
+     *
+     * A task is considered overdue when it has a due date that is in the
+     * past and its status is neither completed nor cancelled. Tasks without
+     * a due date are never considered overdue.
+     *
+     * @return bool
+     */
+    public function getIsOverdueAttribute(): bool
+    {
+        return $this->due_at !== null
+            && $this->due_at->isPast()
+            && ! in_array($this->status, [
+                self::STATUS_COMPLETED,
+                self::STATUS_CANCELLED,
+            ], true);
+    }
+
+    /**
+     * Determine whether the task has a pending status.
+     *
+     * @return bool
+     */
+    public function getIsPendingAttribute(): bool
+    {
+        return $this->status === self::STATUS_PENDING;
+    }
+
+    /**
+     * Determine whether the task has a completed status.
+     *
+     * @return bool
+     */
+    public function getIsCompletedAttribute(): bool
+    {
+        return $this->status === self::STATUS_COMPLETED;
+    }
+
+    /**
+     * Determine whether the task has a cancelled status.
+     *
+     * @return bool
+     */
+    public function getIsCancelledAttribute(): bool
+    {
+        return $this->status === self::STATUS_CANCELLED;
+    }
+
+    /**
      * Scope a query to tasks with a given status.
      *
      * @param  Builder<Task> $query The query builder instance.
@@ -243,14 +378,70 @@ class Task extends Model
     /**
      * Scope a query to tasks with a given priority.
      *
-     * @param  Builder<Task> $query The query builder instance.
-     * @param  string $priority The task priority.
+     * @param  Builder<Task>  $query     The query builder instance.
+     * @param  string         $priority  The task priority to filter by.
      *
      * @return Builder<Task> The modified query builder instance.
      */
     public function scopePriority(Builder $query, string $priority): Builder
     {
         return $query->where('priority', $priority);
+    }
+
+    /**
+     * Scope a query to only include pending tasks.
+     *
+     * @param  Builder<Task> $query The query builder instance.
+     *
+     * @return Builder<Task> The modified query builder instance.
+     */
+    public function scopePending(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_PENDING);
+    }
+
+    /**
+     * Scope a query to only include completed tasks.
+     *
+     * @param  Builder<Task> $query The query builder instance.
+     *
+     * @return Builder<Task> The modified query builder instance.
+     */
+    public function scopeCompleted(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_COMPLETED);
+    }
+
+    /**
+     * Scope a query to only include cancelled tasks.
+     *
+     * @param  Builder<Task>  $query  The query builder instance.
+     *
+     * @return Builder<Task> The modified query builder instance.
+     */
+    public function scopeCancelled(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_CANCELLED);
+    }
+
+    /**
+     * Scope a query to only include overdue tasks.
+     *
+     * A task is overdue when its due date is in the past and its status
+     * is neither completed nor cancelled.
+     *
+     * @param  Builder<Task> $query The query builder instance.
+     *
+     * @return Builder<Task> The modified query builder instance.
+     */
+    public function scopeOverdue(Builder $query): Builder
+    {
+        return $query->whereNotNull('due_at')
+            ->where('due_at', '<', now())
+            ->whereNotIn('status', [
+                self::STATUS_COMPLETED,
+                self::STATUS_CANCELLED,
+            ]);
     }
 
     /**
@@ -269,8 +460,8 @@ class Task extends Model
     /**
      * Scope a query to tasks due after a given date.
      *
-     * @param  Builder<Task> $query The query builder instance.
-     * @param  \DateTimeInterface|string $date The cutoff date.
+     * @param  Builder<Task> $query  The query builder instance.
+     * @param  \DateTimeInterface|string $date   The cutoff date.
      *
      * @return Builder<Task> The modified query builder instance.
      */
@@ -283,7 +474,7 @@ class Task extends Model
      * Scope a query to tasks assigned to a given user.
      *
      * @param  Builder<Task> $query The query builder instance.
-     * @param  int $userId The user ID.
+     * @param  int $userId The ID of the user to filter by.
      *
      * @return Builder<Task> The modified query builder instance.
      */
@@ -293,16 +484,17 @@ class Task extends Model
     }
 
     /**
-     * Get the formatted task title.
+     * Scope a query to only include non-test tasks.
      *
-     * Applies a test prefix when the task is marked as a test record.
+     * Filters out any task records where the 'is_test' flag is true,
+     * ensuring that queries return only real task records.
      *
-     * @param  string|null $value The raw task title from the database.
+     * @param  Builder<Task>  $query The query builder instance.
      *
-     * @return string The formatted task title.
+     * @return Builder<Task> The modified query builder instance.
      */
-    public function getTitleAttribute($value): string
+    public function scopeReal(Builder $query): Builder
     {
-        return $this->prefixTest($value);
+        return $query->where('is_test', false);
     }
 }
