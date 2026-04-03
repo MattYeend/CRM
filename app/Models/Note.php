@@ -276,11 +276,11 @@ class Note extends Model
      */
     public function scopeForNotable(Builder $query, Model $notable): Builder
     {
-        return $query->where('notable_type', get_class($notable))
+        return $query->where('notable_type', $notable->getMorphClass())
             ->where('notable_id', $notable->id);
     }
 
-    /** 
+    /**
      * Scope a query to only include non-test notes.
      *
      * @param  Builder<Note> $query The query builder instance.

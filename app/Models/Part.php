@@ -29,38 +29,55 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * - product(): The product this part belongs to (optional).
  * - category(): The category this part belongs to (optional).
  * - primarySupplier(): The primary supplier for this part (optional).
- * - suppliers(): All suppliers associated with this part, with pivot data for
- *     supplier SKU, unit cost, lead time, and preferred status.
- * - preferredSupplier(): The supplier marked as preferred for this part via the
- *    pivot table.
- * - images(): All images associated with this part, ordered by sort order.
+ * - suppliers(): All suppliers associated with this part, with
+ *      pivot data for supplier SKU, unit cost, lead time, and
+ * preferred status.
+ * - preferredSupplier(): The supplier marked as preferred for
+ *      this part via the vot table.
+ * - images(): All images associated with this part, ordered
+ *      by sort order.
  * - primaryImage(): The primary image for this part.
  * - stockMovements(): All stock movement records for this part.
- * - serialNumbers(): All serial numbers associated with this part (if serialised).
- * - billOfMaterials(): All BOM entries where this part is the parent (assembled) part.
- * - usedInAssemblies(): All BOM entries where this part is used as a child (component) part.
+ * - serialNumbers(): All serial numbers associated with
+ *      this part (if serialised).
+ * - billOfMaterials(): All BOM entries where this part is
+ *      the parent (assembled) part.
+ * - usedInAssemblies(): All BOM entries where this part
+ *      is used as a child (component) part.
  * - creator(): The user that created this part record.
  * - updater(): The user that last updated this part record.
- * - deleter(): The user that deleted this part record (if soft-deleted).
- * - restorer(): The user that restored this part record (if soft-deleted).
+ * - deleter(): The user that deleted this part record
+ *      (if soft-deleted).
+ * - restorer(): The user that restored this part record
+ *      (if soft-deleted).
  * Example usage of relationships:
  * ```php
  * $part = Part::find(1);
  * $product = $part->product; // Get the associated product
  * $category = $part->category; // Get the associated category
- * $primarySupplier = $part->primarySupplier; // Get the primary supplier
+ * $primarySupplier = $part->primarySupplier; // Get the primary
+ * supplier
  * $suppliers = $part->suppliers; // Get all associated suppliers
- * $preferredSupplier = $part->preferredSupplier; // Get the preferred supplier
+ * $preferredSupplier = $part->preferredSupplier; // Get the preferred
+ * supplier
  * $images = $part->images; // Get all images for the part
- * $primaryImage = $part->primaryImage; // Get the primary image for the part
- * $stockMovements = $part->stockMovements; // Get all stock movements for the part
- * $serialNumbers = $part->serialNumbers; // Get all serial numbers for the part
- * $billOfMaterials = $part->billOfMaterials; // Get all BOM entries where this part is the parent
- * $usedInAssemblies = $part->usedInAssemblies; // Get all BOM entries where this part is a child
+ * $primaryImage = $part->primaryImage; // Get the primary image for
+ * the part
+ * $stockMovements = $part->stockMovements; // Get all stock movements
+ * for the part
+ * $serialNumbers = $part->serialNumbers; // Get all serial numbers
+ * for the part
+ * $billOfMaterials = $part->billOfMaterials; // Get all BOM entries
+ * where this part is the parent
+ * $usedInAssemblies = $part->usedInAssemblies; // Get all BOM entries
+ * where this part is a child
  * $creator = $part->creator; // Get the user that created this part
- * $updater = $part->updater; // Get the user that last updated this part
- * $deleter = $part->deleter; // Get the user that deleted this part (if applicable)
- * $restorer = $part->restorer; // Get the user that restored this part (if applicable)
+ * $updater = $part->updater; // Get the user that last updated this
+ * part
+ * $deleter = $part->deleter; // Get the user that deleted this part
+ * (if applicable)
+ * $restorer = $part->restorer; // Get the user that restored this part
+ * (if applicable)
  * ```
  *
  * Helper methods include:

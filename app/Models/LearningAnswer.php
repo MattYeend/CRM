@@ -81,6 +81,7 @@ class LearningAnswer extends Model
      * Get the answer text (optionally formatted).
      *
      * @param string|null $value
+     *
      * @return string
      */
     public function getAnswerAttribute($value): string
@@ -92,6 +93,7 @@ class LearningAnswer extends Model
      * Get whether the answer is correct as a boolean.
      *
      * @param mixed $value
+     *
      * @return bool
      */
     public function getIsCorrectAttribute($value): bool

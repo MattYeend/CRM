@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasTestPrefix;
+use App\Traits\Lead\HasLeadStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -42,7 +43,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * $tasks = $lead->tasks; // Get all tasks for the lead
  * $notes = $lead->notes; // Get all notes for the lead
  * ```
- * 
+ *
  * Accessor methods include:
  * - getTitleAttribute(): Returns the lead title, applying a test prefix if marked as a test.
  * - getFullNameAttribute(): Returns the full name by concatenating first and last name.
@@ -50,13 +51,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * - getContactInfoAttribute(): Returns a formatted string combining email and phone number.
  * - getSourceAttribute(): Returns the lead source, applying a test prefix if marked as a test.
  * - getAgeInDaysAttribute(): Returns the age of the lead in days since creation.
- * - getIsStaleAttribute(): Returns a boolean indicating whether the lead is considered stale (not updated in the last 30 days).
- * - getIsHotAttribute(): Returns a boolean indicating whether the lead is considered hot (updated within the last 7 days).
- * - getIsContactedAttribute(): Returns a boolean indicating whether the lead has been contacted (has any 'contact' activities).
- * - getIsConvertedAttribute(): Returns a boolean indicating whether the lead has been converted to a deal (has any 'conversion' activities).
- * - getIsEligibleForConversionAttribute(): Returns a boolean indicating whether the lead is eligible for conversion (not converted and has been contacted).
- * - getIsHighPriorityAttribute(): Returns a boolean indicating whether the lead is considered high priority (updated within the last 3 days and not contacted).
- * - getIsLowPriorityAttribute(): Returns a boolean indicating whether the lead is considered low priority (updated more than 60 days ago and not contacted).
+ * - getIsStaleAttribute(): Returns a boolean indicating whether the lead is considered stale based on last update time.
+ * - getIsHotAttribute(): Returns a boolean indicating whether the lead is considered hot based on last update time.
+ * - getIsEligibleForConversionAttribute(): Returns a boolean indicating whether the lead is eligible for conversion based on activity history.
+ * - getIsHighPriorityAttribute(): Returns a boolean indicating whether the lead is considered high priority based on last update time and contact activity.
+ * - getIsLowPriorityAttribute(): Returns a boolean indicating whether the lead is considered low priority based on last update time and contact activity.
  * Example usage of accessors:
  * ```php
  * $lead = Lead::find(1);
@@ -68,13 +67,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * $ageInDays = $lead->age_in_days; // Get the age of the lead in days
  * $isStale = $lead->is_stale; // Check if the lead is considered stale
  * $isHot = $lead->is_hot; // Check if the lead is considered hot
- * $isContacted = $lead->is_contacted; // Check if the lead has been contacted
- * $isConverted = $lead->is_converted; // Check if the lead has been converted to a deal
  * $isEligibleForConversion = $lead->is_eligible_for_conversion; // Check if the lead is eligible for conversion
  * $isHighPriority = $lead->is_high_priority; // Check if the lead is considered high priority
  * $isLowPriority = $lead->is_low_priority; // Check if the lead is considered low priority
  * ```
- * 
+ *
  * Query scopes include:
  * - scopeStale($query): Filter the query to only include leads that are considered stale.
  * - scopeHot($query): Filter the query to only include leads that are considered hot.
@@ -112,10 +109,12 @@ class Lead extends Model
      * @use HasFactory<\Database\Factories\LeadFactory>
      * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
      * @use HasTestPrefix<\App\Traits\HasTestPrefix>
+     * @use HasLeadStatus<\App\Traits\Lead\HasLeadStatus>
      */
     use HasFactory,
         SoftDeletes,
-        HasTestPrefix;
+        HasTestPrefix,
+        HasLeadStatus;
 
     /**
      * The attributes that are mass assignable.
@@ -316,7 +315,7 @@ class Lead extends Model
      */
     public function getDisplayNameAttribute(): string
     {
-        return $this->full_name ?: $this->email;
+        return $this->full_name ? $this->full_name : $this->email;
     }
 
     /**
@@ -364,90 +363,6 @@ class Lead extends Model
     }
 
     /**
-     * Determine whether the lead is considered stale.
-     *
-     * A lead is considered stale if it has not been updated in the last 30 days.
-     *
-     * @return bool
-     */
-    public function getIsStaleAttribute(): bool
-    {
-        return $this->updated_at ? $this->updated_at->lt(now()->subDays(30)) : false;
-    }
-    
-    /**
-     * Determine whether the lead is considered hot.
-     *
-     * A lead is considered hot if it has been updated within the last 7 days.
-     *
-     * @return bool
-     */
-    public function getIsHotAttribute(): bool
-    {
-        return $this->updated_at ? $this->updated_at->gt(now()->subDays(7)) : false;
-    }
-
-    /**
-     * Determine whether the lead has been contacted.
-     *
-     * A lead is considered contacted if it has any associated activities of type 'contact'.
-     *
-     * @return bool
-     */
-    public function getIsContactedAttribute(): bool
-    {
-        return $this->activities()->where('type', 'contact')->exists();
-    }
-
-    /**
-     * Determine whether the lead has been converted to a deal.
-     *
-     * A lead is considered converted if it has an associated deal record.
-     *
-     * @return bool
-     */
-    public function getIsConvertedAttribute(): bool
-    {
-        return $this->activities()->where('type', 'conversion')->exists();
-    }
-
-    /**
-     * Determine whether the lead is eligible for conversion.
-     *
-     * A lead is eligible for conversion if it is not already converted and has been contacted.
-     *
-     * @return bool
-     */
-    public function getIsEligibleForConversionAttribute(): bool
-    {
-        return !$this->is_converted && $this->is_contacted;
-    }
-
-    /**
-     * Determine whether the lead is considered high priority.
-     *
-     * A lead is considered high priority if it has been updated within the last 3 days and has not been contacted.
-     *
-     * @return bool
-     */
-    public function getIsHighPriorityAttribute(): bool
-    {
-        return $this->updated_at ? $this->updated_at->gt(now()->subDays(3)) && !$this->is_contacted : false;
-    }
-
-    /**
-     * Determine whether the lead is considered low priority.
-     *
-     * A lead is considered low priority if it has been updated more than 60 days ago and has not been contacted.
-     *
-     * @return bool
-     */
-    public function getIsLowPriorityAttribute(): bool
-    {
-        return $this->updated_at ? $this->updated_at->lt(now()->subDays(60)) && !$this->is_contacted : false;
-    }
-
-    /**
      * Scope a query to only include leads that are considered stale.
      *
      * @param  Builder<Lead> $query The query builder instance.
@@ -471,7 +386,7 @@ class Lead extends Model
         return $query->where('updated_at', '>', now()->subDays(7));
     }
 
-     /**
+    /**
      * Scope a query to only include leads that are eligible for conversion.
      *
      * @param  Builder<Lead> $query The query builder instance.
@@ -586,7 +501,7 @@ class Lead extends Model
         return $query->where('owner_id', $userId);
     }
 
-     /**
+    /**
      * Scope a query to only include leads that are assigned to a specific user.
      *
      * @param  Builder<Lead> $query The query builder instance.

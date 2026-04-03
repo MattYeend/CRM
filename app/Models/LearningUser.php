@@ -200,12 +200,13 @@ class LearningUser extends Pivot
      *
      * @param Builder $query The query builder instance.
      * @param int $userId The ID of the user to filter by.
+     *
      * @return Builder The modified query builder instance.
      */
     public function scopeCompletedForUser($query, int $userId): Builder
     {
         return $query->where('user_id', $userId)
-                     ->where('is_complete', true);
+            ->where('is_complete', true);
     }
 
     /**
@@ -213,12 +214,13 @@ class LearningUser extends Pivot
      *
      * @param Builder $query The query builder instance.
      * @param int $userId The ID of the user to filter by.
+     *
      * @return Builder The modified query builder instance.
      */
     public function scopeIncompleteForUser($query, int $userId): Builder
     {
         return $query->where('user_id', $userId)
-                     ->where('is_complete', false);
+            ->where('is_complete', false);
     }
 
     /**
@@ -245,6 +247,6 @@ class LearningUser extends Pivot
     public function scopeRealForUser($query, int $userId): Builder
     {
         return $query->where('user_id', $userId)
-                     ->where('is_test', false);
+            ->where('is_test', false);
     }
 }

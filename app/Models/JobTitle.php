@@ -415,7 +415,7 @@ class JobTitle extends Model
 
         return $query->where(function (Builder $q) use ($like) {
             $q->where('title', 'like', $like)
-              ->orWhere('short_code', 'like', $like);
+                ->orWhere('short_code', 'like', $like);
         });
     }
 }

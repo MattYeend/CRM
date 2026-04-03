@@ -34,18 +34,23 @@ use Illuminate\Support\Str;
  * $parts = $category->parts; // Get the parts in this category
  * $creator = $category->creator; // Get the user that created this category
  * $updater = $category->updater; // Get the user that last updated this category
- * $deleter = $category->deleter; // Get the user that deleted this category (if applicable)
- * $restorer = $category->restorer; // Get the user that restored this category (if applicable)
+ * $deleter = $category->deleter; // Get the user that deleted this category
+ * (if applicable)
+ * $restorer = $category->restorer; // Get the user that restored this category
+ * (if applicable)
  * ```
  *
  * Accessor methods include:
- * - getSlugAttribute(): Returns the URL-friendly slug for the category, generated from the name.
- * - getFullPathAttribute(): Returns the full hierarchical path of the category as a string, showing its position in the hierarchy.
+ * - getSlugAttribute(): Returns the URL-friendly slug for the category,
+ *      generated from the name.
+ * - getFullPathAttribute(): Returns the full hierarchical path of the
+ *      category as a string, showing its position in the hierarchy.
  * Example usage of accessors:
  * ```php
  * $category = PartCategory::find(1);
  * $slug = $category->slug; // Get the slug for this category
- * $fullPath = $category->full_path; // Get the full hierarchical path for this category
+ * $fullPath = $category->full_path; // Get the full hierarchical
+ * path for this category
  * ```
  *
  * Query scopes include:
@@ -53,7 +58,8 @@ use Illuminate\Support\Str;
  * - scopeReal($query): Filter the query to only include non-test categories.
  * Example usage of query scopes:
  * ```php
- * $categoriesWithName = PartCategory::withName('Screws')->get(); // Get categories with the name "Screws"
+ * $categoriesWithName = PartCategory::withName('Screws')->get(); // Get categories
+ * with the name "Screws"
  * $realCategories = PartCategory::real()->get(); // Get all non-test categories
  * ```
  */
@@ -177,8 +183,8 @@ class PartCategory extends Model
      * Get the URL-friendly slug for the category.
      *
      * The slug is automatically generated from the category name on creation and
-     * regenerated whenever the name changes. It is used for clean URLs and should be
-     * unique across categories to avoid conflicts.
+     * regenerated whenever the name changes. It is used for clean URLs and should
+     * be unique across categories to avoid conflicts.
      *
      * @return string The slug for the category.
      */
@@ -190,10 +196,12 @@ class PartCategory extends Model
     /**
      * Get the full hierarchical path of the category as a string.
      *
-     * This accessor builds a string representation of the category's position in the
-     * hierarchy by concatenating the names of its ancestors and itself, separated by
-     * " > ". For example, a category "Screws" under "Fasteners" would return "Fasteners > Screws".
-     * This is useful for displaying the category in a user-friendly format that shows its context within the hierarchy.
+     * This accessor builds a string representation of the category's position
+     * in the hierarchy by concatenating the names of its ancestors and itself,
+     * separated by " > ". For example, a category "Screws" under "Fasteners"
+     * would return "Fasteners > Screws".
+     * This is useful for displaying the category in a user-friendly format
+     * that shows its context within the hierarchy.
      *
      * @return string The full hierarchical path of the category.
      */

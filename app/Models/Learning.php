@@ -42,7 +42,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * $tasks = $learning->tasks; // Get all tasks for this learning
  * $notes = $learning->notes; // Get all notes for this learning
  * ```
- * 
+ *
  * Accessor methods include:
  * - getTitleAttribute(): Returns the learning title, applying a test prefix
  *      if the learning is marked as a test.
@@ -66,7 +66,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * $metaKeywords = $learning->meta_keywords; // Get the meta keywords from the meta JSON
  * $metaAuthor = $learning->meta_author; // Get the meta author from the meta JSON
  * ```
- * 
+ *
  * Query scopes include:
  * - scopeForUser($query, $userId): Filter the query to only include learnings
  *      assigned to a given user.

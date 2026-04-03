@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasTestPrefix;
+use App\Traits\Learning\HasValidationStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -77,16 +78,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * $invalidQuestions = LearningQuestion::invalid()->get(); // Get all invalid questions
  * $questionsForLearning = LearningQuestion::forLearning($learningId)->get(); // Get questions for a specific learning
  * $searchResults = LearningQuestion::search('term')->get(); // Get questions containing 'term' in the question text
- * ``` 
+ * ```
  */
 class LearningQuestion extends Model
 {
     /**
      * @use HasFactory<\Database\Factories\LearningQuestionFactory>
      * @use HasTestPrefix<\App\Traits\HasTestPrefix>
+     * @use HasValidationStatus<\App\Traits\Learning\HasValidationStatus>
      */
     use HasFactory,
-        HasTestPrefix;
+        HasTestPrefix,
+        HasValidationStatus;
 
     /**
      * The attributes that are mass assignable.
@@ -159,8 +162,8 @@ class LearningQuestion extends Model
     {
         return $this->correctAnswers()->exists();
     }
-    
-     /**
+
+    /**
      * Determine if the question has any incorrect answers.
      *
      * @return bool True if at least one incorrect answer exists, false otherwise.
@@ -179,242 +182,6 @@ class LearningQuestion extends Model
     public function isValid(): bool
     {
         return $this->hasCorrectAnswer() && $this->hasIncorrectAnswer();
-    }
-
-    /**
-     * Get the validation status of the question.
-     *
-     * @return string 'valid' if the question is valid, 'invalid' otherwise.
-     */
-    public function getValidationStatusAttribute(): string
-    {
-        return $this->isValid() ? 'valid' : 'invalid';
-    }
-
-    /**
-     * Get the validation status label for the question.
-     *
-     * @return string A human-readable label indicating whether the question is valid or invalid.
-     */
-    public function getValidationStatusLabelAttribute(): string
-    {
-        return $this->isValid() ? 'Valid' : 'Invalid';
-    }
-
-    /**
-     * Get the validation status color for the question.
-     *
-     * @return string A color name or code representing the validation status (e.g. 'green' for valid, 'red' for invalid).
-     */
-    public function getValidationStatusColorAttribute(): string
-    {
-        return $this->isValid() ? 'green' : 'red';
-    }
-
-    /**
-     * Get the validation status icon for the question.
-     *
-     * @return string A string representing an icon name or class (e.g. 'check' for valid, 'x' for invalid).
-     */
-    public function getValidationStatusIconAttribute(): string
-    {
-        return $this->isValid() ? 'check' : 'x';
-    }
-
-    /**
-     * Get the validation status tooltip for the question.
-     *
-     * @return string A tooltip message providing additional information about the validation status.
-     */
-    public function getValidationStatusTooltipAttribute(): string
-    {
-        return $this->isValid()
-            ? 'This question is valid and has at least one correct and one incorrect answer.'
-            : 'This question is invalid. It must have at least one correct answer and at least one incorrect answer.';
-    }
-
-    /**
-     * Get the validation status badge for the question.
-     *
-     * @return string A string representing a badge class or style (e.g. 'badge-success' for valid, 'badge-danger' for invalid).
-     */
-    public function getValidationStatusBadgeAttribute(): string
-    {
-        return $this->isValid() ? 'badge-success' : 'badge-danger';
-    }
-
-    /**
-     * Get the validation status text for the question.
-     *
-     * @return string A human-readable text indicating the validation status (e.g. 'Valid' or 'Invalid').
-     */
-    public function getValidationStatusTextAttribute(): string
-    {
-        return $this->isValid() ? 'Valid' : 'Invalid';
-    }
-
-    /**
-     * Get the validation status class for the question.
-     *
-     * @return string A CSS class name representing the validation status (e.g. 'text-success' for valid, 'text-danger' for invalid).
-     */
-    public function getValidationStatusClassAttribute(): string
-    {
-        return $this->isValid() ? 'text-success' : 'text-danger';
-    }
-
-    /**
-     * Get the validation status description for the question.
-     *
-     * @return string A detailed description of the validation status, providing guidance on how to fix invalid questions if applicable.
-     */
-    public function getValidationStatusDescriptionAttribute(): string
-    {
-        if ($this->isValid()) {
-            return 'This question is valid and can be used in the learning.';
-        }
-
-        $missingParts = [];
-        if (! $this->hasCorrectAnswer()) {
-            $missingParts[] = 'at least one correct answer';
-        }
-        if (! $this->hasIncorrectAnswer()) {
-            $missingParts[] = 'at least one incorrect answer';
-        }
-
-        return 'This question is invalid because it is missing ' . implode(' and ', $missingParts) . '. Please add the required answer options to make this question valid.';
-    }
-
-    /**
-     * Get the validation status summary for the question.
-     *
-     * @return string A concise summary of the validation status, suitable for display in a list or table view.
-     */
-    public function getValidationStatusSummaryAttribute(): string
-    {
-        if ($this->isValid()) {
-            return 'Valid';
-        }
-
-        $issues = [];
-        if (! $this->hasCorrectAnswer()) {
-            $issues[] = 'No correct answer';
-        }
-        if (! $this->hasIncorrectAnswer()) {
-            $issues[] = 'No incorrect answer';
-        }
-
-        return 'Invalid: ' . implode(', ', $issues);
-    }
-
-    /**
-     * Get the validation status icon class for the question.
-     *
-     * @return string A CSS class name representing the validation status icon (e.g. 'icon-check' for valid, 'icon-x' for invalid).
-     */
-    public function getValidationStatusIconClassAttribute(): string
-    {
-        return $this->isValid() ? 'icon-check' : 'icon-x';
-    }
-
-    /**
-     * Get the validation status color class for the question.
-     *
-     * @return string A CSS class name representing the validation status color (e.g. 'text-green' for valid, 'text-red' for invalid).
-     */
-    public function getValidationStatusColorClassAttribute(): string
-    {
-        return $this->isValid() ? 'text-green' : 'text-red';
-    }
-
-    /**
-     * Get the validation status badge class for the question.
-     *
-     * @return string A CSS class name representing the validation status badge (e.g. 'badge-green' for valid, 'badge-red' for invalid).
-     */
-    public function getValidationStatusBadgeClassAttribute(): string
-    {
-        return $this->isValid() ? 'badge-green' : 'badge-red';
-    }
-
-    /**
-     * Get the validation status label class for the question.
-     *
-     * @return string A CSS class name representing the validation status label (e.g. 'label-green' for valid, 'label-red' for invalid).
-     */
-    public function getValidationStatusLabelClassAttribute(): string
-    {
-        return $this->isValid() ? 'label-green' : 'label-red';
-    }
-
-    /**
-     * Get the validation status text class for the question.
-     *
-     * @return string A CSS class name representing the validation status text (e.g. 'text-green' for valid, 'text-red' for invalid).
-     */
-    public function getValidationStatusTextClassAttribute(): string
-    {
-        return $this->isValid() ? 'text-green' : 'text-red';
-    }
-
-    /**
-     * Get the validation status description class for the question.
-     *
-     * @return string A CSS class name representing the validation status description (e.g. 'text-muted' for valid, 'text-danger' for invalid).
-     */
-    public function getValidationStatusDescriptionClassAttribute(): string
-    {
-        return $this->isValid() ? 'text-muted' : 'text-danger';
-    }
-
-    /**
-     * Get the validation status summary class for the question.
-     *
-     * @return string A CSS class name representing the validation status summary (e.g. 'text-green' for valid, 'text-red' for invalid).
-     */
-    public function getValidationStatusSummaryClassAttribute(): string
-    {
-        return $this->isValid() ? 'text-green' : 'text-red';
-    }
-
-    /**
-     * Get the validation status icon color class for the question.
-     *
-     * @return string A CSS class name representing the validation status icon color (e.g. 'text-green' for valid, 'text-red' for invalid).
-     */
-    public function getValidationStatusIconColorClassAttribute(): string
-    {
-        return $this->isValid() ? 'text-green' : 'text-red';
-    }
-
-    /**
-     * Get the validation status badge color class for the question.
-     *
-     * @return string A CSS class name representing the validation status badge color (e.g. 'badge-green' for valid, 'badge-red' for invalid).
-     */
-    public function getValidationStatusBadgeColorClassAttribute(): string
-    {
-        return $this->isValid() ? 'badge-green' : 'badge-red';
-    }
-
-    /**
-     * Get the validation status label color class for the question.
-     *
-     * @return string A CSS class name representing the validation status label color (e.g. 'text-green' for valid, 'text-red' for invalid).
-     */
-    public function getValidationStatusLabelColorClassAttribute(): string
-    {
-        return $this->isValid() ? 'text-green' : 'text-red';
-    }
-
-    /**
-     * Get the validation status text color class for the question.
-     *
-     * @return string A CSS class name representing the validation status text color (e.g. 'text-green' for valid, 'text-red' for invalid).
-     */
-    public function getValidationStatusTextColorClassAttribute(): string
-    {
-        return $this->isValid() ? 'text-green' : 'text-red';
     }
 
     /**
