@@ -18,6 +18,99 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * warehouse location. Supports bill of materials relationships for
  * assembly costing, multiple supplier associations, serial number and
  * stock movement tracking, and part images.
+ *
+ * Part types include raw materials, finished goods, consumables, spare parts,
+ * and sub-assemblies. Part statuses include active, discontinued, pending, and
+ * out of stock. The model includes scopes for filtering by type, status,
+ * purchasability, sellability, and manufacturing method, as well as helper
+ * methods for stock level checks and margin calculations.
+ *
+ * Relationships defined in this model include:
+ * - product(): The product this part belongs to (optional).
+ * - category(): The category this part belongs to (optional).
+ * - primarySupplier(): The primary supplier for this part (optional).
+ * - suppliers(): All suppliers associated with this part, with pivot data for
+ *     supplier SKU, unit cost, lead time, and preferred status.
+ * - preferredSupplier(): The supplier marked as preferred for this part via the
+ *    pivot table.
+ * - images(): All images associated with this part, ordered by sort order.
+ * - primaryImage(): The primary image for this part.
+ * - stockMovements(): All stock movement records for this part.
+ * - serialNumbers(): All serial numbers associated with this part (if serialised).
+ * - billOfMaterials(): All BOM entries where this part is the parent (assembled) part.
+ * - usedInAssemblies(): All BOM entries where this part is used as a child (component) part.
+ * - creator(): The user that created this part record.
+ * - updater(): The user that last updated this part record.
+ * - deleter(): The user that deleted this part record (if soft-deleted).
+ * - restorer(): The user that restored this part record (if soft-deleted).
+ * Example usage of relationships:
+ * ```php
+ * $part = Part::find(1);
+ * $product = $part->product; // Get the associated product
+ * $category = $part->category; // Get the associated category
+ * $primarySupplier = $part->primarySupplier; // Get the primary supplier
+ * $suppliers = $part->suppliers; // Get all associated suppliers
+ * $preferredSupplier = $part->preferredSupplier; // Get the preferred supplier
+ * $images = $part->images; // Get all images for the part
+ * $primaryImage = $part->primaryImage; // Get the primary image for the part
+ * $stockMovements = $part->stockMovements; // Get all stock movements for the part
+ * $serialNumbers = $part->serialNumbers; // Get all serial numbers for the part
+ * $billOfMaterials = $part->billOfMaterials; // Get all BOM entries where this part is the parent
+ * $usedInAssemblies = $part->usedInAssemblies; // Get all BOM entries where this part is a child
+ * $creator = $part->creator; // Get the user that created this part
+ * $updater = $part->updater; // Get the user that last updated this part
+ * $deleter = $part->deleter; // Get the user that deleted this part (if applicable)
+ * $restorer = $part->restorer; // Get the user that restored this part (if applicable)
+ * ```
+ *
+ * Helper methods include:
+ * - isLowStock(): Returns true if the part's quantity is at or below the reorder point.
+ * - isOutOfStock(): Returns true if the part's quantity is zero.
+ * - marginPercentage(): Calculates the profit margin percentage based on price and cost price.
+ * - bomCost(): Recursively calculates the total cost of the part based on its bill of materials, including sub-assemblies.
+ * - hasBom(): Returns true if the part has any associated bill of materials entries.
+ * Example usage of helper methods:
+ * ```php
+ * $part = Part::find(1);
+ * if ($part->isLowStock()) {
+ *  // Part is low on stock
+ * }
+ * if ($part->isOutOfStock()) {
+ * // Part is out of stock
+ * }
+ * $margin = $part->marginPercentage(); // Get the profit margin percentage
+ * $bomCost = $part->bomCost(); // Get the total BOM cost for the part
+ * if ($part->hasBom()) {
+ * // This part has a bill of materials
+ * }
+ * ```
+ * 
+ * Query scopes include:
+ * - scopeActive($query): Filter to only active parts.
+ * - scopeLowStock($query): Filter to parts where quantity is at or below the reorder point.
+ * - scopeOutOfStock($query): Filter to parts where quantity is zero.
+ * - scopeOfType($query, $type): Filter to parts of a specific type (e.g. 'raw_material').
+ * - scopeOfStatus($query, $status): Filter to parts of a specific status (e.g. 'active').
+ * - scopePurchasable($query): Filter to parts that are marked as purchasable.
+ * - scopeSellable($query): Filter to parts that are marked as sellable.
+ * - scopeManufactured($query): Filter to parts that are marked as manufactured in-house.
+ * - scopeSerialised($query): Filter to parts that are marked as serialised.
+ * - scopeBatchTracked($query): Filter to parts that are marked as batch tracked.
+ * - scopeReal($query): Filter to parts that are not marked as test data.
+ * Example usage of query scopes:
+ * ```php
+ * $activeParts = Part::active()->get(); // Get all active parts
+ * $lowStockParts = Part::lowStock()->get(); // Get all parts that are low on stock
+ * $outOfStockParts = Part::outOfStock()->get(); // Get all parts that are out of stock
+ * $rawMaterials = Part::ofType(Part::RAW_MATERIAL_PART_TYPE)->get(); // Get all raw material parts
+ * $activeFinishedGoods = Part::ofType(Part::FINISHED_GOOD_PART_TYPE)->ofStatus(Part::ACTIVE_PART_STATUS)->get(); // Get all active finished good parts
+ * $purchasableParts = Part::purchasable()->get(); // Get all parts that are purchasable
+ * $sellableParts = Part::sellable()->get(); // Get all parts that are sellable
+ * $manufacturedParts = Part::manufactured()->get(); // Get all parts that are manufactured in-house
+ * $serialisedParts = Part::serialised()->get(); // Get all parts that are serialised
+ * $batchTrackedParts = Part::batchTracked()->get(); // Get all parts that are batch tracked
+ * $realParts = Part::real()->get(); // Get all parts that are not test data
+ * ```
  */
 class Part extends Model
 {
@@ -314,41 +407,43 @@ class Part extends Model
     }
 
     /**
-     * Scope a query to only include active parts.
+     * Get the user that created the part.
      *
-     * @param  Builder $query The query builder instance.
-     *
-     * @return Builder The modified query builder instance.
+     * @return BelongsTo<User,Part>
      */
-    public function scopeActive(Builder $query): Builder
+    public function creator(): BelongsTo
     {
-        return $query->where('is_active', true);
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     /**
-     * Scope a query to parts that are low on stock.
+     * Get the user that last updated the part.
      *
-     * Compares the current quantity against the reorder point.
-     *
-     * @param  Builder $query The query builder instance.
-     *
-     * @return Builder The modified query builder instance.
+     * @return BelongsTo<User,Part>
      */
-    public function scopeLowStock(Builder $query): Builder
+    public function updater(): BelongsTo
     {
-        return $query->whereColumn('quantity', '<=', 'reorder_point');
+        return $this->belongsTo(User::class, 'updated_by');
     }
 
     /**
-     * Scope a query to parts that are out of stock.
+     * Get the user that deleted the part.
      *
-     * @param  Builder $query The query builder instance.
-     *
-     * @return Builder The modified query builder instance.
+     * @return BelongsTo<User,Part>
      */
-    public function scopeOutOfStock(Builder $query): Builder
+    public function deleter(): BelongsTo
     {
-        return $query->where('quantity', 0);
+        return $this->belongsTo(User::class, 'deleted_by');
+    }
+
+    /**
+     * Get the user that restored the part.
+     *
+     * @return BelongsTo<User,Part>
+     */
+    public function restorer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'restored_by');
     }
 
     /**
@@ -442,4 +537,170 @@ class Part extends Model
             fn ($bom) => $bom->totalCost($visited) ?? 0
         );
     }
+
+
+    /**
+     * Scope a query to only include active parts.
+     *
+     * @param  Builder $query The query builder instance.
+     *
+     * @return Builder The modified query builder instance.
+     */
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('is_active', true);
+    }
+
+    /**
+     * Scope a query to parts that are low on stock.
+     *
+     * Compares the current quantity against the reorder point.
+     *
+     * @param  Builder $query The query builder instance.
+     *
+     * @return Builder The modified query builder instance.
+     */
+    public function scopeLowStock(Builder $query): Builder
+    {
+        return $query->whereColumn('quantity', '<=', 'reorder_point');
+    }
+
+    /**
+     * Scope a query to parts that are out of stock.
+     *
+     * @param  Builder $query The query builder instance.
+     *
+     * @return Builder The modified query builder instance.
+     */
+    public function scopeOutOfStock(Builder $query): Builder
+    {
+        return $query->where('quantity', 0);
+    }
+
+    /**
+     * Scope a query to only include parts of a given type.
+     *
+     * @param  Builder $query The query builder instance.
+     * @param  string $type  The part type to filter by (e.g. 'raw_material',
+     * 'finished_good').
+     *
+     * @return Builder The modified query builder instance.
+     */
+    public function scopeOfType(Builder $query, string $type): Builder
+    {
+        return $query->where('type', $type);
+    }
+
+     /**
+     * Scope a query to only include parts of a given status.
+     *
+     * @param  Builder $query The query builder instance.
+     * @param  string $status  The part status to filter by (e.g. 'active',
+     * 'discontinued').
+     *
+     * @return Builder The modified query builder instance.
+     */
+    public function scopeOfStatus(Builder $query, string $status): Builder
+    {
+        return $query->where('status', $status);
+    }
+
+    /**
+     * Scope a query to only include parts that are purchasable.
+     *
+     * Filters to parts where 'is_purchasable' is true, indicating they can be
+     * sourced from suppliers and included in purchase orders.
+     *
+     * @param  Builder $query The query builder instance.
+     *
+     * @return Builder The modified query builder instance.
+     */
+    public function scopePurchasable(Builder $query): Builder
+    {
+        return $query->where('is_purchasable', true);
+    }
+
+    /**
+     * Scope a query to only include parts that are sellable.
+     *
+     * Filters to parts where 'is_sellable' is true, indicating they can be sold
+     * to customers and included in sales orders.
+     *
+     * @param  Builder $query The query builder instance.
+     *
+     * @return Builder The modified query builder instance.
+     */
+    public function scopeSellable(Builder $query): Builder
+    {
+        return $query->where('is_sellable', true);
+    }
+
+    /**
+     * Scope a query to only include parts that are manufactured in-house.
+     *
+     * Filters to parts where 'is_manufactured' is true, indicating they are
+     * produced internally rather than sourced from suppliers. Useful for
+     * differentiating between raw materials, sub-assemblies, and finished goods
+     * in inventory management and production planning contexts.
+     *
+     * @param  Builder $query The query builder instance.
+     *
+     * @return Builder The modified query builder instance.
+     */
+    public function scopeManufactured(Builder $query): Builder
+    {
+        return $query->where('is_manufactured', true);
+    }
+
+    /**
+     * Scope a query to only include parts that are serialised.
+     *
+     * Filters to parts where 'is_serialised' is true, indicating that individual
+     * units of the part are tracked with unique serial numbers. Useful for
+     * managing warranty, service, and traceability requirements for high-value or
+     * regulated items.
+     *
+     * @param  Builder $query The query builder instance.
+     *
+     * @return Builder The modified query builder instance.
+     */
+    public function scopeSerialised(Builder $query): Builder
+    {
+        return $query->where('is_serialised', true);
+    }
+
+    /**
+     * Scope a query to only include parts that are batch tracked.
+     *
+     * Filters to parts where 'is_batch_tracked' is true, indicating that inventory
+     * is managed in batches or lots rather than individual units. Useful for
+     * managing expiry, quality control, and traceability requirements for items like
+     * chemicals, pharmaceuticals, or food products.
+     *
+     * @param  Builder $query The query builder instance.
+     *
+     * @return Builder The modified query builder instance.
+     */
+    public function scopeBatchTracked(Builder $query): Builder
+    {
+        return $query->where('is_batch_tracked', true);
+    }
+
+    /**
+     * Scope a query to only include non-test parts.
+     *
+     * Filters out any records where the 'is_test' flag is true, ensuring that
+     * only real production data is included in the results. Important for accurate
+     * inventory reporting, cost analysis, and production planning by excluding any
+     * parts that are created for testing purposes and not actually used in the
+     * manufacturing or sales processes.
+      *
+      * @param  Builder $query The query builder instance.
+      *
+      * @return Builder The modified query builder instance.
+      */
+    public function scopeReal(Builder $query): Builder
+    {
+        return $query->where('is_test', false);
+     }
 }

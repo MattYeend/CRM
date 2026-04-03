@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasTestPrefix;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -131,6 +132,31 @@ class PartCategory extends Model
     public function restorer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'restored_by');
+    }
+
+    /**
+     * Scope a query to get part categories with a name matching the given
+     * value.
+     *
+     * @param  Builder<PartCategory> $query The query builder instance.
+     * @param  string $name The name to filter by.
+     *
+     * @return Builder<PartCategory> The modified query builder instance.
+     */
+
+    /**
+     * Scope a query to only include non-test categories.
+     *
+     * Filters out any records where the 'is_test' flag is true, ensuring that
+     * only real production data is included in the results.
+     *
+     * @param  Builder<PartCategory> $query The query builder instance.
+     *
+     * @return Builder<PartCategory> The modified query builder instance.
+     */
+    public function scopeReal(Builder $query): Builder
+    {
+        return $query->where('is_test', false);
     }
 
     /**

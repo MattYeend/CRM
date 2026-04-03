@@ -14,6 +14,56 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * the quantity changed, and the stock levels before and after the movement.
  * Provides scopes and helper methods for filtering and classifying movements
  * by direction.
+ *
+ * Relationships defined in this model include:
+ * - part(): Belongs-to relationship to the Part this stock movement belongs to.
+ * - createdBy(): Belongs-to relationship to the User that created the stock
+ *     movement record.
+ * Example usage of relationships:
+ * ```php
+ * $movement = PartStockMovement::find(1);
+ * $part = $movement->part; // Get the associated part
+ * $creator = $movement->createdBy; // Get the user that created this movement
+ * ```
+ *
+ * Helper methods include:
+ * - isInbound(): Returns true if the movement type is 'in' or 'return',
+ *      indicating it adds stock.
+ * - isOutbound(): Returns true if the movement type is 'out', indicating it
+ *      removes stock.
+ * Example usage of helper methods:
+ * ```php
+ * $movement = PartStockMovement::find(1);
+ * if ($movement->isInbound()) {
+ *   // This movement adds stock
+ * } elseif ($movement->isOutbound()) {
+ *  // This movement removes stock
+ * }
+ * ```
+ *
+ * Query scopes include:
+ * - scopeOfType($query, $type): Filter movements by a specific type (e.g. 'in',
+ *      'out', 'return').
+ * - scopeInbound($query): Filter the query to only include inbound movements
+ *      (types 'in' and 'return').
+ * - scopeOutbound($query): Filter the query to only include outbound movements
+ *      (type 'out').
+ * - scopeForPart($query, $partId): Filter the query to only include
+ *      movements for a specific part ID.
+ * - scopeReal($query): Filter the query to only include non-test movements.
+ * Example usage of query scopes:
+ * ```php
+ * $inboundMovements = PartStockMovement::inbound()->get(); // Get all
+ * inbound movements
+ * $outboundMovements = PartStockMovement::outbound()->get(); // Get all
+ * outbound movements
+ * $partMovements = PartStockMovement::forPart($partId)->get(); // Get all
+ * movements for a specific part
+ * $inMovements = PartStockMovement::ofType(PartStockMovement::TYPE_IN)->get();
+ * // Get all 'in' movements
+ * $realMovements = PartStockMovement::real()->get(); // Get all non-test
+ * movements
+ * ```
  */
 class PartStockMovement extends Model
 {
@@ -111,21 +161,6 @@ class PartStockMovement extends Model
     }
 
     /**
-     * Scope a query to movements of a given type.
-     *
-     * @param  Builder $query The query builder instance.
-     *
-     * @param  string $type The movement type to filter by (e.g. 'in', 'out',
-     * 'return').
-     *
-     * @return Builder The modified query builder instance.
-     */
-    public function scopeOfType(Builder $query, string $type): Builder
-    {
-        return $query->where('type', $type);
-    }
-
-    /**
      * Determine whether this movement adds stock.
      *
      * Returns true for movements of type 'in' or 'return'.
@@ -147,5 +182,72 @@ class PartStockMovement extends Model
     public function isOutbound(): bool
     {
         return $this->type === self::TYPE_OUT;
+    }
+
+    /**
+     * Scope a query to movements of a given type.
+     *
+     * @param  Builder $query The query builder instance.
+     *
+     * @param  string $type The movement type to filter by (e.g. 'in', 'out',
+     * 'return').
+     *
+     * @return Builder The modified query builder instance.
+     */
+    public function scopeOfType(Builder $query, string $type): Builder
+    {
+        return $query->where('type', $type);
+    }
+
+    /**
+     * Scope a query to only include inbound movements.
+     *
+     * @param  Builder $query The query builder instance.
+     *
+     * @return Builder The modified query builder instance.
+     */
+    public function scopeInbound(Builder $query): Builder
+    {
+        return $query->whereIn('type', [self::TYPE_IN, self::TYPE_RETURN]);
+    }
+
+    /**
+     * Scope a query to only include outbound movements.
+     *
+     * @param  Builder $query The query builder instance.
+     *
+     * @return Builder The modified query builder instance.
+     */
+    public function scopeOutbound(Builder $query): Builder
+    {
+        return $query->where('type', self::TYPE_OUT);
+    }
+
+    /**
+     * Scope a query to only include movements of a specific part.
+     *
+     * @param  Builder $query The query builder instance.
+     * @param  int $partId The ID of the part to filter by.
+     *
+     * @return Builder The modified query builder instance.
+     */
+    public function scopeForPart(Builder $query, int $partId): Builder
+    {
+        return $query->where('part_id', $partId);
+    }
+
+    /**
+     * Scope a query to only include non-test movements.
+     *
+     * Filters out any records where the 'is_test' flag is true, ensuring that
+     * only real production data is included in the results.
+     *
+     * @param  Builder $query The query builder instance.
+     *
+     * @return Builder The modified query builder instance.
+     */
+    public function scopeReal(Builder $query): Builder
+    {
+        return $query->where('is_test', false);
     }
 }

@@ -12,11 +12,64 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * Represents a uniquely identifiable serialised instance of a part.
  *
- * Tracks lifecycle state (in stock, sold, returned, scrapped), manufacturing
- * and expiry dates, and optional metadata. Provides query scopes for common
- * stock states and helper methods for expiry and serial formatting.
+ * Tracks lifecycle state (in stock, sold, returned, scrapped),
+ * manufacturing and expiry dates, and optional metadata.
+ * Provides query scopes for common stock states and helper methods
+ * for expiry and serial formatting.
  *
- * Serial numbers may be automatically prefixed when marked as test records.
+ * Serial numbers may be automatically prefixed
+ * when marked as test records.
+ *
+ * Relationships defined in this model include:
+ * - part(): Belongs-to relationship to the Part
+ *      this serial number belongs to.
+ * Example usage of relationships:
+ * ```php
+ * $serial = PartSerialNumber::find(1);
+ * $part = $serial->part; // Get the associated part
+ * ```
+ *
+ * Helper methods include:
+ * - isExpired(): Returns true if the current date
+ *      is past the expiry date.
+ * - isExpiringSoon($days = 30): Returns true if the
+ *      expiry date is within the next $days.
+ * - getSerialNumberAttribute($value): Accessor that
+ *      applies a test prefix to the serial number
+ *      when appropriate.
+ * Example usage of helper methods:
+ * ```php
+ * $serial = PartSerialNumber::find(1);
+ * if ($serial->isExpired()) {
+ *  // This serial number is expired
+ * } elseif ($serial->isExpiringSoon()) {
+ * // This serial number is expiring soon
+ * }
+ * $formattedSerial = $serial->serial_number; // Get
+ * the formatted serial number
+ * ```
+ *
+ * Query scopes include:
+ * - scopeInStock($query): Filter the query to only
+ *      include serial numbers currently in stock.
+ * - scopeExpiringSoon($query, $days = 30): Filter the
+ *      query to only include in-stock serial numbers
+ *      expiring within the next $days.
+ * - scopeForPart($query, $partId): Filter the query to
+ *      only include serial numbers for a specific part ID.
+ * - scopeReal($query): Filter the query to only include
+ *      non-test serial numbers.
+ * Example usage of query scopes:
+ * ```php
+ * $inStockSerials = PartSerialNumber::inStock()->get();
+ * // Get all in-stock serial numbers
+ * $expiringSerials = PartSerialNumber::expiringSoon(15)->get();
+ * // Get in-stock serial numbers expiring within 15 days
+ * $partSerials = PartSerialNumber::forPart($partId)->get();
+ * // Get all serial numbers for a specific part
+ * $realSerials = PartSerialNumber::real()->get(); // Get all
+ * non-test serial numbers
+ * ```
  */
 class PartSerialNumber extends Model
 {
@@ -111,6 +164,48 @@ class PartSerialNumber extends Model
     }
 
     /**
+     * Determine whether this serial number's expiry date has passed.
+     *
+     * Returns false when no expiry date is set.
+     *
+     * @return bool
+     */
+    public function isExpired(): bool
+    {
+        return $this->expires_at && $this->expires_at->isPast();
+    }
+
+    /**
+     * Determine whether this serial number is approaching its expiry date.
+     * Uses a default lookahead window of 30 days, but can be customized.
+     * Returns false when no expiry date is set.
+     *
+     * @param  int $days Lookahead window in days (default 30).
+     *
+     * @return bool
+     */
+    public function isExpiringSoon(int $days = 30): bool
+    {
+        return $this->expires_at
+            && $this->expires_at->isFuture()
+            && $this->expires_at->lessThanOrEqualTo(now()->addDays($days));
+    }
+
+    /**
+     * Get the formatted serial number.
+     *
+     * Applies a test prefix when the serial number is marked as a test record.
+     *
+     * @param  string|null $value The raw serial number from the database.
+     *
+     * @return string The formatted serial number.
+     */
+    public function getSerialNumberAttribute($value): string
+    {
+        return $this->prefixTest($value);
+    }
+
+    /**
      * Scope a query to only serial numbers currently held in stock.
      *
      * @param  Builder<PartSerialNumber> $query The query builder instance.
@@ -142,28 +237,30 @@ class PartSerialNumber extends Model
     }
 
     /**
-     * Determine whether this serial number's expiry date has passed.
+     * Scope a query to only include serial numbers for a specific part.
      *
-     * Returns false when no expiry date is set.
+     * @param  Builder<PartSerialNumber> $query The query builder instance.
+     * @param  int $partId The ID of the part to filter by.
      *
-     * @return bool
+     * @return Builder<PartSerialNumber> The modified query builder instance.
      */
-    public function isExpired(): bool
+    public function scopeForPart(Builder $query, int $partId): Builder
     {
-        return $this->expires_at && $this->expires_at->isPast();
+        return $query->where('part_id', $partId);
     }
 
     /**
-     * Get the formatted serial number.
+     * Scope a query to only include non-test serial numbers.
      *
-     * Applies a test prefix when the serial number is marked as a test record.
+     * Filters out any records where the 'is_test' flag is true, ensuring that
+     * only real production data is included in the results.
      *
-     * @param  string|null $value The raw serial number from the database.
+     * @param  Builder<PartSerialNumber> $query The query builder instance.
      *
-     * @return string The formatted serial number.
+     * @return Builder<PartSerialNumber> The modified query builder instance.
      */
-    public function getSerialNumberAttribute($value): string
+    public function scopeReal(Builder $query): Builder
     {
-        return $this->prefixTest($value);
+        return $query->where('is_test', false);
     }
 }
