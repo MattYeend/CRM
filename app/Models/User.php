@@ -35,7 +35,7 @@ use Laravel\Sanctum\HasApiTokens;
  * This model includes traits for factory support, notifications, two-factor
  * authentication, soft deletes, API tokens, billing.
  *
- * Relationships defined in this trait include:
+ * Relationships defined in this model include:
  * - role(): Defines a belongs-to relationship with the Role model,
  *      allowing access to the user's role information.
  * - jobTitle(): Defines a belongs-to relationship with the JobTitle model,
@@ -731,9 +731,9 @@ class User extends Authenticatable
      * matches the administrator role defined in the Role model. It allows
      * for easy retrieval of all administrator users in the system.
      *
-     * @param  Builder<self> $query The query builder instance.
+     * @param  Builder<User> $query The query builder instance.
      *
-     * @return Builder<self> The modified query builder instance with
+     * @return Builder<User> The modified query builder instance with
      * the administrator filter applied.
      */
     public function scopeAdmins(Builder $query): Builder
@@ -749,9 +749,9 @@ class User extends Authenticatable
      * It allows for easy retrieval of all super administrator users in
      * the system.
      *
-     * @param  Builder<self> $query The query builder instance.
+     * @param  Builder<User> $query The query builder instance.
      *
-     * @return Builder<self> The modified query builder instance with
+     * @return Builder<User> The modified query builder instance with
      * the super administrator filter applied.
      */
     public function scopeSuperAdmins(Builder $query): Builder
@@ -766,9 +766,9 @@ class User extends Authenticatable
      * matches the standard user role defined in the Role model. It
      * allows for easy retrieval of all standard users in the system.
      *
-     * @param  Builder<self> $query The query builder instance.
+     * @param  Builder<User> $query The query builder instance.
      *
-     * @return Builder<self> The modified query builder instance with the
+     * @return Builder<User> The modified query builder instance with the
      * standard user filter applied.
      */
     public function scopeStandardUsers(Builder $query): Builder
@@ -784,9 +784,9 @@ class User extends Authenticatable
      * that are marked as test records. This is useful for ensuring
      * that queries return only real user records in the system.
      *
-     * @param  Builder<self> $query The query builder instance.
+     * @param  Builder<User> $query The query builder instance.
      *
-     * @return Builder<self> The modified query builder instance
+     * @return Builder<User> The modified query builder instance
      * with the test records excluded.
      */
     public function scopeReal(Builder $query): Builder

@@ -431,9 +431,9 @@ class Attachment extends Model
      * that are marked as test records. This is useful for ensuring
      * that queries return only real user records in the system.
      *
-     * @param  Builder<self> $query The query builder instance.
+     * @param  Builder<Attachnent> $query The query builder instance.
      *
-     * @return Builder<self>
+     * @return Builder<Attachnent>
      */
     public function scopeReal(Builder $query): Builder
     {
@@ -450,11 +450,11 @@ class Attachment extends Model
      * ATTACHABLE_TYPES constant) and then applies a where
      * clause to filter by the 'attachable_type' column.
      *
-     * @param  Builder<self> $query The query builder instance.
+     * @param  Builder<Attachment> $query The query builder instance.
      * @param  string  $type  The fully-qualified class name of
      * the attachable type to filter by.
      *
-     * @return Builder<self> The modified query builder instance.
+     * @return Builder<Attachment> The modified query builder instance.
      */
     public function scopeAttachableType(
         Builder $query,
@@ -478,10 +478,10 @@ class Attachment extends Model
      * attachments that belong to a specific parent model instance (e.g.,
      * all attachments for a company with ID 1).
      *
-     * @param  Builder<self> $query The query builder instance.
+     * @param  Builder<Attachment> $query The query builder instance.
      * @param  int  $id  The ID of the attachable parent model to filter by.
      *
-     * @return Builder<self> The modified query builder instance.
+     * @return Builder<Attachment> The modified query builder instance.
      */
     public function scopeAttachableId(
         Builder $query,

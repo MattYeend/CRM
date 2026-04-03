@@ -346,10 +346,10 @@ class Activity extends Model
      * user ID, allowing for easy retrieval of all activities
      * assigned to a particular user in the system.
      *
-     * @param  Builder<self> $query The query builder instance.
+     * @param  Builder<Activity> $query The query builder instance.
      * @param  int $userId
      *
-     * @return Builder<self> The modified query builder instance
+     * @return Builder<Activity> The modified query builder instance
      * with the applied filter for assigned user.
      */
     public function scopeAssignedTo(
@@ -373,11 +373,11 @@ class Activity extends Model
      * scope provides a convenient way to filter activities
      * based on the type of their associated subject model.
      *
-     * @param  Builder<self> $query The query builder instance.
+     * @param  Builder<Activity> $query The query builder instance.
      * @param  string $type A fully-qualified class name (e.g.
      * Company::class).
      *
-     * @return Builder<self> The modified query builder instance with
+     * @return Builder<Activity> The modified query builder instance with
      * the applied filter for subject type.
      */
     public function scopeForSubjectType(
@@ -406,11 +406,11 @@ class Activity extends Model
      * provides a convenient way to filter activities based on the
      * specific subject they are associated with.
      *
-     * @param  Builder<self> $query The query builder instance.
+     * @param  Builder<Activity> $query The query builder instance.
      * @param  string $type A fully-qualified class name.
      * @param  int $id   The subject model's primary key.
      *
-     * @return Builder<self> The modified query builder instance
+     * @return Builder<Activity> The modified query builder instance
      * with the applied filters for subject type and ID.
      */
     public function scopeForSubject(
@@ -439,9 +439,9 @@ class Activity extends Model
      * only activities that are not marked as test records
      * will be included in the query results.
      *
-     * @param  Builder<self> $query The query builder instance.
+     * @param  Builder<Activity> $query The query builder instance.
      *
-     * @return Builder<self> The modified query builder instance
+     * @return Builder<Activity> The modified query builder instance
      * with the test records excluded.
      */
     public function scopeReal(Builder $query): Builder
