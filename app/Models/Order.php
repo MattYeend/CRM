@@ -34,14 +34,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * $products = $order->products; // Get the products in this order
  * $creator = $order->creator; // Get the user that created this order
  * $updater = $order->updater; // Get the user that last updated this order
- * $deleter = $order->deleter; // Get the user that deleted this order (if applicable)
- * $restorer = $order->restorer; // Get the user that restored this order (if applicable)
+ * $deleter = $order->deleter; // Get the user that deleted this order
+ *  (if applicable)
+ * $restorer = $order->restorer; // Get the user that restored this order
+ *  (if applicable)
  * ```
  *
  * Helper methods include:
- * - getMarkAsPaid(): Mark the order as paid and record the payment timestamp.
- * - getMarkAsFailed(): Mark the order as failed and record the payment timestamp.
- * - getMarkAsPending(): Mark the order as pending and clear the payment timestamp.
+ * - getMarkAsPaid(): Mark the order as paid and record the payment
+ *      timestamp.
+ * - getMarkAsFailed(): Mark the order as failed and record the payment
+ *      timestamp.
+ * - getMarkAsPending(): Mark the order as pending and clear the payment
+ *      timestamp.
  * Example usage of helper methods:
  * ```php
  * $order = Order::find(1);
@@ -53,17 +58,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Query scopes include:
  * - scopePending($query): Filter the query to only include pending orders.
  * - scopeFailed($query): Filter the query to only include failed orders.
- * - scopeNotPaid($query): Filter the query to only include orders that are not paid (i.e. pending or failed).
+ * - scopeNotPaid($query): Filter the query to only include orders that
+ *      are not paid (i.e. pending or failed).
  * - scopePaid($query): Filter the query to only include paid orders.
- * - scopeSearch($query, $term): Filter the query to include orders matching a search term in the ID, amount, or currency.
+ * - scopeSearch($query, $term): Filter the query to include orders
+ *      matching a search term in the ID, amount, or currency.
  * - scopeReal($query): Filter the query to only include non-test orders.
  * Example usage of query scopes:
  * ```php
  * $pendingOrders = Order::pending()->get(); // Get all pending orders
  * $failedOrders = Order::failed()->get(); // Get all failed orders
- * $notPaidOrders = Order::notPaid()->get(); // Get all orders that are not paid
+ * $notPaidOrders = Order::notPaid()->get(); // Get all orders that are not
+ *  paid
  * $paidOrders = Order::paid()->get(); // Get all paid orders
- * $searchResults = Order::search('USD')->get(); // Get orders matching the search term "USD"
+ * $searchResults = Order::search('USD')->get(); // Get orders matching the
+ *  search term "USD"
  * $realOrders = Order::real()->get(); // Get all non-test orders
  * ```
  */
@@ -270,7 +279,8 @@ class Order extends Model
     }
 
     /**
-     * Scope a query to only include orders that are not paid (i.e. pending or failed).
+     * Scope a query to only include orders that are not paid
+     * (i.e. pending or failed).
      *
      * @param  Builder $query The query builder instance.
      *
@@ -278,7 +288,10 @@ class Order extends Model
      */
     public function scopeNotPaid(Builder $query): Builder
     {
-        return $query->whereIn('status', [self::STATUS_PENDING, self::STATUS_FAILED]);
+        return $query->whereIn(
+            'status',
+            [self::STATUS_PENDING, self::STATUS_FAILED]
+        );
     }
 
     /**
@@ -294,7 +307,8 @@ class Order extends Model
     }
 
     /**
-     * Scope a search query to include orders matching a search term in the ID, amount, or currency.
+     * Scope a search query to include orders matching a search term in
+     * the ID, amount, or currency.
      *
      * @param  Builder $query The query builder instance.
      * @param  string|null $term The search term to filter by.

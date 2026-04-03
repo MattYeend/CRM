@@ -19,25 +19,31 @@ use Illuminate\Support\Str;
  * category name on creation and regenerated whenever the name changes.
  *
  * Relationships defined in this model include:
- * - parent(): The parent category of this category (if any).
- * - children(): The child categories belonging to this category.
+ * - parent(): The parent category of this category
+ *      (if any).
+ * - children(): The child categories belonging to
+ *      this category.
  * - parts(): The parts belonging to this category.
  * - creator(): The user that created the category.
  * - updater(): The user that last updated the category.
- * - deleter(): The user that deleted the category (if soft-deleted).
- * - restorer(): The user that restored the category (if soft-deleted).
+ * - deleter(): The user that deleted the category
+ *      (if soft-deleted).
+ * - restorer(): The user that restored the category
+ *      (if soft-deleted).
  * Example usage of relationships:
  * ```php
  * $category = PartCategory::find(1);
  * $parent = $category->parent; // Get the parent category
  * $children = $category->children; // Get the child categories
  * $parts = $category->parts; // Get the parts in this category
- * $creator = $category->creator; // Get the user that created this category
- * $updater = $category->updater; // Get the user that last updated this category
- * $deleter = $category->deleter; // Get the user that deleted this category
- * (if applicable)
- * $restorer = $category->restorer; // Get the user that restored this category
- * (if applicable)
+ * $creator = $category->creator; // Get the user that created
+ *  this category
+ * $updater = $category->updater; // Get the user that last updated
+ *  this category
+ * $deleter = $category->deleter; // Get the user that deleted
+ *  this category (if applicable)
+ * $restorer = $category->restorer; // Get the user that restored
+ * this category (if applicable)
  * ```
  *
  * Accessor methods include:
@@ -54,13 +60,16 @@ use Illuminate\Support\Str;
  * ```
  *
  * Query scopes include:
- * - scopeWithName($query, $name): Filter categories by a specific name.
- * - scopeReal($query): Filter the query to only include non-test categories.
+ * - scopeWithName($query, $name): Filter categories by a specific
+ *      name.
+ * - scopeReal($query): Filter the query to only include non-test
+ *      categories.
  * Example usage of query scopes:
  * ```php
- * $categoriesWithName = PartCategory::withName('Screws')->get(); // Get categories
- * with the name "Screws"
- * $realCategories = PartCategory::real()->get(); // Get all non-test categories
+ * $categoriesWithName = PartCategory::withName('Screws')->get();
+ * // Get categories with the name "Screws"
+ * $realCategories = PartCategory::real()->get(); // Get all non-test
+ * categories
  * ```
  */
 class PartCategory extends Model
@@ -182,9 +191,10 @@ class PartCategory extends Model
     /**
      * Get the URL-friendly slug for the category.
      *
-     * The slug is automatically generated from the category name on creation and
-     * regenerated whenever the name changes. It is used for clean URLs and should
-     * be unique across categories to avoid conflicts.
+     * The slug is automatically generated from the category
+     * name on creation and regenerated whenever the name
+     * changes. It is used for clean URLs and should be
+     * unique across categories to avoid conflicts.
      *
      * @return string The slug for the category.
      */
@@ -243,8 +253,9 @@ class PartCategory extends Model
     /**
      * Bootstrap the model and its traits.
      *
-     * Registers model event listeners to automatically generate a URL-friendly
-     * slug from the category name on creation, and regenerate it if the name
+     * Registers model event listeners to automatically
+     * generate a URL-friendly slug from the category
+     * name on creation, and regenerate it if the name
      * is changed during an update.
      *
      * @return void

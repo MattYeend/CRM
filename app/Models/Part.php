@@ -81,11 +81,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * ```
  *
  * Helper methods include:
- * - getIsLowStock(): Returns true if the part's quantity is at or below the reorder point.
+ * - getIsLowStock(): Returns true if the part's quantity is at or
+ *      below the reorder point.
  * - getIsOutOfStock(): Returns true if the part's quantity is zero.
- * - getMarginPercentage(): Calculates the profit margin percentage based on price and cost price.
- * - getBomCost(): Recursively calculates the total cost of the part based on its bill of materials, including sub-assemblies.
- * - getHasBom(): Returns true if the part has any associated bill of materials entries.
+ * - getMarginPercentage(): Calculates the profit margin percentage
+ *      based on price and cost price.
+ * - getBomCost(): Recursively calculates the total cost of the part
+ *      based on its bill of materials, including sub-assemblies.
+ * - getHasBom(): Returns true if the part has any associated bill
+ *      of materials entries.
  * Example usage of helper methods:
  * ```php
  * $part = Part::find(1);
@@ -97,37 +101,55 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * }
  * $margin = $part->margin_percentage; // Get the profit margin percentage
  * $bomCost = $part->bom_cost; // Get the total BOM cost for this part
- * $hasBom = $part->has_bom; // Check if this part has an associated bill of materials
+ * $hasBom = $part->has_bom; // Check if this part has an associated
+ *  bill of materials
  * ```
  *
  * Query scopes include:
  * - scopeActive($query): Filter to only active parts.
- * - scopeLowStock($query): Filter to parts where quantity is at or below the reorder point.
+ * - scopeLowStock($query): Filter to parts where quantity is at or below
+ *      the reorder point.
  * - scopeOutOfStock($query): Filter to parts where quantity is zero.
- * - scopeOfType($query, $type): Filter to parts of a specific type (e.g. 'raw_material').
- * - scopeOfStatus($query, $status): Filter to parts of a specific status (e.g. 'active').
+ * - scopeOfType($query, $type): Filter to parts of a specific type (e.g.
+ *      'raw_material').
+ * - scopeOfStatus($query, $status): Filter to parts of a specific status
+ *      (e.g. 'active').
  * - scopePurchasable($query): Filter to parts that are marked as purchasable.
  * - scopeSellable($query): Filter to parts that are marked as sellable.
- * - scopeManufactured($query): Filter to parts that are marked as manufactured in-house.
+ * - scopeManufactured($query): Filter to parts that are marked as
+ *      manufactured in-house.
  * - scopeSerialised($query): Filter to parts that are marked as serialised.
- * - scopeBatchTracked($query): Filter to parts that are marked as batch tracked.
+ * - scopeBatchTracked($query): Filter to parts that are marked as batch
+ *      tracked.
  * - scopeReal($query): Filter to parts that are not marked as test data.
- * - scopeOfType($query, $type): Filter to parts of a specific type (e.g. 'raw_material').
- * - scopeOfStatus($query, $status): Filter to parts of a specific status (e.g. 'active').
+ * - scopeOfType($query, $type): Filter to parts of a specific type (e.g.
+ *      'raw_material').
+ * - scopeOfStatus($query, $status): Filter to parts of a specific status
+ *      (e.g. 'active').
  * Example usage of query scopes:
  * ```php
  * $activeParts = Part::active()->get(); // Get all active parts
- * $lowStockParts = Part::lowStock()->get(); // Get all parts that are low on stock
- * $outOfStockParts = Part::outOfStock()->get(); // Get all parts that are out of stock
- * $rawMaterials = Part::ofType(Part::RAW_MATERIAL_PART_TYPE)->get(); // Get all raw material parts
- * $activeFinishedGoods = Part::ofType(Part::FINISHED_GOOD_PART_TYPE)->ofStatus(Part::ACTIVE_PART_STATUS)->get(); // Get all active finished good parts
- * $purchasableParts = Part::purchasable()->get(); // Get all parts that are purchasable
+ * $lowStockParts = Part::lowStock()->get(); // Get all parts that are low
+ *  on stock
+ * $outOfStockParts = Part::outOfStock()->get(); // Get all parts that are
+ *  out of stock
+ * $rawMaterials = Part::ofType(Part::RAW_MATERIAL_PART_TYPE)->get(); // Get
+ *  all raw material parts
+ * $activeFinishedGoods = Part::ofType(Part::FINISHED_GOOD_PART_TYPE)
+ *  ->ofStatus(Part::ACTIVE_PART_STATUS)->get(); // Get all active finished
+ *      good parts
+ * $purchasableParts = Part::purchasable()->get(); // Get all parts that are
+ *  purchasable
  * $sellableParts = Part::sellable()->get(); // Get all parts that are sellable
- * $manufacturedParts = Part::manufactured()->get(); // Get all parts that are manufactured in-house
- * $serialisedParts = Part::serialised()->get(); // Get all parts that are serialised
- * $batchTrackedParts = Part::batchTracked()->get(); // Get all parts that are batch tracked
+ * $manufacturedParts = Part::manufactured()->get(); // Get all parts that are
+ *  manufactured in-house
+ * $serialisedParts = Part::serialised()->get(); // Get all parts that are
+ *  serialised
+ * $batchTrackedParts = Part::batchTracked()->get(); // Get all parts that are
+ *  batch tracked
  * $realParts = Part::real()->get(); // Get all parts that are not test data
- * $searchResults = Part::search('Widget')->get(); // Get all parts matching the search term "Widget"
+ * $searchResults = Part::search('Widget')->get(); // Get all parts matching
+ *  the search term "Widget"
  * ```
  */
 class Part extends Model
@@ -625,8 +647,9 @@ class Part extends Model
     /**
      * Scope a query to only include parts that are purchasable.
      *
-     * Filters to parts where 'is_purchasable' is true, indicating they can be
-     * sourced from suppliers and included in purchase orders.
+     * Filters to parts where 'is_purchasable' is true, indicating
+     * they can be sourced from suppliers and included in purchase
+     * orders.
      *
      * @param  Builder $query The query builder instance.
      *
@@ -640,8 +663,8 @@ class Part extends Model
     /**
      * Scope a query to only include parts that are sellable.
      *
-     * Filters to parts where 'is_sellable' is true, indicating they can be sold
-     * to customers and included in sales orders.
+     * Filters to parts where 'is_sellable' is true, indicating
+     * they can be sold to customers and included in sales orders.
      *
      * @param  Builder $query The query builder instance.
      *
@@ -655,10 +678,11 @@ class Part extends Model
     /**
      * Scope a query to only include parts that are manufactured in-house.
      *
-     * Filters to parts where 'is_manufactured' is true, indicating they are
-     * produced internally rather than sourced from suppliers. Useful for
-     * differentiating between raw materials, sub-assemblies, and finished goods
-     * in inventory management and production planning contexts.
+     * Filters to parts where 'is_manufactured' is true, indicating
+     * they are produced internally rather than sourced from suppliers.
+     * Useful for differentiating between raw materials, sub-assemblies,
+     * and finished goods in inventory management and production planning
+     * contexts.
      *
      * @param  Builder $query The query builder instance.
      *
@@ -672,10 +696,10 @@ class Part extends Model
     /**
      * Scope a query to only include parts that are serialised.
      *
-     * Filters to parts where 'is_serialised' is true, indicating that individual
-     * units of the part are tracked with unique serial numbers. Useful for
-     * managing warranty, service, and traceability requirements for high-value or
-     * regulated items.
+     * Filters to parts where 'is_serialised' is true, indicating
+     * that individual units of the part are tracked with unique
+     * serial numbers. Useful for managing warranty, service, and
+     * traceability requirements for high-value or regulated items.
      *
      * @param  Builder $query The query builder instance.
      *
@@ -689,10 +713,11 @@ class Part extends Model
     /**
      * Scope a query to only include parts that are batch tracked.
      *
-     * Filters to parts where 'is_batch_tracked' is true, indicating that inventory
-     * is managed in batches or lots rather than individual units. Useful for
-     * managing expiry, quality control, and traceability requirements for items like
-     * chemicals, pharmaceuticals, or food products.
+     * Filters to parts where 'is_batch_tracked' is true, indicating
+     * that inventory is managed in batches or lots rather than
+     * individual units. Useful for managing expiry, quality control,
+     * and traceability requirements for items like chemicals,
+     * pharmaceuticals, or food products.
      *
      * @param  Builder $query The query builder instance.
      *
@@ -706,11 +731,12 @@ class Part extends Model
     /**
      * Scope a query to only include non-test parts.
      *
-     * Filters out any records where the 'is_test' flag is true, ensuring that
-     * only real production data is included in the results. Important for accurate
-     * inventory reporting, cost analysis, and production planning by excluding any
-     * parts that are created for testing purposes and not actually used in the
-     * manufacturing or sales processes.
+     * Filters out any records where the 'is_test' flag is true, ensuring
+     * that only real production data is included in the results.
+     * Important for accurate inventory reporting, cost analysis, and
+     * production planning by excluding any parts that are created for
+     * testing purposes and not actually used in the manufacturing or
+     * sales processes.
      *
      * @param  Builder $query The query builder instance.
      *
@@ -724,11 +750,12 @@ class Part extends Model
     /**
      * Scope a search query to filter parts by a search term.
      *
-     * Filters parts where the SKU, part number, name, or description contains the
-     * search term. Useful for implementing search functionality in the UI, allowing
-     * users to quickly find parts based on common identifiers or keywords.
-     * The search is case-insensitive and matches partial terms, making it flexible for
-     * finding relevant parts even with incomplete information.
+     * Filters parts where the SKU, part number, name, or description
+     * contains the search term. Useful for implementing search functionality
+     * in the UI, allowing users to quickly find parts based on common
+     * identifiers or keywords.
+     * The search is case-insensitive and matches partial terms, making it
+     * flexible for finding relevant parts even with incomplete information.
      *
      * @param  Builder $query The query builder instance.
      * @param  string $term  The search term to filter by.

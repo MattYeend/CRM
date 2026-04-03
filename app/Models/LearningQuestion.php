@@ -24,60 +24,98 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * associated learning.
  *
  * Relationships in this model include:
- * - learning(): BelongsTo relationship to the Learning this question belongs to.
- * - answers(): HasMany relationship to the LearningAnswer options for this question.
- * - correctAnswers(): HasMany relationship to the correct LearningAnswer options for this question.
- * - incorrectAnswers(): HasMany relationship to the incorrect LearningAnswer options for this question.
+ * - learning(): BelongsTo relationship to the Learning this
+ *      question belongs to.
+ * - answers(): HasMany relationship to the LearningAnswer
+ *      options for this question.
+ * - correctAnswers(): HasMany relationship to the correct
+ *      LearningAnswer options for this question.
+ * - incorrectAnswers(): HasMany relationship to the incorrect
+ *      LearningAnswer options for this question.
  * Example usage of relationships:
  * ```php
  * $question = LearningQuestion::find(1);
  * $learning = $question->learning; // Get the parent learning
- * $answers = $question->answers; // Get all answer options for this question
- * $correctAnswers = $question->correctAnswers; // Get the correct answer options for this question
- * $incorrectAnswers = $question->incorrectAnswers; // Get the incorrect answer options for this question
+ * $answers = $question->answers; // Get all answer options for
+ *  this question
+ * $correctAnswers = $question->correctAnswers; // Get the correct
+ *  answer options for this question
+ * $incorrectAnswers = $question->incorrectAnswers; // Get the
+ *  incorrect answer options for this question
  * ```
  *
  * Accessor methods include:
- * - getQuestionAttribute(): Applies the test prefix to the question text when marked as a test.
- * - hasCorrectAnswer(): Returns a boolean indicating whether this question has at least one correct answer.
- * - hasIncorrectAnswer(): Returns a boolean indicating whether this question has at least one incorrect answer.
- * - isValid(): Returns a boolean indicating whether this question is valid (has at least one correct and one incorrect answer).
- * - getValidationStatusAttribute(): Returns a string indicating the validation status ('valid' or 'invalid').
- * - getValidationStatusLabelAttribute(): Returns a human-readable label for the validation status.
- * - getValidationStatusColorAttribute(): Returns a color name or code representing the validation status.
- * - getValidationStatusIconAttribute(): Returns a string representing an icon for the validation status.
- * - getValidationStatusTooltipAttribute(): Returns a tooltip message providing additional information about the validation status.
- * - getValidationStatusBadgeAttribute(): Returns a string representing a badge class for the validation status.
- * - getValidationStatusTextAttribute(): Returns a human-readable text indicating the validation status.
- * - getValidationStatusClassAttribute(): Returns a CSS class name representing the validation status.
+ * - getQuestionAttribute(): Applies the test prefix to the question
+ *      text when marked as a test.
+ * - hasCorrectAnswer(): Returns a boolean indicating whether this
+ *      question has at least one correct answer.
+ * - hasIncorrectAnswer(): Returns a boolean indicating whether this
+ *      question has at least one incorrect answer.
+ * - isValid(): Returns a boolean indicating whether this question is
+ *      valid (has at least one correct and one incorrect answer).
+ * - getValidationStatusAttribute(): Returns a string indicating the
+ *      validation status ('valid' or 'invalid').
+ * - getValidationStatusLabelAttribute(): Returns a human-readable label
+ *      for the validation status.
+ * - getValidationStatusColorAttribute(): Returns a color name or code
+ *      representing the validation status.
+ * - getValidationStatusIconAttribute(): Returns a string representing
+ *      an icon for the validation status.
+ * - getValidationStatusTooltipAttribute(): Returns a tooltip message
+ *      providing additional information about the validation status.
+ * - getValidationStatusBadgeAttribute(): Returns a string representing
+ *      a badge class for the validation status.
+ * - getValidationStatusTextAttribute(): Returns a human-readable
+ *      text indicating the validation status.
+ * - getValidationStatusClassAttribute(): Returns a CSS class
+ *      name representing the validation status.
  * Example usage of accessors:
  * ```php
  * $question = LearningQuestion::find(1);
- * $questionText = $question->question; // Get the question text with test prefix if applicable
- * $hasCorrect = $question->has_correct_answer; // Check if the question has a correct answer
- * $hasIncorrect = $question->has_incorrect_answer; // Check if the question has an incorrect answer
+ * $questionText = $question->question; // Get the question text
+ *  with test prefix if applicable
+ * $hasCorrect = $question->has_correct_answer; // Check if the
+ *  question has a correct answer
+ * $hasIncorrect = $question->has_incorrect_answer; // Check if
+ *  the question has an incorrect answer
  * $isValid = $question->is_valid; // Check if the question is valid
- * $validationStatus = $question->validation_status; // Get the validation status ('valid' or 'invalid')
- * $validationLabel = $question->validation_status_label; // Get the validation status label
- * $validationColor = $question->validation_status_color; // Get the validation status color
- * $validationIcon = $question->validation_status_icon; // Get the validation status icon
- * $validationTooltip = $question->validation_status_tooltip; // Get the validation status tooltip
- * $validationBadge = $question->validation_status_badge; // Get the validation status badge class
- * $validationText = $question->validation_status_text; // Get the validation status text
- * $validationClass = $question->validation_status_class; // Get the validation status CSS class
+ * $validationStatus = $question->validation_status; // Get the
+ *  validation status ('valid' or 'invalid')
+ * $validationLabel = $question->validation_status_label; // Get
+ *  the validation status label
+ * $validationColor = $question->validation_status_color; // Get
+ *  the validation status color
+ * $validationIcon = $question->validation_status_icon; // Get
+ *  the validation status icon
+ * $validationTooltip = $question->validation_status_tooltip;
+ *  // Get the validation status tooltip
+ * $validationBadge = $question->validation_status_badge; // Get
+ *  the validation status badge class
+ * $validationText = $question->validation_status_text; // Get
+ *  the validation status text
+ * $validationClass = $question->validation_status_class; // Get
+ *  the validation status CSS class
  * ```
  *
  * Query scopes include:
- * - scopeValid($query): Filter the query to only include valid questions.
- * - scopeInvalid($query): Filter the query to only include invalid questions.
- * - scopeForLearning($query, $learningId): Filter the query to only include questions for a given learning ID.
- * - scopeSearch($query, $term): Filter the query to only include questions containing a search term in the question text.
+ * - scopeValid($query): Filter the query to only include
+ *      valid questions.
+ * - scopeInvalid($query): Filter the query to only include
+ *      invalid questions.
+ * - scopeForLearning($query, $learningId): Filter the query
+ *      to only include questions for a given learning ID.
+ * - scopeSearch($query, $term): Filter the query to only include
+ *      questions containing a search term in the question text.
  * Example usage of query scopes:
  * ```php
- * $validQuestions = LearningQuestion::valid()->get(); // Get all valid questions
- * $invalidQuestions = LearningQuestion::invalid()->get(); // Get all invalid questions
- * $questionsForLearning = LearningQuestion::forLearning($learningId)->get(); // Get questions for a specific learning
- * $searchResults = LearningQuestion::search('term')->get(); // Get questions containing 'term' in the question text
+ * $validQuestions = LearningQuestion::valid()->get(); // Get all
+ *  valid questions
+ * $invalidQuestions = LearningQuestion::invalid()->get(); // Get all
+ *  invalid questions
+ * $questionsForLearning = LearningQuestion::forLearning($learningId)
+ *  ->get(); // Get questions for a specific learning
+ * $searchResults = LearningQuestion::search('term')->get(); // Get
+ *  questions containing 'term' in the question text
  * ```
  */
 class LearningQuestion extends Model
@@ -156,7 +194,8 @@ class LearningQuestion extends Model
     /**
      * Determine if the question has any correct answers.
      *
-     * @return bool True if at least one correct answer exists, false otherwise.
+     * @return bool True if at least one correct answer exists,
+     * false otherwise.
      */
     public function hasCorrectAnswer(): bool
     {
@@ -166,7 +205,8 @@ class LearningQuestion extends Model
     /**
      * Determine if the question has any incorrect answers.
      *
-     * @return bool True if at least one incorrect answer exists, false otherwise.
+     * @return bool True if at least one incorrect answer exists,
+     * false otherwise.
      */
     public function hasIncorrectAnswer(): bool
     {
@@ -232,7 +272,8 @@ class LearningQuestion extends Model
     }
 
     /**
-     * Scope a query to only include questions containing a search term in the question text.
+     * Scope a query to only include questions containing a search term in
+     * the question text.
      *
      * @param  Builder<LearningQuestion> $query The query builder instance.
      * @param  string|null $term The search term to filter by.

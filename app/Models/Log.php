@@ -16,10 +16,11 @@ use Illuminate\Support\Facades\Auth;
  * application for auditing and debugging purposes.
  *
  * Action constants are defined for various types of events, including
- * user authentication, user management, MFA/settings changes, role/permission
- * management, errors, cache operations, and activities related to core entities
- * like companies, deals, invoices, etc. New actions should be added as constants
- * to ensure consistency and ease of use when logging events throughout the application.
+ * user authentication, user management, MFA/settings changes,
+ * role/permission management, errors, cache operations, and activities
+ * related to core entities like companies, deals, invoices, etc. New actions
+ * should be added as constants to ensure consistency and ease of use when
+ * logging events throughout the application.
  * Example usage of logging an action:
  * ```php
  * Log::log(Log::ACTION_LOGIN_SUCCESS, ['ip' => $request->ip()]);
@@ -31,22 +32,28 @@ use Illuminate\Support\Facades\Auth;
  * Example usage of relationships:
  * ```php
  * $log = Log::find(1);
- * $loggedInUser = $log->loggedInUser; // Get the user that performed the action
- * $relatedUser = $log->relatedToUser; // Get the user related to the action (if applicable)
+ * $loggedInUser = $log->loggedInUser; // Get the user that
+ *  performed the action
+ * $relatedUser = $log->relatedToUser; // Get the user related
+ *  to the action (if applicable)
  * ```
  *
  * Helper methods include:
- * - log(): Static method to create a new log entry with the specified action, data, and user associations.
+ * - log(): Static method to create a new log entry with
+ *      the specified action, data, and user associations.
  * Example usage of helper methods:
  * ```php
- * Log::log(Log::ACTION_CREATE_USER, ['new_user_id' => $newUser->id], Auth::id(), $newUser->id);
+ * Log::log(Log::ACTION_CREATE_USER, ['new_user_id' =>
+ *  $newUser->id], Auth::id(), $newUser->id);
  * ```
  *
  * Query scopes include:
- * - scopeOfAction($query, $action): Filter logs by a specific action constant.
+ * - scopeOfAction($query, $action): Filter logs by a
+ *      specific action constant.
  * Example usage of query scopes:
  * ```php
- * $loginLogs = Log::ofAction(Log::ACTION_LOGIN_SUCCESS)->get(); // Get all successful login logs
+ * $loginLogs = Log::ofAction(Log::ACTION_LOGIN_SUCCESS)
+ *  ->get(); // Get all successful login logs
  * ```
  */
 class Log extends Model

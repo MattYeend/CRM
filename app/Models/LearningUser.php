@@ -24,14 +24,19 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * $learningUser = LearningUser::find(1);
  * $learning = $learningUser->learning; // Get the associated learning
  * $user = $learningUser->user; // Get the associated user
- * $creator = $learningUser->creator; // Get the user that created this pivot entry
- * $updater = $learningUser->updater; // Get the user that last updated this pivot entry
- * $completer = $learningUser->completer; // Get the user that completed this learning (if applicable)
+ * $creator = $learningUser->creator; // Get the user that created this
+ *  pivot entry
+ * $updater = $learningUser->updater; // Get the user that last updated
+ *  this pivot entry
+ * $completer = $learningUser->completer; // Get the user that completed
+ *  this learning (if applicable)
  * ```
  *
  * Accessor methods include:
- * - getStatusAttribute(): Returns the status of the learning for the user, which can be 'complete' or 'incomplete'.
- * - getScoreAttribute(): Returns the score of the learning for the user, if applicable.
+ * - getStatusAttribute(): Returns the status of the learning for the
+ *      user, which can be 'complete' or 'incomplete'.
+ * - getScoreAttribute(): Returns the score of the learning for the
+ *      user, if applicable.
  * Example usage of accessors:
  * ```php
  * $learningUser = LearningUser::find(1);
@@ -40,18 +45,28 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * ```
  *
  * Query scopes include:
- * - scopeCompletedBetween($query, $startDate, $endDate): Filter learnings completed within a given date range.
- * - scopeCompletedForUser($query, $userId): Filter to only include completed learnings for a given user.
- * - scopeIncompleteForUser($query, $userId): Filter to only include incomplete learnings for a given user.
- * - scopeForUser($query, $userId): Filter to only include learnings for a given user.
- * - scopeRealForUser($query, $userId): Filter to only include non-test learnings for a given user.
+ * - scopeCompletedBetween($query, $startDate, $endDate): Filter learnings
+ *      completed within a given date range.
+ * - scopeCompletedForUser($query, $userId): Filter to only include completed
+ *      learnings for a given user.
+ * - scopeIncompleteForUser($query, $userId): Filter to only include incomplete
+ *      learnings for a given user.
+ * - scopeForUser($query, $userId): Filter to only include learnings for a
+ *      given user.
+ * - scopeRealForUser($query, $userId): Filter to only include non-test
+ *      learnings for a given user.
  * Example usage of query scopes:
  * ```php
- * $completedLearnings = LearningUser::completedBetween('2024-01-01', '2024-01-31')->get(); // Get learnings completed in January 2024
- * $completedForUser = LearningUser::completedForUser($userId)->get(); // Get completed learnings for a specific user
- * $incompleteForUser = LearningUser::incompleteForUser($userId)->get(); // Get incomplete learnings for a specific user
- * $learningsForUser = LearningUser::forUser($userId)->get(); // Get all learnings for a specific user
- * $realLearningsForUser = LearningUser::realForUser($userId)->get(); // Get non-test learnings for a specific user
+ * $completedLearnings = LearningUser::completedBetween('2024-01-01',
+ *  '2024-01-31')->get(); // Get learnings completed in January 2024
+ * $completedForUser = LearningUser::completedForUser($userId)->get();
+ *  // Get completed learnings for a specific user
+ * $incompleteForUser = LearningUser::incompleteForUser($userId)->get();
+ *  // Get incomplete learnings for a specific user
+ * $learningsForUser = LearningUser::forUser($userId)->get(); // Get
+ *  all learnings for a specific user
+ * $realLearningsForUser = LearningUser::realForUser($userId)->get();
+ *  // Get non-test learnings for a specific user
  * ```
  */
 class LearningUser extends Pivot
@@ -156,7 +171,8 @@ class LearningUser extends Pivot
     /**
      * Get the status of the learning for the user.
      *
-     * @return string The status of the learning for the user, which can be 'complete', or 'incomplete'.
+     * @return string The status of the learning for the user,
+     * which can be 'complete', or 'incomplete'.
      */
     public function getStatusAttribute(): string
     {
@@ -166,7 +182,8 @@ class LearningUser extends Pivot
     /**
      * Get the score of the learning for the user, if applicable.
      *
-     * @return int|null The score of the learning for the user, or null if not applicable.
+     * @return int|null The score of the learning for the user,
+     * or null if not applicable.
      */
     public function getScoreAttribute(): ?int
     {
@@ -174,16 +191,22 @@ class LearningUser extends Pivot
     }
 
     /**
-     * Scope a query to only include learnings completed within a given date range.
+     * Scope a query to only include learnings completed
+     * within a given date range.
      *
      * @param Builder $query The query builder instance.
-     * @param string|null $startDate The start date of the range (inclusive).
-     * @param string|null $endDate The end date of the range (inclusive).
+     * @param string|null $startDate The start date of
+     * the range (inclusive).
+     * @param string|null $endDate The end date of the
+     * range (inclusive).
      *
      * @return Builder The modified query builder instance.
      */
-    public function scopeCompletedBetween($query, ?string $startDate, ?string $endDate): Builder
-    {
+    public function scopeCompletedBetween(
+        $query,
+        ?string $startDate,
+        ?string $endDate
+    ): Builder {
         if ($startDate) {
             $query->where('completed_at', '>=', $startDate);
         }
@@ -196,29 +219,35 @@ class LearningUser extends Pivot
     }
 
     /**
-     * Scope a query to only include completed learnings for a given user.
+     * Scope a query to only include completed learnings for a
+     * given user.
      *
      * @param Builder $query The query builder instance.
      * @param int $userId The ID of the user to filter by.
      *
      * @return Builder The modified query builder instance.
      */
-    public function scopeCompletedForUser($query, int $userId): Builder
-    {
+    public function scopeCompletedForUser(
+        $query,
+        int $userId
+    ): Builder {
         return $query->where('user_id', $userId)
             ->where('is_complete', true);
     }
 
     /**
-     * Scope a query to only include incomplete learnings for a given user.
+     * Scope a query to only include incomplete learnings for a
+     * given user.
      *
      * @param Builder $query The query builder instance.
      * @param int $userId The ID of the user to filter by.
      *
      * @return Builder The modified query builder instance.
      */
-    public function scopeIncompleteForUser($query, int $userId): Builder
-    {
+    public function scopeIncompleteForUser(
+        $query,
+        int $userId
+    ): Builder {
         return $query->where('user_id', $userId)
             ->where('is_complete', false);
     }

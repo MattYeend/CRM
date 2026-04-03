@@ -18,24 +18,32 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * - user(): The user that this note association belongs to.
  * - creator(): The user that created this note-user association.
  * - updater(): The user that last updated this note-user association.
- * - deleter(): The user that deleted this note-user association (if soft-deleted).
- * - restorer(): The user that restored this note-user association (if soft-deleted).
+ * - deleter(): The user that deleted this note-user association
+ *      (if soft-deleted).
+ * - restorer(): The user that restored this note-user association
+ *      (if soft-deleted).
  * Example usage of relationships:
  * ```php
  * $noteUser = NoteUser::find(1);
  * $note = $noteUser->note; // Get the associated note
  * $user = $noteUser->user; // Get the associated user
- * $creator = $noteUser->creator; // Get the user that created this association
- * $updater = $noteUser->updater; // Get the user that last updated this association
- * $deleter = $noteUser->deleter; // Get the user that deleted this association (if applicable)
- * $restorer = $noteUser->restorer; // Get the user that restored this association (if applicable)
+ * $creator = $noteUser->creator; // Get the user that created this
+ *  association
+ * $updater = $noteUser->updater; // Get the user that last updated
+ *  this association
+ * $deleter = $noteUser->deleter; // Get the user that deleted this
+ *  association (if applicable)
+ * $restorer = $noteUser->restorer; // Get the user that restored this
+ *  association (if applicable)
  * ```
  *
  * Query scopes include:
- * - scopeReal($query): Filter the query to only include non-test note-user associations.
+ * - scopeReal($query): Filter the query to only include non-test note-user
+ *      associations.
  * Example usage of query scopes:
  * ```php
- * $realNoteUsers = NoteUser::real()->get(); // Get all non-test note-user associations
+ * $realNoteUsers = NoteUser::real()->get(); // Get all non-test note-user
+ *  associations
  * ```
  */
 class NoteUser extends Pivot

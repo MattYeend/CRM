@@ -166,7 +166,8 @@ class LearningAnswer extends Model
      *
      * @param Builder<LearningAnswer> $query The query builder instance.
      *
-     * @return Builder<LearningAnswer> The query builder with the incorrect answer scope applied.
+     * @return Builder<LearningAnswer> The query builder with the incorrect
+     * answer scope applied.
      */
     public function scopeIsIncorrect(Builder $query): Builder
     {

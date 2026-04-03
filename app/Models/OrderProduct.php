@@ -19,40 +19,57 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * - product(): The product that this order entry belongs to.
  * - creator(): The user that created the record.
  * - updater(): The user that updated the record.
- * - deleter(): The user that deleted the record (if soft-deleted).
- * - restorer(): The user that restored the record (if soft-deleted).
+ * - deleter(): The user that deleted the record
+ *      (if soft-deleted).
+ * - restorer(): The user that restored the record
+ *      (if soft-deleted).
  * Example usage of relationships:
  * ```php
  * $orderProduct = OrderProduct::find(1);
  * $order = $orderProduct->order; // Get the associated order
- * $product = $orderProduct->product; // Get the associated product
- * $creator = $orderProduct->creator; // Get the user that created the record
- * $updater = $orderProduct->updater; // Get the user that updated the record
- * $deleter = $orderProduct->deleter; // Get the user that deleted the record (if applicable)
- * $restorer = $orderProduct->restorer; // Get the user that restored the record (if applicable)
+ * $product = $orderProduct->product; // Get the associated
+ *  product
+ * $creator = $orderProduct->creator; // Get the user
+ *  that created the record
+ * $updater = $orderProduct->updater; // Get the user
+ *  that updated the record
+ * $deleter = $orderProduct->deleter; // Get the user
+ *  that deleted the record (if applicable)
+ * $restorer = $orderProduct->restorer; // Get the user
+ *  that restored the record (if applicable)
  * ```
  *
  * Accessor methods include:
- * - getFormattedPriceAttribute(): Returns the unit price formatted to two decimal places as a string.
- * - getFormattedTotalAttribute(): Returns the line item total formatted to two decimal places as a string.
- * - getCalculatedTotalAttribute(): Returns the calculated line item total based on quantity and unit price.
+ * - getFormattedPriceAttribute(): Returns the unit price
+ *      formatted to two decimal places as a string.
+ * - getFormattedTotalAttribute(): Returns the line item
+ *      total formatted to two decimal places as a string.
+ * - getCalculatedTotalAttribute(): Returns the calculated
+ *      line item total based on quantity and unit price.
  * Example usage of accessors:
  * ```php
  * $orderProduct = OrderProduct::find(1);
  * $price = $orderProduct->formatted_price; // e.g. "19.99"
  * $total = $orderProduct->formatted_total; // e.g. "59.97"
- * $calculatedTotal = $orderProduct->calculated_total; // e.g. 59.97 (quantity * price)
+ * $calculatedTotal = $orderProduct->calculated_total;
+ *      // e.g. 59.97 (quantity * price)
  * ```
  *
  * Query scopes include:
- * - scopeForOrder($query, $orderId): Filter the query to only include line items for a given order ID.
- * - scopeForProduct($query, $productId): Filter the query to only include line items for a given product ID.
- * - scopeReal($query): Filter the query to only include non-test order products.
+ * - scopeForOrder($query, $orderId): Filter the query to
+ *      only include line items for a given order ID.
+ * - scopeForProduct($query, $productId): Filter the query
+ *      to only include line items for a given product ID.
+ * - scopeReal($query): Filter the query to only include
+ *      non-test order products.
  * Example usage of query scopes:
  * ```php
- * $orderProductsForOrder = OrderProduct::forOrder($orderId)->get(); // Get all line items for a specific order
- * $orderProductsForProduct = OrderProduct::forProduct($productId)->get(); // Get all line items for a specific product
- * $realOrderProducts = OrderProduct::real()->get(); // Get all non-test order products
+ * $orderProductsForOrder = OrderProduct::forOrder($orderId)
+ *  ->get(); // Get all line items for a specific order
+ * $orderProductsForProduct = OrderProduct::forProduct($productId)
+ *  ->get(); // Get all line items for a specific product
+ * $realOrderProducts = OrderProduct::real()->get(); // Get
+ *  all non-test order products
  * ```
  */
 class OrderProduct extends Pivot
