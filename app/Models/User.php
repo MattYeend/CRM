@@ -85,15 +85,6 @@ use Laravel\Sanctum\HasApiTokens;
  *      specifically focusing on the learnings assigned to the user as opposed
  *      to those created by the user.
  *
- * Note: The actual implementation of these relationships is
- * provided in the model, and they are intended to be used as
- * part of the User model's functionality. The User model
- * itself should also use the HasTestPrefix trait to enable
- * test prefixing functionality for user-related records.
- * The relationships defined here can be used in Eloquent queries
- * and model interactions to easily access related data, improving
- * the efficiency and clarity of code that interacts with users
- * and their associated models.
  * Example usage of these relationships in code might look like:
  * ```php
  * $user = User::find(1);
@@ -140,20 +131,6 @@ use Laravel\Sanctum\HasApiTokens;
  *      for performance.
  * - hasPermission($permission): Check if the user has a specific permission.
  * - clearPermissionCache(): Clear the cached permissions for the user.
- * Note: The actual implementation of these methods is provided in the
- * model, and they are intended to be used as part of the User model's
- * functionality.
- * These methods provide convenient ways to check a user's role and
- * permissions, which are common operations in applications that implement
- * role-based access control.
- * The caching of permissions helps to improve performance by reducing the
- * number of database queries needed to check permissions for a user,
- * especially if permissions are checked frequently in the application.
- * This assumes that the User model has a relationship defined to the Role
- * model (e.g., a 'role' method that returns a BelongsTo relationship),
- * and that the Role model has a relationship to its permissions (e.g.,
- * a 'permissions' method that returns a collection of Permission models).
- * The methods in this model rely on these relationships to function correctly.
  * Example usage of these methods in code might look like:
  * ```php
  * $user = User::find(1);
@@ -180,9 +157,6 @@ use Laravel\Sanctum\HasApiTokens;
  * - scopeReal(): Scope a query to exclude users that are marked as test
  *      records, allowing for filtering of only real user records in the
  *      system.
- * Note: The role IDs used in the scope methods are based on constants defined
- * in the Role model, ensuring that the scopes remain consistent with the
- * defined roles in the system.
  *
  * Example usage of these scopes in a query might look like:
  * ```php
@@ -757,13 +731,14 @@ class User extends Authenticatable
      * matches the administrator role defined in the Role model. It allows
      * for easy retrieval of all administrator users in the system.
      *
-     * @param  Builder<self> $query
+     * @param  Builder<self> $query The query builder instance.
      *
-     * @return Builder<self>
+     * @return Builder<self> The modified query builder instance with
+     * the administrator filter applied.
      */
     public function scopeAdmins(Builder $query): Builder
     {
-        return $query->where('role_id', \App\Models\Role::ROLE_ADMIN);
+        return $query->where('role_id', Role::ROLE_ADMIN);
     }
 
     /**
@@ -774,13 +749,14 @@ class User extends Authenticatable
      * It allows for easy retrieval of all super administrator users in
      * the system.
      *
-     * @param  Builder<self> $query
+     * @param  Builder<self> $query The query builder instance.
      *
-     * @return Builder<self>
+     * @return Builder<self> The modified query builder instance with
+     * the super administrator filter applied.
      */
     public function scopeSuperAdmins(Builder $query): Builder
     {
-        return $query->where('role_id', \App\Models\Role::ROLE_SUPER_ADMIN);
+        return $query->where('role_id', Role::ROLE_SUPER_ADMIN);
     }
 
     /**
@@ -790,13 +766,14 @@ class User extends Authenticatable
      * matches the standard user role defined in the Role model. It
      * allows for easy retrieval of all standard users in the system.
      *
-     * @param  Builder<self> $query
+     * @param  Builder<self> $query The query builder instance.
      *
-     * @return Builder<self>
+     * @return Builder<self> The modified query builder instance with the
+     * standard user filter applied.
      */
     public function scopeStandardUsers(Builder $query): Builder
     {
-        return $query->where('role_id', \App\Models\Role::ROLE_USER);
+        return $query->where('role_id', Role::ROLE_USER);
     }
 
     /**
@@ -807,9 +784,10 @@ class User extends Authenticatable
      * that are marked as test records. This is useful for ensuring
      * that queries return only real user records in the system.
      *
-     * @param  Builder<self> $query
+     * @param  Builder<self> $query The query builder instance.
      *
-     * @return Builder<self>
+     * @return Builder<self> The modified query builder instance
+     * with the test records excluded.
      */
     public function scopeReal(Builder $query): Builder
     {

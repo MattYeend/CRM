@@ -19,53 +19,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * activity carries a type string that is prefixed during test runs via the
  * HasTestPrefix trait.
  *
- * Methods defined in this model include:
- * - getTypeAttribute($value): string - Accessor for the activity
- *      type that applies test prefixing.
- * - getUserNameAttribute(): ?string - Accessor for the name of
- *      the assigned user, returning null if no user is associated.
- * - hasSubjectType($type): bool - Utility method to check if the
- *      activity's subject type matches a given type.
- *
- * Note: The hasSubjectType method provides a convenient way to check the
- * type of the activity's subject without needing to directly access the
- * subject_type attribute, improving code readability and maintainability when
- * working with activities and their associated subjects.
- * Example usage of these methods in code might look like:
- * ```php
- * $activity = Activity::find(1);
- * $type = $activity->type; // Get the activity type with
- * test prefixing applied
- * $userName = $activity->user_name; // Get the name of the
- * assigned user, or null if no user is associated
- * $isCompanyActivity = $activity->hasSubjectType(Company::class);
- * // Check if the activity's subject type is Company
- * $isDealActivity = $activity->hasSubjectType(Deal::class); // Check if
- * the activity's subject type is Deal
- * ```
- *
  * Relationships defined in this model include:
- * - user(): BelongsTo<User,Activity> - The user assigned to the activity.
- * - subject(): MorphTo<Model,Activity> - The polymorphic subject model
- *      associated with the activity.
- * - creator(): BelongsTo<User,Activity> - The user who created the activity.
- * - updater(): BelongsTo<User,Activity> - The user who last updated
+ * - user(): The user assigned to the activity.
+ * - subject(): The polymorphic subject model associated with
  *      the activity.
- * - deleter(): BelongsTo<User,Activity> - The user who deleted the activity.
- * - restorer(): BelongsTo<User,Activity> - The user who restored the activity.
- * - attachments(): MorphMany<Attachment> - All attachments associated
- *      with the activity.
- * - tasks(): MorphMany<Task> - All tasks associated with the activity.
- * - notes(): MorphMany<Note> - All notes associated with the activity.
- *
- * Note: The  model itself should also use the HasTestPrefix trait to
- * enable test prefixing functionality for the activity type.
- * The relationships defined here can be used in Eloquent queries and model
- * interactions to easily access related data, improving the efficiency and
- * clarity of code that interacts with activities and their associated models.
- * For example, you can easily retrieve the assigned user, the subject of the
- * activity, the creator, and any attachments, tasks, or notes related to the
- * activity directly through these relationships.
+ * - creator(): The user who created the activity.
+ * - updater(): The user who last updated the activity.
+ * - deleter(): The user who deleted the activity.
+ * - restorer(): The user who restored the activity.
+ * - attachments(): All attachments associated with the activity.
+ * - tasks(): All tasks associated with the activity.
+ * - notes(): All notes associated with the activity.
  * Example usage of these relationships in code might look like:
  * ```php
  * $activity = Activity::find(1);
@@ -88,24 +52,32 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      to activities for a specific subject instance.
  * - scopeReal($query): Scope a query to exclude test
  *      records.
- *
- * Note: The actual implementation of these scopes is
- * provided in the model, and they are intended to be
- * used as part of the Activity model's functionality.
- * This model should be used in conjunction with the
- * The Activity model itself should also use the
- * HasTestPrefix trait to enable test prefixing functionality
- * for the activity type.
- * The scopes defined here can be used in Eloquent queries to
- * easily filter activities based on the specified criteria,
- * improving the efficiency and clarity of database interactions
- * involving activities.
  * Example usage of these scopes in a query might look like:
  * ```php
  * $activities = Activity::assignedTo($userId)
  *    ->forSubjectType(Company::class)
  *   ->real()
  *   ->get();
+ * ```
+ *
+ * Methods defined in this model include:
+ * - getTypeAttribute($value): Accessor for the activity
+ *      type that applies test prefixing.
+ * - getUserNameAttribute(): Accessor for the name of
+ *      the assigned user, returning null if no user is associated.
+ * - hasSubjectType($type): Utility method to check if the
+ *      activity's subject type matches a given type.
+ * Example usage of these methods in code might look like:
+ * ```php
+ * $activity = Activity::find(1);
+ * $type = $activity->type; // Get the activity type with
+ * test prefixing applied
+ * $userName = $activity->user_name; // Get the name of the
+ * assigned user, or null if no user is associated
+ * $isCompanyActivity = $activity->hasSubjectType(Company::class);
+ * // Check if the activity's subject type is Company
+ * $isDealActivity = $activity->hasSubjectType(Deal::class); // Check if
+ * the activity's subject type is Deal
  * ```
  */
 class Activity extends Model
@@ -374,13 +346,16 @@ class Activity extends Model
      * user ID, allowing for easy retrieval of all activities
      * assigned to a particular user in the system.
      *
-     * @param  Builder<self> $query
+     * @param  Builder<self> $query The query builder instance.
      * @param  int $userId
      *
-     * @return Builder<self>
+     * @return Builder<self> The modified query builder instance
+     * with the applied filter for assigned user.
      */
-    public function scopeAssignedTo(Builder $query, int $userId): Builder
-    {
+    public function scopeAssignedTo(
+        Builder $query,
+        int $userId
+    ): Builder {
         return $query->where('assigned_to', $userId);
     }
 
@@ -398,13 +373,17 @@ class Activity extends Model
      * scope provides a convenient way to filter activities
      * based on the type of their associated subject model.
      *
-     * @param  Builder<self> $query
-     * @param  string $type A fully-qualified class name (e.g. Company::class).
+     * @param  Builder<self> $query The query builder instance.
+     * @param  string $type A fully-qualified class name (e.g.
+     * Company::class).
      *
-     * @return Builder<self>
+     * @return Builder<self> The modified query builder instance with
+     * the applied filter for subject type.
      */
-    public function scopeForSubjectType(Builder $query, string $type): Builder
-    {
+    public function scopeForSubjectType(
+        Builder $query,
+        string $type
+    ): Builder {
         return $query->where('subject_type', $type);
     }
 
@@ -427,11 +406,12 @@ class Activity extends Model
      * provides a convenient way to filter activities based on the
      * specific subject they are associated with.
      *
-     * @param  Builder<self> $query
+     * @param  Builder<self> $query The query builder instance.
      * @param  string $type A fully-qualified class name.
      * @param  int $id   The subject model's primary key.
      *
-     * @return Builder<self>
+     * @return Builder<self> The modified query builder instance
+     * with the applied filters for subject type and ID.
      */
     public function scopeForSubject(
         Builder $query,
@@ -459,9 +439,10 @@ class Activity extends Model
      * only activities that are not marked as test records
      * will be included in the query results.
      *
-     * @param  Builder<self> $query
+     * @param  Builder<self> $query The query builder instance.
      *
-     * @return Builder<self>
+     * @return Builder<self> The modified query builder instance
+     * with the test records excluded.
      */
     public function scopeReal(Builder $query): Builder
     {
