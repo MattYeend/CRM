@@ -86,6 +86,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * - scopeOverdue($query): Filter the query to only include tasks that are
  *      past their due date and not yet completed or cancelled.
  * - scopeReal($query): Filter the query to only include non-test tasks.
+ * - scopeSearchTitle($query, $term): Filter the query to tasks with titles
  * Example usage of query scopes:
  * ```php
  * $pending = Task::pending()->get(); // Get all pending tasks
@@ -93,6 +94,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * $highPrio = Task::priority('high')->get(); // Get high-priority tasks
  * $myTasks = Task::assignedTo($userId)->get(); // Get tasks for a user
  * $realTasks = Task::real()->get(); // Exclude test records
+ * $searchResults = Task::searchTitle('call')->get(); // Tasks with 'call'
+ * in the title
  * ```
  */
 class Task extends Model
@@ -496,5 +499,28 @@ class Task extends Model
     public function scopeReal(Builder $query): Builder
     {
         return $query->where('is_test', false);
+    }
+
+    /**
+     * Scope a query to search for tasks with a title containing a given
+     * keyword.
+     *
+     * Wraps the conditions in a grouped where clause to ensure correct
+     * boolean precedence when combined with other scopes.
+     *
+     * @param  Builder<Task> $query The query builder instance.
+     * @param  string $term The term to search for in task titles.
+     *
+     * @return Builder<Task> The modified query builder instance.
+     */
+    public function scopeSearchTitle(
+        Builder $query,
+        string $term
+    ): Builder {
+        $like = "%{$term}%";
+
+        return $query->where(function (Builder $q) use ($like) {
+            $q->where('title', 'like', '%' . $like . '%');
+        });
     }
 }

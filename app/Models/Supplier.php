@@ -370,4 +370,29 @@ class Supplier extends Model
     {
         return $query->where('is_test', false);
     }
+
+    /**
+     * Scope a query to search suppliers by name, contact name, or
+     * contact email using a single search term.
+     *
+     * Wraps the conditions in a grouped where clause to ensure correct
+     * boolean precedence when chained with other scopes. Useful for
+     * powering search inputs in supplier lists or lookup fields.
+     *
+     * @param  Builder<Supplier> $query  The query builder instance.
+     * @param  string $term The search term to match against.
+     *
+     * @return Builder<Supplier> The modified query builder instance.
+     */
+    public function scopeSearch(Builder $query, string $term): Builder
+    {
+        $like = "%{$term}%";
+
+        return $query->where(function (Builder $q) use ($like) {
+            $q->where('name', 'like', $like)
+                ->orWhere('contact_name', 'like', $like)
+                ->orWhere('contact_email', 'like', $like)
+                ->orWhere('code', 'like', $like);
+        });
+    }
 }
