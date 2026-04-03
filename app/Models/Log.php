@@ -2,10 +2,53 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Represents a log entry for user actions and system events.
+ *
+ * Each log entry captures the type of action performed, the user who
+ * performed it, any related user, and additional contextual data. This
+ * model provides a centralized way to track important events within the
+ * application for auditing and debugging purposes.
+ *
+ * Action constants are defined for various types of events, including
+ * user authentication, user management, MFA/settings changes, role/permission
+ * management, errors, cache operations, and activities related to core entities
+ * like companies, deals, invoices, etc. New actions should be added as constants
+ * to ensure consistency and ease of use when logging events throughout the application.
+ * Example usage of logging an action:
+ * ```php
+ * Log::log(Log::ACTION_LOGIN_SUCCESS, ['ip' => $request->ip()]);
+ * ```
+ *
+ * Relationships defined in this model include:
+ * - loggedInUser(): The user who performed the action.
+ * - relatedToUser(): The user related to the action, if applicable.
+ * Example usage of relationships:
+ * ```php
+ * $log = Log::find(1);
+ * $loggedInUser = $log->loggedInUser; // Get the user that performed the action
+ * $relatedUser = $log->relatedToUser; // Get the user related to the action (if applicable)
+ * ```
+ *
+ * Helper methods include:
+ * - log(): Static method to create a new log entry with the specified action, data, and user associations.
+ * Example usage of helper methods:
+ * ```php
+ * Log::log(Log::ACTION_CREATE_USER, ['new_user_id' => $newUser->id], Auth::id(), $newUser->id);
+ * ```
+ *
+ * Query scopes include:
+ * - scopeOfAction($query, $action): Filter logs by a specific action constant.
+ * Example usage of query scopes:
+ * ```php
+ * $loginLogs = Log::ofAction(Log::ACTION_LOGIN_SUCCESS)->get(); // Get all successful login logs
+ * ```
+ */
 class Log extends Model
 {
     // Action constants
@@ -297,12 +340,9 @@ class Log extends Model
      * Log an action.
      *
      * @param int $action The action constant.
-     *
      * @param array|null $data Additional data related to the action.
-     *
      * @param int|null $logged_in_user_id The ID of the user performing
      * the action.
-     *
      * @param int|null $related_to_user_id The ID of the user related
      * to the action.
      */
@@ -328,5 +368,18 @@ class Log extends Model
             $log->data = $data;
             $log->save();
         }
+    }
+
+    /**
+     * Scope a query to only include logs of a given action type.
+     *
+     * @param  Builder<Log> $query The query builder instance.
+     * @param  int $action The action constant to filter by.
+     *
+     * @return Builder<Log> The modified query builder instance.
+     */
+    public function scopeOfAction(Builder $query, int $action): Builder
+    {
+        return $query->where('action_id', $action);
     }
 }

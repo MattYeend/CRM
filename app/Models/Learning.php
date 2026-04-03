@@ -18,6 +18,70 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Each learning may carry a set of questions with answers. Completion state
  * is tracked per user via the LearningUser pivot. Query scopes are provided
  * to filter learnings by assignment and completion status for a given user.
+ *
+ * Relationships defined in this model include:
+ * - questions(): One-to-many relationship to LearningQuestion records
+ *      associated with this learning.
+ * - users(): Many-to-many relationship to User records assigned to this
+ *      learning, with pivot data for completion state and timestamps.
+ * - attachments(): Polymorphic one-to-many relationship to Attachment records
+ *      associated with this learning.
+ * - activities(): Polymorphic one-to-many relationship to Activity records
+ *      associated with this learning.
+ * - tasks(): Polymorphic one-to-many relationship to Task records associated
+ *      with this learning.
+ * - notes(): Polymorphic one-to-many relationship to Note records associated
+ *      with this learning.
+ * Example usage of relationships:
+ * ```php
+ * $learning = Learning::find(1);
+ * $questions = $learning->questions; // Get all questions for this learning
+ * $users = $learning->users; // Get all users assigned to this learning
+ * $attachments = $learning->attachments; // Get all attachments for this learning
+ * $activities = $learning->activities; // Get all activities for this learning
+ * $tasks = $learning->tasks; // Get all tasks for this learning
+ * $notes = $learning->notes; // Get all notes for this learning
+ * ```
+ * 
+ * Accessor methods include:
+ * - getTitleAttribute(): Returns the learning title, applying a test prefix
+ *      if the learning is marked as a test.
+ * - getDescriptionAttribute(): Returns the learning description, defaulting to
+ *      an empty string if null.
+ * - getMetaTitleAttribute(): Returns the meta title from the meta JSON, defaulting
+ *      to an empty string if not set.
+ * - getMetaDescriptionAttribute(): Returns the meta description from the meta JSON, defaulting
+ *      to an empty string if not set.
+ * - getMetaKeywordsAttribute(): Returns the meta keywords from the meta JSON, defaulting
+ *      to an empty string if not set.
+ * - getMetaAuthorAttribute(): Returns the meta author from the meta JSON, defaulting
+ *      to an empty string if not set.
+ * Example usage of accessors:
+ * ```php
+ * $learning = Learning::find(1);
+ * $title = $learning->title; // Get the learning title with test prefix if applicable
+ * $description = $learning->description; // Get the learning description
+ * $metaTitle = $learning->meta_title; // Get the meta title from the meta JSON
+ * $metaDescription = $learning->meta_description; // Get the meta description from the meta JSON
+ * $metaKeywords = $learning->meta_keywords; // Get the meta keywords from the meta JSON
+ * $metaAuthor = $learning->meta_author; // Get the meta author from the meta JSON
+ * ```
+ * 
+ * Query scopes include:
+ * - scopeForUser($query, $userId): Filter the query to only include learnings
+ *      assigned to a given user.
+ * - scopeCompletedForUser($query, $userId): Filter the query to only include
+ *      learnings completed by a given user.
+ * - scopeIncompleteForUser($query, $userId): Filter the query to only include
+ *      learnings not yet completed by a given user.
+ * - scopeReal($query): Filter the query to only include non-test learnings.
+ * Example usage of query scopes:
+ * ```php
+ * $assigned = Learning::forUser($userId)->get(); // Learnings assigned to a user
+ * $completed = Learning::completedForUser($userId)->get(); // Learnings completed by a user
+ * $incomplete = Learning::incompleteForUser($userId)->get(); // Learnings not yet completed by a user
+ * $real = Learning::real()->get(); // Exclude test learnings
+ * ```
  */
 class Learning extends Model
 {
@@ -198,6 +262,78 @@ class Learning extends Model
     }
 
     /**
+     * Get the learning title, applying the test prefix when marked as a test.
+     *
+     * @param  string|null $value The raw learning title from the database.
+     *
+     * @return string
+     */
+    public function getTitleAttribute($value): string
+    {
+        return $this->prefixTest($value);
+    }
+
+    /**
+     * Get the learning description.
+     *
+     * @param  string|null $value The raw learning description from the database.
+     *
+     * @return string
+     */
+    public function getDescriptionAttribute($value): string
+    {
+        return $value ?? '';
+    }
+
+    /**
+     * Get the learning meta title.
+     *
+     * @param  string|null $value The raw learning meta title from the database.
+     *
+     * @return string
+     */
+    public function getMetaTitleAttribute($value): string
+    {
+        return $value ?? '';
+    }
+
+    /**
+     * Get the learning meta description.
+     *
+     * @param  string|null $value The raw learning meta description from the database.
+     *
+     * @return string
+     */
+    public function getMetaDescriptionAttribute($value): string
+    {
+        return $value ?? '';
+    }
+
+    /**
+     * Get the learning meta keywords.
+     *
+     * @param  string|null $value The raw learning meta keywords from the database.
+     *
+     * @return string
+     */
+    public function getMetaKeywordsAttribute($value): string
+    {
+        return $value ?? '';
+    }
+
+    /**
+     * Get the learning meta author.
+     *
+     * @param  string|null $value The raw learning meta author from the database.
+     *
+     * @return string
+     */
+    public function getMetaAuthorAttribute($value): string
+    {
+        return $value ?? '';
+    }
+
+    /**
      * Scope a query to only include learnings assigned to a given user.
      *
      * @param  Builder $query The query builder instance.
@@ -249,14 +385,14 @@ class Learning extends Model
     }
 
     /**
-     * Get the learning title, applying the test prefix when marked as a test.
+     * Scope a query to only include non-test learnings.
      *
-     * @param  string|null  $value  The raw learning title from the database.
+     * @param  Builder $query The query builder instance.
      *
-     * @return string
+     * @return Builder The modified query builder instance.
      */
-    public function getTitleAttribute($value): string
+    public function scopeReal(Builder $query): Builder
     {
-        return $this->prefixTest($value);
+        return $query->where('is_test', false);
     }
 }

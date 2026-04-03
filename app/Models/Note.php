@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasTestPrefix;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,6 +17,50 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Notes may be associated with a Company, Deal, Task, or User via the notable
  * relationship, and are optionally attributed to a user via the user
  * relationship.
+ *
+ * Relationships included in this model include:
+ * - notable: The polymorphic parent model this note is attached to (Company,
+ *      Deal, Task, or User).
+ * - user: The user that the note is attributed to (optional).
+ * - creator: The user that created the note (optional).
+ * - updater: The user that last updated the note (optional).
+ * - deleter: The user that deleted the note (if soft-deleted, optional).
+ * - restorer: The user that restored the note (if soft-deleted, optional).
+ * - attachments: The attachments associated with the note.
+ * - activities: The activities associated with the note.
+ * - tasks: The tasks associated with the note.
+ * Example usage of relationships:
+ * ```php
+ * $note = Note::find(1);
+ * $notable = $note->notable; // Get the notable model this note is attached to
+ * $user = $note->user; // Get the user this note is attributed to (if any)
+ * $creator = $note->creator; // Get the user that created this note (if any)
+ * $updater = $note->updater; // Get the user that last updated this note (if any)
+ * $deleter = $note->deleter; // Get the user that deleted this note (if applicable)
+ * $restorer = $note->restorer; // Get the user that restored this note (if applicable)
+ * $attachments = $note->attachments; // Get the attachments associated with this note
+ * $activities = $note->activities; // Get the activities associated with this note
+ * $tasks = $note->tasks; // Get the tasks associated with this note
+ * ```
+ *
+ * Accessor methods include:
+ * - getTypeAttribute(): Get the note body with the test prefix applied if marked as a test.
+ * Example usage of accessors:
+ * ```php
+ * $note = Note::find(1);
+ * $type = $note->type; // Get the note body with test prefix if applicable
+ * ```
+ *
+ * Query scopes include:
+ * - scopeOfNotableType($query, $notableType): Filter notes by notable type using a class basename.
+ * - scopeForNotable($query, $notable): Filter notes by a specific notable model instance.
+ * - scopeReal($query): Filter notes to only include non-test notes.
+ * Example usage of query scopes:
+ * ```php
+ * $companyNotes = Note::ofNotableType('Company')->get(); // Get all notes for the Company notable type
+ * $notableNotes = Note::forNotable($notable)->get(); // Get all notes for a specific notable model instance
+ * $realNotes = Note::real()->get(); // Get all non-test notes
+ * ```
  */
 class Note extends Model
 {
@@ -198,5 +243,52 @@ class Note extends Model
     public function getTypeAttribute($value): string
     {
         return $this->prefixTest($value);
+    }
+
+    /**
+     * Scope a query to only include notes of a given notable type.
+     *
+     * @param  Builder<Note> $query The query builder instance.
+     * @param  string $notableType The notable type to filter by, as a class
+     * basename (e.g. "Company" instead of "App\Models\Company").
+     *
+     * @return Builder<Note> The modified query builder instance.
+     */
+    public function scopeOfNotableType(Builder $query, string $notableType): Builder
+    {
+        $notableTypeClass = collect(self::NOTABLE_TYPES)
+            ->first(fn ($type) => class_basename($type) === $notableType);
+
+        if (! $notableTypeClass) {
+            throw new \InvalidArgumentException("Invalid notable type: {$notableType}");
+        }
+
+        return $query->where('notable_type', $notableTypeClass);
+    }
+
+    /**
+     * Scope a query to only include notes associated with a given notable model.
+     *
+     * @param  Builder<Note> $query The query builder instance.
+     * @param  Model $notable The notable model to filter by.
+     *
+     * @return Builder<Note> The modified query builder instance.
+     */
+    public function scopeForNotable(Builder $query, Model $notable): Builder
+    {
+        return $query->where('notable_type', get_class($notable))
+            ->where('notable_id', $notable->id);
+    }
+
+    /** 
+     * Scope a query to only include non-test notes.
+     *
+     * @param  Builder<Note> $query The query builder instance.
+     *
+     * @return Builder<Note> The modified query builder instance.
+     */
+    public function scopeReal(Builder $query): Builder
+    {
+        return $query->where('is_test', false);
     }
 }

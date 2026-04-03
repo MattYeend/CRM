@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasTestPrefix;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,6 +16,95 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * A lead captures prospective contact information and is optionally owned
  * and assigned to users. Leads can be converted into Deal records via the
  * convertToDeal method once they are ready to progress through the pipeline.
+ *
+ * Relationships defined in this model include:
+ * - owner(): BelongsTo relationship to the User that owns the lead.
+ * - assignedTo(): BelongsTo relationship to the User that is assigned to the lead.
+ * - creator(): BelongsTo relationship to the User that created the lead.
+ * - updater(): BelongsTo relationship to the User that last updated the lead.
+ * - deleter(): BelongsTo relationship to the User that deleted the lead (if soft-deleted).
+ * - restorer(): BelongsTo relationship to the User that restored the lead (if soft-deleted).
+ * - attachments(): MorphMany relationship to Attachment records associated with the lead.
+ * - activities(): MorphMany relationship to Activity records associated with the lead.
+ * - tasks(): MorphMany relationship to Task records associated with the lead.
+ * - notes(): MorphMany relationship to Note records associated with the lead.
+ * Example usage of relationships:
+ * ```php
+ * $lead = Lead::find(1);
+ * $owner = $lead->owner; // Get the owner of the lead
+ * $assignedUser = $lead->assignedTo; // Get the user assigned to the lead
+ * $creator = $lead->creator; // Get the user that created the lead
+ * $updater = $lead->updater; // Get the user that last updated the lead
+ * $deleter = $lead->deleter; // Get the user that deleted the lead (if applicable)
+ * $restorer = $lead->restorer; // Get the user that restored the lead (if applicable)
+ * $attachments = $lead->attachments; // Get all attachments for the lead
+ * $activities = $lead->activities; // Get all activities for the lead
+ * $tasks = $lead->tasks; // Get all tasks for the lead
+ * $notes = $lead->notes; // Get all notes for the lead
+ * ```
+ * 
+ * Accessor methods include:
+ * - getTitleAttribute(): Returns the lead title, applying a test prefix if marked as a test.
+ * - getFullNameAttribute(): Returns the full name by concatenating first and last name.
+ * - getDisplayNameAttribute(): Returns the display name, which is the full name if available, otherwise the email.
+ * - getContactInfoAttribute(): Returns a formatted string combining email and phone number.
+ * - getSourceAttribute(): Returns the lead source, applying a test prefix if marked as a test.
+ * - getAgeInDaysAttribute(): Returns the age of the lead in days since creation.
+ * - getIsStaleAttribute(): Returns a boolean indicating whether the lead is considered stale (not updated in the last 30 days).
+ * - getIsHotAttribute(): Returns a boolean indicating whether the lead is considered hot (updated within the last 7 days).
+ * - getIsContactedAttribute(): Returns a boolean indicating whether the lead has been contacted (has any 'contact' activities).
+ * - getIsConvertedAttribute(): Returns a boolean indicating whether the lead has been converted to a deal (has any 'conversion' activities).
+ * - getIsEligibleForConversionAttribute(): Returns a boolean indicating whether the lead is eligible for conversion (not converted and has been contacted).
+ * - getIsHighPriorityAttribute(): Returns a boolean indicating whether the lead is considered high priority (updated within the last 3 days and not contacted).
+ * - getIsLowPriorityAttribute(): Returns a boolean indicating whether the lead is considered low priority (updated more than 60 days ago and not contacted).
+ * Example usage of accessors:
+ * ```php
+ * $lead = Lead::find(1);
+ * $title = $lead->title; // Get the lead title with test prefix if applicable
+ * $fullName = $lead->full_name; // Get the full name of the lead
+ * $displayName = $lead->display_name; // Get the display name of the lead
+ * $contactInfo = $lead->contact_info; // Get the formatted contact info
+ * $source = $lead->source; // Get the lead source with test prefix if applicable
+ * $ageInDays = $lead->age_in_days; // Get the age of the lead in days
+ * $isStale = $lead->is_stale; // Check if the lead is considered stale
+ * $isHot = $lead->is_hot; // Check if the lead is considered hot
+ * $isContacted = $lead->is_contacted; // Check if the lead has been contacted
+ * $isConverted = $lead->is_converted; // Check if the lead has been converted to a deal
+ * $isEligibleForConversion = $lead->is_eligible_for_conversion; // Check if the lead is eligible for conversion
+ * $isHighPriority = $lead->is_high_priority; // Check if the lead is considered high priority
+ * $isLowPriority = $lead->is_low_priority; // Check if the lead is considered low priority
+ * ```
+ * 
+ * Query scopes include:
+ * - scopeStale($query): Filter the query to only include leads that are considered stale.
+ * - scopeHot($query): Filter the query to only include leads that are considered hot.
+ * - scopeEligibleForConversion($query): Filter the query to only include leads that are eligible for conversion.
+ * - scopeHighPriority($query): Filter the query to only include leads that are considered high priority.
+ * - scopeLowPriority($query): Filter the query to only include leads that are considered low priority.
+ * - scopeConverted($query): Filter the query to only include leads that have been converted to deals.
+ * - scopeUnconverted($query): Filter the query to only include leads that have not been converted to deals.
+ * - scopeContacted($query): Filter the query to only include leads that have been contacted.
+ * - scopeUncontacted($query): Filter the query to only include leads that have not been contacted.
+ * - scopeOwnedBy($query, $userId): Filter the query to only include leads owned by a specific user.
+ * - scopeAssignedTo($query, $userId): Filter the query to only include leads assigned to a specific user.
+ * - scopeFromSource($query, $source): Filter the query to only include leads from a specific source channel.
+ * - scopeReal($query): Filter the query to only include non-test leads.
+ * Example usage of query scopes:
+ * ```php
+ * $staleLeads = Lead::stale()->get(); // Get leads that are considered stale
+ * $hotLeads = Lead::hot()->get(); // Get leads that are considered hot
+ * $eligibleLeads = Lead::eligibleForConversion()->get(); // Get leads eligible for conversion
+ * $highPriorityLeads = Lead::highPriority()->get(); // Get leads that are considered high priority
+ * $lowPriorityLeads = Lead::lowPriority()->get(); // Get leads that are considered low priority
+ * $convertedLeads = Lead::converted()->get(); // Get leads that have been converted to deals
+ * $unconvertedLeads = Lead::unconverted()->get(); // Get leads that have not been converted to deals
+ * $contactedLeads = Lead::contacted()->get(); // Get leads that have been contacted
+ * $uncontactedLeads = Lead::uncontacted()->get(); // Get leads that have not been contacted
+ * $ownedLeads = Lead::ownedBy($userId)->get(); // Get leads owned by a specific user
+ * $assignedLeads = Lead::assignedTo($userId)->get(); // Get leads assigned to a specific user
+ * $sourceLeads = Lead::fromSource($source)->get(); // Get leads from a specific source channel
+ * $realLeads = Lead::real()->get(); // Get non-test leads
+ * ```
  */
 class Lead extends Model
 {
@@ -206,5 +296,331 @@ class Lead extends Model
     public function getTitleAttribute($value): string
     {
         return $this->prefixTest($value);
+    }
+
+    /**
+     * Get the lead's full name by concatenating first and last name.
+     *
+     * @return string
+     */
+    public function getFullNameAttribute(): string
+    {
+        return trim("{$this->first_name} {$this->last_name}");
+    }
+
+    /**
+     * Get the lead's display name, which is the full name if available,
+     * otherwise falls back to the email address.
+     *
+     * @return string
+     */
+    public function getDisplayNameAttribute(): string
+    {
+        return $this->full_name ?: $this->email;
+    }
+
+    /**
+     * Get the lead's contact information as a formatted string.
+     *
+     * Combines email and phone number into a single string for display.
+     *
+     * @return string
+     */
+    public function getContactInfoAttribute(): string
+    {
+        $contactInfo = [];
+
+        if ($this->email) {
+            $contactInfo[] = "Email: {$this->email}";
+        }
+
+        if ($this->phone) {
+            $contactInfo[] = "Phone: {$this->phone}";
+        }
+
+        return implode(' | ', $contactInfo);
+    }
+
+    /**
+     * Get the lead source, applying the test prefix when marked as a test.
+     *
+     * @param  string|null  $value  The raw lead source from the database.
+     *
+     * @return string
+     */
+    public function getSourceAttribute($value): string
+    {
+        return $this->prefixTest($value);
+    }
+
+    /**
+     * Get the lead's age in days since creation.
+     *
+     * @return int
+     */
+    public function getAgeInDaysAttribute(): int
+    {
+        return $this->created_at ? now()->diffInDays($this->created_at) : 0;
+    }
+
+    /**
+     * Determine whether the lead is considered stale.
+     *
+     * A lead is considered stale if it has not been updated in the last 30 days.
+     *
+     * @return bool
+     */
+    public function getIsStaleAttribute(): bool
+    {
+        return $this->updated_at ? $this->updated_at->lt(now()->subDays(30)) : false;
+    }
+    
+    /**
+     * Determine whether the lead is considered hot.
+     *
+     * A lead is considered hot if it has been updated within the last 7 days.
+     *
+     * @return bool
+     */
+    public function getIsHotAttribute(): bool
+    {
+        return $this->updated_at ? $this->updated_at->gt(now()->subDays(7)) : false;
+    }
+
+    /**
+     * Determine whether the lead has been contacted.
+     *
+     * A lead is considered contacted if it has any associated activities of type 'contact'.
+     *
+     * @return bool
+     */
+    public function getIsContactedAttribute(): bool
+    {
+        return $this->activities()->where('type', 'contact')->exists();
+    }
+
+    /**
+     * Determine whether the lead has been converted to a deal.
+     *
+     * A lead is considered converted if it has an associated deal record.
+     *
+     * @return bool
+     */
+    public function getIsConvertedAttribute(): bool
+    {
+        return $this->activities()->where('type', 'conversion')->exists();
+    }
+
+    /**
+     * Determine whether the lead is eligible for conversion.
+     *
+     * A lead is eligible for conversion if it is not already converted and has been contacted.
+     *
+     * @return bool
+     */
+    public function getIsEligibleForConversionAttribute(): bool
+    {
+        return !$this->is_converted && $this->is_contacted;
+    }
+
+    /**
+     * Determine whether the lead is considered high priority.
+     *
+     * A lead is considered high priority if it has been updated within the last 3 days and has not been contacted.
+     *
+     * @return bool
+     */
+    public function getIsHighPriorityAttribute(): bool
+    {
+        return $this->updated_at ? $this->updated_at->gt(now()->subDays(3)) && !$this->is_contacted : false;
+    }
+
+    /**
+     * Determine whether the lead is considered low priority.
+     *
+     * A lead is considered low priority if it has been updated more than 60 days ago and has not been contacted.
+     *
+     * @return bool
+     */
+    public function getIsLowPriorityAttribute(): bool
+    {
+        return $this->updated_at ? $this->updated_at->lt(now()->subDays(60)) && !$this->is_contacted : false;
+    }
+
+    /**
+     * Scope a query to only include leads that are considered stale.
+     *
+     * @param  Builder<Lead> $query The query builder instance.
+     *
+     * @return Builder<Lead> The modified query builder instance.
+     */
+    public function scopeStale(Builder $query): Builder
+    {
+        return $query->where('updated_at', '<', now()->subDays(30));
+    }
+
+    /**
+     * Scope a query to only include leads that are considered hot.
+     *
+     * @param  Builder<Lead> $query The query builder instance.
+     *
+     * @return Builder<Lead> The modified query builder instance.
+     */
+    public function scopeHot(Builder $query): Builder
+    {
+        return $query->where('updated_at', '>', now()->subDays(7));
+    }
+
+     /**
+     * Scope a query to only include leads that are eligible for conversion.
+     *
+     * @param  Builder<Lead> $query The query builder instance.
+     *
+     * @return Builder<Lead> The modified query builder instance.
+     */
+    public function scopeEligibleForConversion(Builder $query): Builder
+    {
+        return $query->whereDoesntHave('activities', function ($q) {
+            $q->where('type', 'conversion');
+        })->whereHas('activities', function ($q) {
+            $q->where('type', 'contact');
+        });
+    }
+
+    /**
+     * Scope a query to only include leads that are considered high priority.
+     *
+     * @param  Builder<Lead> $query The query builder instance.
+     *
+     * @return Builder<Lead> The modified query builder instance.
+     */
+    public function scopeHighPriority(Builder $query): Builder
+    {
+        return $query->where('updated_at', '>', now()->subDays(3))
+            ->whereDoesntHave('activities', function ($q) {
+                $q->where('type', 'contact');
+            });
+    }
+
+    /**
+     * Scope a query to only include leads that are considered low priority.
+     *
+     * @param  Builder<Lead> $query The query builder instance.
+     *
+     * @return Builder<Lead> The modified query builder instance.
+     */
+    public function scopeLowPriority(Builder $query): Builder
+    {
+        return $query->where('updated_at', '<', now()->subDays(60))
+            ->whereDoesntHave('activities', function ($q) {
+                $q->where('type', 'contact');
+            });
+    }
+
+    /**
+     * Scope a query to only include leads that have been converted to deals.
+     *
+     * @param  Builder<Lead> $query The query builder instance.
+     *
+     * @return Builder<Lead> The modified query builder instance.
+     */
+    public function scopeConverted(Builder $query): Builder
+    {
+        return $query->whereHas('activities', function ($q) {
+            $q->where('type', 'conversion');
+        });
+    }
+
+    /**
+     * Scope a query to only include leads that have not been converted to deals.
+     *
+     * @param  Builder<Lead> $query The query builder instance.
+     *
+     * @return Builder<Lead> The modified query builder instance.
+     */
+    public function scopeUnconverted(Builder $query): Builder
+    {
+        return $query->whereDoesntHave('activities', function ($q) {
+            $q->where('type', 'conversion');
+        });
+    }
+
+    /**
+     * Scope a query to only include leads that have been contacted.
+     *
+     * @param  Builder<Lead> $query The query builder instance.
+     *
+     * @return Builder<Lead> The modified query builder instance.
+     */
+    public function scopeContacted(Builder $query): Builder
+    {
+        return $query->whereHas('activities', function ($q) {
+            $q->where('type', 'contact');
+        });
+    }
+
+    /**
+     * Scope a query to only include leads that have not been contacted.
+     *
+     * @param  Builder<Lead> $query The query builder instance.
+     *
+     * @return Builder<Lead> The modified query builder instance.
+     */
+    public function scopeUncontacted(Builder $query): Builder
+    {
+        return $query->whereDoesntHave('activities', function ($q) {
+            $q->where('type', 'contact');
+        });
+    }
+
+    /**
+     * Scope a query to only include leads that are owned by a specific user.
+     *
+     * @param  Builder<Lead> $query The query builder instance.
+     * @param  int $userId The ID of the user to filter by.
+     *
+     * @return Builder<Lead> The modified query builder instance.
+     */
+    public function scopeOwnedBy(Builder $query, int $userId): Builder
+    {
+        return $query->where('owner_id', $userId);
+    }
+
+     /**
+     * Scope a query to only include leads that are assigned to a specific user.
+     *
+     * @param  Builder<Lead> $query The query builder instance.
+     * @param  int $userId The ID of the user to filter by.
+     *
+     * @return Builder<Lead> The modified query builder instance.
+     */
+    public function scopeAssignedTo(Builder $query, int $userId): Builder
+    {
+        return $query->where('assigned_to', $userId);
+    }
+
+    /**
+     * Scope a query to only include leads that are sourced from a specific channel.
+     *
+     * @param  Builder<Lead> $query The query builder instance.
+     * @param  string $source The source channel to filter by.
+     *
+     * @return Builder<Lead> The modified query builder instance.
+     */
+    public function scopeFromSource(Builder $query, string $source): Builder
+    {
+        return $query->where('source', $source);
+    }
+
+    /**
+     * Scope a query to only include non-test leads.
+     *
+     * @param  Builder<Lead> $query The query builder instance.
+     *
+     * @return Builder<Lead> The modified query builder instance.
+     */
+    public function scopeReal(Builder $query): Builder
+    {
+        return $query->where('is_test', false);
     }
 }
