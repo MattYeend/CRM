@@ -130,7 +130,6 @@ class PermissionSeeder extends Seeder
             ['name' => 'learnings.update.own', 'label' => 'Update own learning materials'],
             ['name' => 'learnings.delete.any', 'label' => 'Delete any learning materials'],
             ['name' => 'learnings.delete.own', 'label' => 'Delete own learning materials'],
-            ['name' => 'learnings.access', 'label' => 'Access learning materials'],
             ['name' => 'learnings.complete.any', 'label' => 'Can complete any learning materials'],
             ['name' => 'learnings.complete.own', 'label' => 'Can complete own learning materials'],
             ['name' => 'learnings.incomplete.any', 'label' => 'Can incomplete any learning materials'],
