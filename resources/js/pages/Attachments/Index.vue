@@ -4,11 +4,10 @@ import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
 import { ref, reactive, onMounted } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
-import { fetchAttachments, deleteAttachment } from '@/pages/Attachments/components/AttachmentService'
+import { fetchAttachments, deleteAttachments } from '@/services/AttachmentService'
 
 interface Attachment {
     id: number
-    title: string | null
     filename: string
     mime: string | null
     size: number | null
@@ -65,7 +64,7 @@ async function loadAttachments(page = 1) {
 
 async function handleDelete(id: number) {
     if (!confirm('Are you sure you want to delete this attachment? This cannot be undone.')) return
-    await deleteAttachment(id)
+    await deleteAttachments(id)
     loadAttachments(currentPage.value)
 }
 

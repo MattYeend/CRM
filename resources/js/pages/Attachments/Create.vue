@@ -73,7 +73,7 @@ async function submit() {
                 </a>
             </div>
 
-            <div class="border rounded bg-white p-6">
+            <div class="border rounded p-6">
                 <h2 class="text-base font-semibold mb-6">Upload a new file</h2>
 
                 <form @submit.prevent="submit" class="space-y-8 max-w-xl">

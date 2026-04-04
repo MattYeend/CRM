@@ -130,7 +130,7 @@ const normalizedSubjectTypes = computed(() =>
                     <div class="flex text-sm text-gray-600 justify-center">
                         <label
                             for="file-upload"
-                            class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500"
+                            class="relative cursor-pointer rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500"
                         >
                             <span>Upload a file</span>
                             <input
@@ -152,37 +152,9 @@ const normalizedSubjectTypes = computed(() =>
             <p v-if="form.errors?.file" class="mt-1 text-sm text-red-600">{{ form.errors.file }}</p>
         </div>
 
-        <!-- Title -->
-        <div>
-            <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Title</label>
-            <input
-                id="title"
-                :value="form.title"
-                type="text"
-                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter attachment title"
-                @input="emit('update:title', ($event.target as HTMLInputElement).value)"
-            />
-            <p v-if="form.errors?.title" class="mt-1 text-sm text-red-600">{{ form.errors.title }}</p>
-        </div>
-
-        <!-- Description -->
-        <div>
-            <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-            <textarea
-                id="description"
-                :value="form.description"
-                rows="3"
-                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter a description (optional)"
-                @input="emit('update:description', ($event.target as HTMLTextAreaElement).value)"
-            ></textarea>
-            <p v-if="form.errors?.description" class="mt-1 text-sm text-red-600">{{ form.errors.description }}</p>
-        </div>
-
         <!-- Attachable Type -->
         <div v-if="showEntityFields !== false">
-            <label for="attachable_type" class="block text-sm font-medium text-gray-700 mb-1">Attach To (Type)</label>
+            <label for="attachable_type" class="block text-sm font-medium text-gray-700 mb-1">Attach To</label>
             <select
                 id="attachable_type"
                 :value="form.attachable_type"
@@ -221,19 +193,6 @@ const normalizedSubjectTypes = computed(() =>
                 </option>
             </select>
             <p v-if="form.errors?.attachable_id" class="mt-1 text-sm text-red-600">{{ form.errors.attachable_id }}</p>
-        </div>
-
-        <!-- Is Public -->
-        <div class="flex items-center gap-2">
-            <input
-                id="is_public"
-                :checked="form.is_public"
-                type="checkbox"
-                class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                @change="emit('update:is_public', ($event.target as HTMLInputElement).checked)"
-            />
-            <label for="is_public" class="text-sm font-medium text-gray-700">Publicly visible</label>
-            <p v-if="form.errors?.is_public" class="mt-1 text-sm text-red-600">{{ form.errors.is_public }}</p>
         </div>
 
         <!-- Actions -->

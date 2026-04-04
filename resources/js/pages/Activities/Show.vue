@@ -48,7 +48,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'View Activity', href: route('activities.show', { activity: activity.value.id }) },
 ]
 
-// Fetch the user via API to get correct permissions
+// Fetch the activity via API to get correct permissions
 async function loadActivity() {
     const data = await fetchActivity(activity.value.id)
 

@@ -113,7 +113,7 @@ async function submit() {
             </div>
 
             <!-- Current file info -->
-            <div class="border rounded bg-white p-4">
+            <div class="border rounded p-4">
                 <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">Current File</p>
                 <div class="flex items-center gap-4">
                     <div v-if="isImage" class="shrink-0">
@@ -148,7 +148,7 @@ async function submit() {
             </div>
 
             <!-- Edit form -->
-            <div class="border rounded bg-white p-6">
+            <div class="border rounded p-6">
                 <h2 class="text-base font-semibold mb-2">Update Details</h2>
                 <p class="text-sm text-gray-500 mb-6">
                     Update title, description, and other metadata. To replace the file, upload a new one below (optional).

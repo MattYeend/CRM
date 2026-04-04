@@ -1,55 +1,81 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
-import { deleteAttachment } from '@/pages/Attachments/components/AttachmentService'
+import { deleteAttachments, fetchAttachment } from '@/services/AttachmentService'
+
+interface UserPermissions {
+    view: boolean
+    update: boolean
+    delete: boolean
+}
 
 interface Attachment {
     id: number
-    title: string | null
-    description: string | null
-    original_filename: string
-    mime_type: string | null
-    file_size: number | null
-    is_public: boolean
+    filename: string
+    mime: string | null
+    size: number
+    attachable_type: string | null
+    uploaded_by: { id: number; name: string } | null
+    created_at: string
     download_url: string
     preview_url: string | null
-    attachable_type: string | null
     attachable_type_label: string | null
     attachable_url: string | null
     attachable: { id: number; name?: string; title?: string } | null
-    uploaded_by: { id: number; name: string } | null
-    created_at: string
     updated_at: string
-    permissions: {
-        view: boolean
-        update: boolean
-        delete: boolean
-        restore: boolean
-    }
+    permissions: UserPermissions
 }
 
-const props = defineProps<{
-    attachment: Attachment
-}>()
+const props = defineProps<{ attachment: any }>()
+
+const attachment = ref<Attachment>({
+    id: props.attachment.id,
+    filename: props.attachment.filename,
+    mime: props.attachment.mime,
+    size: props.attachment.size,
+    attachable_type: props.attachment.attachable_type,
+    uploaded_by: props.attachment.uploaded_by,
+    created_at: props.attachment.created_at,
+    download_url: props.attachment.download_url,
+    preview_url: props.attachment.preview_url,
+    attachable_type_label: props.attachment.attachable_type_label,
+    attachable_url: props.attachment.attachable_url,
+    attachable: props.attachment.attachable,
+    updated_at: props.attachment.updated_at,
+    permissions: { view: false, update: false, delete: false },
+})
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Attachments', href: route('attachments.index') },
-    { title: props.attachment.title ?? props.attachment.original_filename, href: route('attachments.show', { attachment: props.attachment.id }) },
+    { title: 'View Attachment', href: route('attachments.show', { attachment: attachment.value.id }) },
 ]
 
+function capitalize(str: string | null | undefined) {
+    if (!str) return '-'
+    return str
+        .split(' ')
+        .map(s => s.charAt(0).toUpperCase() + s.slice(1))
+        .join(' ')
+}
+
+async function loadAttachment() {
+    const data = await fetchAttachment(attachment.value.id)
+
+    Object.assign(attachment.value, data)
+}
 const showDeleteModal = ref(false)
 const deleting = ref(false)
 
-const isImage = computed(() => props.attachment.mime_type?.startsWith('image/'))
-const isPdf = computed(() => props.attachment.mime_type === 'application/pdf')
+const isImage = computed(() => props.attachment.mime?.startsWith('image/'))
+const isPdf = computed(() => props.attachment.mime === 'application/pdf')
 
 async function handleDelete() {
     deleting.value = true
     try {
-        await deleteAttachment(props.attachment.id)
+        await deleteAttachments(props.attachment.id)
         router.visit(route('attachments.index'))
     } catch (err) {
         console.error('Failed to delete:', err)
@@ -76,18 +102,22 @@ function formatDate(dateString: string | null): string {
         minute: '2-digit',
     })
 }
+
+onMounted(() => {
+    loadAttachment()
+})
 </script>
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head :title="attachment.title ?? attachment.original_filename" />
+        <Head :title="capitalize(attachment.filename) || 'Attachment'" />
 
         <div class="p-6 max-w-4xl space-y-6">
 
             <!-- Header actions -->
             <div class="flex items-center justify-between">
                 <h1 class="text-2xl font-bold">
-                    {{ attachment.title ?? attachment.original_filename }}
+                    {{ attachment.filename }}
                 </h1>
                 <div class="flex items-center gap-2">
                     <a
@@ -114,13 +144,13 @@ function formatDate(dateString: string | null): string {
             </div>
 
             <!-- File Preview -->
-            <div class="border rounded p-6 bg-white">
+            <div class="border rounded p-6">
                 <h2 class="text-sm font-medium text-gray-500 mb-4">Preview</h2>
 
                 <img
                     v-if="isImage"
                     :src="attachment.preview_url ?? attachment.download_url"
-                    :alt="attachment.title ?? attachment.original_filename"
+                    :alt="attachment.filename"
                     class="max-w-full max-h-96 rounded border object-contain"
                 />
 
@@ -132,7 +162,7 @@ function formatDate(dateString: string | null): string {
 
                 <div
                     v-else
-                    class="flex flex-col items-center justify-center py-12 bg-gray-50 rounded border"
+                    class="flex flex-col items-center justify-center py-12 rounded border"
                 >
                     <svg class="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -145,29 +175,21 @@ function formatDate(dateString: string | null): string {
             </div>
 
             <!-- Details -->
-            <div class="border rounded p-6 bg-white">
+            <div class="border rounded p-6">
                 <h2 class="text-sm font-medium text-gray-500 mb-4">Details</h2>
 
                 <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                        <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Title</dt>
-                        <dd class="mt-1 text-sm">{{ attachment.title || '—' }}</dd>
-                    </div>
-                    <div>
                         <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Filename</dt>
-                        <dd class="mt-1 text-sm">{{ attachment.original_filename }}</dd>
+                        <dd class="mt-1 text-sm">{{ attachment.filename }}</dd>
                     </div>
                     <div>
                         <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">File Size</dt>
-                        <dd class="mt-1 text-sm">{{ formatSize(attachment.file_size) }}</dd>
+                        <dd class="mt-1 text-sm">{{ formatSize(attachment.size) }}</dd>
                     </div>
                     <div>
                         <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">File Type</dt>
-                        <dd class="mt-1 text-sm">{{ attachment.mime_type || '—' }}</dd>
-                    </div>
-                    <div class="sm:col-span-2">
-                        <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Description</dt>
-                        <dd class="mt-1 text-sm">{{ attachment.description || '—' }}</dd>
+                        <dd class="mt-1 text-sm">{{ attachment.mime || '—' }}</dd>
                     </div>
                     <div>
                         <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Attached To</dt>
@@ -179,17 +201,6 @@ function formatDate(dateString: string | null): string {
                                 </a>
                             </span>
                             <span v-else class="text-gray-400">—</span>
-                        </dd>
-                    </div>
-                    <div>
-                        <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Visibility</dt>
-                        <dd class="mt-1 text-sm">
-                            <span
-                                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
-                                :class="attachment.is_public ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700'"
-                            >
-                                {{ attachment.is_public ? 'Public' : 'Private' }}
-                            </span>
                         </dd>
                     </div>
                     <div>
@@ -208,7 +219,7 @@ function formatDate(dateString: string | null): string {
             </div>
 
             <!-- Danger Zone -->
-            <div v-if="attachment.permissions.delete" class="border border-red-200 rounded p-6 bg-white">
+            <div v-if="attachment.permissions.delete" class="border border-red-200 rounded p-6">
                 <h2 class="text-sm font-medium text-red-700 mb-1">Danger Zone</h2>
                 <p class="text-sm text-gray-600 mb-4">Permanently delete this attachment. This action cannot be undone.</p>
                 <button
@@ -226,11 +237,11 @@ function formatDate(dateString: string | null): string {
             class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
             @click.self="showDeleteModal = false"
         >
-            <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+            <div class="rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
                 <h2 class="text-lg font-medium mb-2">Delete attachment?</h2>
                 <p class="text-sm text-gray-600 mb-6">
                     This will permanently remove
-                    <strong>{{ attachment.title ?? attachment.original_filename }}</strong>.
+                    <strong>{{ attachment.filename }}</strong>.
                     This cannot be undone.
                 </p>
                 <div class="flex justify-end gap-3">
