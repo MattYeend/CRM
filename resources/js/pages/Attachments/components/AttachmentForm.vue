@@ -3,11 +3,8 @@ import { ref, computed, watch } from 'vue'
 
 interface AttachmentFormData {
     file: File | null
-    title: string
-    description: string
     attachable_type: string
     attachable_id: number | null
-    is_public: boolean
     errors: Record<string, string>
     processing: boolean
 }
@@ -22,16 +19,13 @@ const props = defineProps<{
     cancelHref: string
     submitLabel?: string
     showEntityFields?: boolean
-    subjectTypes?: string[]
+    attachableType?: string[]
 }>()
 
 const emit = defineEmits<{
     (e: 'update:file', value: File | null): void
-    (e: 'update:title', value: string): void
-    (e: 'update:description', value: string): void
     (e: 'update:attachable_type', value: string): void
     (e: 'update:attachable_id', value: number | null): void
-    (e: 'update:is_public', value: boolean): void
 }>()
 
 const isDragging = ref(false)
@@ -46,7 +40,21 @@ const typeApiMap: Record<string, string> = {
     company: 'companies',
     deal: 'deals',
     activity: 'activities',
+    task: 'tasks',
+    user: 'users',
 }
+
+// Each entry keeps the original value (sent to backend) and a display label
+const normalizedAttachableTypes = computed(() =>
+    (props.attachableType ?? []).map(t => {
+        const short = t.split('\\').pop()?.toLowerCase() ?? t
+        return {
+            value: t, // original full class name or whatever the backend expects
+            label: short.charAt(0).toUpperCase() + short.slice(1),
+            short,
+        }
+    })
+)
 
 watch(
     () => props.form.attachable_type,
@@ -56,7 +64,9 @@ watch(
 
         if (!type) return
 
-        const endpoint = typeApiMap[type.toLowerCase()]
+        // resolve short name from either a full class string or already-short string
+        const short = type.split('\\').pop()?.toLowerCase() ?? type
+        const endpoint = typeApiMap[short]
         if (!endpoint) return
 
         loadingEntities.value = true
@@ -95,16 +105,14 @@ function handleDrop(event: DragEvent) {
     }
 }
 
-const normalizedSubjectTypes = computed(() =>
-    (props.subjectTypes ?? []).map(t => t.split('\\').pop()?.toLowerCase() ?? t)
-)
+
 </script>
 
 <template>
     <div class="space-y-6">
         <!-- File Upload -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">File</label>
+            <label class="block text-sm font-medium mb-1">File</label>
             <div
                 class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md transition-colors"
                 :class="{ 'border-blue-400 bg-blue-50': isDragging }"
@@ -154,20 +162,20 @@ const normalizedSubjectTypes = computed(() =>
 
         <!-- Attachable Type -->
         <div v-if="showEntityFields !== false">
-            <label for="attachable_type" class="block text-sm font-medium text-gray-700 mb-1">Attach To</label>
+            <label for="attachable_type" class="block text-sm font-medium mb-1">Attachable Type</label>
             <select
                 id="attachable_type"
                 :value="form.attachable_type"
                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 @change="emit('update:attachable_type', ($event.target as HTMLSelectElement).value)"
             >
-                <option value="">Select entity type</option>
+                <option value="">Attachable Type</option>
                 <option
-                    v-for="type in normalizedSubjectTypes"
-                    :key="type"
-                    :value="type"
+                    v-for="type in normalizedAttachableTypes"
+                    :key="type.value"
+                    :value="type.value"
                 >
-                    {{ type.charAt(0).toUpperCase() + type.slice(1) }}
+                    {{ type.label }}
                 </option>
             </select>
             <p v-if="form.errors?.attachable_type" class="mt-1 text-sm text-red-600">{{ form.errors.attachable_type }}</p>
@@ -175,7 +183,7 @@ const normalizedSubjectTypes = computed(() =>
 
         <!-- Attachable ID -->
         <div v-if="showEntityFields !== false && form.attachable_type">
-            <label for="attachable_id" class="block text-sm font-medium text-gray-700 mb-1">Entity</label>
+            <label for="attachable_id" class="block text-sm font-medium mb-1">Attachable Name</label>
             <select
                 id="attachable_id"
                 :value="form.attachable_id"
@@ -183,7 +191,7 @@ const normalizedSubjectTypes = computed(() =>
                 :disabled="loadingEntities"
                 @change="emit('update:attachable_id', Number(($event.target as HTMLSelectElement).value) || null)"
             >
-                <option :value="null">{{ loadingEntities ? 'Loading...' : 'Select entity' }}</option>
+                <option :value="null">{{ loadingEntities ? 'Loading...' : 'Select Attachable Name' }}</option>
                 <option
                     v-for="entity in entityOptions"
                     :key="entity.id"

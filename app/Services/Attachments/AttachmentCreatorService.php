@@ -59,29 +59,19 @@ class AttachmentCreatorService
     public function create(StoreAttachmentRequest $request): Attachment
     {
         $user = $request->user();
-
         $file = $request->file('file');
-        $path = $file->store('attachments');
-
-        $attachment = $this->fileService->storeFile(
-            $file,
-            $user->id
-        );
-
         $validated = $request->validated();
+
+        $attachment = $this->fileService->storeFile($file, $user->id);
+
+        $validated['created_by'] = $user->id;
+        // Associate with the polymorphic parent if provided.
         $this->attacher->attach(
             $validated['attachable_type'] ?? null,
-            $validated['attachable_id'] ?? null,
+            isset($validated['attachable_id']) ? (int) $validated['attachable_id'] : null,
             $attachment
         );
 
-        $data = $request->validated();
-        $data['filename'] = $file->getClientOriginalName();
-        $data['uploaded_by'] = $user->id;
-        $data['path'] = $path;
-        $data['created_by'] = $user->id;
-        $data['created_at'] = now();
-
-        return Attachment::create($data);
+        return $attachment;
     }
 }

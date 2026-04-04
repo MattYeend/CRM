@@ -41,7 +41,7 @@ class StoreAttachmentRequest extends FormRequest
     {
         return array_merge(
             $this->baseRules(),
-            $this->attchmentRules(),
+            $this->attachmentRules(),
             $this->metaRules(),
         );
     }
@@ -69,7 +69,7 @@ class StoreAttachmentRequest extends FormRequest
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
-    private function attchmentRules(): array
+    private function attachmentRules(): array
     {
         return [
             'attachable_type' => [
@@ -79,7 +79,7 @@ class StoreAttachmentRequest extends FormRequest
             'attachable_id' => [
                 'required',
                 'integer',
-                'required_with:attactable_type',
+                'required_with:attachable_type',
             ],
         ];
     }

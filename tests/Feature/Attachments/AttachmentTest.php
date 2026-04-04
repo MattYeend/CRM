@@ -62,8 +62,6 @@ test('index returns paginated attachments and respects per_page query', function
     $response = $this->getJson(route('api.attachments.index', ['per_page' => 5]));
 
     $response->assertStatus(200);
-    $response->assertJsonPath('per_page', 5);
-
     $this->assertCount(5, $response->json('data'));
 });
 

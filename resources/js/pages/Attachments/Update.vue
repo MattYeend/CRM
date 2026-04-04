@@ -9,12 +9,9 @@ import AttachmentForm from '@/pages/Attachments/components/AttachmentForm.vue'
 
 interface Attachment {
     id: number
-    title: string | null
-    description: string | null
-    original_filename: string
-    mime_type: string | null
-    file_size: number | null
-    is_public: boolean
+    filename: string
+    mime: string | null
+    size: number | null
     download_url: string
     preview_url: string | null
     attachable_type: string | null
@@ -23,27 +20,24 @@ interface Attachment {
 
 const props = defineProps<{
     attachment: Attachment
-    subjectTypes: string[]
+    attachableTypes: string[]
 }>()
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Attachments', href: route('attachments.index') },
     {
-        title: props.attachment.title ?? props.attachment.original_filename,
+        title: props.attachment.filename,
         href: route('attachments.show', { attachment: props.attachment.id }),
     },
     { title: 'Edit', href: route('attachments.edit', { attachment: props.attachment.id }) },
 ]
 
-const isImage = computed(() => props.attachment.mime_type?.startsWith('image/'))
+const isImage = computed(() => props.attachment.mime?.startsWith('image/'))
 
 const form = reactive({
     file: null as File | null,
-    title: props.attachment.title ?? '',
-    description: props.attachment.description ?? '',
     attachable_type: props.attachment.attachable_type ?? '',
     attachable_id: props.attachment.attachable_id ?? null as number | null,
-    is_public: props.attachment.is_public ?? false,
     errors: {} as Record<string, string>,
     processing: false,
 })
@@ -65,11 +59,8 @@ async function submit() {
         const formData = new FormData()
         formData.append('_method', 'PUT')
         if (form.file) formData.append('file', form.file)
-        formData.append('title', form.title)
-        formData.append('description', form.description)
         if (form.attachable_type) formData.append('attachable_type', form.attachable_type)
         if (form.attachable_id !== null) formData.append('attachable_id', String(form.attachable_id))
-        formData.append('is_public', form.is_public ? '1' : '0')
 
         const response = await axios.post(
             `/api/attachments/${props.attachment.id}`,
@@ -94,7 +85,7 @@ async function submit() {
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head :title="`Edit — ${attachment.title ?? attachment.original_filename}`" />
+        <Head :title="`Edit — ${attachment.filename}`" />
 
         <div class="p-6 max-w-2xl space-y-6">
             <div class="flex items-center justify-between">
@@ -114,27 +105,27 @@ async function submit() {
 
             <!-- Current file info -->
             <div class="border rounded p-4">
-                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">Current File</p>
+                <p class="text-xs block text-sm font-medium mb-3">Current File</p>
                 <div class="flex items-center gap-4">
                     <div v-if="isImage" class="shrink-0">
                         <img
                             :src="attachment.preview_url ?? attachment.download_url"
-                            :alt="attachment.original_filename"
+                            :alt="attachment.filename"
                             class="h-16 w-16 object-cover rounded border"
                         />
                     </div>
                     <div
                         v-else
-                        class="shrink-0 h-16 w-16 flex items-center justify-center rounded border bg-gray-50 text-gray-400"
+                        class="shrink-0 h-16 w-16 flex items-center justify-center rounded border"
                     >
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium truncate">{{ attachment.original_filename }}</p>
-                        <p class="text-xs text-gray-500 mt-0.5">
-                            {{ attachment.mime_type }} — {{ formatSize(attachment.file_size) }}
+                        <p class="text-sm font-medium truncate">{{ attachment.filename }}</p>
+                        <p class="text-xs mt-0.5">
+                            {{ attachment.mime }} — {{ formatSize(attachment.size) }}
                         </p>
                         <a
                             :href="attachment.download_url"
@@ -150,17 +141,17 @@ async function submit() {
             <!-- Edit form -->
             <div class="border rounded p-6">
                 <h2 class="text-base font-semibold mb-2">Update Details</h2>
-                <p class="text-sm text-gray-500 mb-6">
-                    Update title, description, and other metadata. To replace the file, upload a new one below (optional).
-                </p>
 
                 <form @submit.prevent="submit" class="space-y-8 max-w-xl">
                     <AttachmentForm
                         :form="form"
                         :cancel-href="route('attachments.show', { attachment: attachment.id })"
-                        :subject-types="subjectTypes"
+                        :attachable-type="attachableTypes"
                         :show-entity-fields="true"
                         submit-label="Update Attachment"
+                        @update:file="form.file = $event"
+                        @update:attachable_type="form.attachable_type = $event"
+                        @update:attachable_id="form.attachable_id = $event"
                     />
                 </form>
             </div>

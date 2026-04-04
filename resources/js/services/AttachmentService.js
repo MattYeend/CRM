@@ -23,32 +23,3 @@ export async function updateAttachments(id, payload) {
 export async function deleteAttachments(id) {
     await api.delete(`/attachments/${id}`);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

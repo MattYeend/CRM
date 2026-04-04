@@ -19,9 +19,9 @@ class AttachmentAttacherService
      * Resolves the target model and associates the attachment if both
      * type and identifier are valid.
      *
-     * @param  string|null  $type        The fully qualified model class name
-     * @param  int|null     $id          The identifier of the target model
-     * @param  Attachment   $attachment  The attachment model to associate
+     * @param  string|null $type The fully qualified model class name
+     * @param  int|null $id The identifier of the target model
+     * @param  Attachment $attachment The attachment model to associate
      *
      * @return void
      */
@@ -47,8 +47,8 @@ class AttachmentAttacherService
      * Attempts to instantiate the model via the service container and
      * retrieve the record by its primary key. Returns null if resolution fails.
      *
-     * @param  string  $type  The fully qualified model class name
-     * @param  int     $id    The identifier of the model
+     * @param  string $type The fully qualified model class name
+     * @param  int $id The identifier of the model
      *
      * @return mixed|null
      */

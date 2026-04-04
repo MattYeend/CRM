@@ -43,6 +43,14 @@ const pagination = reactive({
     total: 0,
 })
 
+function capitalize(str: string | null | undefined) {
+    if (!str) return '-'
+    return str
+        .split(' ')
+        .map(s => s.charAt(0).toUpperCase() + s.slice(1))
+        .join(' ')
+}
+
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Attachments', href: route('attachments.index') },
 ]
@@ -120,7 +128,7 @@ onMounted(() => loadAttachments())
                 <thead>
                     <tr>
                         <th class="p-2 text-left">File Title</th>
-                        <th class="p-2 text-left">File Type</th>
+                        <th class="p-2 text-left">Attached To</th>
                         <th class="p-2 text-left">Uploaded By</th>
                         <th class="p-2 text-left">Date</th>
                         <th class="p-2 text-left">Size</th>
@@ -146,7 +154,7 @@ onMounted(() => loadAttachments())
                                 </div>
                             </div>
                         </td>
-                        <td class="p-2 text-sm">{{ attachment.attachable_type }}</td>
+                        <td class="p-2 text-sm">{{ capitalize(attachment.attachable_type) }}</td>
                         <td class="p-2 text-sm">{{ attachment.uploaded_by ?? '—' }}</td>
                         <td class="p-2 text-sm">{{ formatDate(attachment.created_at) }}</td>
                         <td class="p-2 text-sm text-gray-500">{{ formatSize(attachment.size) }}</td>

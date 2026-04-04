@@ -21,8 +21,8 @@ class AttachmentFileService
      * Persists the file to the configured filesystem disk and records
      * its metadata in a new Attachment model.
      *
-     * @param  UploadedFile  $file        The uploaded file instance
-     * @param  int|null      $uploadedBy  The ID of the user uploading the file
+     * @param  UploadedFile $file The uploaded file instance
+     * @param  int|null $uploadedBy The ID of the user uploading the file
      *
      * @return Attachment
      */
@@ -38,7 +38,7 @@ class AttachmentFileService
             'disk' => $disk,
             'path' => $path,
             'size' => $file->getSize(),
-            'mime_type' => $file->getMimeType(),
+            'mime' => $file->getMimeType(),
             'uploaded_by' => $uploadedBy,
         ]);
     }
@@ -49,9 +49,9 @@ class AttachmentFileService
      * Deletes the existing file from storage (if present), stores the new file,
      * and updates the attachment metadata accordingly.
      *
-     * @param  Attachment    $attachment  The attachment to update
-     * @param  UploadedFile  $file        The new uploaded file
-     * @param  int|null      $uploadedBy  The ID of the user performing
+     * @param  Attachment $attachment The attachment to update
+     * @param  UploadedFile $file The new uploaded file
+     * @param  int|null $uploadedBy The ID of the user performing
      * the update
      *
      * @return Attachment
@@ -72,7 +72,7 @@ class AttachmentFileService
             'disk' => $disk,
             'path' => $path,
             'filename' => $file->getClientOriginalName(),
-            'mime_type' => $file->getMimeType(),
+            'mime' => $file->getMimeType(),
             'size' => $file->getSize(),
             'uploaded_by' => $uploadedBy ?? $attachment->uploaded_by,
         ]);

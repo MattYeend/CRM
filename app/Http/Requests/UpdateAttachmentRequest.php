@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Attachment;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 /**
  * Handles authorisation and validation for updating an existing Attachment.
@@ -41,6 +43,7 @@ class UpdateAttachmentRequest extends FormRequest
     {
         return array_merge(
             $this->baseRules(),
+            $this->attachmentRules(),
             $this->metaRules(),
         );
     }
@@ -56,6 +59,28 @@ class UpdateAttachmentRequest extends FormRequest
     {
         return [
             'file' => 'nullable|file|max:10000',
+        ];
+    }
+
+    /**
+     * Validation rules for the polymorphic attachable relationship.
+     *
+     * Ensures attachable_type is one of the registered attachable types and
+     * that attachable_id is present whenever an attachable_type is provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
+     */
+    private function attachmentRules(): array
+    {
+        return [
+            'attachable_type' => [
+                'nullable',
+                Rule::in(Attachment::ATTACHABLE_TYPES),
+            ],
+            'attachable_id' => [
+                'nullable',
+                'integer',
+            ],
         ];
     }
 

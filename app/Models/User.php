@@ -359,7 +359,7 @@ class User extends Authenticatable
      *
      * @return MorphMany<Attachment>
      */
-    public function attachment(): MorphMany
+    public function attachments(): MorphMany
     {
         return $this->morphMany(Attachment::class, 'attachable');
     }

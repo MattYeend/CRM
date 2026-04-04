@@ -19,6 +19,7 @@ interface Attachment {
     size: number
     attachable_type: string | null
     uploaded_by: { id: number; name: string } | null
+    uploader: { id: number; name: string } | null
     created_at: string
     download_url: string
     preview_url: string | null
@@ -26,6 +27,7 @@ interface Attachment {
     attachable_url: string | null
     attachable: { id: number; name?: string; title?: string } | null
     updated_at: string
+    is_test: boolean
     permissions: UserPermissions
 }
 
@@ -38,6 +40,7 @@ const attachment = ref<Attachment>({
     size: props.attachment.size,
     attachable_type: props.attachment.attachable_type,
     uploaded_by: props.attachment.uploaded_by,
+    uploader: props.attachment.uploader,
     created_at: props.attachment.created_at,
     download_url: props.attachment.download_url,
     preview_url: props.attachment.preview_url,
@@ -45,6 +48,7 @@ const attachment = ref<Attachment>({
     attachable_url: props.attachment.attachable_url,
     attachable: props.attachment.attachable,
     updated_at: props.attachment.updated_at,
+    is_test: props.attachment.is_test ?? false,
     permissions: { view: false, update: false, delete: false },
 })
 
@@ -122,8 +126,10 @@ onMounted(() => {
                 <div class="flex items-center gap-2">
                     <a
                         :href="attachment.download_url"
-                        class="px-4 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50"
+                        class="px-4 py-2 text-sm border border-gray-300 rounded"
+                        :class="attachment.is_test ? 'opacity-50 pointer-events-none cursor-not-allowed' : 'hover:bg-gray-50'"
                         target="_blank"
+                        :aria-disabled="attachment.is_test"
                     >
                         Download
                     </a>
@@ -168,7 +174,13 @@ onMounted(() => {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     <p class="mt-2 text-sm text-gray-500">No preview available</p>
-                    <a :href="attachment.download_url" class="mt-2 text-sm text-blue-600 hover:underline" target="_blank">
+                    <a
+                        :href="attachment.download_url"
+                        class="px-4 py-2 text-sm border border-gray-300 rounded"
+                        :class="attachment.is_test ? 'opacity-50 pointer-events-none cursor-not-allowed' : 'hover:bg-gray-50'"
+                        target="_blank"
+                        :aria-disabled="attachment.is_test"
+                    >
                         Download to view
                     </a>
                 </div>
@@ -193,19 +205,11 @@ onMounted(() => {
                     </div>
                     <div>
                         <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Attached To</dt>
-                        <dd class="mt-1 text-sm">
-                            <span v-if="attachment.attachable">
-                                {{ attachment.attachable_type_label }}:
-                                <a :href="attachment.attachable_url ?? '#'" class="text-blue-600 hover:underline">
-                                    {{ attachment.attachable.name ?? attachment.attachable.title ?? '#' + attachment.attachable.id }}
-                                </a>
-                            </span>
-                            <span v-else class="text-gray-400">—</span>
-                        </dd>
+                        <dd class="mt-1 text-sm">{{ capitalize(attachment.attachable_type) }}</dd>
                     </div>
                     <div>
                         <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Uploaded By</dt>
-                        <dd class="mt-1 text-sm">{{ attachment.uploaded_by?.name ?? '—' }}</dd>
+                        <dd class="mt-1 text-sm">{{ attachment.uploader?.name || '-' }}</dd>
                     </div>
                     <div>
                         <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Uploaded At</dt>
