@@ -132,6 +132,18 @@ class LearningPolicy
     {
         return $this->has($user, 'learnings.assign');
     }
+    
+    /**
+     * Determine whether the user can access models.
+     *
+     * @param  User  $user
+     *
+     * @return  bool
+     */
+    public function access(User $user): bool
+    {
+        return $this->has($user, 'learnings.access');
+    }
 
     /**
      * Determine whether the user can complete their own models.

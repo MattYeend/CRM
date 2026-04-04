@@ -43,6 +43,7 @@ class PermissionRoleSeeder extends Seeder
             'activities.update.any',
             'activities.delete.any',
             'activities.restore.any',
+            'activities.assign',
 
             'attachments.view.all',
             'attachments.view.own',
@@ -86,6 +87,7 @@ class PermissionRoleSeeder extends Seeder
             'invoices.update.any',
             'invoices.delete.any',
             'invoices.restore.any',
+            'invoices.assign',
 
             'invoiceItems.view.all',
             'invoiceItems.view.own',
@@ -93,6 +95,7 @@ class PermissionRoleSeeder extends Seeder
             'invoiceItems.update.any',
             'invoiceItems.delete.any',
             'invoiceItems.restore.any',
+            'invoiceItems.assign',
 
             'jobTitles.view.all',
             'jobTitles.view.own',
@@ -113,6 +116,8 @@ class PermissionRoleSeeder extends Seeder
             'learnings.create',
             'learnings.update.any',
             'learnings.delete.any',
+            'learnings.assign',
+            'learnings.access',
             'learnings.complete.any',
             'learnings.incomplete.any',
             'learnings.restore.any',
@@ -215,6 +220,7 @@ class PermissionRoleSeeder extends Seeder
             'tasks.update.any',
             'tasks.delete.any',
             'tasks.restore.any',
+            'tasks.assign',
 
             'reports.view',
             'data.export',
@@ -322,6 +328,7 @@ class PermissionRoleSeeder extends Seeder
 
             'learnings.view.all',
             'learnings.view.own',
+            'learnings.access',
             'learnings.create',
             'learnings.update.own',
             'learnings.delete.own',
