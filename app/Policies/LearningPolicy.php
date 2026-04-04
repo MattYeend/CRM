@@ -132,7 +132,7 @@ class LearningPolicy
     {
         return $this->has($user, 'learnings.assign');
     }
-    
+
     /**
      * Determine whether the user can access models.
      *

@@ -139,7 +139,6 @@ class ActivityPolicy
         );
     }
 
-
     /**
      * Determine whether the user can assign models.
      *

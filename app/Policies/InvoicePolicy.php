@@ -139,7 +139,6 @@ class InvoicePolicy
         );
     }
 
-
     /**
      * Determine whether the user can assign models.
      *
