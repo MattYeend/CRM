@@ -30,9 +30,9 @@ class LearningPolicy
      * Grant all abilities to super admin users before checking other
      * permissions.
      *
-     * @param  User  $user
+     * @param  User $user
      *
-     * @return  bool|null  Return true to allow, null to continue checking
+     * @return bool|null Return true to allow, null to continue checking
      */
     public function before(User $user): ?bool
     {
@@ -46,9 +46,9 @@ class LearningPolicy
     /**
      * Determine whether the user can view any models.
      *
-     * @param  User  $user
+     * @param  User $user
      *
-     * @return  bool
+     * @return bool
      */
     public function viewAny(User $user): bool
     {
@@ -58,10 +58,10 @@ class LearningPolicy
     /**
      * Determine whether the user can view the model.
      *
-     * @param  User      $user
-     * @param  Learning  $learning
+     * @param  User $user
+     * @param  Learning $learning
      *
-     * @return  bool
+     * @return bool
      */
     public function view(User $user, Learning $learning): bool
     {
@@ -76,9 +76,9 @@ class LearningPolicy
     /**
      * Determine whether the user can create models.
      *
-     * @param  User  $user
+     * @param  User $user
      *
-     * @return  bool
+     * @return bool
      */
     public function create(User $user): bool
     {
@@ -88,10 +88,10 @@ class LearningPolicy
     /**
      * Determine whether the user can update the model.
      *
-     * @param  User      $user
-     * @param  Learning  $learning
+     * @param  User $user
+     * @param  Learning $learning
      *
-     * @return  bool
+     * @return bool
      */
     public function update(User $user, Learning $learning): bool
     {
@@ -106,10 +106,10 @@ class LearningPolicy
     /**
      * Determine whether the user can delete the model.
      *
-     * @param  User      $user
-     * @param  Learning  $learning
+     * @param  User $user
+     * @param  Learning $learning
      *
-     * @return  bool
+     * @return bool
      */
     public function delete(User $user, Learning $learning): bool
     {
@@ -122,23 +122,11 @@ class LearningPolicy
     }
 
     /**
-     * Determine whether the user can manage models.
-     *
-     * @param  User  $user
-     *
-     * @return  bool
-     */
-    public function manage(User $user): bool
-    {
-        return $this->has($user, 'learnings.manage');
-    }
-
-    /**
      * Determine whether the user can assign models.
      *
-     * @param  User  $user
+     * @param  User $user
      *
-     * @return  bool
+     * @return bool
      */
     public function assign(User $user): bool
     {
@@ -146,24 +134,12 @@ class LearningPolicy
     }
 
     /**
-     * Determine whether the user can access models.
-     *
-     * @param  User  $user
-     *
-     * @return  bool
-     */
-    public function access(User $user): bool
-    {
-        return $this->has($user, 'learnings.access');
-    }
-
-    /**
      * Determine whether the user can complete their own models.
      *
-     * @param  User      $user
-     * @param  Learning  $learning
+     * @param  User $user
+     * @param  Learning $learning
      *
-     * @return  bool
+     * @return bool
      */
     public function complete(User $user, Learning $learning)
     {
@@ -178,10 +154,10 @@ class LearningPolicy
     /**
      * Determine whether the user can incomplete their own models.
      *
-     * @param  User      $user
-     * @param  Learning  $learning
+     * @param  User $user
+     * @param  Learning $learning
      *
-     * @return  bool
+     * @return bool
      */
     public function incomplete(User $user, Learning $learning)
     {
@@ -196,10 +172,10 @@ class LearningPolicy
     /**
      * Determine wheter the user can restore the model.
      *
-     * @param  User      $user
-     * @param  Learning  $learning
+     * @param  User $user
+     * @param  Learning $learning
      *
-     * @return  bool
+     * @return bool
      */
     public function restore(User $user, Learning $learning): bool
     {
