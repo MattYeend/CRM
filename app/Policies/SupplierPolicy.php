@@ -30,7 +30,7 @@ class SupplierPolicy
      * Grant all abilities to super admin users before checking other
      * permissions.
      *
-     * @param User $user
+     * @param  User $user
      *
      * @return bool|null Return true to allow, null to continue checking
      */
@@ -46,7 +46,7 @@ class SupplierPolicy
     /**
      * Determine whether the user can view any models.
      *
-     * @param User $user
+     * @param  User $user
      *
      * @return bool
      */
@@ -58,8 +58,8 @@ class SupplierPolicy
     /**
      * Determine whether the user can view the model.
      *
-     * @param User      $user
-     * @param Supplier  $supplier
+     * @param  User $user
+     * @param  Supplier $supplier
      *
      * @return bool
      */
@@ -76,7 +76,7 @@ class SupplierPolicy
     /**
      * Determine whether the user can create models.
      *
-     * @param User $user
+     * @param  User $user
      *
      * @return bool
      */
@@ -88,8 +88,8 @@ class SupplierPolicy
     /**
      * Determine whether the user can update the model.
      *
-     * @param User      $user
-     * @param Supplier  $supplier
+     * @param  User $user
+     * @param  Supplier $supplier
      *
      * @return bool
      */
@@ -106,8 +106,8 @@ class SupplierPolicy
     /**
      * Determine whether the user can delete the model.
      *
-     * @param User      $user
-     * @param Supplier  $supplier
+     * @param  User $user
+     * @param  Supplier $supplier
      *
      * @return bool
      */
@@ -124,8 +124,8 @@ class SupplierPolicy
     /**
      * Determine whether the user can restore the model.
      *
-     * @param User      $user
-     * @param Supplier  $supplier
+     * @param  User $user
+     * @param  Supplier $supplier
      *
      * @return bool
      */

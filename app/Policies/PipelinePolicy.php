@@ -138,4 +138,16 @@ class PipelinePolicy
             'pipelines.restore.own'
         );
     }
+
+    /**
+     * Determine whether the user can assign models.
+     *
+     * @param  User  $user
+     *
+     * @return  bool
+     */
+    public function assign(User $user): bool
+    {
+        return $this->has($user, 'pipelines.assign');
+    }
 }
