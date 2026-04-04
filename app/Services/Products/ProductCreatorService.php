@@ -30,7 +30,6 @@ class ProductCreatorService
         $data = $request->validated();
 
         $data['created_by'] = $user->id;
-        
 
         return Product::create($data);
     }

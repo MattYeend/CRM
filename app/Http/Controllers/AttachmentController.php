@@ -115,7 +115,7 @@ class AttachmentController extends Controller
             'permissions' => [
                 'create' => Gate::allows('create', Attachment::class),
                 'viewAny' => Gate::allows('viewAny', Attachment::class),
-            ]
+            ],
         ]);
     }
 

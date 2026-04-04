@@ -131,12 +131,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ]);
     })->name('attachments.show');
 
-    Route::get('/attachments/{attachment}/edit', function (Attachment $attachment) {
-        return Inertia::render('Attachments/Update', [
-            'attachment' => $attachment->load(['uploader']),
-            'attachableTypes' => Attachment::ATTACHABLE_TYPES,
-        ]);
-    })->name('attachments.edit');
+    Route::get(
+        '/attachments/{attachment}/edit',
+        function (Attachment $attachment) {
+            return Inertia::render('Attachments/Update', [
+                'attachment' => $attachment->load(['uploader']),
+                'attachableTypes' => Attachment::ATTACHABLE_TYPES,
+            ]);
+        }
+    )->name('attachments.edit');
 });
 
 require __DIR__.'/settings.php';

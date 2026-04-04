@@ -68,7 +68,9 @@ class AttachmentCreatorService
         // Associate with the polymorphic parent if provided.
         $this->attacher->attach(
             $validated['attachable_type'] ?? null,
-            isset($validated['attachable_id']) ? (int) $validated['attachable_id'] : null,
+            isset($validated['attachable_id'])
+                ? (int) $validated['attachable_id']
+                : null,
             $attachment
         );
 
