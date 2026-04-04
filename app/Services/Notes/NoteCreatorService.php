@@ -43,7 +43,6 @@ class NoteCreatorService
         $data = $request->validated();
 
         $data['created_by'] = $user->id;
-        $data['created_at'] = now();
 
         $note = Note::create($data);
 

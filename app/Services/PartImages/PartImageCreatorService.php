@@ -35,7 +35,6 @@ class PartImageCreatorService
             'public'
         );
         $data['created_by'] = $user->id;
-        $data['created_at'] = now();
 
         return PartImage::create($data);
     }

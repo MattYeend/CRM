@@ -34,7 +34,6 @@ class OrderCreatorService
         }
 
         $data['created_by'] = $user->id;
-        $data['created_at'] = now();
 
         return Order::create($data);
     }

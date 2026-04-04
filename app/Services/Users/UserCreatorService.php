@@ -37,7 +37,6 @@ class UserCreatorService
 
         $data['password'] = Hash::make($data['password']);
         $data['created_by'] = $user->id;
-        $data['created_at'] = now();
 
         return User::create($data);
     }

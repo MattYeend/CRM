@@ -30,7 +30,6 @@ class QuoteCreatorService
         $data = $request->validated();
 
         $data['created_by'] = $user->id;
-        $data['created_at'] = now();
 
         $subtotal = $data['subtotal'] ?? 0;
         $tax = $data['tax'] ?? 0;

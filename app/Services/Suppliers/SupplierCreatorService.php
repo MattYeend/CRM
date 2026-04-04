@@ -30,7 +30,6 @@ class SupplierCreatorService
         $data = $request->validated();
 
         $data['created_by'] = $user->id;
-        $data['created_at'] = now();
 
         return Supplier::create($data);
     }
