@@ -14,7 +14,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { Activity, BookOpen, Folder, LayoutGrid, User } from 'lucide-vue-next';
+import { Activity, BookOpen, Folder, LayoutGrid, Paperclip, User } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -33,6 +33,11 @@ const mainNavItems: NavItem[] = [
         title: 'Activities',
         href: '/activities',
         icon: Activity
+    },
+    {
+        title: 'Attachments',
+        href: '/attachments',
+        icon: Paperclip
     }
 ];
 

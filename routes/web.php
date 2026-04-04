@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Activity;
+use App\Models\Attachment;
 use App\Models\JobTitle;
 use App\Models\Role;
 use App\Models\User;
@@ -102,6 +103,42 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'subjectTypes' => array_keys(Relation::morphMap()),
         ]);
     })->name('activities.edit');
+
+    /**
+     * -------------------------------------
+     * ------------ Attachments ------------
+     * -------------------------------------
+     */
+    Route::get('/attachments', function () {
+        return Inertia::render('Attachments/Index', [
+            'attachments' => Attachment::with([
+                'uploader',
+            ])->latest()->get(),
+        ]);
+    })->name('attachments.index');
+
+    Route::get('/attachments/create', function () {
+        return Inertia::render('Attachments/Create', [
+            'subjectTypes' => array_keys(Relation::morphMap()),
+        ]);
+    })->name('attachments.create');
+
+    Route::get('/attachments/{attachment}', function (Attachment $attachment) {
+        return Inertia::render('Attachments/Show', [
+            'attachment' => $attachment->load([
+                'uploader',
+            ]),
+        ]);
+    })->name('attachments.show');
+
+    Route::get('/activities/{attachment}/edit', function (Attachment $attachment) {
+        return Inertia::render('Attachments/Update', [
+            'attachment' => $attachment->load([
+                'uploader',
+            ]),
+            'subjectTypes' => array_keys(Relation::morphMap()),
+        ]);
+    })->name('attachments.edit');
 });
 
 require __DIR__.'/settings.php';

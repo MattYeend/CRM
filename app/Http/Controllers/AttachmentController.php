@@ -11,7 +11,8 @@ use App\Services\Attachments\AttachmentManagementService;
 use App\Services\Attachments\AttachmentQueryService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
-// use Illuminate\Support\Facades\Gate;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -99,13 +100,23 @@ class AttachmentController extends Controller
      * @return JsonResponse Paginated attachment data with pagination metadata
      * and permissions.
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $this->authorize('viewAny', Attachment::class);
 
-        $attachment = $this->query->list(request());
+        $paginator = $this->query->list($request);
 
-        return response()->json($attachment);
+        return response()->json([
+            'data' => $paginator->items(),
+            'current_page' => $paginator->currentPage(),
+            'last_page' => $paginator->lastPage(),
+            'total' => $paginator->total(),
+
+            'permissions' => [
+                'create' => Gate::allows('create', Attachment::class),
+                'viewAny' => Gate::allows('viewAny', Attachment::class),
+            ]
+        ]);
     }
 
     /**

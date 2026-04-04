@@ -80,7 +80,7 @@ class ActivityQueryService
      *
      * Formats the activity into a consistent response structure.
      *
-     * @param  Activity  $activity  The activity model to retrieve
+     * @param  Activity $activity The activity model to retrieve
      *
      * @return array
      */

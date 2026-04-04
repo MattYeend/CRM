@@ -5,6 +5,7 @@ namespace App\Services\Attachments;
 use App\Models\Attachment;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for Attachment records.
@@ -64,12 +65,25 @@ class AttachmentQueryService
             min((int) $request->query('per_page', 10), 100)
         );
 
-        $query = Attachment::query();
+        $query = Attachment::with('uploader');
 
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+
+        $paginator->through(
+            fn (Attachment $attachment) => $this->formatAttachment($attachment)
+        );
+
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Attachment::class),
+                'viewAny' => Gate::allows('viewAny', Attachment::class),
+            ],
+        ]);
+
+        return $paginator;
     }
 
     /**
@@ -82,5 +96,38 @@ class AttachmentQueryService
     public function show(Attachment $attachment): Attachment
     {
         return $attachment->load('uploader');
+    }
+
+    /**
+     * Format a attachment into a structured array.
+     *
+     * Includes core attributes, related user data, derived subject name,
+     * and authorisation permissions for the current user.
+     *
+     * @param  Attachment $attchment
+     *
+     * @return array
+     */
+    private function formatAttachment(Attachment $attachment): array
+    {
+        return [
+            'id' => $attachment->id,
+            'filename' => $attachment->filename,
+            'disk' => $attachment->disk,
+            'path' => $attachment->path,
+            'attachable_type' => $attachment->attachable_type,
+            'attachable_id' => $attachment->attachable_id,
+            'attachable_type' => $attachment->attachable_type,
+            'uploaded_by' => $attachment->uploader?->name,
+            'size' => $attachment->size,
+            'created_at' => $attachment->created_at,
+            'mime' => $attachment->mime,
+            'creator' => $attachment->creator,
+            'permissions' => [
+                'view' => Gate::allows('view', $attachment),
+                'update' => Gate::allows('update', $attachment),
+                'delete' => Gate::allows('delete', $attachment),
+            ],
+        ];
     }
 }
