@@ -25,6 +25,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'activities.restore.any', 'label' => 'Restore any activities'],
             ['name' => 'activities.restore.own', 'label' => 'Restore own activities'],
             ['name' => 'activities.assign', 'label' => 'Assign activities'],
+            ['name' => 'activities.access.any', 'label' => 'Access any activities'],
+            ['name' => 'activities.access.own', 'label' => 'Access own activities'],
 
             // Attachments
             ['name' => 'attachments.view.all', 'label' => 'View attachments'],
@@ -38,6 +40,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'attachments.delete.own', 'label' => 'Delete own attachments'],
             ['name' => 'attachments.restore.any', 'label' => 'Restore any attachments'],
             ['name' => 'attachments.restore.own', 'label' => 'Restore own attachments'],
+            ['name' => 'attachments.access.any', 'label' => 'Access any attachments'],
+            ['name' => 'attachments.access.own', 'label' => 'Access own attachments'],
 
             // Bill Of Materials
             ['name' => 'billOfMaterials.view.all', 'label' => 'View bill of materials'],
@@ -50,6 +54,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'billOfMaterials.delete.own', 'label' => 'Delete own bill of materials'],
             ['name' => 'billOfMaterials.restore.any', 'label' => 'Restore any bill of materials'],
             ['name' => 'billOfMaterials.restore.own', 'label' => 'Restore own bill of materials'],
+            ['name' => 'billOfMaterials.access.any', 'label' => 'Access any bill of materials'],
+            ['name' => 'billOfMaterials.access.own', 'label' => 'Access own bill of materials'],
 
             // Companies
             ['name' => 'companies.view.all', 'label' => 'View companies'],
@@ -61,6 +67,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'companies.delete.own', 'label' => 'Delete own companies'],
             ['name' => 'companies.restore.any', 'label' => 'Restore any companies'],
             ['name' => 'companies.restore.own', 'label' => 'Restore own companies'],
+            ['name' => 'companies.access.any', 'label' => 'Access any companies'],
+            ['name' => 'companies.access.own', 'label' => 'Access own companies'],
 
             // Deals
             ['name' => 'deals.view.all', 'label' => 'View deals'],
@@ -72,12 +80,16 @@ class PermissionSeeder extends Seeder
             ['name' => 'deals.delete.own', 'label' => 'Delete own deals'],
             ['name' => 'deals.restore.any', 'label' => 'Restore any deals'],
             ['name' => 'deals.restore.own', 'label' => 'Restore own deals'],
+            ['name' => 'deals.access.any', 'label' => 'Access any deals'],
+            ['name' => 'deals.access.own', 'label' => 'Access own deals'],
 
             // Deal Products
             ['name' => 'deals.products.add', 'label' => 'Add products to deals'],
             ['name' => 'deals.products.update', 'label' => 'Update products on deals'],
             ['name' => 'deals.products.remove', 'label' => 'Remove products from deals'],
             ['name' => 'deals.products.restore', 'label' => 'Restore products on deals'],
+            ['name' => 'deals.products.access.any', 'label' => 'Access any products to deals'],
+            ['name' => 'deals.products.access.own', 'label' => 'Access own products to deals'],
 
             // Invoices / finance
             ['name' => 'invoices.view.all', 'label' => 'View invoices'],
@@ -90,6 +102,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'invoices.restore.any', 'label' => 'Restore any invoices'],
             ['name' => 'invoices.restore.own', 'label' => 'Restore own invoices'],
             ['name' => 'invoices.assign', 'label' => 'Assign invoices'],
+            ['name' => 'invoices.access.any', 'label' => 'Access any invoices'],
+            ['name' => 'invoices.access.own', 'label' => 'Access own invoices'],
 
             // Invoice Items
             ['name' => 'invoiceItems.view.all', 'label' => 'View invoice items'],
@@ -102,6 +116,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'invoiceItems.restore.any', 'label' => 'Restore any invoices items'],
             ['name' => 'invoiceItems.restore.own', 'label' => 'Restore own invoices items'],
             ['name' => 'invoiceItems.assign', 'label' => 'Assign invoice items'],
+            ['name' => 'invoiceItems.access.any', 'label' => 'Access any invoice items'],
+            ['name' => 'invoiceItems.access.own', 'label' => 'Access own invoice items'],
 
             // Job Titles
             ['name' => 'jobTitles.view.all', 'label' => 'View job titles'],
@@ -113,6 +129,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'jobTitles.delete.own', 'label' => 'Delete own job titles'],
             ['name' => 'jobTitles.restore.any', 'label' => 'Restore any job titles'],
             ['name' => 'jobTitles.restore.own', 'label' => 'Restore own job titles'],
+            ['name' => 'jobTitles.access.any', 'label' => 'Access any job titles'],
+            ['name' => 'jobTitles.access.own', 'label' => 'Access own job titles'],
 
             // Leads 
             ['name' => 'leads.view.all', 'label' => 'View leads'],
@@ -124,6 +142,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'leads.delete.own', 'label' => 'Delete own leads'],
             ['name' => 'leads.restore.any', 'label' => 'Restore any leads'],
             ['name' => 'leads.restore.own', 'label' => 'Restore own leads'],
+            ['name' => 'leads.access.any', 'label' => 'Access any leads'],
+            ['name' => 'leads.access.own', 'label' => 'Access own leads'],
 
             // Learning Material
             ['name' => 'learnings.view.all', 'label' => 'View learning materials'],
@@ -134,7 +154,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'learnings.delete.any', 'label' => 'Delete any learning materials'],
             ['name' => 'learnings.delete.own', 'label' => 'Delete own learning materials'],
             ['name' => 'learnings.assign', 'label' => 'Assign learning materials'],
-            ['name' => 'learnings.access', 'label' => 'Access learning materials'],
+            ['name' => 'learnings.access.any', 'label' => 'Access any learning materials'],
+            ['name' => 'learnings.access.own', 'label' => 'Access own learning materials'],
             ['name' => 'learnings.complete.any', 'label' => 'Can complete any learning materials'],
             ['name' => 'learnings.complete.own', 'label' => 'Can complete own learning materials'],
             ['name' => 'learnings.incomplete.any', 'label' => 'Can incomplete any learning materials'],
@@ -152,6 +173,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'notes.delete.own', 'label' => 'Delete own notes'],
             ['name' => 'notes.restore.any', 'label' => 'Restore any notes'],
             ['name' => 'notes.restore.own', 'label' => 'Restore own notes'],
+            ['name' => 'notes.access.any', 'label' => 'Access any notes'],
+            ['name' => 'notes.access.own', 'label' => 'Access own notes'],
 
             // Orders
             ['name' => 'orders.view.all', 'label' => 'View orders'],
@@ -163,12 +186,16 @@ class PermissionSeeder extends Seeder
             ['name' => 'orders.delete.own', 'label' => 'Delete own orders'],
             ['name' => 'orders.restore.any', 'label' => 'Restore any orders'],
             ['name' => 'orders.restore.own', 'label' => 'Restore own orders'],
+            ['name' => 'orders.access.any', 'label' => 'Access any orders'],
+            ['name' => 'orders.access.own', 'label' => 'Access own orders'],
 
             // Order Products
             ['name' => 'orders.products.add', 'label' => 'Add products to orders'],
             ['name' => 'orders.products.update', 'label' => 'Update products on orders'],
             ['name' => 'orders.products.remove', 'label' => 'Remove products from orders'],
             ['name' => 'orders.products.restore', 'label' => 'Restore products on orders'],
+            ['name' => 'orders.products.access.any', 'label' => 'Access any products to orders'],
+            ['name' => 'orders.products.access.own', 'label' => 'Access own products to orders'],
 
             // Parts
             ['name' => 'parts.view.all', 'label' => 'View parts'],
@@ -180,6 +207,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'parts.delete.own', 'label' => 'Delete own parts'],
             ['name' => 'parts.restore.any', 'label' => 'Restore any parts'],
             ['name' => 'parts.restore.own', 'label' => 'Restore own parts'],
+            ['name' => 'parts.access.any', 'label' => 'Access any parts'],
+            ['name' => 'parts.access.own', 'label' => 'Access own parts'],
 
             // Part Categories
             ['name' => 'partCategories.view.all', 'label' => 'View part caterogies'],
@@ -191,6 +220,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'partCategories.delete.own', 'label' => 'Delete own part caterogies'],
             ['name' => 'partCategories.restore.any', 'label' => 'Restore any part caterogies'],
             ['name' => 'partCategories.restore.own', 'label' => 'Restore own part caterogies'],
+            ['name' => 'partCategories.access.any', 'label' => 'Access any part categories'],
+            ['name' => 'partCategories.access.own', 'label' => 'Access own part categories'],
 
             // Part Images
             ['name' => 'partImages.view.all', 'label' => 'View part images'],
@@ -202,11 +233,15 @@ class PermissionSeeder extends Seeder
             ['name' => 'partImages.delete.own', 'label' => 'Delete own part images'],
             ['name' => 'partImages.restore.any', 'label' => 'Restore any part images'],
             ['name' => 'partImages.restore.own', 'label' => 'Restore own part images'],
+            ['name' => 'partImages.access.any', 'label' => 'Access any part images'],
+            ['name' => 'partImages.access.own', 'label' => 'Access own part images'],
 
             // Part Stock Movements
             ['name' => 'partStockMovements.view.all', 'label' => 'View part stock movements'],
             ['name' => 'partStockMovements.view.own', 'label' => 'View own part stock movements'],
             ['name' => 'partStockMovements.create', 'label' => 'Create part stock movements'],
+            ['name' => 'partStockMovements.access.any', 'label' => 'Access any part stock movements'],
+            ['name' => 'partStockMovements.access.own', 'label' => 'Access own part stock movements'],
 
             // Part Serial Numbers
             ['name' => 'partSerialNumbers.view.all', 'label' => 'View part serial numbers'],
@@ -217,6 +252,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'partSerialNumbers.delete.own', 'label' => 'Delete own part serial numbers'],
             ['name' => 'partSerialNumbers.restore.any', 'label' => 'Restore any part serial numbers'],
             ['name' => 'partSerialNumbers.restore.own', 'label' => 'Restore own part serial numbers'],
+            ['name' => 'partSerialNumbers.access.any', 'label' => 'Access any part serial numbers'],
+            ['name' => 'partSerialNumbers.access.own', 'label' => 'Access own part serial numbers'],
 
             // Permissions
             ['name' => 'permissions.view.all', 'label' => 'View permissions'],
@@ -228,6 +265,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'permissions.delete.own', 'label' => 'Delete own permissions'],
             ['name' => 'permissions.restore.any', 'label' => 'Restore any permissions'],
             ['name' => 'permissions.restore.own', 'label' => 'Restore own permissions'],
+            ['name' => 'permissions.access.any', 'label' => 'Access any permissions'],
+            ['name' => 'permissions.access.own', 'label' => 'Access own permissions'],
 
             // Pipelines
             ['name' => 'pipelines.view.all', 'label' => 'View pipelines'],
@@ -237,10 +276,11 @@ class PermissionSeeder extends Seeder
             ['name' => 'pipelines.update.own', 'label' => 'Update own pipelines'],
             ['name' => 'pipelines.delete.any', 'label' => 'Delete any pipelines'],
             ['name' => 'pipelines.delete.own', 'label' => 'Delete own pipelines'],
-            ['name' => 'pipelines.assign', 'label' => 'Assign pipelines to entities'],
             ['name' => 'pipelines.restore.any', 'label' => 'Restore any pipelines'],
             ['name' => 'pipelines.restore.own', 'label' => 'Restore own pipelines'],
             ['name' => 'pipelines.assign', 'label' => 'Assign pipelines'],
+            ['name' => 'pipelines.access.any', 'label' => 'Access any pipelines'],
+            ['name' => 'pipelines.access.own', 'label' => 'Access own pipelines'],
 
             // Pipeline Stages
             ['name' => 'pipelineStages.view.all', 'label' => 'View pipeline stages'],
@@ -250,10 +290,11 @@ class PermissionSeeder extends Seeder
             ['name' => 'pipelineStages.update.own', 'label' => 'Update own pipeline stages'],
             ['name' => 'pipelineStages.delete.any', 'label' => 'Delete any pipeline stages'],
             ['name' => 'pipelineStages.delete.own', 'label' => 'Delete own pipeline stages'],
-            ['name' => 'pipelineStages.assign', 'label' => 'Assign pipeline stages to pipelines'],
             ['name' => 'pipelineStages.restore.any', 'label' => 'Restore any pipeline stages'],
             ['name' => 'pipelineStages.restore.own', 'label' => 'Restore own pipeline stages'],
             ['name' => 'pipelineStages.assign', 'label' => 'Assign pipeline stages'],
+            ['name' => 'pipelineStages.access.any', 'label' => 'Access any pipeline stages'],
+            ['name' => 'pipelineStages.access.own', 'label' => 'Access own pipeline stages'],
 
             // Products
             ['name' => 'products.view.all', 'label' => 'View products'],
@@ -265,6 +306,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'products.delete.own', 'label' => 'Delete own products'],
             ['name' => 'products.restore.any', 'label' => 'Restore any products'],
             ['name' => 'products.restore.own', 'label' => 'Restore own products'],
+            ['name' => 'products.access.any', 'label' => 'Access any products'],
+            ['name' => 'products.access.own', 'label' => 'Access own products'],
 
             // Quotes
             ['name' => 'quotes.view.all', 'label' => 'View quotes'],
@@ -276,12 +319,16 @@ class PermissionSeeder extends Seeder
             ['name' => 'quotes.delete.own', 'label' => 'Delete own quotes'],
             ['name' => 'quotes.restore.any', 'label' => 'Restore any quotes'],
             ['name' => 'quotes.restore.own', 'label' => 'Restore own quotes'],
+            ['name' => 'quotes.access.any', 'label' => 'Access any quotes'],
+            ['name' => 'quotes.access.own', 'label' => 'Access own quotes'],
 
             // Quote Products
             ['name' => 'quotes.products.add', 'label' => 'Add products to quotes'],
             ['name' => 'quotes.products.update', 'label' => 'Update products on quotes'],
             ['name' => 'quotes.products.remove', 'label' => 'Remove products from quotes'],
             ['name' => 'quotes.products.restore', 'label' => 'Restore products on quotes'],
+            ['name' => 'quotes.products.access.any', 'label' => 'Access any products to quotes'],
+            ['name' => 'quotes.products.access.own', 'label' => 'Access own products to quotes'],
 
             // Reports & exports
             ['name' => 'reports.view', 'label' => 'View reports'],
@@ -290,6 +337,8 @@ class PermissionSeeder extends Seeder
             // Roles
             ['name' => 'roles.view.all', 'label' => 'View roles'],
             ['name' => 'roles.view.own', 'label' => 'View own roles'],
+            ['name' => 'roles.access.any', 'label' => 'Access any roles'],
+            ['name' => 'roles.access.own', 'label' => 'Access own roles'],
 
             // Tasks
             ['name' => 'tasks.view.all', 'label' => 'View tasks'],
@@ -302,10 +351,14 @@ class PermissionSeeder extends Seeder
             ['name' => 'tasks.restore.any', 'label' => 'Restore any tasks'],
             ['name' => 'tasks.restore.own', 'label' => 'Restore own tasks'],
             ['name' => 'tasks.assign', 'label' => 'Assign tasks'],
+            ['name' => 'tasks.access.any', 'label' => 'Access any tasks'],
+            ['name' => 'tasks.access.own', 'label' => 'Access own tasks'],
 
             // Settings
             ['name' => 'settings.view', 'label' => 'View settings'],
             ['name' => 'settings.manage', 'label' => 'Manage settings'],
+            ['name' => 'settings.access.any', 'label' => 'Access any settings'],
+            ['name' => 'settings.access.own', 'label' => 'Access own settings'],
 
             // Suppliers
             ['name' => 'suppliers.view.all', 'label' => 'View suppliers'],
@@ -317,6 +370,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'suppliers.delete.own', 'label' => 'Delete own suppliers'],
             ['name' => 'suppliers.restore.any', 'label' => 'Restore any suppliers'],
             ['name' => 'suppliers.restore.own', 'label' => 'Restore own suppliers'],
+            ['name' => 'suppliers.access.any', 'label' => 'Access any suppliers'],
+            ['name' => 'suppliers.access.own', 'label' => 'Access own suppliers'],
 
             // Users
             ['name' => 'users.view.all', 'label' => 'View users'],
@@ -330,6 +385,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'users.assign.permissions', 'label' => 'Assign permissions to users'],
             ['name' => 'users.restore.any', 'label' => 'Restore any users'],
             ['name' => 'users.restore.own', 'label' => 'Restore own users'],
+            ['name' => 'users.access.any', 'label' => 'Access any users'],
+            ['name' => 'users.access.own', 'label' => 'Access own users'],
         ];
 
         foreach ($permissions as $permission) {
