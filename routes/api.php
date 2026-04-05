@@ -171,10 +171,6 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
         'deals/{id}/restore',
         [DealController::class, 'restore']
     )->name('api.deals.restore');
-    Route::delete(
-        'deals/{id}/force',
-        [DealController::class, 'forceDelete']
-    )->name('api.deals.forceDelete');
 
     /**
      * ----------------------------------------------------------
@@ -380,10 +376,6 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
         'leads/{id}/restore',
         [LeadController::class, 'restore']
     )->name('api.leads.restore');
-    Route::delete(
-        'leads/{id}/force',
-        [LeadController::class, 'forceDelete']
-    )->name('api.leads.forceDelete');
 
     /**
      * ----------------------------------------------------------

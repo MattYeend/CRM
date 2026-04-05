@@ -23,3 +23,8 @@ export async function updateAttachments(id, payload) {
 export async function deleteAttachments(id) {
     await api.delete(`/attachments/${id}`);
 }
+
+export async function restoreAttachment(id) {
+    const response = await api.post(`/attachments/${id}/restore`);
+    return response.data;
+}

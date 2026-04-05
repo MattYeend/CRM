@@ -23,3 +23,8 @@ export async function updateActivities(id, payload) {
 export async function deleteActivities(id) {
     await api.delete(`/activities/${id}`);
 }
+
+export async function restoreActivity(id) {
+    const response = await api.post(`/activites/${id}/restore`);
+    return response.data;
+}

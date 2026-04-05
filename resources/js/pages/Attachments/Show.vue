@@ -4,7 +4,7 @@ import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
 import { ref, computed, onMounted } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
-import { deleteAttachments, fetchAttachment } from '@/services/AttachmentService'
+import { deleteAttachments, fetchAttachment } from '@/services/attachmentService'
 
 interface UserPermissions {
     view: boolean
