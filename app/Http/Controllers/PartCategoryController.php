@@ -140,6 +140,7 @@ class PartCategoryController extends Controller
     public function show(PartCategory $partCategory): JsonResponse
     {
         $this->authorize('view', $partCategory);
+        $this->authorize('access', $partCategory);
 
         $partCategory = $this->query->show($partCategory);
 

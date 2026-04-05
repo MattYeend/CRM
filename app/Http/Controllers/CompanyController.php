@@ -136,6 +136,7 @@ class CompanyController extends Controller
     public function show(Company $company): JsonResponse
     {
         $this->authorize('view', $company);
+        $this->authorize('access', $company);
 
         $company = $this->query->show($company);
 

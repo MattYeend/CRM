@@ -136,6 +136,7 @@ class JobTitleController extends Controller
     public function show(JobTitle $jobTitle): JsonResponse
     {
         $this->authorize('view', $jobTitle);
+        $this->authorize('access', $jobTitle);
 
         $jobTitle = $this->query->show($jobTitle);
 

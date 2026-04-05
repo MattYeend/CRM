@@ -136,6 +136,7 @@ class SupplierController extends Controller
     public function show(Supplier $supplier): JsonResponse
     {
         $this->authorize('view', $supplier);
+        $this->authorize('access', $supplier);
 
         $supplier = $this->query->show($supplier);
 

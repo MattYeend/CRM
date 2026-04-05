@@ -139,6 +139,7 @@ class PipelineStageController extends Controller
     public function show(PipelineStage $pipelineStage): JsonResponse
     {
         $this->authorize('view', $pipelineStage);
+        $this->authorize('access', $pipelineStage);
 
         $pipelineStage = $this->query->show($pipelineStage);
 

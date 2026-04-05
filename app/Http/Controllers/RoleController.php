@@ -103,6 +103,7 @@ class RoleController extends Controller
     public function show(Role $role): JsonResponse
     {
         $this->authorize('view', $role);
+        $this->authorize('access', $role);
 
         $role = $this->query->show($role);
 

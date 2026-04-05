@@ -180,6 +180,7 @@ class ProductController extends Controller
     public function show(Product $product): JsonResponse
     {
         $this->authorize('view', $product);
+        $this->authorize('access', $product);
 
         $product = $this->query->show($product);
 

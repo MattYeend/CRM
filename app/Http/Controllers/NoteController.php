@@ -133,6 +133,7 @@ class NoteController extends Controller
     public function show(Note $note): JsonResponse
     {
         $this->authorize('view', $note);
+        $this->authorize('access', $note);
 
         $note = $this->query->show($note);
 

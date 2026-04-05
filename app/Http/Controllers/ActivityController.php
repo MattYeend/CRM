@@ -145,6 +145,7 @@ class ActivityController extends Controller
     public function show(Activity $activity): JsonResponse
     {
         $this->authorize('view', $activity);
+        $this->authorize('access', $activity);
 
         $activity = $this->query->show($activity);
 

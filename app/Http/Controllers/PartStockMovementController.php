@@ -141,6 +141,7 @@ class PartStockMovementController extends Controller
     public function show(Part $part, PartStockMovement $partStockMovement)
     {
         $this->authorize('view', $partStockMovement);
+        $this->authorize('access', $partStockMovement);
 
         $partStockMovement = $this->query->show($partStockMovement);
 

@@ -133,6 +133,7 @@ class PartController extends Controller
     public function show(Part $part): JsonResponse
     {
         $this->authorize('view', $part);
+        $this->authorize('access', $part);
 
         $part = $this->query->show($part);
 

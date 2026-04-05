@@ -136,6 +136,7 @@ class LearningController extends Controller
     public function show(Learning $learning): JsonResponse
     {
         $this->authorize('view', $learning);
+        $this->authorize('access', $learning);
 
         $learning = $this->query->show($learning);
 

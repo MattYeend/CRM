@@ -136,6 +136,7 @@ class InvoiceController extends Controller
     public function show(Invoice $invoice): JsonResponse
     {
         $this->authorize('view', $invoice);
+        $this->authorize('access', $invoice);
 
         $invoice = $this->query->show($invoice);
 

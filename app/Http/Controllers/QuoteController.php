@@ -145,6 +145,7 @@ class QuoteController extends Controller
     public function show(Quote $quote): JsonResponse
     {
         $this->authorize('view', $quote);
+        $this->authorize('access', $quote);
 
         $quote = $this->query->show($quote);
 

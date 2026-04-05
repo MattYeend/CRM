@@ -149,6 +149,7 @@ class OrderController extends Controller
     public function show(Order $order): JsonResponse
     {
         $this->authorize('view', $order);
+        $this->authorize('access', $order);
 
         $order = $this->query->show($order);
 

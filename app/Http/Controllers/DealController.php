@@ -150,6 +150,7 @@ class DealController extends Controller
     public function show(Deal $deal): JsonResponse
     {
         $this->authorize('view', $deal);
+        $this->authorize('access', $deal);
 
         $deal = $this->query->show($deal);
 

@@ -138,6 +138,7 @@ class TaskController extends Controller
     public function show(Task $task): JsonResponse
     {
         $this->authorize('view', $task);
+        $this->authorize('access', $task);
 
         $task = $this->query->show($task);
 

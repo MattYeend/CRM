@@ -136,6 +136,7 @@ class PartImageController extends Controller
     public function show(PartImage $partImage): JsonResponse
     {
         $this->authorize('view', $partImage);
+        $this->authorize('access', $partImage);
 
         $partImage = $this->query->show($partImage);
 

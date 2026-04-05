@@ -165,6 +165,7 @@ class AttachmentController extends Controller
     public function show(Attachment $attachment): JsonResponse
     {
         $this->authorize('view', $attachment);
+        $this->authorize('access', $attachment);
 
         $attachment = $this->query->show($attachment);
 

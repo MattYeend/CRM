@@ -133,6 +133,7 @@ class LeadController extends Controller
     public function show(Lead $lead): JsonResponse
     {
         $this->authorize('view', $lead);
+        $this->authorize('access', $lead);
 
         $lead = $this->query->show($lead);
 

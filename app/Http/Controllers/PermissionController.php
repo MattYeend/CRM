@@ -133,6 +133,7 @@ class PermissionController extends Controller
     public function show(Permission $permission): JsonResponse
     {
         $this->authorize('view', $permission);
+        $this->authorize('access', $permission);
 
         $permission = $this->query->show($permission);
 

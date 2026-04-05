@@ -144,6 +144,7 @@ class UserController extends Controller
     public function show(User $user): JsonResponse
     {
         $this->authorize('view', $user);
+        $this->authorize('access', $user);
 
         $user = $this->query->show($user);
 
