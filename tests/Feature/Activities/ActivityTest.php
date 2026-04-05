@@ -18,6 +18,7 @@ beforeEach(function () {
         'activities.update.any',
         'activities.delete.any',
         'activities.restore.any',
+        'activities.access.any',
     ];
     
     // Create permissions in DB

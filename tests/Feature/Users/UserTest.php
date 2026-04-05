@@ -25,6 +25,7 @@ beforeEach(function () {
         'users.manage',
         'users.assign.roles',
         'users.assign.permissions',
+        'users.access.any',
     ];
 
     // Create permissions in DB

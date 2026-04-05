@@ -19,6 +19,7 @@ beforeEach(function () {
         'tasks.update.any',
         'tasks.delete.any',
         'tasks.restore.any',
+        'tasks.access.any',
     ];
 
     // Create permissions in DB

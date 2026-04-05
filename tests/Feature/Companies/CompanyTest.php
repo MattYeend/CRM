@@ -19,6 +19,7 @@ beforeEach(function () {
         'companies.update.any',
         'companies.delete.any',
         'companies.restore.any',
+        'companies.access.any',
     ];
 
     // Create permissions in DB

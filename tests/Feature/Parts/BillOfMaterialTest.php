@@ -19,6 +19,7 @@ beforeEach(function () {
         'billOfMaterials.update.any',
         'billOfMaterials.delete.any',
         'billOfMaterials.restore.any',
+        'billOfMaterials.access.any',
     ];
 
     $permissionModels = collect($permissions)

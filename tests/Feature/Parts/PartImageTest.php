@@ -21,6 +21,7 @@ beforeEach(function () {
         'partImages.update.any',
         'partImages.delete.any',
         'partImages.restore.any',
+        'partImages.access.any',
     ];
 
     // Create permissions in DB

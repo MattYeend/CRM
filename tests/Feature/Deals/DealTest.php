@@ -21,10 +21,12 @@ beforeEach(function () {
         'deals.update.any',
         'deals.delete.any',
         'deals.restore.any',
+        'deals.access.any',
         'deals.products.add',
         'deals.products.update',
         'deals.products.remove',
         'deals.products.restore',
+        'deals.products.access.any',
     ];
 
     // Create permissions in DB

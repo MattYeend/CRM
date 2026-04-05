@@ -17,6 +17,7 @@ beforeEach(function () {
         'permissions.update.any',
         'permissions.delete.any',
         'permissions.restore.any',
+        'permissions.access.any',
     ];
 
     // Create permissions in DB
@@ -66,7 +67,7 @@ test('index returns all permissions when no pagination specified', function () {
     $response = $this->getJson(route('api.permissions.index'));
 
     $response->assertStatus(200);
-    $this->assertCount(8, $response->json('data'));
+    $this->assertCount(9, $response->json('data'));
 });
 
 test('index returns 403 when user lacks permission', function () {

@@ -21,10 +21,12 @@ beforeEach(function () {
         'orders.update.any',
         'orders.delete.any',
         'orders.restore.any',
+        'orders.access.any',
         'orders.products.add',
         'orders.products.update',
         'orders.products.remove',
         'orders.products.restore',
+        'orders.products.access.any',
     ];
 
     // Create permissions

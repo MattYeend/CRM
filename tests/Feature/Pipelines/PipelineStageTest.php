@@ -19,11 +19,13 @@ beforeEach(function () {
         'pipelines.update.any',
         'pipelines.delete.any',
         'pipelines.restore.any',
+        'pipelines.access.any',
         'pipelineStages.view.all',
         'pipelineStages.create',
         'pipelineStages.update.any',
         'pipelineStages.delete.any',
         'pipelineStages.restore.any',
+        'pipelineStages.access.any',
     ];
 
     // Create permissions in DB

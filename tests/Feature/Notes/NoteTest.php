@@ -20,6 +20,7 @@ beforeEach(function () {
         'notes.update.any',
         'notes.delete.any',
         'notes.restore.any',
+        'notes.access.any',
     ];
 
     // Create permissions in DB

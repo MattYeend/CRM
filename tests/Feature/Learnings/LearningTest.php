@@ -20,6 +20,7 @@ beforeEach(function () {
         'learnings.update.any',
         'learnings.delete.any',
         'learnings.restore.any',
+        'learnings.access.any',
     ];
 
     // Create permissions in DB

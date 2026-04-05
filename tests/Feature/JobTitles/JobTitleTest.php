@@ -21,6 +21,7 @@ beforeEach(function () {
         'jobTitles.update.any',
         'jobTitles.delete.any',
         'jobTitles.restore.any',
+        'jobTitles.access.any',
     ];
 
     // Create permissions in DB

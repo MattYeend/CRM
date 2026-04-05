@@ -19,12 +19,14 @@ beforeEach(function () {
         'invoices.create',
         'invoices.update.any',
         'invoices.delete.any',
-        'invoice.restore.any',
+        'invoices.restore.any',
+        'invoices.access.any',
         'invoiceItems.view.all',
         'invoiceItems.create',
         'invoiceItems.update.any',
         'invoiceItems.delete.any',
         'invoiceItems.restore.any',
+        'invoiceItems.access.any',
     ];
 
     // Create permissions in DB

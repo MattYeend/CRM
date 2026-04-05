@@ -13,6 +13,7 @@ beforeEach(function () {
 
     $permissions = [
         'roles.view.all',
+        'roles.access.any',
     ];
 
     // Create permissions in DB

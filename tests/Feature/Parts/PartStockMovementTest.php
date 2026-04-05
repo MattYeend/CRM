@@ -16,6 +16,7 @@ beforeEach(function () {
     $permissions = [
         'partStockMovements.view.all',
         'partStockMovements.create',
+        'partStockMovements.access.any',
     ];
 
     $permissionModels = collect($permissions)

@@ -152,8 +152,8 @@ class OrderPolicy
         return $this->anyOrOwn(
             $user,
             $order,
-            'order.access.any',
-            'order.access.own'
+            'orders.access.any',
+            'orders.access.own'
         );
     }
 }

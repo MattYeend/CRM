@@ -18,6 +18,7 @@ beforeEach(function () {
         'partCategories.update.any',
         'partCategories.delete.any',
         'partCategories.restore.any',
+        'partCategories.access.any',
     ];
 
     // Create permissions in DB

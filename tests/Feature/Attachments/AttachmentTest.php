@@ -23,6 +23,7 @@ beforeEach(function () {
         'attachments.update.any',
         'attachments.delete.any',
         'attachments.restore.any',
+        'attachments.access.any',
     ];
 
     // Create permissions in DB

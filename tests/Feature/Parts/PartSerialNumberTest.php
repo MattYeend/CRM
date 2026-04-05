@@ -19,6 +19,7 @@ beforeEach(function () {
         'partSerialNumbers.update.any',
         'partSerialNumbers.delete.any',
         'partSerialNumbers.restore.any',
+        'partSerialNumbers.access.any',
     ];
 
     $permissionModels = collect($permissions)

@@ -18,6 +18,7 @@ beforeEach(function () {
         'leads.update.any',
         'leads.delete.any',
         'leads.restore.any',
+        'leads.access.any',
     ];
 
     // Create permissions in DB
