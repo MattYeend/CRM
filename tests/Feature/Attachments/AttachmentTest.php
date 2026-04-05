@@ -174,11 +174,15 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
 
     Storage::disk('public')->put($fakePath, 'fake-pdf-content');
 
-    // Mock AttachmentService::storeFile to return the prepared attachment
     $serviceMock = Mockery::mock(AttachmentFileService::class);
+
     $serviceMock->shouldReceive('storeFile')
         ->once()
         ->andReturn($returnedAttachment);
+
+    $serviceMock->shouldReceive('getUrl')
+        ->andReturn(route('attachments.download', $returnedAttachment));
+
     $this->app->instance(AttachmentFileService::class, $serviceMock);
 
     $file = UploadedFile::fake()->create('document.pdf', 120, 'application/pdf');
@@ -203,7 +207,6 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
         'disk' => 'public',
     ]);
 
-    // Assert that the file exists on the fake public disk at the path returned by service
     Storage::disk('public')->assertExists($returnedAttachment->path);
 });
 

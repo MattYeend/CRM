@@ -79,4 +79,23 @@ class AttachmentFileService
 
         return $attachment;
     }
+
+    /**
+     * Get the authenticated download URL for an attachment.
+     *
+     * @param  Attachment $attachment
+     *
+     * @return string
+     */
+    public function getUrl(Attachment $attachment): string
+    {
+        if ($attachment->disk === 'local') {
+            return route('attachments.download', $attachment);
+        }
+
+        /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
+        $disk = Storage::disk($attachment->disk);
+
+        return $disk->url($attachment->path);
+    }
 }

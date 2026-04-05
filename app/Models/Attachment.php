@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\Attachments\AttachmentFileService;
 use App\Traits\HasTestPrefix;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -74,6 +75,8 @@ use InvalidArgumentException;
  * - file_extension(): Get the file extension of the attachment.
  * - name(): Get the attachment name, applying the test prefix when marked
  *      as a test.
+ * - download_url(): Get the authenticated download URL for the attachment.
+ *
  * Example usage of accessors:
  * ```php
  * // Get the size of an attachment in a human-readable format
@@ -87,6 +90,7 @@ use InvalidArgumentException;
  * $fileExtension = $attachment->file_extension;
  * // Get the name of an attachment, applying test prefix if it's a test record
  * $name = $attachment->name;
+ * $downloadUrl = $attachment->download_url;
  * ```
  * Query scopes include:
  * - real(): Scope a query to exclude test records.
@@ -159,6 +163,13 @@ class Attachment extends Model
         self::ATTACHABLE_TASK,
         self::ATTACHABLE_USER,
     ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array<int,string>
+     */
+    protected $appends = ['download_url'];
 
     /**
      * The attributes that are mass assignable.
@@ -368,6 +379,21 @@ class Attachment extends Model
     public function getMimeTypeAttribute(): string
     {
         return $this->mime;
+    }
+
+    /**
+     * Get the authenticated download URL for the attachment.
+     *
+     * For locally stored files, returns a signed application route that
+     * streams the file through the Laravel download endpoint. For files
+     * on external disks (e.g. S3), delegates to the filesystem adapter
+     * to generate a direct URL.
+     *
+     * @return string
+     */
+    public function getDownloadUrlAttribute(): string
+    {
+        return app(AttachmentFileService::class)->getUrl($this);
     }
 
     /**

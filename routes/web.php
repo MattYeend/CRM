@@ -7,6 +7,7 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -140,6 +141,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]);
         }
     )->name('attachments.edit');
+
+    Route::get(
+        '/attachments/{attachment}/download',
+        function (Attachment $attachment) {
+            /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
+            $disk = Storage::disk($attachment->disk);
+
+            return $disk->response($attachment->path, $attachment->filename);
+        }
+    )->name('attachments.download');
 });
 
 require __DIR__.'/settings.php';
