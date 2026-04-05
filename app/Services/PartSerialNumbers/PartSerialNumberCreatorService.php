@@ -36,7 +36,6 @@ class PartSerialNumberCreatorService
         return $part->serialNumbers()->create([
             ...$request->validated(),
             'created_by' => $user->id,
-            'created_at' => now(),
         ]);
     }
 }

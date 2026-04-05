@@ -53,7 +53,6 @@ class LearningCreatorService
             $learning = Learning::create([
                 ...$data,
                 'created_by' => $user->id,
-                'created_at' => now(),
             ]);
 
             if (isset($data['questions']) && count($data['questions']) > 0) {
