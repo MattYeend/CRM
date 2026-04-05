@@ -76,7 +76,6 @@ class UserUpdaterService
         $this->avatarUpdater->handle($request, $user, $data);
 
         $data['updated_by'] = auth()->id();
-        $data['updated_at'] = now();
 
         $user->update($data);
 

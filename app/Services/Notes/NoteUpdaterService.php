@@ -34,7 +34,6 @@ class NoteUpdaterService
         $data = $request->validated();
 
         $data['updated_by'] = $user->id;
-        $data['updated_at'] = now();
 
         $note->update($data);
 

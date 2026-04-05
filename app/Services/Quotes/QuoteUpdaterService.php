@@ -35,7 +35,6 @@ class QuoteUpdaterService
         $data = $request->validated();
 
         $data['updated_by'] = $user->id;
-        $data['updated_at'] = now();
 
         $subtotal = $data['subtotal'] ?? 0;
         $tax = $data['tax'] ?? 0;

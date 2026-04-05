@@ -57,7 +57,6 @@ class LearningUpdaterService
             $learning->update([
                 ...$data,
                 'updated_by' => $user->id,
-                'updated_at' => now(),
             ]);
 
             if (isset($data['questions'])) {
