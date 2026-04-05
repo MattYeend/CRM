@@ -29,7 +29,6 @@ class TaskDestructorService
 
         $task->update([
             'deleted_by' => $userId,
-            'deleted_at' => now(),
         ]);
 
         $task->delete();
@@ -56,7 +55,6 @@ class TaskDestructorService
         if ($task->trashed()) {
             $task->update([
                 'updated_by' => $userId,
-                'updated_at' => now(),
             ]);
             $task->restore();
         }

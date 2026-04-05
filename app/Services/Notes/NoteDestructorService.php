@@ -29,7 +29,6 @@ class NoteDestructorService
 
         $note->update([
             'deleted_by' => $userId,
-            'deleted_at' => now(),
         ]);
 
         $note->delete();
@@ -56,7 +55,6 @@ class NoteDestructorService
         if ($note->trashed()) {
             $note->update([
                 'restored_by' => $userId,
-                'restored_at' => now(),
             ]);
             $note->restore();
         }

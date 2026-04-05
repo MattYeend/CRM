@@ -29,7 +29,6 @@ class LeadDestructorService
 
         $lead->update([
             'deleted_by' => $userId,
-            'deleted_at' => now(),
         ]);
 
         $lead->delete();
@@ -56,7 +55,6 @@ class LeadDestructorService
         if ($lead->trashed()) {
             $lead->update([
                 'restored_by' => $userId,
-                'restored_at' => now(),
             ]);
             $lead->restore();
         }

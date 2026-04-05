@@ -29,7 +29,6 @@ class InvoiceItemDestructorService
 
         $invoiceItem->update([
             'deleted_by' => $userId,
-            'deleted_at' => now(),
         ]);
 
         $invoiceItem->delete();
@@ -56,7 +55,6 @@ class InvoiceItemDestructorService
         if ($invoiceItem->trashed()) {
             $invoiceItem->update([
                 'restored_by' => $userId,
-                'restored_at' => now(),
             ]);
             $invoiceItem->restore();
         }

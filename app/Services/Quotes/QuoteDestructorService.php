@@ -29,7 +29,6 @@ class QuoteDestructorService
 
         $quote->update([
             'deleted_by' => $userId,
-            'deleted_at' => now(),
         ]);
 
         $quote->delete();
@@ -56,7 +55,6 @@ class QuoteDestructorService
         if ($quote->trashed()) {
             $quote->update([
                 'updated_by' => $userId,
-                'updated_at' => now(),
             ]);
             $quote->restore();
         }

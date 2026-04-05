@@ -29,7 +29,6 @@ class AttachmentDestructorService
 
         $attachment->update([
             'deleted_by' => $userId,
-            'deleted_at' => now(),
         ]);
 
         $attachment->delete();
@@ -56,7 +55,6 @@ class AttachmentDestructorService
         if ($attachment->trashed()) {
             $attachment->update([
                 'restored_by' => $userId,
-                'restored_at' => now(),
             ]);
             $attachment->restore();
         }

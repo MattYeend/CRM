@@ -29,7 +29,6 @@ class UserDestructorService
 
         $user->update([
             'deleted_by' => $authId,
-            'deleted_at' => now(),
         ]);
 
         $user->delete();
@@ -56,7 +55,6 @@ class UserDestructorService
         if ($user->trashed()) {
             $user->update([
                 'restored_by' => $authId,
-                'restored_at' => now(),
             ]);
             $user->restore();
         }

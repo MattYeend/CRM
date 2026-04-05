@@ -29,7 +29,6 @@ class PermissionDestructorService
 
         $permission->update([
             'deleted_by' => $userId,
-            'deleted_at' => now(),
         ]);
         $permission->roles()->detach();
 
@@ -57,7 +56,6 @@ class PermissionDestructorService
         if ($permission->trashed()) {
             $permission->update([
                 'restored_by' => $userId,
-                'restored_at' => now(),
             ]);
             $permission->restore();
         }

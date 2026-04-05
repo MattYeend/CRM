@@ -29,7 +29,6 @@ class PartDestructorService
 
         $part->update([
             'deleted_by' => $userId,
-            'deleted_at' => now(),
         ]);
 
         $part->delete();
@@ -55,7 +54,6 @@ class PartDestructorService
         if ($part->trashed()) {
             $part->update([
                 'restored_by' => $userId,
-                'restored_at' => now(),
             ]);
             $part->restore();
         }

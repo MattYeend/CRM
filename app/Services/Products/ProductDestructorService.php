@@ -29,7 +29,6 @@ class ProductDestructorService
 
         $product->update([
             'deleted_by' => $userId,
-            'deleted_at' => now(),
         ]);
 
         $product->deals()->detach();
@@ -59,7 +58,6 @@ class ProductDestructorService
         if ($product->trashed()) {
             $product->update([
                 'updated_by' => $userId,
-                'updated_at' => now(),
             ]);
             $product->restore();
         }

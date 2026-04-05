@@ -29,7 +29,6 @@ class SupplierDestructorService
 
         $supplier->update([
             'deleted_by' => $userId,
-            'deleted_at' => now(),
         ]);
 
         $supplier->delete();
@@ -56,7 +55,6 @@ class SupplierDestructorService
         if ($supplier->trashed()) {
             $supplier->update([
                 'restored_by' => $userId,
-                'restored_at' => now(),
             ]);
             $supplier->restore();
         }

@@ -30,7 +30,6 @@ class PartCategoryDestructorService
 
         $partCategory->update([
             'deleted_by' => $userId,
-            'deleted_at' => now(),
         ]);
 
         $partCategory->delete();
@@ -52,7 +51,6 @@ class PartCategoryDestructorService
         if ($partCategory->trashed()) {
             $partCategory->update([
                 'restored_by' => $userId,
-                'restored_at' => now(),
             ]);
             $partCategory->restore();
         }

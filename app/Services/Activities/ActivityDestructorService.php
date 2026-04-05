@@ -28,7 +28,6 @@ class ActivityDestructorService
 
         $activity->update([
             'deleted_by' => $userId,
-            'deleted_at' => now(),
         ]);
 
         $activity->delete();
@@ -53,7 +52,6 @@ class ActivityDestructorService
         if ($activity->trashed()) {
             $activity->update([
                 'restored_by' => $userId,
-                'restored_at' => now(),
             ]);
             $activity->restore();
         }

@@ -30,7 +30,6 @@ class PartSerialNumberDestructorService
 
         $partSerialNumber->update([
             'deleted_by' => $userId,
-            'deleted_at' => now(),
         ]);
 
         $partSerialNumber->delete();
@@ -57,7 +56,6 @@ class PartSerialNumberDestructorService
         if ($partSerialNumber->trashed()) {
             $partSerialNumber->update([
                 'restored_by' => $userId,
-                'restored_at' => now(),
             ]);
             $partSerialNumber->restore();
         }

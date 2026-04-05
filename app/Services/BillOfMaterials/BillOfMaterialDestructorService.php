@@ -29,7 +29,6 @@ class BillOfMaterialDestructorService
 
         $billOfMaterial->update([
             'deleted_by' => $userId,
-            'deleted_at' => now(),
         ]);
 
         $billOfMaterial->delete();
@@ -55,7 +54,6 @@ class BillOfMaterialDestructorService
         if ($billOfMaterial->trashed()) {
             $billOfMaterial->update([
                 'restored_by' => $userId,
-                'restored_at' => now(),
             ]);
             $billOfMaterial->restore();
         }

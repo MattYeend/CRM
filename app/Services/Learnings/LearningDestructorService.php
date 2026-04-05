@@ -34,7 +34,6 @@ class LearningDestructorService
 
         $learning->update([
             'deleted_by' => $userId,
-            'deleted_at' => now(),
         ]);
 
         $learning->delete();
@@ -61,7 +60,6 @@ class LearningDestructorService
         if ($learning->trashed()) {
             $learning->update([
                 'restored_by' => $userId,
-                'restored_at' => now(),
             ]);
             $learning->restore();
         }

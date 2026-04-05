@@ -29,7 +29,6 @@ class OrderDestructorService
 
         $order->update([
             'deleted_by' => $userId,
-            'deleted_at' => now(),
         ]);
 
         $order->delete();
@@ -56,7 +55,6 @@ class OrderDestructorService
         if ($order->trashed()) {
             $order->update([
                 'updated_by' => $userId,
-                'updated_at' => now(),
             ]);
             $order->restore();
         }

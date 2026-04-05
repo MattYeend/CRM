@@ -30,7 +30,6 @@ class PipelineStageDestructorService
 
         $pipelineStage->update([
             'deleted_by' => $userId,
-            'deleted_at' => now(),
         ]);
 
         $pipelineStage->delete();
@@ -57,7 +56,6 @@ class PipelineStageDestructorService
         if ($pipelineStage->trashed()) {
             $pipelineStage->update([
                 'restored_by' => $userId,
-                'restored_at' => now(),
             ]);
 
             $pipelineStage->restore();

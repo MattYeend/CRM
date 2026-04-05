@@ -29,7 +29,6 @@ class PartImageDestructorService
 
         $partImage->update([
             'deleted_by' => $userId,
-            'deleted_at' => now(),
         ]);
 
         $partImage->delete();
@@ -56,7 +55,6 @@ class PartImageDestructorService
         if ($partImage->trashed()) {
             $partImage->update([
                 'restored_by' => $userId,
-                'restored_at' => now(),
             ]);
             $partImage->restore();
         }

@@ -29,7 +29,6 @@ class DealDestructorService
 
         $deal->update([
             'deleted_by' => $userId,
-            'deleted_at' => now(),
         ]);
 
         $deal->delete();
@@ -55,7 +54,6 @@ class DealDestructorService
         if ($deal->trashed()) {
             $deal->update([
                 'restored_by' => $userId,
-                'restored_at' => now(),
             ]);
             $deal->restore();
         }

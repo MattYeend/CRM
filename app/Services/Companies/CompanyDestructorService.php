@@ -29,7 +29,6 @@ class CompanyDestructorService
 
         $company->update([
             'deleted_by' => $userId,
-            'deleted_at' => now(),
         ]);
 
         $company->delete();
@@ -56,7 +55,6 @@ class CompanyDestructorService
         if ($company->trashed()) {
             $company->update([
                 'restored_by' => $userId,
-                'restored_at' => now(),
             ]);
             $company->restore();
         }

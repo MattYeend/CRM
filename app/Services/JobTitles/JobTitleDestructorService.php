@@ -29,7 +29,6 @@ class JobTitleDestructorService
 
         $jobTitle->update([
             'deleted_by' => $userId,
-            'deleted_at' => now(),
         ]);
 
         $jobTitle->delete();
@@ -56,7 +55,6 @@ class JobTitleDestructorService
         if ($jobTitle->trashed()) {
             $jobTitle->update([
                 'restored_by' => $userId,
-                'restored_at' => now(),
             ]);
             $jobTitle->restore();
         }
