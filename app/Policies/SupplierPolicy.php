@@ -138,4 +138,22 @@ class SupplierPolicy
             'suppliers.restore.own'
         );
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  Supplier $supplier
+     *
+     * @return bool
+     */
+    public function access(User $user, Supplier $supplier): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $supplier,
+            'suppliers.access.any',
+            'suppliers.access.own'
+        );
+    }
 }

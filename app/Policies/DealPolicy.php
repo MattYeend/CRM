@@ -138,4 +138,22 @@ class DealPolicy
             'deals.restore.own'
         );
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  Deal $deal
+     *
+     * @return bool
+     */
+    public function access(User $user, Deal $deal): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $deal,
+            'deals.access.any',
+            'deals.access.own'
+        );
+    }
 }

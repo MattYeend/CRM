@@ -173,4 +173,22 @@ class UserPolicy
             'users.restore.own'
         );
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  User $model
+     *
+     * @return bool
+     */
+    public function access(User $user, User $model): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $model,
+            'users.access.any',
+            'users.access.own'
+        );
+    }
 }

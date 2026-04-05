@@ -138,4 +138,22 @@ class PartPolicy
             'parts.restore.own'
         );
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  Part $part
+     *
+     * @return bool
+     */
+    public function access(User $user, Part $part): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $part,
+            'parts.access.any',
+            'parts.access.own'
+        );
+    }
 }

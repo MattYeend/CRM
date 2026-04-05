@@ -150,4 +150,22 @@ class TaskPolicy
     {
         return $this->has($user, 'tasks.assign');
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  Task $task
+     *
+     * @return bool
+     */
+    public function access(User $user, Task $task): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $task,
+            'tasks.access.any',
+            'tasks.access.own'
+        );
+    }
 }

@@ -150,4 +150,22 @@ class ActivityPolicy
     {
         return $this->has($user, 'activities.assign');
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  Activity $activity
+     *
+     * @return bool
+     */
+    public function access(User $user, Activity $activity): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $activity,
+            'activities.access.any',
+            'activities.access.own'
+        );
+    }
 }

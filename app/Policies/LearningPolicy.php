@@ -134,15 +134,21 @@ class LearningPolicy
     }
 
     /**
-     * Determine whether the user can access models.
+     * Determine whether the user can access the model.
      *
-     * @param  User  $user
+     * @param  User $user
+     * @param  Learning $learning
      *
-     * @return  bool
+     * @return bool
      */
-    public function access(User $user): bool
+    public function access(User $user, Learning $learning): bool
     {
-        return $this->has($user, 'learnings.access');
+        return $this->anyOrOwn(
+            $user,
+            $learning,
+            'learnings.access.any',
+            'learnings.access.own'
+        );
     }
 
     /**

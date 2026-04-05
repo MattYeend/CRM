@@ -145,4 +145,24 @@ class PartSerialNumberPolicy
             'partSerialNumbers.restore.own'
         );
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  PartSerialNumber $partSerialNumber
+     *
+     * @return bool
+     */
+    public function access(
+        User $user,
+        PartSerialNumber $partSerialNumber
+    ): bool {
+        return $this->anyOrOwn(
+            $user,
+            $partSerialNumber,
+            'partSerialNumbers.access.any',
+            'partSerialNumbers.access.own'
+        );
+    }
 }

@@ -138,4 +138,22 @@ class CompanyPolicy
             'companies.restore.own'
         );
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  Company $company
+     *
+     * @return bool
+     */
+    public function access(User $user, Company $company): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $company,
+            'companies.access.any',
+            'companies.access.own'
+        );
+    }
 }

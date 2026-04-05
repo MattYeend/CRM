@@ -138,4 +138,22 @@ class ProductPolicy
             'products.restore.own'
         );
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  Product $product
+     *
+     * @return bool
+     */
+    public function access(User $user, Product $product): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $product,
+            'products.access.any',
+            'products.access.own'
+        );
+    }
 }

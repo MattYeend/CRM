@@ -138,4 +138,22 @@ class PartImagePolicy
             'partImages.restore.own',
         );
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  PartImage $partImage
+     *
+     * @return bool
+     */
+    public function access(User $user, PartImage $partImage): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $partImage,
+            'partImages.access.any',
+            'partImages.access.own'
+        );
+    }
 }

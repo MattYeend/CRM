@@ -138,4 +138,22 @@ class QuotePolicy
             'quotes.restore.own'
         );
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  Quote $quote
+     *
+     * @return bool
+     */
+    public function access(User $user, Quote $quote): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $quote,
+            'quotes.access.any',
+            'quotes.access.own'
+        );
+    }
 }

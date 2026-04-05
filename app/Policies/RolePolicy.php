@@ -71,4 +71,22 @@ class RolePolicy
             'roles.view.own'
         );
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  Role $role
+     *
+     * @return bool
+     */
+    public function access(User $user, Role $role): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $role,
+            'roles.access.any',
+            'roles.access.own'
+        );
+    }
 }

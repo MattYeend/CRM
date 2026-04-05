@@ -138,4 +138,22 @@ class OrderPolicy
             'orders.restore.own'
         );
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  Order $order
+     *
+     * @return bool
+     */
+    public function access(User $user, Order $order): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $order,
+            'order.access.any',
+            'order.access.own'
+        );
+    }
 }

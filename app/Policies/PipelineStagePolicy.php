@@ -151,4 +151,22 @@ class PipelineStagePolicy
     {
         return $this->has($user, 'pipelineStages.assign');
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  PipelineStage $pipelineStage
+     *
+     * @return bool
+     */
+    public function access(User $user, PipelineStage $pipelineStage): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $pipelineStage,
+            'pipelineStages.access.any',
+            'pipelineStages.access.own'
+        );
+    }
 }

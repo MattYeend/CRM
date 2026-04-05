@@ -138,4 +138,22 @@ class NotePolicy
             'notes.restore.own'
         );
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  Note $note
+     *
+     * @return bool
+     */
+    public function access(User $user, Note $note): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $note,
+            'notes.access.any',
+            'notes.access.own'
+        );
+    }
 }

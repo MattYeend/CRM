@@ -121,4 +121,22 @@ class BillOfMaterialPolicy
             'billOfMaterials.restore.own'
         );
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  BillOfMaterial $billOfMaterial
+     *
+     * @return bool
+     */
+    public function access(User $user, BillOfMaterial $billOfMaterial): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $billOfMaterial,
+            'billOfMaterials.access.any',
+            'billOfMaterials.access.own'
+        );
+    }
 }

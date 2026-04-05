@@ -150,4 +150,22 @@ class AttachmentPolicy
     {
         return $this->has($user, 'attachments.upload.any');
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  Attachment $attachment
+     *
+     * @return bool
+     */
+    public function access(User $user, Attachment $attachment): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $attachment,
+            'attachments.access.any',
+            'attachments.access.own'
+        );
+    }
 }

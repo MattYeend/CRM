@@ -150,4 +150,22 @@ class InvoicePolicy
     {
         return $this->has($user, 'invoices.assign');
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  Invoice $invoice
+     *
+     * @return bool
+     */
+    public function access(User $user, Invoice $invoice): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $invoice,
+            'invoices.access.any',
+            'invoices.access.own'
+        );
+    }
 }

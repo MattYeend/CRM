@@ -134,4 +134,22 @@ class LeadPolicy
             'leads.restore.own'
         );
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  Lead $lead
+     *
+     * @return bool
+     */
+    public function access(User $user, Lead $lead): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $lead,
+            'leads.access.any',
+            'leads.access.own'
+        );
+    }
 }

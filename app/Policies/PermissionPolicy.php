@@ -138,4 +138,22 @@ class PermissionPolicy
             'permissions.restore.own'
         );
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  Permission $permission
+     *
+     * @return bool
+     */
+    public function access(User $user, Permission $permission): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $permission,
+            'permissions.access.any',
+            'permissions.access.own'
+        );
+    }
 }

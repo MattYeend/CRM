@@ -85,4 +85,24 @@ class PartStockMovementPolicy
     {
         return $this->has($user, 'partStockMovements.create');
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  PartStockMovement $partStockMovement
+     *
+     * @return bool
+     */
+    public function access(
+        User $user,
+        PartStockMovement $partStockMovement
+    ): bool {
+        return $this->anyOrOwn(
+            $user,
+            $partStockMovement,
+            'partStockMovements.access.any',
+            'partStockMovements.access.own'
+        );
+    }
 }

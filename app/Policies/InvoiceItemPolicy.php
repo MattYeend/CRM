@@ -150,4 +150,22 @@ class InvoiceItemPolicy
     {
         return $this->has($user, 'invoiceItems.assign');
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  InvoiceItem $invoiceItem
+     *
+     * @return bool
+     */
+    public function access(User $user, InvoiceItem $invoiceItem): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $invoiceItem,
+            'invoiceItems.access.any',
+            'invoiceItems.access.own'
+        );
+    }
 }

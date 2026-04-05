@@ -138,4 +138,22 @@ class PartCategoryPolicy
             'partCategories.restore.own'
         );
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  PartCategory $partCategory
+     *
+     * @return bool
+     */
+    public function access(User $user, PartCategory $partCategory): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $partCategory,
+            'partCategories.access.any',
+            'partCategories.access.own'
+        );
+    }
 }

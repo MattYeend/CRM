@@ -146,4 +146,22 @@ class JobTitlePolicy
             'jobTitles.restore.own'
         );
     }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  JobTitle $jobTitle
+     *
+     * @return bool
+     */
+    public function access(User $user, JobTitle $jobTitle): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $jobTitle,
+            'jobTitles.access.any',
+            'jobTitles.access.own'
+        );
+    }
 }
