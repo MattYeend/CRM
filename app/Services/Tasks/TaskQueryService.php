@@ -134,7 +134,6 @@ class TaskQueryService
             'is_pending' => $task->getIsPendingAttribute(),
             'is_completed' => $task->getIsCompletedAttribute(),
             'is_cancelled' => $task->getIsCancelledAttribute(),
-            'is_test' => $task->is_test,
             'creator' => $task->creator,
             'created_at' => $task->created_at,
             'updated_at' => $task->updated_at,

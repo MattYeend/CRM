@@ -130,7 +130,6 @@ class PartCategoryQueryService
             'slug' => $partCategory->slug,
             'full_path' => $partCategory->full_path,
             'description' => $partCategory->description,
-            'is_test' => $partCategory->is_test,
             'children' => $partCategory->children,
             'parts' => $partCategory->parts,
             'creator' => $partCategory->creator,

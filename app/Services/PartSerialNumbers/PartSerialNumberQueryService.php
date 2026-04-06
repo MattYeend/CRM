@@ -124,11 +124,8 @@ class PartSerialNumberQueryService
             'expires_at' => $serialNumber->expires_at,
             'is_expired' => $serialNumber->getIsExpired(),
             'is_expiring_soon' => $serialNumber->getIsExpiringSoon(),
-            'is_test' => $serialNumber->is_test,
             'creator' => $serialNumber->creator,
             'created_at' => $serialNumber->created_at,
-            'updated_at' => $serialNumber->updated_at,
-            'deleted_at' => $serialNumber->deleted_at,
             'permissions' => [
                 'view' => Gate::allows('view', $serialNumber),
                 'update' => Gate::allows('update', $serialNumber),

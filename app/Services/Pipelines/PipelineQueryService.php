@@ -119,12 +119,9 @@ class PipelineQueryService
             'is_default' => $pipeline->getIsDefaultAttribute(),
             'stage_count' => $pipeline->getStageCountAttribute(),
             'deal_count' => $pipeline->getDealCountAttribute(),
-            'is_test' => $pipeline->is_test,
             'stages' => $pipeline->stages,
             'creator' => $pipeline->creator,
             'created_at' => $pipeline->created_at,
-            'updated_at' => $pipeline->updated_at,
-            'deleted_at' => $pipeline->deleted_at,
             'permissions' => [
                 'view' => Gate::allows('view', $pipeline),
                 'update' => Gate::allows('update', $pipeline),

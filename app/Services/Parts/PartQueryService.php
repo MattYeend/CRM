@@ -170,7 +170,6 @@ class PartQueryService
             'is_manufactured' => $part->is_manufactured,
             'is_serialised' => $part->is_serialised,
             'is_batch_tracked' => $part->is_batch_tracked,
-            'is_test' => $part->is_test,
             'is_low_stock' => $part->getIsLowStock(),
             'is_out_of_stock' => $part->getIsOutOfStock(),
             'margin_percentage' => $part->getMarginPercentage(),

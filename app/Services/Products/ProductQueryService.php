@@ -131,11 +131,7 @@ class ProductQueryService
             'lead_time_days' => $product->lead_time_days,
             'is_low_stock' => $product->getIsLowStockAttribute(),
             'is_out_of_stock' => $product->getIsOutOfStockAttribute(),
-            'is_test' => $product->is_test,
             'creator' => $product->creator,
-            'created_at' => $product->created_at,
-            'updated_at' => $product->updated_at,
-            'deleted_at' => $product->deleted_at,
             'permissions' => [
                 'view' => Gate::allows('view', $product),
                 'update' => Gate::allows('update', $product),

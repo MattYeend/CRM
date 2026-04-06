@@ -152,13 +152,10 @@ class SupplierQueryService
             'contact_phone' => $supplier->contact_phone,
             'is_active' => $supplier->is_active,
             'notes' => $supplier->notes,
-            'is_test' => $supplier->is_test,
             'parts' => $supplier->parts,
             'part_suppliers' => $supplier->partSuppliers,
             'creator' => $supplier->creator,
             'created_at' => $supplier->created_at,
-            'updated_at' => $supplier->updated_at,
-            'deleted_at' => $supplier->deleted_at,
             'permissions' => [
                 'view' => Gate::allows('view', $supplier),
                 'update' => Gate::allows('update', $supplier),

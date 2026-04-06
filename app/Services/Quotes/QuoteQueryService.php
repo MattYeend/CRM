@@ -137,11 +137,7 @@ class QuoteQueryService
             'accepted_at' => $quote->accepted_at,
             'is_sent' => $quote->getIsSentAttribute(),
             'is_accepted' => $quote->getIsAcceptedAttribute(),
-            'is_test' => $quote->is_test,
             'creator' => $quote->creator,
-            'created_at' => $quote->created_at,
-            'updated_at' => $quote->updated_at,
-            'deleted_at' => $quote->deleted_at,
             'permissions' => [
                 'view' => Gate::allows('view', $quote),
                 'update' => Gate::allows('update', $quote),

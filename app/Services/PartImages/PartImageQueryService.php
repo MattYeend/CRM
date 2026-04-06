@@ -126,7 +126,6 @@ class PartImageQueryService
             'alt' => $partImage->alt,
             'is_primary' => $partImage->is_primary,
             'sort_order' => $partImage->sort_order,
-            'is_test' => $partImage->is_test,
             'creator' => $partImage->creator,
             'created_at' => $partImage->created_at,
             'updated_at' => $partImage->updated_at,

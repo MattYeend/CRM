@@ -122,11 +122,8 @@ class PipelineStageQueryService
             'is_won' => $pipelineStage->getIsWonAttribute(),
             'is_lost' => $pipelineStage->getIsLostAttribute(),
             'deal_count' => $pipelineStage->getDealCountAttribute(),
-            'is_test' => $pipelineStage->is_test,
             'creator' => $pipelineStage->creator,
             'created_at' => $pipelineStage->created_at,
-            'updated_at' => $pipelineStage->updated_at,
-            'deleted_at' => $pipelineStage->deleted_at,
             'permissions' => [
                 'view' => Gate::allows('view', $pipelineStage),
                 'update' => Gate::allows('update', $pipelineStage),
