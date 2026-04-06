@@ -59,6 +59,19 @@ use Illuminate\Support\Str;
  * $fullPath = $category->full_path; // Get the full hierarchical
  * path for this category
  * ```
+ * 
+ *  Utility methods include:
+ * - ancestors(): Returns a collection of all parent categories, ordered
+ *      from the top-most parent down to the immediate parent of this
+ *      category. Useful for building full paths or breadcrumbs.
+ * Example usage:
+ * ```php
+ * $category = PartCategory::find(5);
+ * $ancestors = $category->ancestors(); // Collection of parent categories
+ * foreach ($ancestors as $ancestor) {
+ *     echo $ancestor->name . ' > ';
+ * }
+ * ```
  *
  * Query scopes include:
  * - scopeWithName($query, $name): Filter categories by a specific
@@ -223,9 +236,14 @@ class PartCategory extends Model
     }
 
     /**
-     * Get all ancestors (parents up the hierarchy) as a Collection.
+     * Get all ancestor categories of this category as a Collection.
+    *
+    * This method walks up the parent hierarchy, collecting each parent
+    * category until it reaches a top-level category with no parent.
+    * The returned collection is ordered from the top-most ancestor
+    * down to the immediate parent of this category.
      *
-     * @return Collection
+     * @return Collection<PartCategory>
      */
     public function ancestors()
     {
