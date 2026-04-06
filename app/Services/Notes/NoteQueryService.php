@@ -109,10 +109,10 @@ class NoteQueryService
     /**
      * Format a note into a structured array.
      *
-     * Includes core attributes, related data, derived accessors,
+     * Includes core attributes, related user data, derived notable name,
      * and authorisation permissions for the current user.
      *
-     * @param  Note $note
+     * @param  Note  $note
      *
      * @return array
      */
@@ -120,9 +120,10 @@ class NoteQueryService
     {
         return [
             'id' => $note->id,
-            'body' => $note->body,
-            'notable_type' => $this->notableType($note),
+            'body' => $note->type,
+            'notable_type' => $note->notable_type,
             'notable_id' => $note->notable_id,
+            'notable_name' => $this->notableName($note),
             'notable' => $note->notable,
             'user' => $note->user,
             'creator' => $note->creator,
@@ -135,23 +136,23 @@ class NoteQueryService
     }
 
     /**
-     * Resolve the notable type for a niote.
+     * Resolve the notable name for a note.
      *
-     * Attempts to derive a displayable type from the related type
-     * using common attributes such as `type` or `title`.
+     * Attempts to derive a displayable name from the related notable
+     * using common attributes such as `name` or `title`.
      *
      * @param  Note $note
      *
-     * @return string
+     * @return string|null
      */
-    private function notableType(Note $note): string
+    private function notableName(Note $note): ?string
     {
         if ($note->notable) {
-            $notableType = $note->notable->name
+            return $note->notable->name
                 ?? $note->notable->title
                 ?? null;
         }
 
-        return $note->notable_type = $notableType;
+        return null;
     }
 }
