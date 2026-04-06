@@ -92,7 +92,13 @@ test('show returns a single part category', function () {
 
     $response->assertStatus(200);
     $response->assertJsonFragment(['id' => $category->id, 'name' => $category->name]);
-    $response->assertJsonStructure(['id', 'name', 'slug', 'description', 'is_test', 'parent_id']);
+    $response->assertJsonStructure([
+        'id',
+        'name',
+        'slug',
+        'description',
+        'parent_id'
+    ]);
 });
 
 test('show returns 403 when user lacks permission', function () {
@@ -128,7 +134,6 @@ test('store creates a new part category and returns 201', function () {
         'name' => 'Engine Parts',
         'slug' => 'engine-parts',
         'description' => 'All parts related to the engine',
-        'is_test' => false,
     ];
 
     $response = $this->postJson(route('api.partCategories.store'), $payload);

@@ -58,7 +58,7 @@ test('index returns paginated roles with user_count and permissions', function (
     // Ensure returned item has permissions and users_count keys (users_count comes from withCount)
     $first = $response->json('data')[0];
     $this->assertArrayHasKey('permissions', $first);
-    $this->assertArrayHasKey('users_count', $first);
+    $this->assertArrayHasKey('user_count', $first);
 });
 
 /**

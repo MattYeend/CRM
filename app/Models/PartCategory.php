@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 /**
@@ -219,6 +220,24 @@ class PartCategory extends Model
     {
         $ancestors = $this->ancestors()->pluck('name')->toArray();
         return implode(' > ', array_merge($ancestors, [$this->name]));
+    }
+
+    /**
+     * Get all ancestors (parents up the hierarchy) as a Collection.
+     *
+     * @return Collection
+     */
+    public function ancestors()
+    {
+        $ancestors = [];
+        $parent = $this->parent;
+
+        while ($parent) {
+            $ancestors[] = $parent;
+            $parent = $parent->parent;
+        }
+
+        return collect(array_reverse($ancestors));
     }
 
     /**
