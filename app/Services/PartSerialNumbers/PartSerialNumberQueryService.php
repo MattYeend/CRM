@@ -87,18 +87,16 @@ class PartSerialNumberQueryService
         $this->trashFilter->applyTrashFilters($query, $request);
 
         $paginator = $query->paginate($perPage)->appends($request->query());
- 
-        $paginator->through(
-            fn (PartSerialNumber $serialNumber) => $this->formatPartSerialNumber($serialNumber)
-        );
- 
+
+        $paginator->through([$this, 'formatPartSerialNumber']);
+
         $paginator->appends([
             'permissions' => [
                 'create' => Gate::allows('create', PartSerialNumber::class),
                 'viewAny' => Gate::allows('viewAny', PartSerialNumber::class),
             ],
         ]);
- 
+
         return $paginator;
     }
 
@@ -112,8 +110,9 @@ class PartSerialNumberQueryService
      *
      * @return array
      */
-    private function formatPartSerialNumber(PartSerialNumber $serialNumber): array
-    {
+    private function formatPartSerialNumber(
+        PartSerialNumber $serialNumber
+    ): array {
         return [
             'id' => $serialNumber->id,
             'part_id' => $serialNumber->part_id,

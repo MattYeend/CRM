@@ -84,18 +84,18 @@ class SupplierQueryService
         $this->trashFilter->applyTrashFilters($query, $request);
 
         $paginator = $query->paginate($perPage)->appends($request->query());
- 
+
         $paginator->through(
             fn (Supplier $supplier) => $this->formatSupplier($supplier)
         );
- 
+
         $paginator->appends([
             'permissions' => [
                 'create' => Gate::allows('create', Supplier::class),
                 'viewAny' => Gate::allows('viewAny', Supplier::class),
             ],
         ]);
- 
+
         return $paginator;
     }
 
@@ -113,7 +113,7 @@ class SupplierQueryService
             'parts',
             'partSuppliers',
         );
- 
+
         return $this->formatSupplier($supplier);
     }
 

@@ -57,18 +57,16 @@ class PartStockMovementQueryService
         $this->sorting->applySorting($query, $request);
 
         $paginator = $query->paginate($perPage)->appends($request->query());
- 
-        $paginator->through(
-            fn (PartStockMovement $movement) => $this->formatPartStockMovement($movement)
-        );
- 
+
+        $paginator->through([$this, 'formatPartStockMovement']);
+
         $paginator->appends([
             'permissions' => [
                 'create' => Gate::allows('create', PartStockMovement::class),
                 'viewAny' => Gate::allows('viewAny', PartStockMovement::class),
             ],
         ]);
- 
+
         return $paginator;
     }
 
@@ -85,7 +83,7 @@ class PartStockMovementQueryService
         PartStockMovement $partStockMovement
     ): array {
         $partStockMovement->load('part');
- 
+
         return $this->formatPartStockMovement($partStockMovement);
     }
 

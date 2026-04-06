@@ -74,18 +74,18 @@ class QuoteQueryService
         $this->trashFilter->applyTrashFilters($query, $request);
 
         $paginator = $query->paginate($perPage)->appends($request->query());
- 
+
         $paginator->through(
             fn (Quote $quote) => $this->formatQuote($quote)
         );
- 
+
         $paginator->appends([
             'permissions' => [
                 'create' => Gate::allows('create', Quote::class),
                 'viewAny' => Gate::allows('viewAny', Quote::class),
             ],
         ]);
- 
+
         return $paginator;
     }
 
@@ -104,7 +104,7 @@ class QuoteQueryService
             'products',
             'creator',
         );
- 
+
         return $this->formatQuote($quote);
     }
 

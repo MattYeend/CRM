@@ -81,18 +81,18 @@ class PartQueryService
         $this->trashFilter->applyTrashFilters($query, $request);
 
         $paginator = $query->paginate($perPage)->appends($request->query());
- 
+
         $paginator->through(
             fn (Part $part) => $this->formatPart($part)
         );
- 
+
         $paginator->appends([
             'permissions' => [
                 'create' => Gate::allows('create', Part::class),
                 'viewAny' => Gate::allows('viewAny', Part::class),
             ],
         ]);
- 
+
         return $paginator;
     }
 
@@ -115,7 +115,7 @@ class PartQueryService
             'billOfMaterials',
             'usedInAssemblies',
         );
- 
+
         return $this->formatPart($part);
     }
 

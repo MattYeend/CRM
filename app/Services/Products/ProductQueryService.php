@@ -70,18 +70,18 @@ class ProductQueryService
         $this->trashFilter->applyTrashFilters($query, $request);
 
         $paginator = $query->paginate($perPage)->appends($request->query());
- 
+
         $paginator->through(
             fn (Product $product) => $this->formatProduct($product)
         );
- 
+
         $paginator->appends([
             'permissions' => [
                 'create' => Gate::allows('create', Product::class),
                 'viewAny' => Gate::allows('viewAny', Product::class),
             ],
         ]);
- 
+
         return $paginator;
     }
 
@@ -96,7 +96,7 @@ class ProductQueryService
     public function show(Product $product): array
     {
         $product->load('creator');
- 
+
         return $this->formatProduct($product);
     }
 

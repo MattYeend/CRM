@@ -74,18 +74,18 @@ class PartImageQueryService
         $this->trashFilter->applyTrashFilters($query, $request);
 
         $paginator = $query->paginate($perPage)->appends($request->query());
- 
+
         $paginator->through(
             fn (PartImage $partImage) => $this->formatPartImage($partImage)
         );
- 
+
         $paginator->appends([
             'permissions' => [
                 'create' => Gate::allows('create', PartImage::class),
                 'viewAny' => Gate::allows('viewAny', PartImage::class),
             ],
         ]);
- 
+
         return $paginator;
     }
 
@@ -99,7 +99,7 @@ class PartImageQueryService
     public function show(PartImage $partImage): array
     {
         $partImage->load('part');
- 
+
         return $this->formatPartImage($partImage);
     }
 

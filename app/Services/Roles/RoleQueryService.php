@@ -71,18 +71,18 @@ class RoleQueryService
         $this->trashFilter->applyTrashFilters($query, $request);
 
         $paginator = $query->paginate($perPage)->appends($request->query());
- 
+
         $paginator->through(
             fn (Role $role) => $this->formatRole($role)
         );
- 
+
         $paginator->appends([
             'permissions' => [
                 'create' => Gate::allows('create', Role::class),
                 'viewAny' => Gate::allows('viewAny', Role::class),
             ],
         ]);
- 
+
         return $paginator;
     }
 
@@ -97,7 +97,7 @@ class RoleQueryService
     public function show(Role $role): array
     {
         $role->load('permissions', 'users');
- 
+
         return $this->formatRole($role);
     }
 
@@ -119,7 +119,8 @@ class RoleQueryService
             'label' => $role->label,
             'is_admin' => $role->getIsAdminAttribute(),
             'is_super_admin' => $role->getIsSuperAdminAttribute(),
-            'user_count' => $role->users_count ?? $role->getUserCountAttribute(),
+            'user_count' => $role->users_count ??
+                $role->getUserCountAttribute(),
             'permissions' => $role->permissions,
             'users' => $role->relationLoaded('users') ? $role->users : null,
             'created_at' => $role->created_at,

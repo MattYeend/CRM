@@ -70,18 +70,18 @@ class TaskQueryService
         $this->trashFilter->applyTrashFilters($query, $request);
 
         $paginator = $query->paginate($perPage)->appends($request->query());
- 
+
         $paginator->through(
             fn (Task $task) => $this->formatTask($task)
         );
- 
+
         $paginator->appends([
             'permissions' => [
                 'create' => Gate::allows('create', Task::class),
                 'viewAny' => Gate::allows('viewAny', Task::class),
             ],
         ]);
- 
+
         return $paginator;
     }
 
@@ -100,7 +100,7 @@ class TaskQueryService
             'creator',
             'taskable',
         );
- 
+
         return $this->formatTask($task);
     }
 

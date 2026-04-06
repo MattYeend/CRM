@@ -70,18 +70,18 @@ class PipelineQueryService
         $this->trashFilter->applyTrashFilters($query, $request);
 
         $paginator = $query->paginate($perPage)->appends($request->query());
- 
+
         $paginator->through(
             fn (Pipeline $pipeline) => $this->formatPipeline($pipeline)
         );
- 
+
         $paginator->appends([
             'permissions' => [
                 'create' => Gate::allows('create', Pipeline::class),
                 'viewAny' => Gate::allows('viewAny', Pipeline::class),
             ],
         ]);
- 
+
         return $paginator;
     }
 
@@ -96,7 +96,7 @@ class PipelineQueryService
     public function show(Pipeline $pipeline): array
     {
         $pipeline->load('stages');
- 
+
         return $this->formatPipeline($pipeline);
     }
 

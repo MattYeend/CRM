@@ -77,18 +77,16 @@ class PartCategoryQueryService
         $this->trashFilter->applyTrashFilters($query, $request);
 
         $paginator = $query->paginate($perPage)->appends($request->query());
- 
-        $paginator->through(
-            fn (PartCategory $partCategory) => $this->formatPartCategory($partCategory)
-        );
- 
+
+        $paginator->through([$this, 'formatPartCategory']);
+
         $paginator->appends([
             'permissions' => [
                 'create' => Gate::allows('create', PartCategory::class),
                 'viewAny' => Gate::allows('viewAny', PartCategory::class),
             ],
         ]);
- 
+
         return $paginator;
     }
 
@@ -108,7 +106,7 @@ class PartCategoryQueryService
             'children',
             'parts',
         );
- 
+
         return $this->formatPartCategory($partCategory);
     }
 

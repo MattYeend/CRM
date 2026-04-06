@@ -75,9 +75,7 @@ class BillOfMaterialQueryService
 
         $paginator = $query->paginate($perPage)->appends($request->query());
 
-        $paginator->through(
-            fn (BillOfMaterial $billOfMaterial) => $this->formatBOM($billOfMaterial)
-        );
+        $paginator->through([$this, 'formatBOM']);
 
         $paginator->appends([
             'permissions' => [

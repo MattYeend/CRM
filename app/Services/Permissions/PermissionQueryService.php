@@ -70,18 +70,18 @@ class PermissionQueryService
         $this->trashFilter->applyTrashFilters($query, $request);
 
         $paginator = $query->paginate($perPage)->appends($request->query());
- 
+
         $paginator->through(
             fn (Permission $permission) => $this->formatPermission($permission)
         );
- 
+
         $paginator->appends([
             'permissions' => [
                 'create' => Gate::allows('create', Permission::class),
                 'viewAny' => Gate::allows('viewAny', Permission::class),
             ],
         ]);
- 
+
         return $paginator;
     }
 
@@ -96,7 +96,7 @@ class PermissionQueryService
     public function show(Permission $permission): array
     {
         $permission->load('roles');
- 
+
         return $this->formatPermission($permission);
     }
 
