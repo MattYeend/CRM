@@ -3,8 +3,10 @@
 namespace App\Services\PartSerialNumbers;
 
 use App\Models\Part;
+use App\Models\PartSerialNumber;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for PartSerialNumber records.
@@ -84,6 +86,55 @@ class PartSerialNumberQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+ 
+        $paginator->through(
+            fn (PartSerialNumber $serialNumber) => $this->formatPartSerialNumber($serialNumber)
+        );
+ 
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', PartSerialNumber::class),
+                'viewAny' => Gate::allows('viewAny', PartSerialNumber::class),
+            ],
+        ]);
+ 
+        return $paginator;
+    }
+
+    /**
+     * Format a part serial number into a structured array.
+     *
+     * Includes core attributes, related data, derived expiry state, and
+     * authorisation permissions for the current user.
+     *
+     * @param  PartSerialNumber $serialNumber
+     *
+     * @return array
+     */
+    private function formatPartSerialNumber(PartSerialNumber $serialNumber): array
+    {
+        return [
+            'id' => $serialNumber->id,
+            'part_id' => $serialNumber->part_id,
+            'part' => $serialNumber->part,
+            'serial_number' => $serialNumber->serial_number,
+            'status' => $serialNumber->status,
+            'batch_number' => $serialNumber->batch_number,
+            'manufactured_at' => $serialNumber->manufactured_at,
+            'expires_at' => $serialNumber->expires_at,
+            'is_expired' => $serialNumber->getIsExpired(),
+            'is_expiring_soon' => $serialNumber->getIsExpiringSoon(),
+            'is_test' => $serialNumber->is_test,
+            'creator' => $serialNumber->creator,
+            'created_at' => $serialNumber->created_at,
+            'updated_at' => $serialNumber->updated_at,
+            'deleted_at' => $serialNumber->deleted_at,
+            'permissions' => [
+                'view' => Gate::allows('view', $serialNumber),
+                'update' => Gate::allows('update', $serialNumber),
+                'delete' => Gate::allows('delete', $serialNumber),
+            ],
+        ];
     }
 }

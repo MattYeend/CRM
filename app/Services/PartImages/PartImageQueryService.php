@@ -5,6 +5,7 @@ namespace App\Services\PartImages;
 use App\Models\PartImage;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for PartImage records.
@@ -72,7 +73,20 @@ class PartImageQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+ 
+        $paginator->through(
+            fn (PartImage $partImage) => $this->formatPartImage($partImage)
+        );
+ 
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', PartImage::class),
+                'viewAny' => Gate::allows('viewAny', PartImage::class),
+            ],
+        ]);
+ 
+        return $paginator;
     }
 
     /**
@@ -80,12 +94,48 @@ class PartImageQueryService
      *
      * @param  PartImage $partImage The route-model-bound part image instance.
      *
-     * @return PartImage The part image with the part relationship loaded.
+     * @return array
      */
-    public function show(PartImage $partImage): PartImage
+    public function show(PartImage $partImage): array
     {
-        return $partImage->load(
-            'part',
-        );
+        $partImage->load('part');
+ 
+        return $this->formatPartImage($partImage);
+    }
+
+    /**
+     * Format a part image into a structured array.
+     *
+     * Includes core attributes, related data, derived URL accessors, and
+     * authorisation permissions for the current user.
+     *
+     * @param  PartImage $partImage
+     *
+     * @return array
+     */
+    private function formatPartImage(PartImage $partImage): array
+    {
+        return [
+            'id' => $partImage->id,
+            'part_id' => $partImage->part_id,
+            'part' => $partImage->part,
+            'image' => $partImage->image,
+            'image_url' => $partImage->image_url,
+            'thumbnail_url' => $partImage->thumbnail_url,
+            'thumbnail_or_image_url' => $partImage->thumbnail_or_image_url,
+            'alt' => $partImage->alt,
+            'is_primary' => $partImage->is_primary,
+            'sort_order' => $partImage->sort_order,
+            'is_test' => $partImage->is_test,
+            'creator' => $partImage->creator,
+            'created_at' => $partImage->created_at,
+            'updated_at' => $partImage->updated_at,
+            'deleted_at' => $partImage->deleted_at,
+            'permissions' => [
+                'view' => Gate::allows('view', $partImage),
+                'update' => Gate::allows('update', $partImage),
+                'delete' => Gate::allows('delete', $partImage),
+            ],
+        ];
     }
 }

@@ -5,6 +5,7 @@ namespace App\Services\PartCategories;
 use App\Models\PartCategory;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for PartCategory records.
@@ -75,7 +76,20 @@ class PartCategoryQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+ 
+        $paginator->through(
+            fn (PartCategory $partCategory) => $this->formatPartCategory($partCategory)
+        );
+ 
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', PartCategory::class),
+                'viewAny' => Gate::allows('viewAny', PartCategory::class),
+            ],
+        ]);
+ 
+        return $paginator;
     }
 
     /**
@@ -85,14 +99,51 @@ class PartCategoryQueryService
      * @param  PartCategory $partCategory The route-model-bound part category
      * instance.
      *
-     * @return PartCategory The part category with relationships loaded.
+     * @return array
      */
-    public function show(PartCategory $partCategory): PartCategory
+    public function show(PartCategory $partCategory): array
     {
-        return $partCategory->load(
+        $partCategory->load(
             'parent',
             'children',
             'parts',
         );
+ 
+        return $this->formatPartCategory($partCategory);
+    }
+
+    /**
+     * Format a part category into a structured array.
+     *
+     * Includes core attributes, related data, and authorisation permissions
+     * for the current user.
+     *
+     * @param  PartCategory $partCategory
+     *
+     * @return array
+     */
+    private function formatPartCategory(PartCategory $partCategory): array
+    {
+        return [
+            'id' => $partCategory->id,
+            'parent_id' => $partCategory->parent_id,
+            'parent' => $partCategory->parent,
+            'name' => $partCategory->name,
+            'slug' => $partCategory->slug,
+            'full_path' => $partCategory->full_path,
+            'description' => $partCategory->description,
+            'is_test' => $partCategory->is_test,
+            'children' => $partCategory->children,
+            'parts' => $partCategory->parts,
+            'creator' => $partCategory->creator,
+            'created_at' => $partCategory->created_at,
+            'updated_at' => $partCategory->updated_at,
+            'deleted_at' => $partCategory->deleted_at,
+            'permissions' => [
+                'view' => Gate::allows('view', $partCategory),
+                'update' => Gate::allows('update', $partCategory),
+                'delete' => Gate::allows('delete', $partCategory),
+            ],
+        ];
     }
 }

@@ -5,6 +5,7 @@ namespace App\Services\Parts;
 use App\Models\Part;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for Part records.
@@ -79,7 +80,20 @@ class PartQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+ 
+        $paginator->through(
+            fn (Part $part) => $this->formatPart($part)
+        );
+ 
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Part::class),
+                'viewAny' => Gate::allows('viewAny', Part::class),
+            ],
+        ]);
+ 
+        return $paginator;
     }
 
     /**
@@ -87,11 +101,11 @@ class PartQueryService
      *
      * @param  Part $part The route-model-bound part instance.
      *
-     * @return Part The part with relationships loaded.
+     * @return array
      */
-    public function show(Part $part): Part
+    public function show(Part $part): array
     {
-        return $part->load(
+        $part->load(
             'product',
             'category',
             'primarySupplier',
@@ -99,7 +113,85 @@ class PartQueryService
             'stockMovements',
             'serialNumbers',
             'billOfMaterials',
-            'usedInAssemblies'
+            'usedInAssemblies',
         );
+ 
+        return $this->formatPart($part);
+    }
+
+    /**
+     * Format a part into a structured array.
+     *
+     * Includes core attributes, related data, derived helper values, and
+     * authorisation permissions for the current user.
+     *
+     * @param  Part $part
+     *
+     * @return array
+     */
+    private function formatPart(Part $part): array
+    {
+        return [
+            'id' => $part->id,
+            'sku' => $part->sku,
+            'part_number' => $part->part_number,
+            'barcode' => $part->barcode,
+            'name' => $part->name,
+            'description' => $part->description,
+            'brand' => $part->brand,
+            'manufacturer' => $part->manufacturer,
+            'type' => $part->type,
+            'status' => $part->status,
+            'unit_of_measure' => $part->unit_of_measure,
+            'height' => $part->height,
+            'width' => $part->width,
+            'length' => $part->length,
+            'weight' => $part->weight,
+            'volume' => $part->volume,
+            'colour' => $part->colour,
+            'material' => $part->material,
+            'price' => $part->price,
+            'cost_price' => $part->cost_price,
+            'currency' => $part->currency,
+            'tax_rate' => $part->tax_rate,
+            'tax_code' => $part->tax_code,
+            'discount_percentage' => $part->discount_percentage,
+            'quantity' => $part->quantity,
+            'min_stock_level' => $part->min_stock_level,
+            'max_stock_level' => $part->max_stock_level,
+            'reorder_point' => $part->reorder_point,
+            'reorder_quantity' => $part->reorder_quantity,
+            'lead_time_days' => $part->lead_time_days,
+            'warehouse_location' => $part->warehouse_location,
+            'bin_location' => $part->bin_location,
+            'is_active' => $part->is_active,
+            'is_purchasable' => $part->is_purchasable,
+            'is_sellable' => $part->is_sellable,
+            'is_manufactured' => $part->is_manufactured,
+            'is_serialised' => $part->is_serialised,
+            'is_batch_tracked' => $part->is_batch_tracked,
+            'is_test' => $part->is_test,
+            'is_low_stock' => $part->getIsLowStock(),
+            'is_out_of_stock' => $part->getIsOutOfStock(),
+            'margin_percentage' => $part->getMarginPercentage(),
+            'has_bom' => $part->getHasBom(),
+            'product' => $part->product,
+            'category' => $part->category,
+            'primary_supplier' => $part->primarySupplier,
+            'primary_image' => $part->primaryImage,
+            'stock_movements' => $part->stockMovements,
+            'serial_numbers' => $part->serialNumbers,
+            'bill_of_materials' => $part->billOfMaterials,
+            'used_in_assemblies' => $part->usedInAssemblies,
+            'creator' => $part->creator,
+            'created_at' => $part->created_at,
+            'updated_at' => $part->updated_at,
+            'deleted_at' => $part->deleted_at,
+            'permissions' => [
+                'view' => Gate::allows('view', $part),
+                'update' => Gate::allows('update', $part),
+                'delete' => Gate::allows('delete', $part),
+            ],
+        ];
     }
 }

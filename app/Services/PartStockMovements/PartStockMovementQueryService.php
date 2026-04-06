@@ -5,6 +5,7 @@ namespace App\Services\PartStockMovements;
 use App\Models\PartStockMovement;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for PartStockMovement records.
@@ -55,7 +56,20 @@ class PartStockMovementQueryService
 
         $this->sorting->applySorting($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+ 
+        $paginator->through(
+            fn (PartStockMovement $movement) => $this->formatPartStockMovement($movement)
+        );
+ 
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', PartStockMovement::class),
+                'viewAny' => Gate::allows('viewAny', PartStockMovement::class),
+            ],
+        ]);
+ 
+        return $paginator;
     }
 
     /**
@@ -65,12 +79,48 @@ class PartStockMovementQueryService
      * @param  PartStockMovement $partStockMovement The route-model-bound
      * part instance.
      *
-     * @return PartStockMovement The part stock movement with relationships
-     * loaded.
+     * @return array
      */
     public function show(
         PartStockMovement $partStockMovement
-    ): PartStockMovement {
-        return $partStockMovement;
+    ): array {
+        $partStockMovement->load('part');
+ 
+        return $this->formatPartStockMovement($partStockMovement);
+    }
+
+    /**
+     * Format a part stock movement into a structured array.
+     *
+     * Includes core attributes, related data, derived direction flags, and
+     * authorisation permissions for the current user.
+     *
+     * @param  PartStockMovement $movement
+     *
+     * @return array
+     */
+    private function formatPartStockMovement(PartStockMovement $movement): array
+    {
+        return [
+            'id' => $movement->id,
+            'part_id' => $movement->part_id,
+            'part' => $movement->part,
+            'type' => $movement->type,
+            'quantity' => $movement->quantity,
+            'quantity_before' => $movement->quantity_before,
+            'quantity_after' => $movement->quantity_after,
+            'reference' => $movement->reference,
+            'notes' => $movement->notes,
+            'is_inbound' => $movement->getIsInbound(),
+            'is_outbound' => $movement->getIsOutbound(),
+            'created_by' => $movement->createdBy,
+            'created_at' => $movement->created_at,
+            'updated_at' => $movement->updated_at,
+            'permissions' => [
+                'view' => Gate::allows('view', $movement),
+                'update' => Gate::allows('update', $movement),
+                'delete' => Gate::allows('delete', $movement),
+            ],
+        ];
     }
 }

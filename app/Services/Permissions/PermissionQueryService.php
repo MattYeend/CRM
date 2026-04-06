@@ -5,6 +5,7 @@ namespace App\Services\Permissions;
 use App\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for Permission records.
@@ -68,19 +69,65 @@ class PermissionQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+ 
+        $paginator->through(
+            fn (Permission $permission) => $this->formatPermission($permission)
+        );
+ 
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Permission::class),
+                'viewAny' => Gate::allows('viewAny', Permission::class),
+            ],
+        ]);
+ 
+        return $paginator;
     }
 
     /**
      * Return a single permission with related data loaded.
      *
-     * @param  Permission $ordpermissioner The route-model-bound permission
+     * @param  Permission $permission The route-model-bound permission
      * instance.
      *
-     * @return Permission The permission with relationships loaded.
+     * @return array
      */
-    public function show(Permission $permission): Permission
+    public function show(Permission $permission): array
     {
-        return $permission->load('roles');
+        $permission->load('roles');
+ 
+        return $this->formatPermission($permission);
+    }
+
+    /**
+     * Format a permission into a structured array.
+     *
+     * Includes core attributes, related role data, derived assignment state,
+     * and authorisation permissions for the current user.
+     *
+     * @param  Permission $permission
+     *
+     * @return array
+     */
+    private function formatPermission(Permission $permission): array
+    {
+        return [
+            'id' => $permission->id,
+            'name' => $permission->name,
+            'label' => $permission->label,
+            'is_assigned' => $permission->getIsAssignedAttribute(),
+            'role_count' => $permission->getRoleCountAttribute(),
+            'roles' => $permission->roles,
+            'creator' => $permission->creator,
+            'created_at' => $permission->created_at,
+            'updated_at' => $permission->updated_at,
+            'deleted_at' => $permission->deleted_at,
+            'permissions' => [
+                'view' => Gate::allows('view', $permission),
+                'update' => Gate::allows('update', $permission),
+                'delete' => Gate::allows('delete', $permission),
+            ],
+        ];
     }
 }
