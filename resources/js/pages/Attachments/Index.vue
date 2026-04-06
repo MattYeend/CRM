@@ -4,7 +4,8 @@ import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
 import { ref, reactive, onMounted } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
-import { fetchAttachments, deleteAttachments } from '@/services/attachmentService'
+import { deleteAttachments } from '@/services/attachmentService'
+import { fetchAttachments } from '@/services/attachmentService'
 
 interface Attachment {
     id: number
