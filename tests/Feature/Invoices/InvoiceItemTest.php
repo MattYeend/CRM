@@ -127,8 +127,8 @@ test('show returns an invoice item with relations loaded', function () {
 
     $response->assertJsonStructure([
         'id',
-        'invoice_id',
-        'product_id',
+        'invoice',
+        'product',
         'description',
         'quantity',
         'unit_price',

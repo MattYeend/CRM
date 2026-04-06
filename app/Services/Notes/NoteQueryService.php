@@ -144,6 +144,7 @@ class NoteQueryService
             'notable' => $note->notable,
             'user' => $note->user,
             'creator' => $note->creator,
+            'meta' => $note->meta,
             'permissions' => [
                 'view' => Gate::allows('view', $note),
                 'update' => Gate::allows('update', $note),

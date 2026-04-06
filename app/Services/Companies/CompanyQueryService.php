@@ -154,6 +154,7 @@ class CompanyQueryService
             'postal_code' => $company->postal_code,
             'country' => $company->country,
             'full_address' => $company->full_address,
+            'meta' => $company->meta,
         ];
     }
 
@@ -169,6 +170,7 @@ class CompanyQueryService
         return [
             'has_deals' => $company->has_deals,
             'has_outstanding_invoices' => $company->has_outstanding_invoices,
+            'attachments' => $company->attachments,
         ];
     }
 

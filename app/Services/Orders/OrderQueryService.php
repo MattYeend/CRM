@@ -142,6 +142,7 @@ class OrderQueryService
             'stripe_payment_intent' => $order->stripe_payment_intent,
             'stripe_invoice_id' => $order->stripe_invoice_id,
             'paid_at' => $order->paid_at,
+            'meta' => $order->meta,
         ];
     }
 
@@ -159,6 +160,7 @@ class OrderQueryService
             'deal' => $order->deal,
             'products' => $order->products,
             'creator' => $order->creator,
+            'assignedTo' => $order->assigned_to
         ];
     }
 

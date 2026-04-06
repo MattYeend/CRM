@@ -121,8 +121,8 @@ test('show returns the company with relationships loaded', function () {
         'postal_code',
         'country',
         'meta',
-        'deals',
-        'invoices',
+        'has_deals',
+        'has_outstanding_invoices',
         'attachments'
     ]);
 });

@@ -137,6 +137,7 @@ class ProductQueryService
             'name' => $product->name,
             'description' => $product->description,
             'status' => $product->status,
+            'meta' => $product->meta,
         ];
     }
 

@@ -110,7 +110,7 @@ test('show returns a single order', function () {
 
     $response->assertJsonStructure([
         'id',
-        'assigned_to',
+        'assignedTo',
         'amount',
         'currency',
         'status',

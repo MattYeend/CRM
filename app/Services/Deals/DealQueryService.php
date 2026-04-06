@@ -206,10 +206,13 @@ class DealQueryService
     private function relationshipData(Deal $deal): array
     {
         return [
+            'attachments' => $deal->attachments,
             'company' => $deal->company,
+            'notes' => $deal->notes,
             'owner' => $deal->owner,
             'pipeline' => $deal->pipeline,
             'stage' => $deal->stage,
+            'tasks' => $deal->tasks,
             'creator' => $deal->creator,
         ];
     }

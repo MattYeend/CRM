@@ -56,7 +56,7 @@ test('index returns paginated leads with filters', function () {
 
     $response = $this->getJson(route('api.leads.index', [
         'per_page' => 5,
-        'owner_id' => $owner->id,
+        'owner' => $owner->id,
         'source' => 'website',
     ]));
 
@@ -118,11 +118,11 @@ test('show returns a lead with relations loaded', function () {
         'phone',
         'source',
         'meta',
-        'owner_id' => [],
+        'owner' => [],
         'assigned_to' => [],
-        'created_by',
-        'updated_by',
-        'deleted_by',
+        'creator',
+        'updater',
+        'deleter',
         'created_at',
         'updated_at',
     ]);

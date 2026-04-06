@@ -176,6 +176,9 @@ class LeadQueryService
             'source' => $lead->source,
             'age_in_days' => $lead->age_in_days,
             'assigned_at' => $lead->assigned_at,
+            'meta' => $lead->meta,
+            'created_at' => $lead->created_at,
+            'updated_at' => $lead->updated_at,
         ];
     }
 
@@ -223,6 +226,8 @@ class LeadQueryService
     {
         return [
             'creator' => $lead->creator,
+            'updater' => $lead->updater,
+            'deleter' => $lead->deleter,
         ];
     }
 

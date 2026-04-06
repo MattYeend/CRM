@@ -106,7 +106,7 @@ test('show returns a note with user and notable loaded', function () {
     $response->assertJsonFragment(['id' => $note->id]);
     $response->assertJsonStructure([
         'id',
-        'user_id',
+        'user',
         'body',
         'meta',
         'user' => [],

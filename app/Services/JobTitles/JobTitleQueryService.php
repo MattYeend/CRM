@@ -127,6 +127,8 @@ class JobTitleQueryService
             'user_count' => $jobTitle->user_count,
             'users' => $jobTitle->users,
             'creator' => $jobTitle->creator,
+            'updater' => $jobTitle->updater,
+            'meta' => $jobTitle->meta,
             'permissions' => [
                 'view' => Gate::allows('view', $jobTitle),
                 'update' => Gate::allows('update', $jobTitle),

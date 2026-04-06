@@ -57,7 +57,6 @@ test('index returns paginated tasks with relations', function () {
         'created_by' => $creator->id,
         'taskable_type' => Deal::class,
         'taskable_id' => $taskable->id,
-        'created_by' => $this->auth->id,
     ]);
 
     $response = $this->getJson(route('api.tasks.index', ['per_page' => 5]));
@@ -83,7 +82,6 @@ test('index returns all tasks when no pagination specified', function () {
         'created_by' => $creator->id,
         'taskable_type' => Deal::class,
         'taskable_id' => $taskable->id,
-        'created_by' => $this->auth->id,
     ]);
     $response = $this->getJson(route('api.tasks.index'));
 
@@ -132,7 +130,7 @@ test('show returns a task with assignee, creator and taskable loaded', function 
         'title',
         'description',
         'assigned_to',
-        'created_by',
+        'creator',
         'priority',
         'status',
         'due_at',
@@ -152,7 +150,6 @@ test('show returns 403 when user lacks permission', function () {
         'created_by' => $creator->id,
         'taskable_type' => Deal::class,
         'taskable_id' => $taskable->id,
-        'created_by' => $this->auth->id,
     ]);
     $user = User::factory()->create();
     $role = Role::factory()->create(['name' => 'user']);
