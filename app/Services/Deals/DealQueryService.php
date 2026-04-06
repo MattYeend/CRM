@@ -128,7 +128,7 @@ class DealQueryService
      * Includes core attributes, related data, derived accessors,
      * and authorisation permissions for the current user.
      *
-     * @param  Deal  $deal
+     * @param  Deal $deal
      *
      * @return array
      */

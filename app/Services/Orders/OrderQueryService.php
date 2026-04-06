@@ -5,6 +5,7 @@ namespace App\Services\Orders;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for Order records.
@@ -68,7 +69,20 @@ class OrderQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+
+        $paginator->through(
+            fn (Order $order) => $this->formatOrder($order)
+        );
+
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Order::class),
+                'viewAny' => Gate::allows('viewAny', Order::class),
+            ],
+        ]);
+
+        return $paginator;
     }
 
     /**
@@ -77,10 +91,51 @@ class OrderQueryService
      * @param  Order $order The route-model-bound order
      * instance.
      *
-     * @return Order The order with relationships loaded.
+     * @return array
      */
-    public function show(Order $order): Order
+    public function show(Order $order): array
     {
-        return $order;
+        $order->load(
+            'user',
+            'deal',
+            'products',
+        );
+
+        return $this->formatOrder($order);
+    }
+
+    /**
+     * Format an order into a structured array.
+     *
+     * Includes core attributes, related data, derived accessors,
+     * and authorisation permissions for the current user.
+     *
+     * @param  Order $order
+     *
+     * @return array
+     */
+    private function formatOrder(Order $order): array
+    {
+        return [
+            'id' => $order->id,
+            'status' => $order->status,
+            'amount' => $order->amount,
+            'currency' => $order->currency,
+            'payment_method' => $order->payment_method,
+            'payment_intent_id' => $order->payment_intent_id,
+            'charge_id' => $order->charge_id,
+            'stripe_payment_intent' => $order->stripe_payment_intent,
+            'stripe_invoice_id' => $order->stripe_invoice_id,
+            'paid_at' => $order->paid_at,
+            'user' => $order->user,
+            'deal' => $order->deal,
+            'products' => $order->products,
+            'creator' => $order->creator,
+            'permissions' => [
+                'view' => Gate::allows('view', $order),
+                'update' => Gate::allows('update', $order),
+                'delete' => Gate::allows('delete', $order),
+            ],
+        ];
     }
 }

@@ -5,6 +5,7 @@ namespace App\Services\Leads;
 use App\Models\Lead;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for Lead records.
@@ -82,7 +83,20 @@ class LeadQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+
+        $paginator->through(
+            fn (Lead $lead) => $this->formatLead($lead)
+        );
+
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Lead::class),
+                'viewAny' => Gate::allows('viewAny', Lead::class),
+            ],
+        ]);
+
+        return $paginator;
     }
 
     /**
@@ -91,13 +105,57 @@ class LeadQueryService
      * @param  Lead $lead The route-model-bound lead
      * instance.
      *
-     * @return Lead The lead with relationships loaded.
+     * @return array
      */
-    public function show(Lead $lead): Lead
+    public function show(Lead $lead): array
     {
-        return $lead->load(
+        $lead->load(
             'owner',
             'assignedTo',
         );
+
+        return $this->formatLead($lead);
     }
+
+    /**
+     * Format a lead into a structured array.
+     *
+     * Includes core attributes, related data, derived accessors,
+     * and authorisation permissions for the current user.
+     *
+     * @param  Lead $lead
+     *
+     * @return array
+     */
+    private function formatLead(Lead $lead): array
+    {
+        return [
+            'id' => $lead->id,
+            'title' => $lead->title,
+            'first_name' => $lead->first_name,
+            'last_name' => $lead->last_name,
+            'full_name' => $lead->full_name,
+            'display_name' => $lead->display_name,
+            'email' => $lead->email,
+            'phone' => $lead->phone,
+            'contact_info' => $lead->contact_info,
+            'source' => $lead->source,
+            'age_in_days' => $lead->age_in_days,
+            'is_stale' => $lead->is_stale,
+            'is_hot' => $lead->is_hot,
+            'is_high_priority' => $lead->is_high_priority,
+            'is_low_priority' => $lead->is_low_priority,
+            'is_eligible_for_conversion' => $lead->is_eligible_for_conversion,
+            'assigned_at' => $lead->assigned_at,
+            'owner' => $lead->owner,
+            'assigned_to' => $lead->assignedTo,
+            'creator' => $lead->creator,
+            'permissions' => [
+                'view' => Gate::allows('view', $lead),
+                'update' => Gate::allows('update', $lead),
+                'delete' => Gate::allows('delete', $lead),
+            ],
+        ];
+    }
+
 }

@@ -112,7 +112,7 @@ class InvoiceQueryService
      * Includes core attributes, related data, derived accessors,
      * and authorisation permissions for the current user.
      *
-     * @param  Invoice  $invoice
+     * @param  Invoice $invoice
      *
      * @return array
      */

@@ -5,6 +5,7 @@ namespace App\Services\JobTitles;
 use App\Models\JobTitle;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for JobTitle records.
@@ -68,7 +69,20 @@ class JobTitleQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+
+        $paginator->through(
+            fn (JobTitle $jobTitle) => $this->formatJobTitle($jobTitle)
+        );
+
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', JobTitle::class),
+                'viewAny' => Gate::allows('viewAny', JobTitle::class),
+            ],
+        ]);
+
+        return $paginator;
     }
 
     /**
@@ -77,10 +91,47 @@ class JobTitleQueryService
      * @param  JobTitle $jobTitle The route-model-bound job title
      * instance.
      *
-     * @return JobTitle The job title with relationships loaded.
+     * @return array
      */
-    public function show(JobTitle $jobTitle): JobTitle
+    public function show(JobTitle $jobTitle): array
     {
-        return $jobTitle->load('users', 'creator', 'updater');
+        $jobTitle->load(
+            'users',
+            'creator',
+            'updater',
+        );
+
+        return $this->formatJobTitle($jobTitle);
+    }
+
+    /**
+     * Format a job title into a structured array.
+     *
+     * Includes core attributes, related data, derived accessors,
+     * and authorisation permissions for the current user.
+     *
+     * @param  JobTitle $jobTitle
+     *
+     * @return array
+     */
+    private function formatJobTitle(JobTitle $jobTitle): array
+    {
+        return [
+            'id' => $jobTitle->id,
+            'title' => $jobTitle->title,
+            'short_code' => $jobTitle->short_code,
+            'group' => $jobTitle->group,
+            'is_csuite' => $jobTitle->is_csuite,
+            'is_executive' => $jobTitle->is_executive,
+            'is_director' => $jobTitle->is_director,
+            'user_count' => $jobTitle->user_count,
+            'users' => $jobTitle->users,
+            'creator' => $jobTitle->creator,
+            'permissions' => [
+                'view' => Gate::allows('view', $jobTitle),
+                'update' => Gate::allows('update', $jobTitle),
+                'delete' => Gate::allows('delete', $jobTitle),
+            ],
+        ];
     }
 }

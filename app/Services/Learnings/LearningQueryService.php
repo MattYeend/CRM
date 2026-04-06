@@ -5,6 +5,7 @@ namespace App\Services\Learnings;
 use App\Models\Learning;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for Learning records.
@@ -70,7 +71,20 @@ class LearningQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+
+        $paginator->through(
+            fn (Learning $learning) => $this->formatLearning($learning)
+        );
+
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Learning::class),
+                'viewAny' => Gate::allows('viewAny', Learning::class),
+            ],
+        ]);
+
+        return $paginator;
     }
 
     /**
@@ -79,10 +93,48 @@ class LearningQueryService
      * @param  Learning $learning The route-model-bound learning
      * instance.
      *
-     * @return Learning The learning with relationships loaded.
+     * @return array
      */
-    public function show(Learning $learning): Learning
+    public function show(Learning $learning): array
     {
-        return $learning->load('users');
+        $learning->load(
+            'users',
+            'questions',
+        );
+
+        return $this->formatLearning($learning);
+    }
+
+    /**
+     * Format a learning into a structured array.
+     *
+     * Includes core attributes, related data, derived accessors,
+     * and authorisation permissions for the current user.
+     *
+     * @param  Learning $learning
+     *
+     * @return array
+     */
+    private function formatLearning(Learning $learning): array
+    {
+        return [
+            'id' => $learning->id,
+            'title' => $learning->title,
+            'description' => $learning->description,
+            'date' => $learning->date,
+            'pass_score' => $learning->pass_score,
+            'meta_title' => $learning->meta_title,
+            'meta_description' => $learning->meta_description,
+            'meta_keywords' => $learning->meta_keywords,
+            'meta_author' => $learning->meta_author,
+            'users' => $learning->users,
+            'questions' => $learning->questions,
+            'creator' => $learning->creator,
+            'permissions' => [
+                'view' => Gate::allows('view', $learning),
+                'update' => Gate::allows('update', $learning),
+                'delete' => Gate::allows('delete', $learning),
+            ],
+        ];
     }
 }

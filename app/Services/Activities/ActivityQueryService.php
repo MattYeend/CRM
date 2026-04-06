@@ -124,7 +124,7 @@ class ActivityQueryService
      * Attempts to derive a displayable name from the related subject
      * using common attributes such as `name` or `title`.
      *
-     * @param  Activity  $activity
+     * @param  Activity $activity
      *
      * @return string
      */

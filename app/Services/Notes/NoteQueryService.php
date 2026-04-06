@@ -5,6 +5,7 @@ namespace App\Services\Notes;
 use App\Models\Note;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for Note records.
@@ -71,7 +72,20 @@ class NoteQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+
+        $paginator->through(
+            fn (Note $note) => $this->formatNote($note)
+        );
+
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Note::class),
+                'viewAny' => Gate::allows('viewAny', Note::class),
+            ],
+        ]);
+
+        return $paginator;
     }
 
     /**
@@ -80,10 +94,64 @@ class NoteQueryService
      * @param  Note $note The route-model-bound note
      * instance.
      *
-     * @return Note The note with relationships loaded.
+     * @return array
      */
-    public function show(Note $note): Note
+    public function show(Note $note): array
     {
-        return $note->load('user', 'notable');
+        $note->load(
+            'user',
+            'notable',
+        );
+
+        return $this->formatNote($note);
+    }
+
+    /**
+     * Format a note into a structured array.
+     *
+     * Includes core attributes, related data, derived accessors,
+     * and authorisation permissions for the current user.
+     *
+     * @param  Note $note
+     *
+     * @return array
+     */
+    private function formatNote(Note $note): array
+    {
+        return [
+            'id' => $note->id,
+            'body' => $note->body,
+            'notable_type' => $this->notableType($note),
+            'notable_id' => $note->notable_id,
+            'notable' => $note->notable,
+            'user' => $note->user,
+            'creator' => $note->creator,
+            'permissions' => [
+                'view' => Gate::allows('view', $note),
+                'update' => Gate::allows('update', $note),
+                'delete' => Gate::allows('delete', $note),
+            ],
+        ];
+    }
+
+    /**
+     * Resolve the notable type for a niote.
+     *
+     * Attempts to derive a displayable type from the related type
+     * using common attributes such as `type` or `title`.
+     *
+     * @param  Note $note
+     *
+     * @return string
+     */
+    private function notableType(Note $note): string
+    {
+        if ($note->notable) {
+            $notableType = $note->notable->name
+                ?? $note->notable->title
+                ?? null;
+        }
+
+        return $note->notable_type = $notableType;
     }
 }

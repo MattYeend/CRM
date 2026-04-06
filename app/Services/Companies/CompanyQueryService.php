@@ -119,7 +119,7 @@ class CompanyQueryService
      * Includes core attributes, related data, derived accessors,
      * and authorisation permissions for the current user.
      *
-     * @param  Company  $company
+     * @param  Company $company
      *
      * @return array
      */
