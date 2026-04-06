@@ -2,9 +2,11 @@
 
 namespace App\Services\BillOfMaterials;
 
+use App\Models\BillOfMaterial;
 use App\Models\Part;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for Bill of Materials (BOM) records.
@@ -71,6 +73,48 @@ class BillOfMaterialQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+
+        $paginator->through(
+            fn (BillOfMaterial $billOfMaterial) => $this->formatBOM($billOfMaterial)
+        );
+
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', BillOfMaterial::class),
+                'viewAny' => Gate::allows('viewAny', BillOfMaterial::class),
+            ],
+        ]);
+
+        return $paginator;
+    }
+
+    /**
+     * Format a Bill Of Material into a structured array.
+     *
+     * Includes core attributes, related user data, derived subject name,
+     * and authorisation permissions for the current user.
+     *
+     * @param  BillOfMaterial $billOfMaterial
+     *
+     * @return array
+     */
+    private function formatBOM(BillOfMaterial $billOfMaterial): array
+    {
+        return [
+            'id' => $billOfMaterial->id,
+            'parent_part_id' => $billOfMaterial->parent_part_id,
+            'child_part_id' => $billOfMaterial->child_part_id,
+            'quantity' => $billOfMaterial->quantity,
+            'unit_of_measure' => $billOfMaterial->unit_of_measure,
+            'scrap_percentage' => $billOfMaterial->scrap_percentage,
+            'notes' => $billOfMaterial->notes,
+            'creator' => $billOfMaterial->creator,
+            'permissions' => [
+                'view' => Gate::allows('view', $billOfMaterial),
+                'update' => Gate::allows('update', $billOfMaterial),
+                'delete' => Gate::allows('delete', $billOfMaterial),
+            ],
+        ];
     }
 }

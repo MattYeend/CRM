@@ -5,6 +5,7 @@ namespace App\Services\Invoices;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for Invoice records.
@@ -71,7 +72,20 @@ class InvoiceQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+
+        $paginator->through(
+            fn (Invoice $invoice) => $this->formatInvoice($invoice)
+        );
+
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Invoice::class),
+                'viewAny' => Gate::allows('viewAny', Invoice::class),
+            ],
+        ]);
+
+        return $paginator;
     }
 
     /**
@@ -80,13 +94,56 @@ class InvoiceQueryService
      * @param  Invoice $invoice The route-model-bound invoice
      * instance.
      *
-     * @return Invoice The invoice with relationships loaded.
+     * @return array
      */
-    public function show(Invoice $invoice): Invoice
+    public function show(Invoice $invoice): array
     {
-        return $invoice->load(
+        $invoice->load(
             'company',
             'items',
         );
+
+        return $this->formatInvoice($invoice);
+    }
+
+    /**
+     * Format an invoice into a structured array.
+     *
+     * Includes core attributes, related data, derived accessors,
+     * and authorisation permissions for the current user.
+     *
+     * @param  Invoice  $invoice
+     *
+     * @return array
+     */
+    private function formatInvoice(Invoice $invoice): array
+    {
+        return [
+            'id' => $invoice->id,
+            'number' => $invoice->number,
+            'status' => $invoice->status,
+            'is_draft' => $invoice->is_draft,
+            'is_sent' => $invoice->is_sent,
+            'is_paid' => $invoice->is_paid,
+            'is_overdue' => $invoice->is_overdue,
+            'is_cancelled' => $invoice->is_cancelled,
+            'currency' => $invoice->currency,
+            'subtotal' => $invoice->subtotal,
+            'formatted_subtotal' => $invoice->formatted_subtotal,
+            'tax' => $invoice->tax,
+            'formatted_tax' => $invoice->formatted_tax,
+            'total' => $invoice->total,
+            'formatted_total' => $invoice->formatted_total,
+            'issue_date' => $invoice->issue_date,
+            'due_date' => $invoice->due_date,
+            'company' => $invoice->company,
+            'items' => $invoice->items,
+            'creator' => $invoice->creator,
+            'permissions' => [
+                'view' => Gate::allows('view', $invoice),
+                'update' => Gate::allows('update', $invoice),
+                'delete' => Gate::allows('delete', $invoice),
+            ],
+        ];
     }
 }

@@ -5,6 +5,7 @@ namespace App\Services\InvoiceItems;
 use App\Models\InvoiceItem;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for InvoiceItem records.
@@ -65,7 +66,20 @@ class InvoiceItemQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+
+        $paginator->through(
+            fn (InvoiceItem $item) => $this->formatInvoiceItem($item)
+        );
+
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', InvoiceItem::class),
+                'viewAny' => Gate::allows('viewAny', InvoiceItem::class),
+            ],
+        ]);
+
+        return $paginator;
     }
 
     /**
@@ -74,10 +88,48 @@ class InvoiceItemQueryService
      * @param  InvoiceItem $invoiceItem The route-model-bound invoice
      * item instance.
      *
-     * @return InvoiceItem The invoice item with relationships loaded.
+     * @return array
      */
-    public function show(InvoiceItem $invoiceItem): InvoiceItem
+    public function show(InvoiceItem $invoiceItem): array
     {
-        return $invoiceItem->load('invoice', 'product');
+        $invoiceItem->load(
+            'invoice',
+            'product',
+        );
+
+        return $this->formatInvoiceItem($invoiceItem);
+    }
+
+    /**
+     * Format an invoice item into a structured array.
+     *
+     * Includes core attributes, related data, derived accessors,
+     * and authorisation permissions for the current user.
+     *
+     * @param  InvoiceItem  $item
+     *
+     * @return array
+     */
+    private function formatInvoiceItem(InvoiceItem $item): array
+    {
+        return [
+            'id' => $item->id,
+            'invoice_id' => $item->invoice_id,
+            'description' => $item->description,
+            'quantity' => $item->quantity,
+            'unit_price' => $item->unit_price,
+            'formatted_unit_price' => $item->formatted_unit_price,
+            'line_total' => $item->line_total,
+            'formatted_line_total' => $item->formatted_line_total,
+            'has_product' => $item->has_product,
+            'invoice' => $item->invoice,
+            'product' => $item->product,
+            'creator' => $item->creator,
+            'permissions' => [
+                'view' => Gate::allows('view', $item),
+                'update' => Gate::allows('update', $item),
+                'delete' => Gate::allows('delete', $item),
+            ],
+        ];
     }
 }

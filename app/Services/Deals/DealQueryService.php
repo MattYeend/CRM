@@ -5,6 +5,7 @@ namespace App\Services\Deals;
 use App\Models\Deal;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for Deal records.
@@ -83,7 +84,20 @@ class DealQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+
+        $paginator->through(
+            fn (Deal $deal) => $this->formatDeal($deal)
+        );
+
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Deal::class),
+                'viewAny' => Gate::allows('viewAny', Deal::class),
+            ],
+        ]);
+
+        return $paginator;
     }
 
     /**
@@ -91,11 +105,11 @@ class DealQueryService
      *
      * @param  Deal $deal The route-model-bound deal instance.
      *
-     * @return Deal The deal with relationships loaded.
+     * @return array
      */
-    public function show(Deal $deal): Deal
+    public function show(Deal $deal): array
     {
-        return $deal->load(
+        $deal->load(
             'company',
             'owner',
             'pipeline',
@@ -104,5 +118,45 @@ class DealQueryService
             'tasks',
             'attachments',
         );
+
+        return $this->formatDeal($deal);
+    }
+
+    /**
+     * Format a deal into a structured array.
+     *
+     * Includes core attributes, related data, derived accessors,
+     * and authorisation permissions for the current user.
+     *
+     * @param  Deal  $deal
+     *
+     * @return array
+     */
+    private function formatDeal(Deal $deal): array
+    {
+        return [
+            'id' => $deal->id,
+            'title' => $deal->title,
+            'value' => $deal->value,
+            'formatted_value' => $deal->formatted_value,
+            'currency' => $deal->currency,
+            'status' => $deal->status,
+            'is_open' => $deal->is_open,
+            'is_won' => $deal->is_won,
+            'is_lost' => $deal->is_lost,
+            'is_closed' => $deal->is_closed,
+            'is_overdue' => $deal->is_overdue,
+            'close_date' => $deal->close_date,
+            'company' => $deal->company,
+            'owner' => $deal->owner,
+            'pipeline' => $deal->pipeline,
+            'stage' => $deal->stage,
+            'creator' => $deal->creator,
+            'permissions' => [
+                'view' => Gate::allows('view', $deal),
+                'update' => Gate::allows('update', $deal),
+                'delete' => Gate::allows('delete', $deal),
+            ],
+        ];
     }
 }

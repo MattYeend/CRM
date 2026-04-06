@@ -5,6 +5,7 @@ namespace App\Services\Companies;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for Company records.
@@ -78,7 +79,20 @@ class CompanyQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+
+        $paginator->through(
+            fn (Company $company) => $this->formatCompany($company)
+        );
+
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Company::class),
+                'viewAny' => Gate::allows('viewAny', Company::class),
+            ],
+        ]);
+
+        return $paginator;
     }
 
     /**
@@ -86,14 +100,57 @@ class CompanyQueryService
      *
      * @param  Company $company The route-model-bound company instance.
      *
-     * @return Company The company with relationships loaded.
+     * @return array
      */
-    public function show(Company $company): Company
+    public function show(Company $company): array
     {
-        return $company->load(
+        $company->load(
             'deals',
             'invoices',
-            'attachments'
+            'attachments',
         );
+
+        return $this->formatCompany($company);
+    }
+
+    /**
+     * Format a company into a structured array.
+     *
+     * Includes core attributes, related data, derived accessors,
+     * and authorisation permissions for the current user.
+     *
+     * @param  Company  $company
+     *
+     * @return array
+     */
+    private function formatCompany(Company $company): array
+    {
+        return [
+            'id' => $company->id,
+            'name' => $company->name,
+            'industry' => $company->industry,
+            'website' => $company->website,
+            'website_host' => $company->website_host,
+            'phone' => $company->phone,
+            'address' => $company->address,
+            'city' => $company->city,
+            'region' => $company->region,
+            'postal_code' => $company->postal_code,
+            'country' => $company->country,
+            'full_address' => $company->full_address,
+            'contact_first_name' => $company->contact_first_name,
+            'contact_last_name' => $company->contact_last_name,
+            'contact_full_name' => $company->contact_full_name,
+            'contact_email' => $company->contact_email,
+            'contact_phone' => $company->contact_phone,
+            'has_deals' => $company->has_deals,
+            'has_outstanding_invoices' => $company->has_outstanding_invoices,
+            'creator' => $company->creator,
+            'permissions' => [
+                'view' => Gate::allows('view', $company),
+                'update' => Gate::allows('update', $company),
+                'delete' => Gate::allows('delete', $company),
+            ],
+        ];
     }
 }
