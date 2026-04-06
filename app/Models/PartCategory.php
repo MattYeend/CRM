@@ -59,7 +59,7 @@ use Illuminate\Support\Str;
  * $fullPath = $category->full_path; // Get the full hierarchical
  * path for this category
  * ```
- * 
+ *
  *  Utility methods include:
  * - ancestors(): Returns a collection of all parent categories, ordered
  *      from the top-most parent down to the immediate parent of this
@@ -237,11 +237,11 @@ class PartCategory extends Model
 
     /**
      * Get all ancestor categories of this category as a Collection.
-    *
-    * This method walks up the parent hierarchy, collecting each parent
-    * category until it reaches a top-level category with no parent.
-    * The returned collection is ordered from the top-most ancestor
-    * down to the immediate parent of this category.
+     *
+     * This method walks up the parent hierarchy, collecting each parent
+     * category until it reaches a top-level category with no parent.
+     * The returned collection is ordered from the top-most ancestor
+     * down to the immediate parent of this category.
      *
      * @return Collection<PartCategory>
      */

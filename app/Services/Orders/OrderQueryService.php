@@ -160,7 +160,7 @@ class OrderQueryService
             'deal' => $order->deal,
             'products' => $order->products,
             'creator' => $order->creator,
-            'assignedTo' => $order->assigned_to
+            'assignedTo' => $order->assigned_to,
         ];
     }
 
