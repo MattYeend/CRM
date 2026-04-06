@@ -5,6 +5,7 @@ namespace App\Services\Suppliers;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for Supplier records.
@@ -82,7 +83,20 @@ class SupplierQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+ 
+        $paginator->through(
+            fn (Supplier $supplier) => $this->formatSupplier($supplier)
+        );
+ 
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Supplier::class),
+                'viewAny' => Gate::allows('viewAny', Supplier::class),
+            ],
+        ]);
+ 
+        return $paginator;
     }
 
     /**
@@ -91,13 +105,65 @@ class SupplierQueryService
      * @param Supplier $supplier The route-model bound supplier
      * instance.
      *
-     * @return Supplier The supplier with relations loaded.
+     * @return array
      */
-    public function show(Supplier $supplier): Supplier
+    public function show(Supplier $supplier): array
     {
-        return $supplier->load(
+        $supplier->load(
             'parts',
             'partSuppliers',
         );
+ 
+        return $this->formatSupplier($supplier);
+    }
+
+    /**
+     * Format a supplier into a structured array.
+     *
+     * Includes core attributes, contact and address data, derived accessors,
+     * related parts data, and authorisation permissions for the current user.
+     *
+     * @param  Supplier $supplier
+     *
+     * @return array
+     */
+    private function formatSupplier(Supplier $supplier): array
+    {
+        return [
+            'id' => $supplier->id,
+            'name' => $supplier->name,
+            'code' => $supplier->code,
+            'email' => $supplier->email,
+            'phone' => $supplier->phone,
+            'website' => $supplier->website,
+            'website_host' => $supplier->getWebsiteHostAttribute(),
+            'address_line_1' => $supplier->address_line_1,
+            'address_line_2' => $supplier->address_line_2,
+            'city' => $supplier->city,
+            'county' => $supplier->county,
+            'postcode' => $supplier->postcode,
+            'country' => $supplier->country,
+            'full_address' => $supplier->getFullAddressAttribute(),
+            'currency' => $supplier->currency,
+            'payment_terms' => $supplier->payment_terms,
+            'tax_number' => $supplier->tax_number,
+            'contact_name' => $supplier->contact_name,
+            'contact_email' => $supplier->contact_email,
+            'contact_phone' => $supplier->contact_phone,
+            'is_active' => $supplier->is_active,
+            'notes' => $supplier->notes,
+            'is_test' => $supplier->is_test,
+            'parts' => $supplier->parts,
+            'part_suppliers' => $supplier->partSuppliers,
+            'creator' => $supplier->creator,
+            'created_at' => $supplier->created_at,
+            'updated_at' => $supplier->updated_at,
+            'deleted_at' => $supplier->deleted_at,
+            'permissions' => [
+                'view' => Gate::allows('view', $supplier),
+                'update' => Gate::allows('update', $supplier),
+                'delete' => Gate::allows('delete', $supplier),
+            ],
+        ];
     }
 }

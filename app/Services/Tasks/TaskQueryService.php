@@ -5,6 +5,7 @@ namespace App\Services\Tasks;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for Task records.
@@ -68,7 +69,20 @@ class TaskQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+ 
+        $paginator->through(
+            fn (Task $task) => $this->formatTask($task)
+        );
+ 
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Task::class),
+                'viewAny' => Gate::allows('viewAny', Task::class),
+            ],
+        ]);
+ 
+        return $paginator;
     }
 
     /**
@@ -77,10 +91,80 @@ class TaskQueryService
      * @param  Task $task The route-model-bound task
      * instance.
      *
-     * @return Task The task with relationships loaded.
+     * @return array
      */
-    public function show(Task $task): Task
+    public function show(Task $task): array
     {
-        return $task->load('assignee', 'creator', 'taskable');
+        $task->load(
+            'assignee',
+            'creator',
+            'taskable',
+        );
+ 
+        return $this->formatTask($task);
+    }
+
+    /**
+     * Format a task into a structured array.
+     *
+     * Includes core attributes, related assignee and parent entity data,
+     * derived lifecycle state flags, and authorisation permissions for the
+     * current user.
+     *
+     * @param  Task $task
+     *
+     * @return array
+     */
+    private function formatTask(Task $task): array
+    {
+        return [
+            'id' => $task->id,
+            'title' => $task->title,
+            'description' => $task->description,
+            'assigned_to' => $task->assigned_to,
+            'assignee' => $task->assignee,
+            'taskable_type' => $task->taskable_type,
+            'taskable_id' => $task->taskable_id,
+            'taskable_name' => $this->taskableName($task),
+            'taskable' => $task->taskable,
+            'priority' => $task->priority,
+            'status' => $task->status,
+            'due_at' => $task->due_at,
+            'is_overdue' => $task->getIsOverdueAttribute(),
+            'is_pending' => $task->getIsPendingAttribute(),
+            'is_completed' => $task->getIsCompletedAttribute(),
+            'is_cancelled' => $task->getIsCancelledAttribute(),
+            'is_test' => $task->is_test,
+            'creator' => $task->creator,
+            'created_at' => $task->created_at,
+            'updated_at' => $task->updated_at,
+            'deleted_at' => $task->deleted_at,
+            'permissions' => [
+                'view' => Gate::allows('view', $task),
+                'update' => Gate::allows('update', $task),
+                'delete' => Gate::allows('delete', $task),
+            ],
+        ];
+    }
+
+    /**
+     * Resolve the taskable name for a task.
+     *
+     * Attempts to derive a displayable name from the related taskable
+     * using common attributes such as `name` or `title`.
+     *
+     * @param  Task $task
+     *
+     * @return string|null
+     */
+    private function taskableName(Task $task): ?string
+    {
+        if ($task->taskable) {
+            return $task->taskable->name
+                ?? $task->taskable->title
+                ?? null;
+        }
+
+        return null;
     }
 }

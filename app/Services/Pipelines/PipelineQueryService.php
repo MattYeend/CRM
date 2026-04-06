@@ -5,6 +5,7 @@ namespace App\Services\Pipelines;
 use App\Models\Pipeline;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for Pipeline records.
@@ -68,7 +69,20 @@ class PipelineQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+ 
+        $paginator->through(
+            fn (Pipeline $pipeline) => $this->formatPipeline($pipeline)
+        );
+ 
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Pipeline::class),
+                'viewAny' => Gate::allows('viewAny', Pipeline::class),
+            ],
+        ]);
+ 
+        return $paginator;
     }
 
     /**
@@ -77,10 +91,45 @@ class PipelineQueryService
      * @param  Pipeline $pipeline The route-model-bound pipeline
      * instance.
      *
-     * @return Pipeline The pipeline with relationships loaded.
+     * @return array
      */
-    public function show(Pipeline $pipeline): Pipeline
+    public function show(Pipeline $pipeline): array
     {
-        return $pipeline->load('stages');
+        $pipeline->load('stages');
+ 
+        return $this->formatPipeline($pipeline);
+    }
+
+    /**
+     * Format a pipeline into a structured array.
+     *
+     * Includes core attributes, related stage data, derived counts, and
+     * authorisation permissions for the current user.
+     *
+     * @param  Pipeline $pipeline
+     *
+     * @return array
+     */
+    private function formatPipeline(Pipeline $pipeline): array
+    {
+        return [
+            'id' => $pipeline->id,
+            'name' => $pipeline->name,
+            'description' => $pipeline->description,
+            'is_default' => $pipeline->getIsDefaultAttribute(),
+            'stage_count' => $pipeline->getStageCountAttribute(),
+            'deal_count' => $pipeline->getDealCountAttribute(),
+            'is_test' => $pipeline->is_test,
+            'stages' => $pipeline->stages,
+            'creator' => $pipeline->creator,
+            'created_at' => $pipeline->created_at,
+            'updated_at' => $pipeline->updated_at,
+            'deleted_at' => $pipeline->deleted_at,
+            'permissions' => [
+                'view' => Gate::allows('view', $pipeline),
+                'update' => Gate::allows('update', $pipeline),
+                'delete' => Gate::allows('delete', $pipeline),
+            ],
+        ];
     }
 }

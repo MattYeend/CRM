@@ -5,6 +5,7 @@ namespace App\Services\PipelineStages;
 use App\Models\PipelineStage;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for PipelineStage records.
@@ -68,7 +69,20 @@ class PipelineStageQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+ 
+        $paginator->through(
+            fn (PipelineStage $pipelineStage) => $this->formatPipelineStage($pipelineStage)
+        );
+ 
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', PipelineStage::class),
+                'viewAny' => Gate::allows('viewAny', PipelineStage::class),
+            ],
+        ]);
+ 
+        return $paginator;
     }
 
     /**
@@ -77,10 +91,49 @@ class PipelineStageQueryService
      * @param  PipelineStage $pipelineStage The route-model-bound pipeline stage
      * instance.
      *
-     * @return PipelineStage The pipeline stage with relationships loaded.
+     * @return array
      */
-    public function show(PipelineStage $pipelineStage): PipelineStage
+    public function show(PipelineStage $pipelineStage): array
     {
-        return $pipelineStage->load('pipeline');
+        $pipelineStage->load('pipeline');
+ 
+        return $this->formatPipelineStage($pipelineStage);
+    }
+
+    /**
+     * Format a pipeline stage into a structured array.
+     *
+     * Includes core attributes, related pipeline data, derived state flags,
+     * and authorisation permissions for the current user.
+     *
+     * @param  PipelineStage $pipelineStage
+     *
+     * @return array
+     */
+    private function formatPipelineStage(PipelineStage $pipelineStage): array
+    {
+        return [
+            'id' => $pipelineStage->id,
+            'pipeline_id' => $pipelineStage->pipeline_id,
+            'pipeline' => $pipelineStage->pipeline,
+            'name' => $pipelineStage->name,
+            'position' => $pipelineStage->position,
+            'is_won_stage' => $pipelineStage->is_won_stage,
+            'is_lost_stage' => $pipelineStage->is_lost_stage,
+            'is_open' => $pipelineStage->getIsOpenAttribute(),
+            'is_won' => $pipelineStage->getIsWonAttribute(),
+            'is_lost' => $pipelineStage->getIsLostAttribute(),
+            'deal_count' => $pipelineStage->getDealCountAttribute(),
+            'is_test' => $pipelineStage->is_test,
+            'creator' => $pipelineStage->creator,
+            'created_at' => $pipelineStage->created_at,
+            'updated_at' => $pipelineStage->updated_at,
+            'deleted_at' => $pipelineStage->deleted_at,
+            'permissions' => [
+                'view' => Gate::allows('view', $pipelineStage),
+                'update' => Gate::allows('update', $pipelineStage),
+                'delete' => Gate::allows('delete', $pipelineStage),
+            ],
+        ];
     }
 }

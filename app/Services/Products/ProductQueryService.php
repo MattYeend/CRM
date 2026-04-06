@@ -5,6 +5,7 @@ namespace App\Services\Products;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for Product records.
@@ -68,7 +69,20 @@ class ProductQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+ 
+        $paginator->through(
+            fn (Product $product) => $this->formatProduct($product)
+        );
+ 
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Product::class),
+                'viewAny' => Gate::allows('viewAny', Product::class),
+            ],
+        ]);
+ 
+        return $paginator;
     }
 
     /**
@@ -77,10 +91,56 @@ class ProductQueryService
      * @param  Product $product The route-model-bound product
      * instance.
      *
-     * @return Product The product with relationships loaded.
+     * @return array
      */
-    public function show(Product $product): Product
+    public function show(Product $product): array
     {
-        return $product;
+        $product->load('creator');
+ 
+        return $this->formatProduct($product);
+    }
+
+    /**
+     * Format a product into a structured array.
+     *
+     * Includes core attributes, stock state flags, formatted pricing, and
+     * authorisation permissions for the current user.
+     *
+     * @param  Product $product
+     *
+     * @return array
+     */
+    private function formatProduct(Product $product): array
+    {
+        return [
+            'id' => $product->id,
+            'sku' => $product->sku,
+            'name' => $product->name,
+            'description' => $product->description,
+            'price' => $product->price,
+            'formatted_price' => $product->getFormattedPriceAttribute(),
+            'currency' => $product->currency,
+            'status' => $product->status,
+            'is_active' => $product->getIsActiveAttribute(),
+            'is_discontinued' => $product->getIsDiscontinuedAttribute(),
+            'quantity' => $product->quantity,
+            'min_stock_level' => $product->min_stock_level,
+            'max_stock_level' => $product->max_stock_level,
+            'reorder_point' => $product->reorder_point,
+            'reorder_quantity' => $product->reorder_quantity,
+            'lead_time_days' => $product->lead_time_days,
+            'is_low_stock' => $product->getIsLowStockAttribute(),
+            'is_out_of_stock' => $product->getIsOutOfStockAttribute(),
+            'is_test' => $product->is_test,
+            'creator' => $product->creator,
+            'created_at' => $product->created_at,
+            'updated_at' => $product->updated_at,
+            'deleted_at' => $product->deleted_at,
+            'permissions' => [
+                'view' => Gate::allows('view', $product),
+                'update' => Gate::allows('update', $product),
+                'delete' => Gate::allows('delete', $product),
+            ],
+        ];
     }
 }

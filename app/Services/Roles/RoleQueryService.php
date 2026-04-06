@@ -5,6 +5,7 @@ namespace App\Services\Roles;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for Role records.
@@ -69,7 +70,20 @@ class RoleQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+ 
+        $paginator->through(
+            fn (Role $role) => $this->formatRole($role)
+        );
+ 
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Role::class),
+                'viewAny' => Gate::allows('viewAny', Role::class),
+            ],
+        ]);
+ 
+        return $paginator;
     }
 
     /**
@@ -78,10 +92,43 @@ class RoleQueryService
      * @param  Role $role The route-model-bound role
      * instance.
      *
-     * @return Role The role with relationships loaded.
+     * @return array
      */
-    public function show(Role $role): Role
+    public function show(Role $role): array
     {
-        return $role->load('permissions', 'users');
+        $role->load('permissions', 'users');
+ 
+        return $this->formatRole($role);
+    }
+
+    /**
+     * Format a role into a structured array.
+     *
+     * Includes core attributes, related permission and user data, derived
+     * admin state flags, and authorisation permissions for the current user.
+     *
+     * @param  Role $role
+     *
+     * @return array
+     */
+    private function formatRole(Role $role): array
+    {
+        return [
+            'id' => $role->id,
+            'name' => $role->name,
+            'label' => $role->label,
+            'is_admin' => $role->getIsAdminAttribute(),
+            'is_super_admin' => $role->getIsSuperAdminAttribute(),
+            'user_count' => $role->users_count ?? $role->getUserCountAttribute(),
+            'permissions' => $role->permissions,
+            'users' => $role->relationLoaded('users') ? $role->users : null,
+            'created_at' => $role->created_at,
+            'updated_at' => $role->updated_at,
+            'permissions_meta' => [
+                'view' => Gate::allows('view', $role),
+                'update' => Gate::allows('update', $role),
+                'delete' => Gate::allows('delete', $role),
+            ],
+        ];
     }
 }

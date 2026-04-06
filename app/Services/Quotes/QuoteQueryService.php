@@ -5,6 +5,7 @@ namespace App\Services\Quotes;
 use App\Models\Quote;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for Quote records.
@@ -63,12 +64,29 @@ class QuoteQueryService
             min((int) $request->query('per_page', 10), 100)
         );
 
-        $query = Quote::with('creator', 'updater', 'deal');
+        $query = Quote::with(
+            'creator',
+            'updater',
+            'deal',
+        );
 
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        return $query->paginate($perPage)->appends($request->query());
+        $paginator = $query->paginate($perPage)->appends($request->query());
+ 
+        $paginator->through(
+            fn (Quote $quote) => $this->formatQuote($quote)
+        );
+ 
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Quote::class),
+                'viewAny' => Gate::allows('viewAny', Quote::class),
+            ],
+        ]);
+ 
+        return $paginator;
     }
 
     /**
@@ -77,10 +95,58 @@ class QuoteQueryService
      * @param  Quote $quote The route-model-bound oquoterder
      * instance.
      *
-     * @return Quote The quote with relationships loaded.
+     * @return array
      */
-    public function show(Quote $quote): Quote
+    public function show(Quote $quote): array
     {
-        return $quote->load('creator', 'updater', 'deal');
+        $quote->load(
+            'deal',
+            'products',
+            'creator',
+        );
+ 
+        return $this->formatQuote($quote);
+    }
+
+    /**
+     * Format a quote into a structured array.
+     *
+     * Includes core attributes, related deal and product data, derived
+     * state flags, formatted financials, and authorisation permissions
+     * for the current user.
+     *
+     * @param  Quote $quote
+     *
+     * @return array
+     */
+    private function formatQuote(Quote $quote): array
+    {
+        return [
+            'id' => $quote->id,
+            'deal_id' => $quote->deal_id,
+            'deal' => $quote->deal,
+            'products' => $quote->products,
+            'currency' => $quote->currency,
+            'subtotal' => $quote->subtotal,
+            'formatted_subtotal' => $quote->getFormattedSubtotalAttribute(),
+            'tax' => $quote->tax,
+            'formatted_tax' => $quote->getFormattedTaxAttribute(),
+            'total' => $quote->total,
+            'formatted_total' => $quote->getFormattedTotalAttribute(),
+            'sent_at' => $quote->sent_at,
+            'accepted_at' => $quote->accepted_at,
+            'is_sent' => $quote->getIsSentAttribute(),
+            'is_accepted' => $quote->getIsAcceptedAttribute(),
+            'is_test' => $quote->is_test,
+            'creator' => $quote->creator,
+            'created_at' => $quote->created_at,
+            'updated_at' => $quote->updated_at,
+            'deleted_at' => $quote->deleted_at,
+            'permissions' => [
+                'view' => Gate::allows('view', $quote),
+                'update' => Gate::allows('update', $quote),
+                'delete' => Gate::allows('delete', $quote),
+            ],
+        ];
     }
 }
