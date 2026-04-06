@@ -58,8 +58,9 @@ class PartStockMovementQueryService
 
         $paginator = $query->paginate($perPage)->appends($request->query());
 
-        $paginator->through([$this, 'formatPartStockMovement']);
-
+        $paginator->through(function (PartStockMovement $movement) {
+            return $this->formatPartStockMovement($movement);
+        });
         $paginator->appends([
             'permissions' => [
                 'create' => Gate::allows('create', PartStockMovement::class),
@@ -90,8 +91,8 @@ class PartStockMovementQueryService
     /**
      * Format a part stock movement into a structured array.
      *
-     * Includes core attributes, related data, derived direction flags, and
-     * authorisation permissions for the current user.
+     * Combines core attributes, relationships, derived values,
+     * metadata, and permissions into a single array.
      *
      * @param  PartStockMovement $movement
      *
@@ -99,21 +100,89 @@ class PartStockMovementQueryService
      */
     private function formatPartStockMovement(PartStockMovement $movement): array
     {
+        return array_merge(
+            $this->baseData($movement),
+            $this->quantityData($movement),
+            $this->derivedData($movement),
+            $this->relationshipData($movement),
+            $this->permissionData($movement),
+        );
+    }
+
+    /**
+     * Extract core movement attributes.
+     *
+     * @param  PartStockMovement $movement
+     *
+     * @return array
+     */
+    private function baseData(PartStockMovement $movement): array
+    {
         return [
             'id' => $movement->id,
             'part_id' => $movement->part_id,
-            'part' => $movement->part,
             'type' => $movement->type,
+            'reference' => $movement->reference,
+            'notes' => $movement->notes,
+        ];
+    }
+
+    /**
+     * Extract quantity-related fields.
+     *
+     * @param  PartStockMovement $movement
+     *
+     * @return array
+     */
+    private function quantityData(PartStockMovement $movement): array
+    {
+        return [
             'quantity' => $movement->quantity,
             'quantity_before' => $movement->quantity_before,
             'quantity_after' => $movement->quantity_after,
-            'reference' => $movement->reference,
-            'notes' => $movement->notes,
+        ];
+    }
+
+    /**
+     * Extract derived movement direction flags.
+     *
+     * @param  PartStockMovement $movement
+     *
+     * @return array
+     */
+    private function derivedData(PartStockMovement $movement): array
+    {
+        return [
             'is_inbound' => $movement->getIsInbound(),
             'is_outbound' => $movement->getIsOutbound(),
+        ];
+    }
+
+    /**
+     * Extract related model data for the movement.
+     *
+     * @param  PartStockMovement $movement
+     *
+     * @return array
+     */
+    private function relationshipData(PartStockMovement $movement): array
+    {
+        return [
+            'part' => $movement->part,
             'created_by' => $movement->createdBy,
-            'created_at' => $movement->created_at,
-            'updated_at' => $movement->updated_at,
+        ];
+    }
+
+    /**
+     * Determine authorisation permissions for the movement.
+     *
+     * @param  PartStockMovement $movement
+     *
+     * @return array
+     */
+    private function permissionData(PartStockMovement $movement): array
+    {
+        return [
             'permissions' => [
                 'view' => Gate::allows('view', $movement),
                 'update' => Gate::allows('update', $movement),

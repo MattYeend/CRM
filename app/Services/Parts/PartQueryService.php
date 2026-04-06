@@ -82,18 +82,7 @@ class PartQueryService
 
         $paginator = $query->paginate($perPage)->appends($request->query());
 
-        $paginator->through(
-            fn (Part $part) => $this->formatPart($part)
-        );
-
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Part::class),
-                'viewAny' => Gate::allows('viewAny', Part::class),
-            ],
-        ]);
-
-        return $paginator;
+        return $this->transformPaginator($paginator);
     }
 
     /**
@@ -120,16 +109,65 @@ class PartQueryService
     }
 
     /**
+     * Apply transformation and append permissions to the paginator.
+     *
+     * Each part item is formatted into a structured array and
+     * top-level permissions are appended to the paginator response.
+     *
+     * @param  LengthAwarePaginator $paginator The paginator instance
+     * containing Part models.
+     *
+     * @return LengthAwarePaginator The transformed paginator instance.
+     */
+    private function transformPaginator(
+        LengthAwarePaginator $paginator
+    ): LengthAwarePaginator {
+        $paginator->through(
+            fn (Part $part) => $this->formatPart($part)
+        );
+
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Part::class),
+                'viewAny' => Gate::allows('viewAny', Part::class),
+            ],
+        ]);
+
+        return $paginator;
+    }
+
+    /**
      * Format a part into a structured array.
      *
-     * Includes core attributes, related data, derived helper values, and
-     * authorisation permissions for the current user.
+     * Combines core attributes, dimensions, pricing, stock data,
+     * relationships, derived values, and permissions into a single array.
      *
      * @param  Part $part
      *
      * @return array
      */
     private function formatPart(Part $part): array
+    {
+        return array_merge(
+            $this->baseData($part),
+            $this->dimensionData($part),
+            $this->pricingData($part),
+            $this->stockData($part),
+            $this->flagData($part),
+            $this->derivedData($part),
+            $this->relationshipData($part),
+            $this->permissionData($part),
+        );
+    }
+
+    /**
+     * Extract core identifying and descriptive attributes.
+     *
+     * @param  Part $part
+     *
+     * @return array
+     */
+    private function baseData(Part $part): array
     {
         return [
             'id' => $part->id,
@@ -143,19 +181,58 @@ class PartQueryService
             'type' => $part->type,
             'status' => $part->status,
             'unit_of_measure' => $part->unit_of_measure,
+            'colour' => $part->colour,
+            'material' => $part->material,
+        ];
+    }
+
+    /**
+     * Extract physical dimension data.
+     *
+     * @param  Part $part
+     *
+     * @return array
+     */
+    private function dimensionData(Part $part): array
+    {
+        return [
             'height' => $part->height,
             'width' => $part->width,
             'length' => $part->length,
             'weight' => $part->weight,
             'volume' => $part->volume,
-            'colour' => $part->colour,
-            'material' => $part->material,
+        ];
+    }
+
+    /**
+     * Extract pricing and tax-related data.
+     *
+     * @param  Part $part
+     *
+     * @return array
+     */
+    private function pricingData(Part $part): array
+    {
+        return [
             'price' => $part->price,
             'cost_price' => $part->cost_price,
             'currency' => $part->currency,
             'tax_rate' => $part->tax_rate,
             'tax_code' => $part->tax_code,
             'discount_percentage' => $part->discount_percentage,
+        ];
+    }
+
+    /**
+     * Extract inventory and stock control data.
+     *
+     * @param  Part $part
+     *
+     * @return array
+     */
+    private function stockData(Part $part): array
+    {
+        return [
             'quantity' => $part->quantity,
             'min_stock_level' => $part->min_stock_level,
             'max_stock_level' => $part->max_stock_level,
@@ -164,16 +241,55 @@ class PartQueryService
             'lead_time_days' => $part->lead_time_days,
             'warehouse_location' => $part->warehouse_location,
             'bin_location' => $part->bin_location,
+        ];
+    }
+
+    /**
+     * Extract boolean flags describing part behaviour.
+     *
+     * @param  Part $part
+     *
+     * @return array
+     */
+    private function flagData(Part $part): array
+    {
+        return [
             'is_active' => $part->is_active,
             'is_purchasable' => $part->is_purchasable,
             'is_sellable' => $part->is_sellable,
             'is_manufactured' => $part->is_manufactured,
             'is_serialised' => $part->is_serialised,
             'is_batch_tracked' => $part->is_batch_tracked,
+        ];
+    }
+
+    /**
+     * Extract computed or derived attributes.
+     *
+     * @param  Part $part
+     *
+     * @return array
+     */
+    private function derivedData(Part $part): array
+    {
+        return [
             'is_low_stock' => $part->getIsLowStock(),
             'is_out_of_stock' => $part->getIsOutOfStock(),
             'margin_percentage' => $part->getMarginPercentage(),
             'has_bom' => $part->getHasBom(),
+        ];
+    }
+
+    /**
+     * Extract related model data.
+     *
+     * @param  Part $part
+     *
+     * @return array
+     */
+    private function relationshipData(Part $part): array
+    {
+        return [
             'product' => $part->product,
             'category' => $part->category,
             'primary_supplier' => $part->primarySupplier,
@@ -183,9 +299,19 @@ class PartQueryService
             'bill_of_materials' => $part->billOfMaterials,
             'used_in_assemblies' => $part->usedInAssemblies,
             'creator' => $part->creator,
-            'created_at' => $part->created_at,
-            'updated_at' => $part->updated_at,
-            'deleted_at' => $part->deleted_at,
+        ];
+    }
+
+    /**
+     * Determine authorisation permissions for the part.
+     *
+     * @param  Part $part
+     *
+     * @return array
+     */
+    private function permissionData(Part $part): array
+    {
+        return [
             'permissions' => [
                 'view' => Gate::allows('view', $part),
                 'update' => Gate::allows('update', $part),

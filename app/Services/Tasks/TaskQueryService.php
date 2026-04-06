@@ -107,9 +107,8 @@ class TaskQueryService
     /**
      * Format a task into a structured array.
      *
-     * Includes core attributes, related assignee and parent entity data,
-     * derived lifecycle state flags, and authorisation permissions for the
-     * current user.
+     * Combines core attributes, assignment and polymorphic data,
+     * derived lifecycle flags, metadata, and permissions.
      *
      * @param  Task $task
      *
@@ -117,27 +116,108 @@ class TaskQueryService
      */
     private function formatTask(Task $task): array
     {
+        return array_merge(
+            $this->baseData($task),
+            $this->assignmentData($task),
+            $this->polymorphicData($task),
+            $this->stateData($task),
+            $this->relationshipData($task),
+            $this->permissionData($task),
+        );
+    }
+
+    /**
+     * Extract core task attributes.
+     *
+     * @param  Task $task
+     *
+     * @return array
+     */
+    private function baseData(Task $task): array
+    {
         return [
             'id' => $task->id,
             'title' => $task->title,
             'description' => $task->description,
+            'priority' => $task->priority,
+            'status' => $task->status,
+            'due_at' => $task->due_at,
+        ];
+    }
+
+    /**
+     * Extract assignment-related data.
+     *
+     * @param  Task $task
+     *
+     * @return array
+     */
+    private function assignmentData(Task $task): array
+    {
+        return [
             'assigned_to' => $task->assigned_to,
             'assignee' => $task->assignee,
+        ];
+    }
+
+    /**
+     * Extract polymorphic taskable data.
+     *
+     * @param  Task $task
+     *
+     * @return array
+     */
+    private function polymorphicData(Task $task): array
+    {
+        return [
             'taskable_type' => $task->taskable_type,
             'taskable_id' => $task->taskable_id,
             'taskable_name' => $this->taskableName($task),
             'taskable' => $task->taskable,
-            'priority' => $task->priority,
-            'status' => $task->status,
-            'due_at' => $task->due_at,
+        ];
+    }
+
+    /**
+     * Extract derived lifecycle state flags.
+     *
+     * @param  Task $task
+     *
+     * @return array
+     */
+    private function stateData(Task $task): array
+    {
+        return [
             'is_overdue' => $task->getIsOverdueAttribute(),
             'is_pending' => $task->getIsPendingAttribute(),
             'is_completed' => $task->getIsCompletedAttribute(),
             'is_cancelled' => $task->getIsCancelledAttribute(),
+        ];
+    }
+
+    /**
+     * Extract related model data.
+     *
+     * @param  Task $task
+     *
+     * @return array
+     */
+    private function relationshipData(Task $task): array
+    {
+        return [
             'creator' => $task->creator,
-            'created_at' => $task->created_at,
-            'updated_at' => $task->updated_at,
-            'deleted_at' => $task->deleted_at,
+        ];
+    }
+
+    /**
+     * Determine authorisation permissions for the task.
+     *
+     * @param  Task $task
+     *
+     * @return array
+     */
+    private function permissionData(Task $task): array
+    {
+        return [
             'permissions' => [
                 'view' => Gate::allows('view', $task),
                 'update' => Gate::allows('update', $task),

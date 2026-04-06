@@ -123,8 +123,6 @@ class RoleQueryService
                 $role->getUserCountAttribute(),
             'permissions' => $role->permissions,
             'users' => $role->relationLoaded('users') ? $role->users : null,
-            'created_at' => $role->created_at,
-            'updated_at' => $role->updated_at,
             'permissions_meta' => [
                 'view' => Gate::allows('view', $role),
                 'update' => Gate::allows('update', $role),

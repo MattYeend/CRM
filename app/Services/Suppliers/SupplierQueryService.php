@@ -85,18 +85,7 @@ class SupplierQueryService
 
         $paginator = $query->paginate($perPage)->appends($request->query());
 
-        $paginator->through(
-            fn (Supplier $supplier) => $this->formatSupplier($supplier)
-        );
-
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Supplier::class),
-                'viewAny' => Gate::allows('viewAny', Supplier::class),
-            ],
-        ]);
-
-        return $paginator;
+        return $this->transformPaginator($paginator);
     }
 
     /**
@@ -118,6 +107,34 @@ class SupplierQueryService
     }
 
     /**
+     * Apply transformation and append permissions to the paginator.
+     *
+     * Each supplier item is formatted into a structured array and
+     * top-level permissions are appended to the paginator response.
+     *
+     * @param  LengthAwarePaginator $paginator The paginator instance
+     * containing Supplier models.
+     *
+     * @return LengthAwarePaginator The transformed paginator instance.
+     */
+    private function transformPaginator(
+        LengthAwarePaginator $paginator
+    ): LengthAwarePaginator {
+        $paginator->through(
+            fn (Supplier $supplier) => $this->formatSupplier($supplier)
+        );
+
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Supplier::class),
+                'viewAny' => Gate::allows('viewAny', Supplier::class),
+            ],
+        ]);
+
+        return $paginator;
+    }
+
+    /**
      * Format a supplier into a structured array.
      *
      * Includes core attributes, contact and address data, derived accessors,
@@ -129,6 +146,26 @@ class SupplierQueryService
      */
     private function formatSupplier(Supplier $supplier): array
     {
+        return array_merge(
+            $this->baseData($supplier),
+            $this->addressData($supplier),
+            $this->contactData($supplier),
+            $this->relationshipData($supplier),
+            $this->permissionData($supplier),
+        );
+    }
+
+    /**
+     * Extract base supplier attributes.
+     *
+     * Includes core identifying and financial fields.
+     *
+     * @param  Supplier $supplier
+     *
+     * @return array
+     */
+    private function baseData(Supplier $supplier): array
+    {
         return [
             'id' => $supplier->id,
             'name' => $supplier->name,
@@ -137,6 +174,26 @@ class SupplierQueryService
             'phone' => $supplier->phone,
             'website' => $supplier->website,
             'website_host' => $supplier->getWebsiteHostAttribute(),
+            'currency' => $supplier->currency,
+            'payment_terms' => $supplier->payment_terms,
+            'tax_number' => $supplier->tax_number,
+            'is_active' => $supplier->is_active,
+            'notes' => $supplier->notes,
+        ];
+    }
+
+    /**
+     * Extract supplier address-related data.
+     *
+     * Includes individual address fields and the computed full address.
+     *
+     * @param  Supplier $supplier
+     *
+     * @return array
+     */
+    private function addressData(Supplier $supplier): array
+    {
+        return [
             'address_line_1' => $supplier->address_line_1,
             'address_line_2' => $supplier->address_line_2,
             'city' => $supplier->city,
@@ -144,18 +201,58 @@ class SupplierQueryService
             'postcode' => $supplier->postcode,
             'country' => $supplier->country,
             'full_address' => $supplier->getFullAddressAttribute(),
-            'currency' => $supplier->currency,
-            'payment_terms' => $supplier->payment_terms,
-            'tax_number' => $supplier->tax_number,
+        ];
+    }
+
+    /**
+     * Extract supplier contact information.
+     *
+     * Includes primary contact name, email, and phone number.
+     *
+     * @param  Supplier $supplier
+     *
+     * @return array
+     */
+    private function contactData(Supplier $supplier): array
+    {
+        return [
             'contact_name' => $supplier->contact_name,
             'contact_email' => $supplier->contact_email,
             'contact_phone' => $supplier->contact_phone,
-            'is_active' => $supplier->is_active,
-            'notes' => $supplier->notes,
+        ];
+    }
+
+    /**
+     * Extract supplier relationship data.
+     *
+     * Includes related parts, part-supplier links, and creator.
+     *
+     * @param  Supplier $supplier
+     *
+     * @return array
+     */
+    private function relationshipData(Supplier $supplier): array
+    {
+        return [
             'parts' => $supplier->parts,
             'part_suppliers' => $supplier->partSuppliers,
             'creator' => $supplier->creator,
-            'created_at' => $supplier->created_at,
+        ];
+    }
+
+    /**
+     * Determine authorisation permissions for the supplier.
+     *
+     * Evaluates the current user's ability to view, update,
+     * and delete the supplier.
+     *
+     * @param  Supplier $supplier
+     *
+     * @return array
+     */
+    private function permissionData(Supplier $supplier): array
+    {
+        return [
             'permissions' => [
                 'view' => Gate::allows('view', $supplier),
                 'update' => Gate::allows('update', $supplier),

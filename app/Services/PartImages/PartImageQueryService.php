@@ -127,9 +127,6 @@ class PartImageQueryService
             'is_primary' => $partImage->is_primary,
             'sort_order' => $partImage->sort_order,
             'creator' => $partImage->creator,
-            'created_at' => $partImage->created_at,
-            'updated_at' => $partImage->updated_at,
-            'deleted_at' => $partImage->deleted_at,
             'permissions' => [
                 'view' => Gate::allows('view', $partImage),
                 'update' => Gate::allows('update', $partImage),

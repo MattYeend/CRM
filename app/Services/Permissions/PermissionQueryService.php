@@ -120,9 +120,6 @@ class PermissionQueryService
             'role_count' => $permission->getRoleCountAttribute(),
             'roles' => $permission->roles,
             'creator' => $permission->creator,
-            'created_at' => $permission->created_at,
-            'updated_at' => $permission->updated_at,
-            'deleted_at' => $permission->deleted_at,
             'permissions' => [
                 'view' => Gate::allows('view', $permission),
                 'update' => Gate::allows('update', $permission),

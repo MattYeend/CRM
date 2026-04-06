@@ -85,18 +85,7 @@ class LeadQueryService
 
         $paginator = $query->paginate($perPage)->appends($request->query());
 
-        $paginator->through(
-            fn (Lead $lead) => $this->formatLead($lead)
-        );
-
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Lead::class),
-                'viewAny' => Gate::allows('viewAny', Lead::class),
-            ],
-        ]);
-
-        return $paginator;
+        return $this->transformPaginator($paginator);
     }
 
     /**
@@ -118,16 +107,61 @@ class LeadQueryService
     }
 
     /**
+     * Apply transformation and append permissions to the paginator.
+     *
+     * Each lead item is formatted into a structured array and
+     * top-level permissions are appended to the paginator response.
+     *
+     * @param  LengthAwarePaginator $paginator The paginator instance
+     * containing Lead models.
+     *
+     * @return LengthAwarePaginator The transformed paginator instance.
+     */
+    private function transformPaginator(
+        LengthAwarePaginator $paginator
+    ): LengthAwarePaginator {
+        $paginator->through(
+            fn (Lead $lead) => $this->formatLead($lead)
+        );
+
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Lead::class),
+                'viewAny' => Gate::allows('viewAny', Lead::class),
+            ],
+        ]);
+
+        return $paginator;
+    }
+
+    /**
      * Format a lead into a structured array.
      *
-     * Includes core attributes, related data, derived accessors,
-     * and authorisation permissions for the current user.
+     * Combines core attributes, derived flags, relationships, and permissions.
      *
      * @param  Lead $lead
      *
      * @return array
      */
     private function formatLead(Lead $lead): array
+    {
+        return array_merge(
+            $this->baseData($lead),
+            $this->derivedData($lead),
+            $this->assignmentData($lead),
+            $this->relationshipData($lead),
+            $this->permissionData($lead),
+        );
+    }
+
+    /**
+     * Extract core lead attributes.
+     *
+     * @param  Lead $lead
+     *
+     * @return array
+     */
+    private function baseData(Lead $lead): array
     {
         return [
             'id' => $lead->id,
@@ -141,15 +175,67 @@ class LeadQueryService
             'contact_info' => $lead->contact_info,
             'source' => $lead->source,
             'age_in_days' => $lead->age_in_days,
+            'assigned_at' => $lead->assigned_at,
+        ];
+    }
+
+    /**
+     * Extract computed lead flags for priority and status.
+     *
+     * @param  Lead $lead
+     *
+     * @return array
+     */
+    private function derivedData(Lead $lead): array
+    {
+        return [
             'is_stale' => $lead->is_stale,
             'is_hot' => $lead->is_hot,
             'is_high_priority' => $lead->is_high_priority,
             'is_low_priority' => $lead->is_low_priority,
             'is_eligible_for_conversion' => $lead->is_eligible_for_conversion,
-            'assigned_at' => $lead->assigned_at,
-            'owner' => $lead->owner,
+        ];
+    }
+
+    /**
+     * Extract lead assignment data.
+     *
+     * @param  Lead $lead
+     *
+     * @return array
+     */
+    private function assignmentData(Lead $lead): array
+    {
+        return [
             'assigned_to' => $lead->assignedTo,
+            'owner' => $lead->owner,
+        ];
+    }
+
+    /**
+     * Extract related model data for the lead.
+     *
+     * @param  Lead $lead
+     *
+     * @return array
+     */
+    private function relationshipData(Lead $lead): array
+    {
+        return [
             'creator' => $lead->creator,
+        ];
+    }
+
+    /**
+     * Determine authorisation permissions for the lead.
+     *
+     * @param  Lead $lead
+     *
+     * @return array
+     */
+    private function permissionData(Lead $lead): array
+    {
+        return [
             'permissions' => [
                 'view' => Gate::allows('view', $lead),
                 'update' => Gate::allows('update', $lead),

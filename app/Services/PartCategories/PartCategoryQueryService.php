@@ -78,7 +78,46 @@ class PartCategoryQueryService
 
         $paginator = $query->paginate($perPage)->appends($request->query());
 
-        $paginator->through([$this, 'formatPartCategory']);
+        return $this->transformPaginator($paginator);
+    }
+
+    /**
+     * Return a single part category with its parent, children, and parts
+     * relationships loaded.
+     *
+     * @param  PartCategory $category The route-model-bound part category
+     * instance.
+     *
+     * @return array
+     */
+    public function show(PartCategory $category): array
+    {
+        $category->load(
+            'parent',
+            'children',
+            'parts',
+        );
+
+        return $this->formatPartCategory($category);
+    }
+
+    /**
+     * Apply transformation and append permissions to the paginator.
+     *
+     * Each part category item is formatted into a structured array and
+     * top-level permissions are appended to the paginator response.
+     *
+     * @param  LengthAwarePaginator $paginator The paginator instance
+     * containing PartCategory models.
+     *
+     * @return LengthAwarePaginator The transformed paginator instance.
+     */
+    private function transformPaginator(
+        LengthAwarePaginator $paginator
+    ): LengthAwarePaginator {
+        $paginator->through(
+            fn (PartCategory $category) => $this->formatPartCategory($category)
+        );
 
         $paginator->appends([
             'permissions' => [
@@ -91,55 +130,32 @@ class PartCategoryQueryService
     }
 
     /**
-     * Return a single part category with its parent, children, and parts
-     * relationships loaded.
-     *
-     * @param  PartCategory $partCategory The route-model-bound part category
-     * instance.
-     *
-     * @return array
-     */
-    public function show(PartCategory $partCategory): array
-    {
-        $partCategory->load(
-            'parent',
-            'children',
-            'parts',
-        );
-
-        return $this->formatPartCategory($partCategory);
-    }
-
-    /**
      * Format a part category into a structured array.
      *
      * Includes core attributes, related data, and authorisation permissions
      * for the current user.
      *
-     * @param  PartCategory $partCategory
+     * @param  PartCategory $category
      *
      * @return array
      */
-    private function formatPartCategory(PartCategory $partCategory): array
+    private function formatPartCategory(PartCategory $category): array
     {
         return [
-            'id' => $partCategory->id,
-            'parent_id' => $partCategory->parent_id,
-            'parent' => $partCategory->parent,
-            'name' => $partCategory->name,
-            'slug' => $partCategory->slug,
-            'full_path' => $partCategory->full_path,
-            'description' => $partCategory->description,
-            'children' => $partCategory->children,
-            'parts' => $partCategory->parts,
-            'creator' => $partCategory->creator,
-            'created_at' => $partCategory->created_at,
-            'updated_at' => $partCategory->updated_at,
-            'deleted_at' => $partCategory->deleted_at,
+            'id' => $category->id,
+            'parent_id' => $category->parent_id,
+            'parent' => $category->parent,
+            'name' => $category->name,
+            'slug' => $category->slug,
+            'full_path' => $category->full_path,
+            'description' => $category->description,
+            'children' => $category->children,
+            'parts' => $category->parts,
+            'creator' => $category->creator,
             'permissions' => [
-                'view' => Gate::allows('view', $partCategory),
-                'update' => Gate::allows('update', $partCategory),
-                'delete' => Gate::allows('delete', $partCategory),
+                'view' => Gate::allows('view', $category),
+                'update' => Gate::allows('update', $category),
+                'delete' => Gate::allows('delete', $category),
             ],
         ];
     }

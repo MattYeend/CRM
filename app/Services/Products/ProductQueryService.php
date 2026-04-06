@@ -103,8 +103,8 @@ class ProductQueryService
     /**
      * Format a product into a structured array.
      *
-     * Includes core attributes, stock state flags, formatted pricing, and
-     * authorisation permissions for the current user.
+     * Combines core attributes, pricing, stock data,
+     * derived values, relationships, and permissions.
      *
      * @param  Product $product
      *
@@ -112,26 +112,110 @@ class ProductQueryService
      */
     private function formatProduct(Product $product): array
     {
+        return array_merge(
+            $this->baseData($product),
+            $this->pricingData($product),
+            $this->stockData($product),
+            $this->derivedData($product),
+            $this->relationshipData($product),
+            $this->permissionData($product),
+        );
+    }
+
+    /**
+     * Extract core product attributes.
+     *
+     * @param  Product $product
+     *
+     * @return array
+     */
+    private function baseData(Product $product): array
+    {
         return [
             'id' => $product->id,
             'sku' => $product->sku,
             'name' => $product->name,
             'description' => $product->description,
+            'status' => $product->status,
+        ];
+    }
+
+    /**
+     * Extract pricing-related data.
+     *
+     * @param  Product $product
+     *
+     * @return array
+     */
+    private function pricingData(Product $product): array
+    {
+        return [
             'price' => $product->price,
             'formatted_price' => $product->getFormattedPriceAttribute(),
             'currency' => $product->currency,
-            'status' => $product->status,
-            'is_active' => $product->getIsActiveAttribute(),
-            'is_discontinued' => $product->getIsDiscontinuedAttribute(),
+        ];
+    }
+
+    /**
+     * Extract stock control data.
+     *
+     * @param  Product $product
+     *
+     * @return array
+     */
+    private function stockData(Product $product): array
+    {
+        return [
             'quantity' => $product->quantity,
             'min_stock_level' => $product->min_stock_level,
             'max_stock_level' => $product->max_stock_level,
             'reorder_point' => $product->reorder_point,
             'reorder_quantity' => $product->reorder_quantity,
             'lead_time_days' => $product->lead_time_days,
+        ];
+    }
+
+    /**
+     * Extract computed product attributes.
+     *
+     * @param  Product $product
+     *
+     * @return array
+     */
+    private function derivedData(Product $product): array
+    {
+        return [
+            'is_active' => $product->getIsActiveAttribute(),
+            'is_discontinued' => $product->getIsDiscontinuedAttribute(),
             'is_low_stock' => $product->getIsLowStockAttribute(),
             'is_out_of_stock' => $product->getIsOutOfStockAttribute(),
+        ];
+    }
+
+    /**
+     * Extract related model data.
+     *
+     * @param  Product $product
+     *
+     * @return array
+     */
+    private function relationshipData(Product $product): array
+    {
+        return [
             'creator' => $product->creator,
+        ];
+    }
+
+    /**
+     * Determine authorisation permissions for the product.
+     *
+     * @param  Product $product
+     *
+     * @return array
+     */
+    private function permissionData(Product $product): array
+    {
+        return [
             'permissions' => [
                 'view' => Gate::allows('view', $product),
                 'update' => Gate::allows('update', $product),

@@ -107,14 +107,29 @@ class OrderQueryService
     /**
      * Format an order into a structured array.
      *
-     * Includes core attributes, related data, derived accessors,
-     * and authorisation permissions for the current user.
+     * Combines core attributes, related data, and permissions.
      *
      * @param  Order $order
      *
      * @return array
      */
     private function formatOrder(Order $order): array
+    {
+        return array_merge(
+            $this->baseData($order),
+            $this->relationshipData($order),
+            $this->permissionData($order),
+        );
+    }
+
+    /**
+     * Extract core order attributes.
+     *
+     * @param  Order $order
+     *
+     * @return array
+     */
+    private function baseData(Order $order): array
     {
         return [
             'id' => $order->id,
@@ -127,10 +142,36 @@ class OrderQueryService
             'stripe_payment_intent' => $order->stripe_payment_intent,
             'stripe_invoice_id' => $order->stripe_invoice_id,
             'paid_at' => $order->paid_at,
+        ];
+    }
+
+    /**
+     * Extract related model data for the order.
+     *
+     * @param  Order $order
+     *
+     * @return array
+     */
+    private function relationshipData(Order $order): array
+    {
+        return [
             'user' => $order->user,
             'deal' => $order->deal,
             'products' => $order->products,
             'creator' => $order->creator,
+        ];
+    }
+
+    /**
+     * Determine authorisation permissions for the order.
+     *
+     * @param  Order $order
+     *
+     * @return array
+     */
+    private function permissionData(Order $order): array
+    {
+        return [
             'permissions' => [
                 'view' => Gate::allows('view', $order),
                 'update' => Gate::allows('update', $order),

@@ -86,18 +86,7 @@ class DealQueryService
 
         $paginator = $query->paginate($perPage)->appends($request->query());
 
-        $paginator->through(
-            fn (Deal $deal) => $this->formatDeal($deal)
-        );
-
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Deal::class),
-                'viewAny' => Gate::allows('viewAny', Deal::class),
-            ],
-        ]);
-
-        return $paginator;
+        return $this->transformPaginator($paginator);
     }
 
     /**
@@ -123,16 +112,60 @@ class DealQueryService
     }
 
     /**
+     * Apply transformation and append permissions to the paginator.
+     *
+     * Each deal item is formatted into a structured array and
+     * top-level permissions are appended to the paginator response.
+     *
+     * @param  LengthAwarePaginator $paginator The paginator instance
+     * containing Deal models.
+     *
+     * @return LengthAwarePaginator The transformed paginator instance.
+     */
+    private function transformPaginator(
+        LengthAwarePaginator $paginator
+    ): LengthAwarePaginator {
+        $paginator->through(
+            fn (Deal $deal) => $this->formatDeal($deal)
+        );
+
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Deal::class),
+                'viewAny' => Gate::allows('viewAny', Deal::class),
+            ],
+        ]);
+
+        return $paginator;
+    }
+
+    /**
      * Format a deal into a structured array.
      *
-     * Includes core attributes, related data, derived accessors,
-     * and authorisation permissions for the current user.
+     * Combines core attributes, derived flags, relationships, and permissions.
      *
      * @param  Deal $deal
      *
      * @return array
      */
     private function formatDeal(Deal $deal): array
+    {
+        return array_merge(
+            $this->baseData($deal),
+            $this->derivedData($deal),
+            $this->relationshipData($deal),
+            $this->permissionData($deal),
+        );
+    }
+
+    /**
+     * Extract core deal attributes.
+     *
+     * @param  Deal $deal
+     *
+     * @return array
+     */
+    private function baseData(Deal $deal): array
     {
         return [
             'id' => $deal->id,
@@ -141,17 +174,56 @@ class DealQueryService
             'formatted_value' => $deal->formatted_value,
             'currency' => $deal->currency,
             'status' => $deal->status,
+            'close_date' => $deal->close_date,
+        ];
+    }
+
+    /**
+     * Extract derived flags for deal lifecycle.
+     *
+     * @param  Deal $deal
+     *
+     * @return array
+     */
+    private function derivedData(Deal $deal): array
+    {
+        return [
             'is_open' => $deal->is_open,
             'is_won' => $deal->is_won,
             'is_lost' => $deal->is_lost,
             'is_closed' => $deal->is_closed,
             'is_overdue' => $deal->is_overdue,
-            'close_date' => $deal->close_date,
+        ];
+    }
+
+    /**
+     * Extract related model data for the deal.
+     *
+     * @param  Deal $deal
+     *
+     * @return array
+     */
+    private function relationshipData(Deal $deal): array
+    {
+        return [
             'company' => $deal->company,
             'owner' => $deal->owner,
             'pipeline' => $deal->pipeline,
             'stage' => $deal->stage,
             'creator' => $deal->creator,
+        ];
+    }
+
+    /**
+     * Determine authorisation permissions for the deal.
+     *
+     * @param  Deal $deal
+     *
+     * @return array
+     */
+    private function permissionData(Deal $deal): array
+    {
+        return [
             'permissions' => [
                 'view' => Gate::allows('view', $deal),
                 'update' => Gate::allows('update', $deal),

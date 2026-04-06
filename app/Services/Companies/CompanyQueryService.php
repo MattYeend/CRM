@@ -116,14 +116,30 @@ class CompanyQueryService
     /**
      * Format a company into a structured array.
      *
-     * Includes core attributes, related data, derived accessors,
-     * and authorisation permissions for the current user.
+     * Combines core attributes, derived flags, relationships, and permissions.
      *
      * @param  Company $company
      *
      * @return array
      */
     private function formatCompany(Company $company): array
+    {
+        return array_merge(
+            $this->baseData($company),
+            $this->derivedData($company),
+            $this->relationshipData($company),
+            $this->permissionData($company),
+        );
+    }
+
+    /**
+     * Extract core company attributes.
+     *
+     * @param  Company $company
+     *
+     * @return array
+     */
+    private function baseData(Company $company): array
     {
         return [
             'id' => $company->id,
@@ -138,14 +154,53 @@ class CompanyQueryService
             'postal_code' => $company->postal_code,
             'country' => $company->country,
             'full_address' => $company->full_address,
+        ];
+    }
+
+    /**
+     * Extract derived flags for the company.
+     *
+     * @param  Company $company
+     *
+     * @return array
+     */
+    private function derivedData(Company $company): array
+    {
+        return [
+            'has_deals' => $company->has_deals,
+            'has_outstanding_invoices' => $company->has_outstanding_invoices,
+        ];
+    }
+
+    /**
+     * Extract related contact and creator data for the company.
+     *
+     * @param  Company $company
+     *
+     * @return array
+     */
+    private function relationshipData(Company $company): array
+    {
+        return [
             'contact_first_name' => $company->contact_first_name,
             'contact_last_name' => $company->contact_last_name,
             'contact_full_name' => $company->contact_full_name,
             'contact_email' => $company->contact_email,
             'contact_phone' => $company->contact_phone,
-            'has_deals' => $company->has_deals,
-            'has_outstanding_invoices' => $company->has_outstanding_invoices,
             'creator' => $company->creator,
+        ];
+    }
+
+    /**
+     * Determine authorisation permissions for the company.
+     *
+     * @param  Company $company
+     *
+     * @return array
+     */
+    private function permissionData(Company $company): array
+    {
+        return [
             'permissions' => [
                 'view' => Gate::allows('view', $company),
                 'update' => Gate::allows('update', $company),

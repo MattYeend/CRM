@@ -74,18 +74,7 @@ class NoteQueryService
 
         $paginator = $query->paginate($perPage)->appends($request->query());
 
-        $paginator->through(
-            fn (Note $note) => $this->formatNote($note)
-        );
-
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Note::class),
-                'viewAny' => Gate::allows('viewAny', Note::class),
-            ],
-        ]);
-
-        return $paginator;
+        return $this->transformPaginator($paginator);
     }
 
     /**
@@ -104,6 +93,34 @@ class NoteQueryService
         );
 
         return $this->formatNote($note);
+    }
+
+    /**
+     * Apply transformation and append permissions to the paginator.
+     *
+     * Each note item is formatted into a structured array and
+     * top-level permissions are appended to the paginator response.
+     *
+     * @param  LengthAwarePaginator $paginator The paginator instance
+     * containing Note models.
+     *
+     * @return LengthAwarePaginator The transformed paginator instance.
+     */
+    private function transformPaginator(
+        LengthAwarePaginator $paginator
+    ): LengthAwarePaginator {
+        $paginator->through(
+            fn (Note $note) => $this->formatNote($note)
+        );
+
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Note::class),
+                'viewAny' => Gate::allows('viewAny', Note::class),
+            ],
+        ]);
+
+        return $paginator;
     }
 
     /**

@@ -75,18 +75,7 @@ class QuoteQueryService
 
         $paginator = $query->paginate($perPage)->appends($request->query());
 
-        $paginator->through(
-            fn (Quote $quote) => $this->formatQuote($quote)
-        );
-
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Quote::class),
-                'viewAny' => Gate::allows('viewAny', Quote::class),
-            ],
-        ]);
-
-        return $paginator;
+        return $this->transformPaginator($paginator);
     }
 
     /**
@@ -109,6 +98,34 @@ class QuoteQueryService
     }
 
     /**
+     * Apply transformation and append permissions to the paginator.
+     *
+     * Each quote item is formatted into a structured array and
+     * top-level permissions are appended to the paginator response.
+     *
+     * @param  LengthAwarePaginator $paginator The paginator instance
+     * containing Quote models.
+     *
+     * @return LengthAwarePaginator The transformed paginator instance.
+     */
+    private function transformPaginator(
+        LengthAwarePaginator $paginator
+    ): LengthAwarePaginator {
+        $paginator->through(
+            fn (Quote $quote) => $this->formatQuote($quote)
+        );
+
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Quote::class),
+                'viewAny' => Gate::allows('viewAny', Quote::class),
+            ],
+        ]);
+
+        return $paginator;
+    }
+
+    /**
      * Format a quote into a structured array.
      *
      * Includes core attributes, related deal and product data, derived
@@ -121,11 +138,44 @@ class QuoteQueryService
      */
     private function formatQuote(Quote $quote): array
     {
+        return array_merge(
+            $this->baseData($quote),
+            $this->currencyData($quote),
+            $this->relationshipData($quote),
+            $this->permissionData($quote),
+        );
+    }
+
+    /**
+     * Extract base quote attributes.
+     *
+     * Includes core identifying fields.
+     *
+     * @param  Quote $quote
+     *
+     * @return array
+     */
+    private function baseData(Quote $quote): array
+    {
         return [
             'id' => $quote->id,
-            'deal_id' => $quote->deal_id,
             'deal' => $quote->deal,
             'products' => $quote->products,
+        ];
+    }
+
+    /**
+     * Extract currency attributes.
+     *
+     * Includes core financial fields.
+     *
+     * @param  Quote $quote
+     *
+     * @return array
+     */
+    private function currencyData(Quote $quote): array
+    {
+        return [
             'currency' => $quote->currency,
             'subtotal' => $quote->subtotal,
             'formatted_subtotal' => $quote->getFormattedSubtotalAttribute(),
@@ -137,7 +187,39 @@ class QuoteQueryService
             'accepted_at' => $quote->accepted_at,
             'is_sent' => $quote->getIsSentAttribute(),
             'is_accepted' => $quote->getIsAcceptedAttribute(),
+        ];
+    }
+
+    /**
+     * Extract quote relationship data.
+     *
+     * Includes related deal id and creator.
+     *
+     * @param  Quote $quote
+     *
+     * @return array
+     */
+    private function relationshipData(Quote $quote): array
+    {
+        return [
+            'deal_id' => $quote->deal_id,
             'creator' => $quote->creator,
+        ];
+    }
+
+    /**
+     * Determine authorisation permissions for the quote.
+     *
+     * Evaluates the current user's ability to view, update,
+     * and delete the quote.
+     *
+     * @param  Quote $quote
+     *
+     * @return array
+     */
+    private function permissionData(Quote $quote): array
+    {
+        return [
             'permissions' => [
                 'view' => Gate::allows('view', $quote),
                 'update' => Gate::allows('update', $quote),

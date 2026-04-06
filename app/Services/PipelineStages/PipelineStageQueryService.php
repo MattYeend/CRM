@@ -71,7 +71,9 @@ class PipelineStageQueryService
 
         $paginator = $query->paginate($perPage)->appends($request->query());
 
-        $paginator->through([$this, 'formatPipelineStage']);
+        $paginator->through(function (PipelineStage $pipelineStage) {
+            return $this->formatPipelineStage($pipelineStage);
+        });
 
         $paginator->appends([
             'permissions' => [
@@ -123,7 +125,6 @@ class PipelineStageQueryService
             'is_lost' => $pipelineStage->getIsLostAttribute(),
             'deal_count' => $pipelineStage->getDealCountAttribute(),
             'creator' => $pipelineStage->creator,
-            'created_at' => $pipelineStage->created_at,
             'permissions' => [
                 'view' => Gate::allows('view', $pipelineStage),
                 'update' => Gate::allows('update', $pipelineStage),

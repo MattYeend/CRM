@@ -74,18 +74,7 @@ class InvoiceQueryService
 
         $paginator = $query->paginate($perPage)->appends($request->query());
 
-        $paginator->through(
-            fn (Invoice $invoice) => $this->formatInvoice($invoice)
-        );
-
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Invoice::class),
-                'viewAny' => Gate::allows('viewAny', Invoice::class),
-            ],
-        ]);
-
-        return $paginator;
+        return $this->transformPaginator($paginator);
     }
 
     /**
@@ -107,10 +96,37 @@ class InvoiceQueryService
     }
 
     /**
+     * Apply transformation and append permissions to the paginator.
+     *
+     * Each invoice item is formatted into a structured array and
+     * top-level permissions are appended to the paginator response.
+     *
+     * @param  LengthAwarePaginator $paginator The paginator instance
+     * containing Invoice models.
+     *
+     * @return LengthAwarePaginator The transformed paginator instance.
+     */
+    private function transformPaginator(
+        LengthAwarePaginator $paginator
+    ): LengthAwarePaginator {
+        $paginator->through(
+            fn (Invoice $invoice) => $this->formatInvoice($invoice)
+        );
+
+        $paginator->appends([
+            'permissions' => [
+                'create' => Gate::allows('create', Invoice::class),
+                'viewAny' => Gate::allows('viewAny', Invoice::class),
+            ],
+        ]);
+
+        return $paginator;
+    }
+
+    /**
      * Format an invoice into a structured array.
      *
-     * Includes core attributes, related data, derived accessors,
-     * and authorisation permissions for the current user.
+     * Combines core attributes, derived flags, relationships, and permissions.
      *
      * @param  Invoice $invoice
      *
@@ -118,15 +134,27 @@ class InvoiceQueryService
      */
     private function formatInvoice(Invoice $invoice): array
     {
+        return array_merge(
+            $this->baseData($invoice),
+            $this->derivedData($invoice),
+            $this->relationshipData($invoice),
+            $this->permissionData($invoice),
+        );
+    }
+
+    /**
+     * Extract core invoice attributes.
+     *
+     * @param  Invoice $invoice
+     *
+     * @return array
+     */
+    private function baseData(Invoice $invoice): array
+    {
         return [
             'id' => $invoice->id,
             'number' => $invoice->number,
             'status' => $invoice->status,
-            'is_draft' => $invoice->is_draft,
-            'is_sent' => $invoice->is_sent,
-            'is_paid' => $invoice->is_paid,
-            'is_overdue' => $invoice->is_overdue,
-            'is_cancelled' => $invoice->is_cancelled,
             'currency' => $invoice->currency,
             'subtotal' => $invoice->subtotal,
             'formatted_subtotal' => $invoice->formatted_subtotal,
@@ -136,9 +164,53 @@ class InvoiceQueryService
             'formatted_total' => $invoice->formatted_total,
             'issue_date' => $invoice->issue_date,
             'due_date' => $invoice->due_date,
+        ];
+    }
+
+    /**
+     * Extract derived invoice flags.
+     *
+     * @param  Invoice $invoice
+     *
+     * @return array
+     */
+    private function derivedData(Invoice $invoice): array
+    {
+        return [
+            'is_draft' => $invoice->is_draft,
+            'is_sent' => $invoice->is_sent,
+            'is_paid' => $invoice->is_paid,
+            'is_overdue' => $invoice->is_overdue,
+            'is_cancelled' => $invoice->is_cancelled,
+        ];
+    }
+
+    /**
+     * Extract related model data for the invoice.
+     *
+     * @param  Invoice $invoice
+     *
+     * @return array
+     */
+    private function relationshipData(Invoice $invoice): array
+    {
+        return [
             'company' => $invoice->company,
             'items' => $invoice->items,
             'creator' => $invoice->creator,
+        ];
+    }
+
+    /**
+     * Determine authorisation permissions for the invoice.
+     *
+     * @param  Invoice $invoice
+     *
+     * @return array
+     */
+    private function permissionData(Invoice $invoice): array
+    {
+        return [
             'permissions' => [
                 'view' => Gate::allows('view', $invoice),
                 'update' => Gate::allows('update', $invoice),

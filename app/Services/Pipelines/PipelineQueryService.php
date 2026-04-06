@@ -121,7 +121,6 @@ class PipelineQueryService
             'deal_count' => $pipeline->getDealCountAttribute(),
             'stages' => $pipeline->stages,
             'creator' => $pipeline->creator,
-            'created_at' => $pipeline->created_at,
             'permissions' => [
                 'view' => Gate::allows('view', $pipeline),
                 'update' => Gate::allows('update', $pipeline),

@@ -88,7 +88,9 @@ class PartSerialNumberQueryService
 
         $paginator = $query->paginate($perPage)->appends($request->query());
 
-        $paginator->through([$this, 'formatPartSerialNumber']);
+        $paginator->through(function (PartSerialNumber $serialNumber) {
+            return $this->formatPartSerialNumber($serialNumber);
+        });
 
         $paginator->appends([
             'permissions' => [
@@ -125,7 +127,6 @@ class PartSerialNumberQueryService
             'is_expired' => $serialNumber->getIsExpired(),
             'is_expiring_soon' => $serialNumber->getIsExpiringSoon(),
             'creator' => $serialNumber->creator,
-            'created_at' => $serialNumber->created_at,
             'permissions' => [
                 'view' => Gate::allows('view', $serialNumber),
                 'update' => Gate::allows('update', $serialNumber),
