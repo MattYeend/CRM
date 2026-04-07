@@ -64,9 +64,9 @@ class CompanyQueryService
      * @param  Request $request Incoming HTTP request; may carry search,
      * sort, filter, and pagination params.
      *
-     * @return LengthAwarePaginator Paginated company results.
+     * @return array Paginated company results.
      */
-    public function list(Request $request): LengthAwarePaginator
+    public function list(Request $request): array
     {
         $perPage = max(
             1,
@@ -85,14 +85,15 @@ class CompanyQueryService
             fn (Company $company) => $this->formatCompany($company)
         );
 
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Company::class),
-                'viewAny' => Gate::allows('viewAny', Company::class),
-            ],
-        ]);
-
-        return $paginator;
+        return array_merge(
+            $paginator->toArray(),
+            [
+                'permissions' => [
+                    'create' => Gate::allows('create', Company::class),
+                    'viewAny' => Gate::allows('viewAny', Company::class),
+                ],
+            ]
+        );
     }
 
     /**

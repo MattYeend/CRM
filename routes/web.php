@@ -169,7 +169,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('companies.index');
 
     Route::get('/companies/create', function () {
-        return Inertia::render('Activities/Create');
+        return Inertia::render('Companies/Create');
     })->name('companies.create');
 
     Route::get('/companies/{company}', function (Company $company) {
