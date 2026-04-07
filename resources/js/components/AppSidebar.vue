@@ -14,7 +14,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { Activity, BookOpen, Folder, LayoutGrid, Paperclip, User } from 'lucide-vue-next';
+import { Activity, LayoutGrid, Paperclip, User } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -28,7 +28,6 @@ const mainNavItems: NavItem[] = [
         href: '/users',
         icon: User
     },
-
     {
         title: 'Activities',
         href: '/activities',
@@ -41,18 +40,7 @@ const mainNavItems: NavItem[] = [
     }
 ];
 
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Github Repo',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
-];
+const footerNavItems: NavItem[] = [];
 </script>
 
 <template>
