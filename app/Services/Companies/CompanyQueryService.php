@@ -3,8 +3,8 @@
 namespace App\Services\Companies;
 
 use App\Models\Company;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -64,35 +64,21 @@ class CompanyQueryService
      * @param  Request $request Incoming HTTP request; may carry search,
      * sort, filter, and pagination params.
      *
-     * @return array Paginated company results.
+     * @return array
      */
     public function list(Request $request): array
     {
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
-
         $query = Company::with('deals', 'invoices', 'attachments');
 
         $this->search->applySearch($query, $request);
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        $paginator = $query->paginate($perPage)->appends($request->query());
-
-        $paginator->through(
-            fn (Company $company) => $this->formatCompany($company)
-        );
+        $paginator = $this->paginate($query, $request);
 
         return array_merge(
-            $paginator->toArray(),
-            [
-                'permissions' => [
-                    'create' => Gate::allows('create', Company::class),
-                    'viewAny' => Gate::allows('viewAny', Company::class),
-                ],
-            ]
+            $paginator,
+            ['permissions' => $this->getPermissions()]
         );
     }
 
@@ -112,6 +98,39 @@ class CompanyQueryService
         );
 
         return $this->formatCompany($company);
+    }
+
+    /**
+     * Paginate and transform the company query.
+     *
+     * @param Builder $query
+     * @param Request $request
+     *
+     * @return array
+     */
+    private function paginate($query, Request $request): array
+    {
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
+
+        return $query->paginate($perPage)
+            ->appends($request->query())
+            ->through(fn (
+                Company $company
+            ): array => $this->formatCompany($company))
+            ->toArray();
+    }
+
+    /**
+     * Get permission flags for the current user.
+     *
+     * @return array
+     */
+    private function getPermissions(): array
+    {
+        return [
+            'create' => Gate::allows('create', Company::class),
+            'viewAny' => Gate::allows('viewAny', Company::class),
+        ];
     }
 
     /**
