@@ -73,7 +73,7 @@ class CompanyQueryService
             min((int) $request->query('per_page', 10), 100)
         );
 
-        $query = Company::query();
+        $query = Company::with('deals', 'invoices', 'attachments');
 
         $this->search->applySearch($query, $request);
         $this->sorting->applySorting($query, $request);

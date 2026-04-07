@@ -2,6 +2,7 @@
 
 use App\Models\Activity;
 use App\Models\Attachment;
+use App\Models\Company;
 use App\Models\JobTitle;
 use App\Models\Role;
 use App\Models\User;
@@ -151,6 +152,45 @@ Route::middleware(['auth', 'verified'])->group(function () {
             return $disk->response($attachment->path, $attachment->filename);
         }
     )->name('attachments.download');
+
+    /**
+     * -------------------------------------
+     * ------------- Companies -------------
+     * -------------------------------------
+     */
+    Route::get('/companies', function () {
+        return Inertia::render('Companies/Index', [
+            'companies' => Company::with([
+                'deals',
+                'invoices',
+                'attachments',
+            ])->latest()->get(),
+        ]);
+    })->name('companies.index');
+
+    Route::get('/companies/create', function () {
+        return Inertia::render('Activities/Create');
+    })->name('companies.create');
+
+    Route::get('/companies/{company}', function (Company $company) {
+        return Inertia::render('Companies/Show', [
+            'company' => $company->load([
+                'deals',
+                'invoices',
+                'attachments',
+            ]),
+        ]);
+    })->name('companies.show');
+
+    Route::get('/companies/{company}/edit', function (Company $company) {
+        return Inertia::render('Companies/Update', [
+            'company' => $company->load([
+                'deals',
+                'invoices',
+                'attachments',
+            ]),
+        ]);
+    })->name('companies.edit');
 });
 
 require __DIR__.'/settings.php';
