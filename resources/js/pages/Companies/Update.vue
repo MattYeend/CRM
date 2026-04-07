@@ -1,0 +1,30 @@
+<script setup lang="ts">
+import { Head } from '@inertiajs/vue3'
+import { type BreadcrumbItem } from '@/types'
+import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
+import CompanyForm from './components/CompanyForm.vue'
+import { route } from 'ziggy-js'
+
+const props = defineProps<{
+    company: any
+}>()
+
+const breadcrumbItems: BreadcrumbItem[] = [
+    { title: 'Companies', href: route('companies.index') },
+    { title: 'Edit Company', href: route('companies.edit', { company: props.company.id }) },
+]
+</script>
+
+<template>
+    <AppLayout :breadcrumbs="breadcrumbItems">
+        <Head title="Edit Company" />
+        <div class="p-6">
+            <h1 class="text-2xl font-bold mb-6">Edit Company</h1>
+            <CompanyForm
+                :company="company"
+                :submit-route="`/api/companies/${company.id}`"
+                method="put"
+            />
+        </div>
+    </AppLayout>
+</template>
