@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Industry;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -19,7 +20,7 @@ class CompanyFactory extends Factory
     {
         return [
             'name' => fake()->company(),
-            'industry' => fake()->companySuffix(),
+            'industry_id' => Industry::inRandomOrder()->first()?->id,
             'website' => fake()->optional()->url(),
             'phone' => fake()->optional()->phoneNumber(),
             'address' => fake()->optional()->streetAddress(),

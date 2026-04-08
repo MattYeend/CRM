@@ -87,6 +87,14 @@ class PermissionRoleSeeder extends Seeder
             'deals.products.restore',
             'deals.products.access.any',
 
+            'industries.view.all',
+            'industries.view.own',
+            'industries.create',
+            'industries.update.any',
+            'industries.delete.any',
+            'industries.restore.any',
+            'industries.access.any',
+
             'invoices.view.all',
             'invoices.view.own',
             'invoices.create',
@@ -333,6 +341,14 @@ class PermissionRoleSeeder extends Seeder
             'deals.access.own',
 
             'deals.products.access.own',
+
+            'industries.view.all',
+            'industries.view.own',
+            'industries.create',
+            'industries.update.own',
+            'industries.delete.own',
+            'industries.restore.own',
+            'industries.access.own',
 
             'invoices.view.all',
             'invoices.view.own',

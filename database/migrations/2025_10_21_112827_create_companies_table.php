@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('industry')->nullable();
+            $table->foreignId('industry_id')->nullable()->constrained('industries')->nullOnDelete();
             $table->string('website')->nullable();
             $table->string('phone')->nullable();
             $table->string('address')->nullable();

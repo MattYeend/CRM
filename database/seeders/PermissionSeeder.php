@@ -91,6 +91,19 @@ class PermissionSeeder extends Seeder
             ['name' => 'deals.products.access.any', 'label' => 'Access any products to deals'],
             ['name' => 'deals.products.access.own', 'label' => 'Access own products to deals'],
 
+            // Company Industries
+            ['name' => 'industries.view.all', 'label' => 'View industries'],
+            ['name' => 'industries.view.own', 'label' => 'View own industries'],
+            ['name' => 'industries.create', 'label' => 'Create industries'],
+            ['name' => 'industries.update.any', 'label' => 'Update any industries'],
+            ['name' => 'industries.update.own', 'label' => 'Update own industries'],
+            ['name' => 'industries.delete.any', 'label' => 'Delete any industries'],
+            ['name' => 'industries.delete.own', 'label' => 'Delete own industries'],
+            ['name' => 'industries.restore.any', 'label' => 'Restore any industries'],
+            ['name' => 'industries.restore.own', 'label' => 'Restore own industries'],
+            ['name' => 'industries.access.any', 'label' => 'Access any industries'],
+            ['name' => 'industries.access.own', 'label' => 'Access own industries'],
+
             // Invoices / finance
             ['name' => 'invoices.view.all', 'label' => 'View invoices'],
             ['name' => 'invoices.view.own', 'label' => 'View own invoices'],
