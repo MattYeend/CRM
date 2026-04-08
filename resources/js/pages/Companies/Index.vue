@@ -10,6 +10,7 @@ interface Company {
     id: number
     name: string
     industry?: string
+    industry_id?: number | null
     phone?: string
     city?: string
     country?: string

@@ -163,7 +163,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('Companies/Index', [
             'companies' => Company::with([
                 'deals',
-                'industries',
+                'industry',
                 'invoices',
                 'attachments',
             ])->latest()->get(),
@@ -180,7 +180,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('Companies/Show', [
             'company' => $company->load([
                 'deals',
-                'industries',
+                'industry',
                 'invoices',
                 'attachments',
             ]),

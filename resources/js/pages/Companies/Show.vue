@@ -16,6 +16,7 @@ interface Company {
     id: number
     name: string
     industry?: string
+    industry_id?: number | null
     website?: string
     website_host?: string
     phone?: string
@@ -50,13 +51,14 @@ const company = ref<Company>({
     id: props.company.id,
     name: props.company.name,
     industry: props.company.industry,
+    industry_id: props.company.industry_id,
     website: props.company.website,
     phone: props.company.phone,
     city: props.company.city,
     country: props.company.country,
-    has_deals: false,
-    has_outstanding_invoices: false,
-    permissions: { view: false, update: false, delete: false },
+    has_deals: props.company.has_deals ?? false,
+    has_outstanding_invoices: props.company.has_outstanding_invoices ?? false,
+    permissions: props.company.permissions ?? { view: false, update: false, delete: false },
 })
 
 const breadcrumbItems: BreadcrumbItem[] = [
