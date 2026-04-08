@@ -38,7 +38,7 @@ class IndustrySortingService
      */
     public function applySorting(Builder $query, Request $request): void
     {
-        $sortBy = $request->query('sort_by', 'id');
+        $sortBy = $request->query('sort_by', 'name');
 
         if (! in_array($sortBy, self::ALLOWED_SORTS, true)) {
             $sortBy = 'id';

@@ -14,7 +14,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { Activity, Building2, LayoutGrid, Paperclip, User } from 'lucide-vue-next';
+import { Activity, Building2, Globe, LayoutGrid, Paperclip, User } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -42,6 +42,11 @@ const mainNavItems: NavItem[] = [
         title: 'Companies',
         href: '/companies',
         icon: Building2
+    },
+    {
+        title: 'Company Industries',
+        href: '/industries',
+        icon: Globe
     }
 ];
 

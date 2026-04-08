@@ -34,7 +34,7 @@ import { toUrl, urlIsActive } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem, NavItem } from '@/types';
 import { InertiaLinkProps, Link, usePage } from '@inertiajs/vue3';
-import { Activity, Building2, LayoutGrid, Menu, Paperclip, Search, User } from 'lucide-vue-next';
+import { Activity, Building2, Globe, LayoutGrid, Menu, Paperclip, Search, User } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 interface Props {
@@ -85,6 +85,11 @@ const mainNavItems: NavItem[] = [
         title: 'Companies',
         href: '/companies',
         icon: Building2
+    },
+    {
+        title: 'Company Industries',
+        href: '/industries',
+        icon: Globe
     }
 ];
 

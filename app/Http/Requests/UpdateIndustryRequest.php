@@ -60,7 +60,7 @@ class UpdateIndustryRequest extends FormRequest
                 'sometimes',
                 'string',
                 'max:255',
-                Rule::unique('induestries', 'name')->ignore($industry),
+                Rule::unique('industries', 'name')->ignore($industry),
             ],
         ];
     }

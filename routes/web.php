@@ -207,11 +207,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/industries', function () {
         return Inertia::render('Industries/Index', [
             'industries' => Industry::with([
-                'deals',
-                'industries',
-                'invoices',
-                'attachments',
-            ])->latest()->get(),
+                'companies',
+            ])->orderBy('name')->get(),
         ]);
     })->name('industries.index');
 
@@ -222,10 +219,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/industries/{industry}', function (Industry $industry) {
         return Inertia::render('Industries/Show', [
             'industry' => $industry->load([
-                'deals',
-                'industries',
-                'invoices',
-                'attachments',
+                'companies',
             ]),
         ]);
     })->name('industries.show');
@@ -233,10 +227,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/industries/{industry}/edit', function (Industry $industry) {
         return Inertia::render('Industries/Update', [
             'industry' => $industry->load([
-                'deals',
-                'industries',
-                'invoices',
-                'attachments',
+                'companies',
             ]),
         ]);
     })->name('industries.edit');
