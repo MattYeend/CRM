@@ -1,7 +1,12 @@
 <script setup lang="ts">
+interface Industry {
+    id: number
+    name: string
+}
+
 interface CompanyForm {
     name: string
-    industry: string
+    industry_id: number | null
     website: string
     phone: string
     errors: Record<string, string>
@@ -10,6 +15,7 @@ interface CompanyForm {
 
 const props = defineProps<{
     form: CompanyForm
+    industries: Industry[]
 }>()
 
 const form = props.form
@@ -36,14 +42,21 @@ const form = props.form
 
         <div>
             <label class="block text-sm font-medium mb-1">Industry</label>
-            <input
-                v-model="form.industry"
-                type="text"
+            <select
+                v-model="form.industry_id"
                 class="w-full border rounded px-3 py-2"
-                placeholder="Technology"
-            />
-            <p v-if="form.errors.industry" class="text-red-500 text-sm mt-1">
-                {{ form.errors.industry }}
+            >
+                <option :value="null">-- Select an industry --</option>
+                <option
+                    v-for="industry in industries"
+                    :key="industry.id"
+                    :value="industry.id"
+                >
+                    {{ industry.name }}
+                </option>
+            </select>
+            <p v-if="form.errors.industry_id" class="text-red-500 text-sm mt-1">
+                {{ form.errors.industry_id }}
             </p>
         </div>
 

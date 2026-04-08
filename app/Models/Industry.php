@@ -8,7 +8,35 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
+/**
+ * Represents an industry used to classify companies within the CRM.
+ *
+ * A URL-friendly slug is automatically generated from the industry name
+ * on creation and regenerated whenever the name changes.
+ *
+ * Relationships defined in this model include:
+ * - companies(): The companies belonging to this industry.
+ * - creator(): The user that created the industry.
+ * - updater(): The user that last updated the industry.
+ * - deleter(): The user that deleted the industry
+ *      (if soft-deleted).
+ * - restorer(): The user that restored the industry
+ *      (if soft-deleted).
+ *
+ * Example usage of relationships:
+ * ```php
+ * $industry = Industry::find(1);
+ * $companies = $industry->companies; // Get the companies in this industry
+ * $creator = $industry->creator;     // Get the user that created this industry
+ * $updater = $industry->updater;     // Get the user that last updated this industry
+ * $deleter = $industry->deleter;     // Get the user that deleted this industry
+ *                                    //   (if applicable)
+ * $restorer = $industry->restorer;   // Get the user that restored this industry
+ *                                    //   (if applicable)
+ * ```
+ */
 class Industry extends Model
 {
     /** 
@@ -93,5 +121,30 @@ class Industry extends Model
     public function restorer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'restored_by');
+    }
+
+    /**
+     * Bootstrap the model and its traits.
+     *
+     * Registers model event listeners to automatically
+     * generate a URL-friendly slug from the category
+     * name on creation, and regenerate it if the name
+     * is changed during an update.
+     *
+     * @return void
+     */
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function (Industry $industry) {
+            $industry->slug = Str::slug($industry->name);
+        });
+
+        static::updating(function (Industry $industry) {
+            if ($industry->isDirty('name')) {
+                $industry->slug = Str::slug($industry->name);
+            }
+        });
     }
 }

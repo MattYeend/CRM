@@ -171,7 +171,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('companies.index');
 
     Route::get('/companies/create', function () {
-        return Inertia::render('Companies/Create');
+        return Inertia::render('Companies/Create', [
+            'industries' => Industry::orderBy('name')->get(['id', 'name']),
+        ]);
     })->name('companies.create');
 
     Route::get('/companies/{company}', function (Company $company) {
@@ -193,6 +195,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'invoices',
                 'attachments',
             ]),
+            'industries' => Industry::orderBy('name')->get(['id', 'name']),
         ]);
     })->name('companies.edit');
 

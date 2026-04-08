@@ -5,10 +5,15 @@ import CompanyIdentitySection from './CompanyIdentitySection.vue'
 import CompanyAddressSection from './CompanyAddressSection.vue'
 import CompanyContactSection from './CompanyContactSection.vue'
 
+interface Industry {
+    id: number
+    name: string
+}
+
 interface Company {
     id?: number
     name?: string
-    industry?: string
+    industry_id?: number | null
     website?: string
     phone?: string
     address?: string
@@ -25,6 +30,7 @@ interface Company {
 
 const props = defineProps<{
     company?: Company
+    industries: Industry[]
     method?: 'post' | 'put'
     submitLabel?: string
     submitRoute: string
@@ -32,7 +38,7 @@ const props = defineProps<{
 
 const form = useForm({
     name: props.company?.name ?? '',
-    industry: props.company?.industry ?? '',
+    industry_id: props.company?.industry_id ?? null,
     website: props.company?.website ?? '',
     phone: props.company?.phone ?? '',
     address: props.company?.address ?? '',
@@ -72,7 +78,7 @@ async function submit() {
 
 <template>
     <form @submit.prevent="submit" class="space-y-8 max-w-2xl">
-        <CompanyIdentitySection :form="form" />
+        <CompanyIdentitySection :form="form" :industries="industries" />
         <CompanyAddressSection :form="form" />
         <CompanyContactSection :form="form" />
 

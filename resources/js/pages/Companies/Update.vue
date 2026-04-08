@@ -5,8 +5,14 @@ import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
 import CompanyForm from './components/CompanyForm.vue'
 import { route } from 'ziggy-js'
 
+interface Industry {
+    id: number
+    name: string
+}
+
 const props = defineProps<{
     company: any
+    industries: Industry[]
 }>()
 
 const breadcrumbItems: BreadcrumbItem[] = [
@@ -22,6 +28,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
             <h1 class="text-2xl font-bold mb-6">Edit Company</h1>
             <CompanyForm
                 :company="company"
+                :industries="industries"
                 :submit-route="`/api/companies/${company.id}`"
                 method="put"
             />
