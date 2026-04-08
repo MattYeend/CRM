@@ -288,6 +288,13 @@ class Log extends Model
     public const ACTION_BILL_OF_MATERIAL_DELETED = 168;
     public const ACTION_BILL_OF_MATERIAL_RESTORED = 169;
 
+    // Company Industries
+    public const ACTION_COMPANY_INDUSTRY_CREATED = 170;
+    public const ACTION_COMPANY_INDUSTRY_UPDATED = 171;
+    public const ACTION_COMPANY_INDUSTRY_DELETED = 172;
+    public const ACTION_COMPANY_INDUSTRY_RESTORED = 173;
+    public const ACTION_COMPANY_INDUSTRY_VIEWED = 174;
+
     // New Logging Actions should go here to be reviewed
     // by the development team for future releases.
     // Ensure to update the documentation accordingly.
