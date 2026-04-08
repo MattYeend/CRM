@@ -5,6 +5,7 @@ use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\BillOfMaterialController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DealController;
+use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceItemController;
 use App\Http\Controllers\JobTitleController;
@@ -93,10 +94,23 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
         'companies/{id}/restore',
         [CompanyController::class, 'restore']
     )->name('api.companies.restore');
-    Route::delete(
-        'companies/{id}/force',
-        [CompanyController::class, 'forceDelete']
-    )->name('api.companies.forceDelete');
+
+    /**
+     * ----------------------------------------------------------
+     * ----------------------- Industries -----------------------
+     * ----------------------------------------------------------
+     */
+    Route::apiResource('industries', IndustryController::class)->names([
+        'index' => 'api.industries.index',
+        'store' => 'api.industries.store',
+        'show' => 'api.industries.show',
+        'update' => 'api.industries.update',
+        'destroy' => 'api.industries.destroy',
+    ]);
+    Route::post(
+        'industries/{id}/restore',
+        [IndustryController::class, 'restore']
+    )->name('api.industries.restore');
 
     /**
      * ----------------------------------------------------------

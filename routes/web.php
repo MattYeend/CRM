@@ -3,6 +3,7 @@
 use App\Models\Activity;
 use App\Models\Attachment;
 use App\Models\Company;
+use App\Models\Industry;
 use App\Models\JobTitle;
 use App\Models\Role;
 use App\Models\User;
@@ -162,6 +163,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('Companies/Index', [
             'companies' => Company::with([
                 'deals',
+                'industries',
                 'invoices',
                 'attachments',
             ])->latest()->get(),
@@ -176,6 +178,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('Companies/Show', [
             'company' => $company->load([
                 'deals',
+                'industries',
                 'invoices',
                 'attachments',
             ]),
@@ -186,11 +189,54 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('Companies/Update', [
             'company' => $company->load([
                 'deals',
+                'industries',
                 'invoices',
                 'attachments',
             ]),
         ]);
     })->name('companies.edit');
+
+    /**
+     * --------------------------------------
+     * ------------- Industries -------------
+     * --------------------------------------
+     */
+    Route::get('/industries', function () {
+        return Inertia::render('Industries/Index', [
+            'industries' => Industry::with([
+                'deals',
+                'industries',
+                'invoices',
+                'attachments',
+            ])->latest()->get(),
+        ]);
+    })->name('industries.index');
+
+    Route::get('/industries/create', function () {
+        return Inertia::render('Industries/Create');
+    })->name('industries.create');
+
+    Route::get('/industries/{industry}', function (Industry $industry) {
+        return Inertia::render('Industries/Show', [
+            'industry' => $industry->load([
+                'deals',
+                'industries',
+                'invoices',
+                'attachments',
+            ]),
+        ]);
+    })->name('industries.show');
+
+    Route::get('/industries/{industry}/edit', function (Industry $industry) {
+        return Inertia::render('Industries/Update', [
+            'industry' => $industry->load([
+                'deals',
+                'industries',
+                'invoices',
+                'attachments',
+            ]),
+        ]);
+    })->name('industries.edit');
 });
 
 require __DIR__.'/settings.php';
