@@ -68,7 +68,12 @@ class CompanyQueryService
      */
     public function list(Request $request): array
     {
-        $query = Company::with('deals', 'invoices', 'attachments');
+        $query = Company::with(
+            'deals',
+            'industry',
+            'invoices',
+            'attachments'
+        );
 
         $this->search->applySearch($query, $request);
         $this->sorting->applySorting($query, $request);
@@ -93,6 +98,7 @@ class CompanyQueryService
     {
         $company->load(
             'deals',
+            'industry',
             'invoices',
             'attachments',
         );
@@ -164,7 +170,8 @@ class CompanyQueryService
         return [
             'id' => $company->id,
             'name' => $company->name,
-            'industry' => $company->industry,
+            'industry' => $company->industry?->name,
+            'industry_id' => $company->industry_id,
             'website' => $company->website,
             'website_host' => $company->website_host,
             'phone' => $company->phone,

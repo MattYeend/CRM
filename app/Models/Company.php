@@ -133,7 +133,7 @@ class Company extends Model
      */
     protected $fillable = [
         'name',
-        'industry',
+        'industry_id',
         'website',
         'phone',
         'address',
@@ -229,6 +229,16 @@ class Company extends Model
     public function notes(): MorphMany
     {
         return $this->morphMany(Note::class, 'notable');
+    }
+
+    /**
+     * Get the industry associated with the company
+     *
+     * @return BelongsTo<Industry,Company>
+     */
+    public function industry(): BelongsTo
+    {
+        return $this->belongsTo(Industry::class);
     }
 
     /**
@@ -445,11 +455,11 @@ class Company extends Model
      */
     public function scopeInIndustry(
         $query,
-        string|array $industry
+        int|array $industryId
     ): Builder {
-        return is_array($industry)
-            ? $query->whereIn('industry', $industry)
-            : $query->where('industry', $industry);
+        return is_array($industryId)
+            ? $query->whereIn('industry_id', $industryId)
+            : $query->where('industry_id', $industryId);
     }
 
     /**

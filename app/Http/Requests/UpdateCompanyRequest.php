@@ -57,7 +57,7 @@ class UpdateCompanyRequest extends FormRequest
     {
         return [
             'name' => 'sometimes|string|max:255',
-            'industry' => 'nullable|string|max:100',
+            'industry_id' => 'nullable|integer|exists:industries,id',
             'website' => 'nullable|url|max:255',
             'phone' => 'nullable|string|max:30',
             'address' => 'nullable|string|max:255',
