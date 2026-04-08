@@ -82,7 +82,7 @@ class IndustryPolicy
      */
     public function create(User $user): bool
     {
-        return $this->has($user, 'companies.create');
+        return $this->has($user, 'industries.create');
     }
 
     /**
@@ -132,8 +132,26 @@ class IndustryPolicy
         return $this->anyOrOwn(
             $user,
             $industry,
-            'industries.delete.any',
-            'industries.delete.own'
+            'industries.restore.any',
+            'industries.restore.own'
+        );
+    }
+
+    /**
+     * Determine whether the user can access the model.
+     *
+     * @param  User $user
+     * @param  Industry $industry
+     *
+     * @return bool
+     */
+    public function access(User $user, Industry $industry): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $industry,
+            'industries.access.any',
+            'industries.access.own'
         );
     }
 }

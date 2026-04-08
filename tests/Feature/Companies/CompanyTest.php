@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Company;
+use App\Models\Industry;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
@@ -155,9 +156,10 @@ test('show returns 404 for non-existent company', function () {
  * -----------------------------------------------------------
  */
 test('store creates a company with valid payload and returns 201', function () {
+    $industry = Industry::factory()->create(['name' => 'Software']);
     $payload = [
         'name' => 'NewCo Ltd',
-        'industry' => 'Software',
+        'industry_id' => $industry->id,
         'website' => 'https://newco.example',
         'phone' => '0123456789',
         'address' => '1 Test Street',
@@ -173,7 +175,7 @@ test('store creates a company with valid payload and returns 201', function () {
     $response = $this->postJson(route('api.companies.store'), $payload);
 
     $response->assertStatus(201);
-    $response->assertJsonFragment(['name' => 'NewCo Ltd', 'industry' => 'Software']);
+    $response->assertJsonFragment(['name' => 'NewCo Ltd', 'industry_id' => $industry->id]);
 
     $this->assertDatabaseHas('companies', ['name' => 'NewCo Ltd', 'website' => 'https://newco.example']);
 });

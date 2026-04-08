@@ -37,14 +37,14 @@ class IndustryController extends Controller
 
     /**
      * Service responsible for creating, updating, deleting, and restoring
-     * companies.
+     * industries.
      *
      * @var IndustryManagementService
      */
     protected IndustryManagementService $management;
 
     /**
-     * Service responsible for querying and listing companies.
+     * Service responsible for querying and listing industries.
      *
      * @var IndustryQueryService
      */

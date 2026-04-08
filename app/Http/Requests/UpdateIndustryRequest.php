@@ -34,7 +34,9 @@ class UpdateIndustryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        $industry = $this->route('industry');
+
+        return $this->user()->can('update', $industry);
     }
 
     /**
