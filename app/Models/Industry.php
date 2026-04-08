@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -29,18 +28,19 @@ use Illuminate\Support\Str;
  * ```php
  * $industry = Industry::find(1);
  * $companies = $industry->companies; // Get the companies in this industry
- * $creator = $industry->creator;     // Get the user that created this industry
- * $updater = $industry->updater;     // Get the user that last updated this industry
- * $deleter = $industry->deleter;     // Get the user that deleted this industry
- *                                    //   (if applicable)
- * $restorer = $industry->restorer;   // Get the user that restored this industry
- *                                    //   (if applicable)
+ * $creator = $industry->creator; // Get the user that created this industry
+ * $updater = $industry->updater; // Get the user that last updated this
+ *  industry
+ * $deleter = $industry->deleter; // Get the user that deleted this industry
+ *  (if applicable)
+ * $restorer = $industry->restorer; // Get the user that restored this industry
+ *  (if applicable)
  * ```
  */
 class Industry extends Model
 {
-    /** 
-     * @use HasFactory<\Database\Factories\IndustryFactory> 
+    /**
+     * @use HasFactory<\Database\Factories\IndustryFactory>
      * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
      */
     use HasFactory,

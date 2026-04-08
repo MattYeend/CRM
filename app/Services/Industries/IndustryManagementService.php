@@ -59,7 +59,8 @@ class IndustryManagementService
      *
      * Delegates to the creator service to validate and store the industry.
      *
-     * @param  StoreIndustryRequest $request The request containing industry data.
+     * @param  StoreIndustryRequest $request The request containing industry
+     * data.
      *
      * @return Industry The newly created industry instance.
      */

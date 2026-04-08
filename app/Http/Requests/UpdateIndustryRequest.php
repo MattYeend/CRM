@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 /**
  * Authorises and validates a request to update an existing industry.
@@ -16,8 +17,10 @@ use Illuminate\Foundation\Http\FormRequest;
  * Example usage:
  * ```php
  * // In a controller method:
- * public function update(UpdateIndustryRequest $request, Industry $industry): RedirectResponse
- * {
+ * public function update(
+ *      UpdateIndustryRequest $request,
+ *      Industry $industry
+ * ): RedirectResponse {
  *     $validated = $request->validated();
  *     $industry->update($validated);
  * }
@@ -42,7 +45,7 @@ class UpdateIndustryRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * - name: Required. Must be a string no longer than 255 characters
+     * - name: Sometimes. Must be a string no longer than 255 characters
      *       and unique within the industries table, ignoring the current
      *       industry record to permit saving without changing the name.
      *
@@ -50,8 +53,15 @@ class UpdateIndustryRequest extends FormRequest
      */
     public function rules(): array
     {
+        $industry = $this->route('industry');
+
         return [
-            'name' => 'required|string|max:255|unique:industries,name,' . $this->route('industry')->id,
+            'name' => [
+                'sometimes',
+                'string',
+                'max:255',
+                Rule::unique('induestries', 'name')->ignore($industry),
+            ],
         ];
     }
 }
