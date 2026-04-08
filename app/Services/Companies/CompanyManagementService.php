@@ -15,8 +15,25 @@ use App\Models\Company;
  */
 class CompanyManagementService
 {
+    /**
+     * Service responsible for creating new company records.
+     *
+     * @var CompanyCreatorService
+     */
     private CompanyCreatorService $creator;
+
+    /**
+     * Service responsible for updating existing company records.
+     *
+     * @var CompanyUpdaterService
+     */
     private CompanyUpdaterService $updater;
+
+    /**
+     * Service responsible for soft-deleting and restoring learning records.
+     *
+     * @var CompanyDestructorService
+     */
     private CompanyDestructorService $destructor;
 
     /**

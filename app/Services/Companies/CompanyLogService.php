@@ -148,7 +148,7 @@ class CompanyLogService
         return [
             'id' => $company->id,
             'name' => $company->name,
-            'industry' => $company->industry,
+            'industry id' => $company->industry_id,
             'website' => $company->website,
             'phone' => $company->phone,
             'address' => $company->address,
