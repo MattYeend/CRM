@@ -632,7 +632,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'orders' => $service->list($request),
         ]);
     })->name('orders.index');
- 
+
     Route::get('/orders/create', function () {
         return Inertia::render('Orders/Create', [
             'users' => User::orderBy('name')->get(['id', 'name']),
@@ -640,7 +640,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'products' => Product::orderBy('name')->get(['id', 'name']),
         ]);
     })->name('orders.create');
- 
+
     Route::get('/orders/{order}', function (
         Order $order,
         OrderQueryService $service
@@ -649,7 +649,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'order' => $service->show($order),
         ]);
     })->name('orders.show');
- 
+
     Route::get('/orders/{order}/edit', function (Order $order) {
         return Inertia::render('Orders/Update', [
             'order' => $order->load([
@@ -662,7 +662,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'products' => Product::orderBy('name')->get(['id', 'name']),
         ]);
     })->name('orders.edit');
- 
+
     Route::get('/orders/{order}/success', function (
         Order $order,
         OrderQueryService $service
@@ -671,7 +671,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'order' => $service->show($order),
         ]);
     })->name('orders.success');
- 
+
     /**
      * -----------------------------------------
      * ------------- Order Products ------------
@@ -684,14 +684,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]),
         ]);
     })->name('orders.products.index');
- 
+
     Route::get('/orders/{order}/products/add', function (Order $order) {
         return Inertia::render('OrderProducts/Add', [
             'order' => $order,
             'products' => Product::orderBy('name')->get(['id', 'name']),
         ]);
     })->name('orders.products.add');
- 
+
     Route::get(
         '/orders/{order}/products/{product}/edit',
         function (Order $order, Product $product) {
@@ -715,14 +715,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'parts' => $service->list($request),
         ]);
     })->name('parts.index');
- 
+
     Route::get('/parts/create', function () {
         return Inertia::render('Parts/Create', [
             'categories' => PartCategory::orderBy('name')->get(['id', 'name']),
             'products' => Product::orderBy('name')->get(['id', 'name']),
         ]);
     })->name('parts.create');
- 
+
     Route::get('/parts/{part}', function (
         Part $part,
         PartQueryService $service
@@ -731,7 +731,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'part' => $service->show($part),
         ]);
     })->name('parts.show');
- 
+
     Route::get('/parts/{part}/edit', function (Part $part) {
         return Inertia::render('Parts/Update', [
             'part' => $part->load([
@@ -745,7 +745,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'products' => Product::orderBy('name')->get(['id', 'name']),
         ]);
     })->name('parts.edit');
- 
+
     /**
      * -------------------------------------------------------
      * ------- Bill Of Materials (nested: parts) -------------
@@ -761,14 +761,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'billOfMaterials' => $service->list($part, $request),
         ]);
     })->name('parts.billOfMaterials.index');
- 
+
     Route::get('/parts/{part}/bill-of-materials/create', function (Part $part) {
         return Inertia::render('BillOfMaterials/Create', [
             'part' => $part,
             'parts' => Part::orderBy('name')->get(['id', 'sku', 'name']),
         ]);
     })->name('parts.billOfMaterials.create');
- 
+
     Route::get(
         '/parts/{part}/bill-of-materials/{billOfMaterial}',
         function (Part $part, BillOfMaterial $billOfMaterial) {
@@ -781,7 +781,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]);
         }
     )->name('parts.billOfMaterials.show');
- 
+
     Route::get(
         '/parts/{part}/bill-of-materials/{billOfMaterial}/edit',
         function (Part $part, BillOfMaterial $billOfMaterial) {
@@ -795,7 +795,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]);
         }
     )->name('parts.billOfMaterials.edit');
- 
+
     /**
      * -------------------------------------------------------
      * -------- Part Serial Numbers (nested: parts) ----------
@@ -811,13 +811,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'serialNumbers' => $service->list($request, $part),
         ]);
     })->name('parts.serialNumbers.index');
- 
+
     Route::get('/parts/{part}/serial-numbers/create', function (Part $part) {
         return Inertia::render('PartSerialNumbers/Create', [
             'part' => $part,
         ]);
     })->name('parts.serialNumbers.create');
- 
+
     Route::get(
         '/parts/{part}/serial-numbers/{serialNumber}/edit',
         function (Part $part, PartSerialNumber $serialNumber) {
@@ -827,7 +827,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]);
         }
     )->name('parts.serialNumbers.edit');
- 
+
     /**
      * -------------------------------------------------------
      * ------- Part Stock Movements (nested: parts) ----------
@@ -843,13 +843,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'stockMovements' => $service->list($request, $part),
         ]);
     })->name('parts.stockMovements.index');
- 
+
     Route::get('/parts/{part}/stock-movements/create', function (Part $part) {
         return Inertia::render('PartStockMovements/Create', [
             'part' => $part,
         ]);
     })->name('parts.stockMovements.create');
- 
+
     Route::get(
         '/parts/{part}/stock-movements/{stockMovement}',
         function (Part $part, PartStockMovement $stockMovement) {
@@ -862,7 +862,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]);
         }
     )->name('parts.stockMovements.show');
- 
+
     /**
      * -----------------------------------------
      * ----------- Part Categories -------------
@@ -876,13 +876,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'partCategories' => $service->list($request),
         ]);
     })->name('part-categories.index');
- 
+
     Route::get('/part-categories/create', function () {
         return Inertia::render('PartCategories/Create', [
             'categories' => PartCategory::orderBy('name')->get(['id', 'name']),
         ]);
     })->name('part-categories.create');
- 
+
     Route::get('/part-categories/{partCategory}', function (
         PartCategory $partCategory,
         PartCategoryQueryService $service
@@ -891,7 +891,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'partCategory' => $service->show($partCategory),
         ]);
     })->name('part-categories.show');
- 
+
     Route::get('/part-categories/{partCategory}/edit', function (
         PartCategory $partCategory
     ) {
@@ -904,7 +904,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'categories' => PartCategory::orderBy('name')->get(['id', 'name']),
         ]);
     })->name('part-categories.edit');
- 
+
     /**
      * -----------------------------------------
      * ------------- Part Images ---------------
@@ -918,13 +918,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'partImages' => $service->list($request),
         ]);
     })->name('part-images.index');
- 
+
     Route::get('/part-images/create', function () {
         return Inertia::render('PartImages/Create', [
             'parts' => Part::orderBy('name')->get(['id', 'sku', 'name']),
         ]);
     })->name('part-images.create');
- 
+
     Route::get('/part-images/{partImage}', function (
         PartImage $partImage,
         PartImageQueryService $service
@@ -933,7 +933,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'partImage' => $service->show($partImage),
         ]);
     })->name('part-images.show');
- 
+
     Route::get('/part-images/{partImage}/edit', function (
         PartImage $partImage
     ) {
@@ -958,13 +958,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'permissions' => $service->list($request),
         ]);
     })->name('permissions.index');
- 
+
     Route::get('/permissions/create', function () {
         return Inertia::render('Permissions/Create', [
             'roles' => Role::orderBy('name')->get(['id', 'name']),
         ]);
     })->name('permissions.create');
- 
+
     Route::get('/permissions/{permission}', function (
         Permission $permission,
         PermissionQueryService $service
@@ -973,7 +973,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'permission' => $service->show($permission),
         ]);
     })->name('permissions.show');
- 
+
     Route::get('/permissions/{permission}/edit', function (
         Permission $permission
     ) {
@@ -984,7 +984,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'roles' => Role::orderBy('name')->get(['id', 'name']),
         ]);
     })->name('permissions.edit');
- 
+
     /**
      * -----------------------------------------
      * -------------- Pipelines ----------------
@@ -998,11 +998,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'pipelines' => $service->list($request),
         ]);
     })->name('pipelines.index');
- 
+
     Route::get('/pipelines/create', function () {
         return Inertia::render('Pipelines/Create');
     })->name('pipelines.create');
- 
+
     Route::get('/pipelines/{pipeline}', function (
         Pipeline $pipeline,
         PipelineQueryService $service
@@ -1011,7 +1011,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'pipeline' => $service->show($pipeline),
         ]);
     })->name('pipelines.show');
- 
+
     Route::get('/pipelines/{pipeline}/edit', function (Pipeline $pipeline) {
         return Inertia::render('Pipelines/Update', [
             'pipeline' => $pipeline->load([
@@ -1019,7 +1019,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]),
         ]);
     })->name('pipelines.edit');
- 
+
     /**
      * -------------------------------------------------------
      * ------- Pipeline Stages (nested: pipelines) -----------
@@ -1035,7 +1035,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'stages' => $service->list($request),
         ]);
     })->name('pipelines.stages.index');
- 
+
     Route::get('/pipelines/{pipeline}/stages/create', function (
         Pipeline $pipeline
     ) {
@@ -1043,7 +1043,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'pipeline' => $pipeline,
         ]);
     })->name('pipelines.stages.create');
- 
+
     Route::get(
         '/pipelines/{pipeline}/stages/{stage}',
         function (
@@ -1057,7 +1057,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]);
         }
     )->name('pipelines.stages.show');
- 
+
     Route::get(
         '/pipelines/{pipeline}/stages/{stage}/edit',
         function (Pipeline $pipeline, PipelineStage $stage) {
@@ -1087,11 +1087,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'products' => $service->list($request),
         ]);
     })->name('products.index');
- 
+
     Route::get('/products/create', function () {
         return Inertia::render('Products/Create');
     })->name('products.create');
- 
+
     Route::get('/products/{product}', function (
         Product $product,
         ProductQueryService $service
@@ -1100,7 +1100,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'product' => $service->show($product),
         ]);
     })->name('products.show');
- 
+
     Route::get('/products/{product}/edit', function (Product $product) {
         return Inertia::render('Products/Update', [
             'product' => $product->load([
@@ -1108,7 +1108,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]),
         ]);
     })->name('products.edit');
- 
+
     /**
      * -------------------------------------------------------
      * -------- Product Deals (nested: products) -------------
@@ -1121,14 +1121,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]),
         ]);
     })->name('products.deals.index');
- 
+
     Route::get('/products/{product}/deals/add', function (Product $product) {
         return Inertia::render('ProductDeals/Add', [
             'product' => $product,
             'deals' => Deal::orderBy('title')->get(['id', 'title']),
         ]);
     })->name('products.deals.add');
- 
+
     Route::get(
         '/products/{product}/deals/{deal}/edit',
         function (Product $product, Deal $deal) {
@@ -1138,7 +1138,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]);
         }
     )->name('products.deals.edit');
- 
+
     /**
      * -------------------------------------------------------
      * -------- Product Orders (nested: products) ------------
@@ -1151,14 +1151,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]),
         ]);
     })->name('products.orders.index');
- 
+
     Route::get('/products/{product}/orders/add', function (Product $product) {
         return Inertia::render('ProductOrders/Add', [
             'product' => $product,
             'orders' => Order::orderBy('id')->get(['id']),
         ]);
     })->name('products.orders.add');
- 
+
     Route::get(
         '/products/{product}/orders/{order}/edit',
         function (Product $product, Order $order) {
@@ -1168,7 +1168,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]);
         }
     )->name('products.orders.edit');
- 
+
     /**
      * -------------------------------------------------------
      * -------- Product Quotes (nested: products) ------------
@@ -1181,14 +1181,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]),
         ]);
     })->name('products.quotes.index');
- 
+
     Route::get('/products/{product}/quotes/add', function (Product $product) {
         return Inertia::render('ProductQuotes/Add', [
             'product' => $product,
             'quotes' => Quote::orderBy('id')->get(['id']),
         ]);
     })->name('products.quotes.add');
- 
+
     Route::get(
         '/products/{product}/quotes/{quote}/edit',
         function (Product $product, Quote $quote) {
@@ -1198,7 +1198,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]);
         }
     )->name('products.quotes.edit');
- 
+
     /**
      * -----------------------------------------
      * --------------- Quotes ------------------
@@ -1212,14 +1212,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'quotes' => $service->list($request),
         ]);
     })->name('quotes.index');
- 
+
     Route::get('/quotes/create', function () {
         return Inertia::render('Quotes/Create', [
             'deals' => Deal::orderBy('title')->get(['id', 'title']),
             'products' => Product::orderBy('name')->get(['id', 'name']),
         ]);
     })->name('quotes.create');
- 
+
     Route::get('/quotes/{quote}', function (
         Quote $quote,
         QuoteQueryService $service
@@ -1228,7 +1228,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'quote' => $service->show($quote),
         ]);
     })->name('quotes.show');
- 
+
     Route::get('/quotes/{quote}/edit', function (Quote $quote) {
         return Inertia::render('Quotes/Update', [
             'quote' => $quote->load([
@@ -1240,7 +1240,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'products' => Product::orderBy('name')->get(['id', 'name']),
         ]);
     })->name('quotes.edit');
- 
+
     /**
      * -------------------------------------------------------
      * -------- Quote Products (nested: quotes) --------------
@@ -1253,14 +1253,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]),
         ]);
     })->name('quotes.products.index');
- 
+
     Route::get('/quotes/{quote}/products/add', function (Quote $quote) {
         return Inertia::render('QuoteProducts/Add', [
             'quote' => $quote,
             'products' => Product::orderBy('name')->get(['id', 'name']),
         ]);
     })->name('quotes.products.add');
- 
+
     Route::get(
         '/quotes/{quote}/products/{product}/edit',
         function (Quote $quote, Product $product) {
@@ -1270,7 +1270,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]);
         }
     )->name('quotes.products.edit');
- 
+
     /**
      * -----------------------------------------
      * --------------- Roles -------------------
@@ -1284,7 +1284,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'roles' => $service->list($request),
         ]);
     })->name('roles.index');
- 
+
     Route::get('/roles/{role}', function (
         Role $role,
         RoleQueryService $service
@@ -1293,7 +1293,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'role' => $service->show($role),
         ]);
     })->name('roles.show');
- 
+
     Route::get('/roles/{role}/edit', function (Role $role) {
         return Inertia::render('Roles/Update', [
             'role' => $role->load([
@@ -1303,7 +1303,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'permissions' => Permission::orderBy('name')->get(['id', 'name']),
         ]);
     })->name('roles.edit');
- 
+
     /**
      * -----------------------------------------
      * -------------- Suppliers ----------------
@@ -1317,11 +1317,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'suppliers' => $service->list($request),
         ]);
     })->name('suppliers.index');
- 
+
     Route::get('/suppliers/create', function () {
         return Inertia::render('Suppliers/Create');
     })->name('suppliers.create');
- 
+
     Route::get('/suppliers/{supplier}', function (
         Supplier $supplier,
         SupplierQueryService $service
@@ -1330,7 +1330,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'supplier' => $service->show($supplier),
         ]);
     })->name('suppliers.show');
- 
+
     Route::get('/suppliers/{supplier}/edit', function (Supplier $supplier) {
         return Inertia::render('Suppliers/Update', [
             'supplier' => $supplier->load([
@@ -1339,7 +1339,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]),
         ]);
     })->name('suppliers.edit');
- 
+
     /**
      * -----------------------------------------
      * --------------- Tasks -------------------
@@ -1353,14 +1353,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'tasks' => $service->list($request),
         ]);
     })->name('tasks.index');
- 
+
     Route::get('/tasks/create', function () {
         return Inertia::render('Tasks/Create', [
             'users' => User::orderBy('name')->get(['id', 'name']),
             'taskableTypes' => array_keys(Relation::morphMap()),
         ]);
     })->name('tasks.create');
- 
+
     Route::get('/tasks/{task}', function (
         Task $task,
         TaskQueryService $service
@@ -1369,7 +1369,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'task' => $service->show($task),
         ]);
     })->name('tasks.show');
- 
+
     Route::get('/tasks/{task}/edit', function (Task $task) {
         return Inertia::render('Tasks/Update', [
             'task' => $task->load([
