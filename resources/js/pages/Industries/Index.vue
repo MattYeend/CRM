@@ -9,6 +9,7 @@ import { fetchIndustries, deleteIndustries } from '@/services/industryService'
 interface Industry {
     id: number
     name: string
+    has_companies: boolean
     permissions: { view: boolean; update: boolean; delete: boolean }
 }
 
@@ -89,11 +90,11 @@ onMounted(() => loadIndustries())
                                 :href="route('industries.show', { industry: industry.id })"
                             >View</Link>
                             <Link
-                                v-if="industry.permissions.update"
+                                v-if="industry.permissions.update && !industry.has_companies"
                                 :href="route('industries.edit', { industry: industry.id })"
                             >Edit</Link>
                             <button
-                                v-if="industry.permissions.delete"
+                                v-if="industry.permissions.delete && !industry.has_companies"
                                 @click="handleDelete(industry.id)"
                                 class="text-red-600"
                             >Delete</button>

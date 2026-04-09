@@ -68,9 +68,9 @@ class IndustryQueryService
      */
     public function list(Request $request): array
     {
-        $query = Industry::with(
+        $query = Industry::withCount(
             'companies',
-        );
+        )->with('creator');
 
         $this->search->applySearch($query, $request);
         $this->sorting->applySorting($query, $request);
@@ -93,9 +93,9 @@ class IndustryQueryService
      */
     public function show(Industry $industry): array
     {
-        $industry->load(
+        $industry->loadCount(
             'companies',
-        );
+        )->load('creator');
 
         return $this->formatIndustry($industry);
     }
@@ -177,7 +177,7 @@ class IndustryQueryService
     private function derivedData(Industry $industry): array
     {
         return [
-            'company' => $industry->company,
+            'has_companies' => $industry->companies_count > 0,
         ];
     }
 

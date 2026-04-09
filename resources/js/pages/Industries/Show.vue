@@ -10,6 +10,7 @@ interface Industry {
     id: number
     name: string
     slug: string
+    has_companies: boolean
     permissions: { view: boolean; update: boolean; delete: boolean }
 }
 
@@ -19,6 +20,7 @@ const industry = ref<Industry>({
     id: props.industry.id,
     name: props.industry.name,
     slug: props.industry.slug,
+    has_companies: props.industry.has_companies,
     permissions: { view: false, update: false, delete: false },
 })
 
@@ -50,7 +52,7 @@ onMounted(() => loadIndustry())
                     <h1 class="text-2xl font-bold">{{ industry.name }}</h1>
                     <div class="flex items-center space-x-2">
                         <Link
-                            v-if="industry.permissions.update"
+                            v-if="industry.permissions.update && !industry.has_companies"
                             :href="route('industries.edit', { industry: industry.id })"
                             class="bg-blue-600 text-white px-4 py-2 rounded"
                         >Edit</Link>
@@ -59,7 +61,7 @@ onMounted(() => loadIndustry())
                             class="bg-gray-200 text-gray-700 px-4 py-2 rounded"
                         >Back</Link>
                         <button
-                            v-if="industry.permissions.delete"
+                            v-if="industry.permissions.delete && !industry.has_companies"
                             @click="handleDelete"
                             class="bg-red-600 text-white px-4 py-2 rounded"
                         >Delete</button>
