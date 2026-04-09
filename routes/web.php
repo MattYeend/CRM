@@ -2,6 +2,7 @@
 
 use App\Models\Activity;
 use App\Models\Attachment;
+use App\Models\BillOfMaterial;
 use App\Models\Company;
 use App\Models\Deal;
 use App\Models\Industry;
@@ -11,13 +12,24 @@ use App\Models\JobTitle;
 use App\Models\Lead;
 use App\Models\Learning;
 use App\Models\Note;
+use App\Models\Order;
+use App\Models\Part;
+use App\Models\PartCategory;
+use App\Models\PartImage;
+use App\Models\PartSerialNumber;
+use App\Models\PartStockMovement;
+use App\Models\Permission;
 use App\Models\Pipeline;
 use App\Models\PipelineStage;
 use App\Models\Product;
+use App\Models\Quote;
 use App\Models\Role;
+use App\Models\Supplier;
+use App\Models\Task;
 use App\Models\User;
 use App\Services\Activities\ActivityQueryService;
 use App\Services\Attachments\AttachmentQueryService;
+use App\Services\BillOfMaterials\BillOfMaterialQueryService;
 use App\Services\Companies\CompanyQueryService;
 use App\Services\Deals\DealQueryService;
 use App\Services\Industries\IndustryQueryService;
@@ -27,6 +39,20 @@ use App\Services\JobTitles\JobTitleQueryService;
 use App\Services\Leads\LeadQueryService;
 use App\Services\Learnings\LearningQueryService;
 use App\Services\Notes\NoteQueryService;
+use App\Services\Orders\OrderQueryService;
+use App\Services\PartCategories\PartCategoryQueryService;
+use App\Services\PartImages\PartImageQueryService;
+use App\Services\Parts\PartQueryService;
+use App\Services\PartSerialNumbers\PartSerialNumberQueryService;
+use App\Services\PartStockMovements\PartStockMovementQueryService;
+use App\Services\Permissions\PermissionQueryService;
+use App\Services\Pipelines\PipelineQueryService;
+use App\Services\PipelineStages\PipelineStageQueryService;
+use App\Services\Products\ProductQueryService;
+use App\Services\Quotes\QuoteQueryService;
+use App\Services\Roles\RoleQueryService;
+use App\Services\Suppliers\SupplierQueryService;
+use App\Services\Tasks\TaskQueryService;
 use App\Services\Users\UserQueryService;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
@@ -44,9 +70,9 @@ Route::get('dashboard', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     /**
-     * -------------------------------
-     * ------------ Users ------------
-     * -------------------------------
+     * -----------------------------------
+     * -------------- Users --------------
+     * -----------------------------------
      */
     Route::get('/users', function (
         Request $request,
@@ -82,9 +108,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('users.edit');
 
     /**
-     * ------------------------------------
-     * ------------ Activities ------------
-     * ------------------------------------
+     * ----------------------------------------
+     * -------------- Activities --------------
+     * ----------------------------------------
      */
     Route::get('/activities', function (
         Request $request,
@@ -121,9 +147,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('activities.edit');
 
     /**
-     * -------------------------------------
-     * ------------ Attachments ------------
-     * -------------------------------------
+     * -----------------------------------------
+     * -------------- Attachments --------------
+     * -----------------------------------------
      */
     Route::get('/attachments', function (
         Request $request,
@@ -170,9 +196,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     )->name('attachments.download');
 
     /**
-     * -------------------------------------
-     * ------------- Companies -------------
-     * -------------------------------------
+     * -----------------------------------------
+     * --------------- Companies ---------------
+     * -----------------------------------------
      */
     Route::get('/companies', function (
         Request $request,
@@ -211,9 +237,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('companies.edit');
 
     /**
-     * --------------------------------------
-     * ------------- Industries -------------
-     * --------------------------------------
+     * ------------------------------------------
+     * --------------- Industries ---------------
+     * ------------------------------------------
      */
     Route::get('/industries', function (
         Request $request,
@@ -246,9 +272,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('industries.edit');
 
     /**
-     * -------------------------------------
-     * --------------- Deals ---------------
-     * -------------------------------------
+     * -----------------------------------------
+     * ----------------- Deals -----------------
+     * -----------------------------------------
      */
     Route::get('/deals', function (
         Request $request,
@@ -294,9 +320,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('deals.edit');
 
     /**
-     * -----------------------------------------
-     * ------------- Deal Products -------------
-     * -----------------------------------------
+     * ---------------------------------------------------------
+     * ------------- Deal Products (nested: deals) -------------
+     * ---------------------------------------------------------
      */
     Route::get('/deals/{deal}/products', function (Deal $deal) {
         return Inertia::render('DealProducts/Index', [
@@ -324,9 +350,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     )->name('deals.products.edit');
 
     /**
-     * --------------------------------------
-     * -------------- Invoices --------------
-     * --------------------------------------
+     * ------------------------------------------
+     * ---------------- Invoices ----------------
+     * ------------------------------------------
      */
     Route::get('/invoices', function (
         Request $request,
@@ -363,9 +389,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('invoices.edit');
 
     /**
-     * -------------------------------------
-     * ---------- Invoice Items ------------
-     * -------------------------------------
+     * -----------------------------------------
+     * ------------ Invoice Items --------------
+     * -----------------------------------------
      */
     Route::get('/invoice-items', function (
         Request $request,
@@ -406,9 +432,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('invoice-items.edit');
 
     /**
-     * -------------------------------------
-     * ----------- Job Titles --------------
-     * -------------------------------------
+     * -----------------------------------------
+     * ------------- Job Titles ----------------
+     * -----------------------------------------
      */
     Route::get('/job-titles', function (
         Request $request,
@@ -445,9 +471,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('job-titles.edit');
 
     /**
-     * -------------------------------------
-     * --------------- Leads ---------------
-     * -------------------------------------
+     * -----------------------------------------
+     * ----------------- Leads -----------------
+     * -----------------------------------------
      */
     Route::get('/leads', function (
         Request $request,
@@ -489,9 +515,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('leads.edit');
 
     /**
-     * -------------------------------------
-     * ------------- Learnings -------------
-     * -------------------------------------
+     * -----------------------------------------
+     * --------------- Learnings ---------------
+     * -----------------------------------------
      */
     Route::get('/learnings', function (
         Request $request,
@@ -529,9 +555,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('learnings.edit');
 
     /**
-     * -------------------------------------
-     * -------- Learning Completion --------
-     * -------------------------------------
+     * -----------------------------------------
+     * ---------- Learning Completion ----------
+     * -----------------------------------------
      */
 
     // Page to take/complete a learning (quiz / assessment)
@@ -555,9 +581,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('learnings.results');
 
     /**
-     * -------------------------------
-     * ------------ Notes ------------
-     * -------------------------------
+     * -----------------------------------
+     * -------------- Notes --------------
+     * -----------------------------------
      */
     Route::get('/notes', function (
         Request $request,
@@ -583,7 +609,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ]);
     })->name('notes.show');
 
-    Route::get('/activities/{note}/edit', function (Note $note) {
+    Route::get('/notes/{note}/edit', function (Note $note) {
         return Inertia::render('Notes/Update', [
             'note' => $note->load([
                 'user',
@@ -592,6 +618,769 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'notableTypes' => array_keys(Relation::morphMap()),
         ]);
     })->name('notes.edit');
+
+    /**
+     * -------------------------------------
+     * -------------- Orders ---------------
+     * -------------------------------------
+     */
+    Route::get('/orders', function (
+        Request $request,
+        OrderQueryService $service
+    ) {
+        return Inertia::render('Orders/Index', [
+            'orders' => $service->list($request),
+        ]);
+    })->name('orders.index');
+ 
+    Route::get('/orders/create', function () {
+        return Inertia::render('Orders/Create', [
+            'users' => User::orderBy('name')->get(['id', 'name']),
+            'deals' => Deal::orderBy('title')->get(['id', 'title']),
+            'products' => Product::orderBy('name')->get(['id', 'name']),
+        ]);
+    })->name('orders.create');
+ 
+    Route::get('/orders/{order}', function (
+        Order $order,
+        OrderQueryService $service
+    ) {
+        return Inertia::render('Orders/Show', [
+            'order' => $service->show($order),
+        ]);
+    })->name('orders.show');
+ 
+    Route::get('/orders/{order}/edit', function (Order $order) {
+        return Inertia::render('Orders/Update', [
+            'order' => $order->load([
+                'user',
+                'deal',
+                'products',
+            ]),
+            'users' => User::orderBy('name')->get(['id', 'name']),
+            'deals' => Deal::orderBy('title')->get(['id', 'title']),
+            'products' => Product::orderBy('name')->get(['id', 'name']),
+        ]);
+    })->name('orders.edit');
+ 
+    Route::get('/orders/{order}/success', function (
+        Order $order,
+        OrderQueryService $service
+    ) {
+        return Inertia::render('Orders/Success', [
+            'order' => $service->show($order),
+        ]);
+    })->name('orders.success');
+ 
+    /**
+     * -----------------------------------------
+     * ------------- Order Products ------------
+     * -----------------------------------------
+     */
+    Route::get('/orders/{order}/products', function (Order $order) {
+        return Inertia::render('OrderProducts/Index', [
+            'order' => $order->load([
+                'products',
+            ]),
+        ]);
+    })->name('orders.products.index');
+ 
+    Route::get('/orders/{order}/products/add', function (Order $order) {
+        return Inertia::render('OrderProducts/Add', [
+            'order' => $order,
+            'products' => Product::orderBy('name')->get(['id', 'name']),
+        ]);
+    })->name('orders.products.add');
+ 
+    Route::get(
+        '/orders/{order}/products/{product}/edit',
+        function (Order $order, Product $product) {
+            return Inertia::render('OrderProducts/Edit', [
+                'order' => $order,
+                'product' => $product,
+            ]);
+        }
+    )->name('orders.products.edit');
+
+    /**
+     * -----------------------------------------
+     * --------------- Parts -------------------
+     * -----------------------------------------
+     */
+    Route::get('/parts', function (
+        Request $request,
+        PartQueryService $service
+    ) {
+        return Inertia::render('Parts/Index', [
+            'parts' => $service->list($request),
+        ]);
+    })->name('parts.index');
+ 
+    Route::get('/parts/create', function () {
+        return Inertia::render('Parts/Create', [
+            'categories' => PartCategory::orderBy('name')->get(['id', 'name']),
+            'products' => Product::orderBy('name')->get(['id', 'name']),
+        ]);
+    })->name('parts.create');
+ 
+    Route::get('/parts/{part}', function (
+        Part $part,
+        PartQueryService $service
+    ) {
+        return Inertia::render('Parts/Show', [
+            'part' => $service->show($part),
+        ]);
+    })->name('parts.show');
+ 
+    Route::get('/parts/{part}/edit', function (Part $part) {
+        return Inertia::render('Parts/Update', [
+            'part' => $part->load([
+                'product',
+                'category',
+                'primarySupplier',
+                'primaryImage',
+                'billOfMaterials',
+            ]),
+            'categories' => PartCategory::orderBy('name')->get(['id', 'name']),
+            'products' => Product::orderBy('name')->get(['id', 'name']),
+        ]);
+    })->name('parts.edit');
+ 
+    /**
+     * -------------------------------------------------------
+     * ------- Bill Of Materials (nested: parts) -------------
+     * -------------------------------------------------------
+     */
+    Route::get('/parts/{part}/bill-of-materials', function (
+        Part $part,
+        Request $request,
+        BillOfMaterialQueryService $service
+    ) {
+        return Inertia::render('BillOfMaterials/Index', [
+            'part' => $part,
+            'billOfMaterials' => $service->list($part, $request),
+        ]);
+    })->name('parts.billOfMaterials.index');
+ 
+    Route::get('/parts/{part}/bill-of-materials/create', function (Part $part) {
+        return Inertia::render('BillOfMaterials/Create', [
+            'part' => $part,
+            'parts' => Part::orderBy('name')->get(['id', 'sku', 'name']),
+        ]);
+    })->name('parts.billOfMaterials.create');
+ 
+    Route::get(
+        '/parts/{part}/bill-of-materials/{billOfMaterial}',
+        function (Part $part, BillOfMaterial $billOfMaterial) {
+            return Inertia::render('BillOfMaterials/Show', [
+                'part' => $part,
+                'billOfMaterial' => $billOfMaterial->load([
+                    'childPart',
+                    'creator',
+                ]),
+            ]);
+        }
+    )->name('parts.billOfMaterials.show');
+ 
+    Route::get(
+        '/parts/{part}/bill-of-materials/{billOfMaterial}/edit',
+        function (Part $part, BillOfMaterial $billOfMaterial) {
+            return Inertia::render('BillOfMaterials/Update', [
+                'part' => $part,
+                'billOfMaterial' => $billOfMaterial->load([
+                    'childPart',
+                    'creator',
+                ]),
+                'parts' => Part::orderBy('name')->get(['id', 'sku', 'name']),
+            ]);
+        }
+    )->name('parts.billOfMaterials.edit');
+ 
+    /**
+     * -------------------------------------------------------
+     * -------- Part Serial Numbers (nested: parts) ----------
+     * -------------------------------------------------------
+     */
+    Route::get('/parts/{part}/serial-numbers', function (
+        Part $part,
+        Request $request,
+        PartSerialNumberQueryService $service
+    ) {
+        return Inertia::render('PartSerialNumbers/Index', [
+            'part' => $part,
+            'serialNumbers' => $service->list($request, $part),
+        ]);
+    })->name('parts.serialNumbers.index');
+ 
+    Route::get('/parts/{part}/serial-numbers/create', function (Part $part) {
+        return Inertia::render('PartSerialNumbers/Create', [
+            'part' => $part,
+        ]);
+    })->name('parts.serialNumbers.create');
+ 
+    Route::get(
+        '/parts/{part}/serial-numbers/{serialNumber}/edit',
+        function (Part $part, PartSerialNumber $serialNumber) {
+            return Inertia::render('PartSerialNumbers/Update', [
+                'part' => $part,
+                'serialNumber' => $serialNumber,
+            ]);
+        }
+    )->name('parts.serialNumbers.edit');
+ 
+    /**
+     * -------------------------------------------------------
+     * ------- Part Stock Movements (nested: parts) ----------
+     * -------------------------------------------------------
+     */
+    Route::get('/parts/{part}/stock-movements', function (
+        Part $part,
+        Request $request,
+        PartStockMovementQueryService $service
+    ) {
+        return Inertia::render('PartStockMovements/Index', [
+            'part' => $part,
+            'stockMovements' => $service->list($request, $part),
+        ]);
+    })->name('parts.stockMovements.index');
+ 
+    Route::get('/parts/{part}/stock-movements/create', function (Part $part) {
+        return Inertia::render('PartStockMovements/Create', [
+            'part' => $part,
+        ]);
+    })->name('parts.stockMovements.create');
+ 
+    Route::get(
+        '/parts/{part}/stock-movements/{stockMovement}',
+        function (Part $part, PartStockMovement $stockMovement) {
+            return Inertia::render('PartStockMovements/Show', [
+                'part' => $part,
+                'stockMovement' => $stockMovement->load([
+                    'part',
+                    'createdBy',
+                ]),
+            ]);
+        }
+    )->name('parts.stockMovements.show');
+ 
+    /**
+     * -----------------------------------------
+     * ----------- Part Categories -------------
+     * -----------------------------------------
+     */
+    Route::get('/part-categories', function (
+        Request $request,
+        PartCategoryQueryService $service
+    ) {
+        return Inertia::render('PartCategories/Index', [
+            'partCategories' => $service->list($request),
+        ]);
+    })->name('part-categories.index');
+ 
+    Route::get('/part-categories/create', function () {
+        return Inertia::render('PartCategories/Create', [
+            'categories' => PartCategory::orderBy('name')->get(['id', 'name']),
+        ]);
+    })->name('part-categories.create');
+ 
+    Route::get('/part-categories/{partCategory}', function (
+        PartCategory $partCategory,
+        PartCategoryQueryService $service
+    ) {
+        return Inertia::render('PartCategories/Show', [
+            'partCategory' => $service->show($partCategory),
+        ]);
+    })->name('part-categories.show');
+ 
+    Route::get('/part-categories/{partCategory}/edit', function (
+        PartCategory $partCategory
+    ) {
+        return Inertia::render('PartCategories/Update', [
+            'partCategory' => $partCategory->load([
+                'parent',
+                'children',
+                'parts',
+            ]),
+            'categories' => PartCategory::orderBy('name')->get(['id', 'name']),
+        ]);
+    })->name('part-categories.edit');
+ 
+    /**
+     * -----------------------------------------
+     * ------------- Part Images ---------------
+     * -----------------------------------------
+     */
+    Route::get('/part-images', function (
+        Request $request,
+        PartImageQueryService $service
+    ) {
+        return Inertia::render('PartImages/Index', [
+            'partImages' => $service->list($request),
+        ]);
+    })->name('part-images.index');
+ 
+    Route::get('/part-images/create', function () {
+        return Inertia::render('PartImages/Create', [
+            'parts' => Part::orderBy('name')->get(['id', 'sku', 'name']),
+        ]);
+    })->name('part-images.create');
+ 
+    Route::get('/part-images/{partImage}', function (
+        PartImage $partImage,
+        PartImageQueryService $service
+    ) {
+        return Inertia::render('PartImages/Show', [
+            'partImage' => $service->show($partImage),
+        ]);
+    })->name('part-images.show');
+ 
+    Route::get('/part-images/{partImage}/edit', function (
+        PartImage $partImage
+    ) {
+        return Inertia::render('PartImages/Update', [
+            'partImage' => $partImage->load([
+                'part',
+            ]),
+            'parts' => Part::orderBy('name')->get(['id', 'sku', 'name']),
+        ]);
+    })->name('part-images.edit');
+
+    /**
+     * -----------------------------------------
+     * ------------- Permissions ---------------
+     * -----------------------------------------
+     */
+    Route::get('/permissions', function (
+        Request $request,
+        PermissionQueryService $service
+    ) {
+        return Inertia::render('Permissions/Index', [
+            'permissions' => $service->list($request),
+        ]);
+    })->name('permissions.index');
+ 
+    Route::get('/permissions/create', function () {
+        return Inertia::render('Permissions/Create', [
+            'roles' => Role::orderBy('name')->get(['id', 'name']),
+        ]);
+    })->name('permissions.create');
+ 
+    Route::get('/permissions/{permission}', function (
+        Permission $permission,
+        PermissionQueryService $service
+    ) {
+        return Inertia::render('Permissions/Show', [
+            'permission' => $service->show($permission),
+        ]);
+    })->name('permissions.show');
+ 
+    Route::get('/permissions/{permission}/edit', function (
+        Permission $permission
+    ) {
+        return Inertia::render('Permissions/Update', [
+            'permission' => $permission->load([
+                'roles',
+            ]),
+            'roles' => Role::orderBy('name')->get(['id', 'name']),
+        ]);
+    })->name('permissions.edit');
+ 
+    /**
+     * -----------------------------------------
+     * -------------- Pipelines ----------------
+     * -----------------------------------------
+     */
+    Route::get('/pipelines', function (
+        Request $request,
+        PipelineQueryService $service
+    ) {
+        return Inertia::render('Pipelines/Index', [
+            'pipelines' => $service->list($request),
+        ]);
+    })->name('pipelines.index');
+ 
+    Route::get('/pipelines/create', function () {
+        return Inertia::render('Pipelines/Create');
+    })->name('pipelines.create');
+ 
+    Route::get('/pipelines/{pipeline}', function (
+        Pipeline $pipeline,
+        PipelineQueryService $service
+    ) {
+        return Inertia::render('Pipelines/Show', [
+            'pipeline' => $service->show($pipeline),
+        ]);
+    })->name('pipelines.show');
+ 
+    Route::get('/pipelines/{pipeline}/edit', function (Pipeline $pipeline) {
+        return Inertia::render('Pipelines/Update', [
+            'pipeline' => $pipeline->load([
+                'stages',
+            ]),
+        ]);
+    })->name('pipelines.edit');
+ 
+    /**
+     * -------------------------------------------------------
+     * ------- Pipeline Stages (nested: pipelines) -----------
+     * -------------------------------------------------------
+     */
+    Route::get('/pipelines/{pipeline}/stages', function (
+        Pipeline $pipeline,
+        Request $request,
+        PipelineStageQueryService $service
+    ) {
+        return Inertia::render('PipelineStages/Index', [
+            'pipeline' => $pipeline,
+            'stages' => $service->list($request),
+        ]);
+    })->name('pipelines.stages.index');
+ 
+    Route::get('/pipelines/{pipeline}/stages/create', function (
+        Pipeline $pipeline
+    ) {
+        return Inertia::render('PipelineStages/Create', [
+            'pipeline' => $pipeline,
+        ]);
+    })->name('pipelines.stages.create');
+ 
+    Route::get(
+        '/pipelines/{pipeline}/stages/{stage}',
+        function (
+            Pipeline $pipeline,
+            PipelineStage $stage,
+            PipelineStageQueryService $service
+        ) {
+            return Inertia::render('PipelineStages/Show', [
+                'pipeline' => $pipeline,
+                'stage' => $service->show($stage),
+            ]);
+        }
+    )->name('pipelines.stages.show');
+ 
+    Route::get(
+        '/pipelines/{pipeline}/stages/{stage}/edit',
+        function (Pipeline $pipeline, PipelineStage $stage) {
+            return Inertia::render('PipelineStages/Update', [
+                'pipeline' => $pipeline,
+                'stage' => $stage->load([
+                    'pipeline',
+                    'deals',
+                    'notes',
+                    'tasks',
+                    'attachments',
+                ]),
+            ]);
+        }
+    )->name('pipelines.stages.edit');
+
+    /**
+     * -----------------------------------------
+     * -------------- Products -----------------
+     * -----------------------------------------
+     */
+    Route::get('/products', function (
+        Request $request,
+        ProductQueryService $service
+    ) {
+        return Inertia::render('Products/Index', [
+            'products' => $service->list($request),
+        ]);
+    })->name('products.index');
+ 
+    Route::get('/products/create', function () {
+        return Inertia::render('Products/Create');
+    })->name('products.create');
+ 
+    Route::get('/products/{product}', function (
+        Product $product,
+        ProductQueryService $service
+    ) {
+        return Inertia::render('Products/Show', [
+            'product' => $service->show($product),
+        ]);
+    })->name('products.show');
+ 
+    Route::get('/products/{product}/edit', function (Product $product) {
+        return Inertia::render('Products/Update', [
+            'product' => $product->load([
+                'creator',
+            ]),
+        ]);
+    })->name('products.edit');
+ 
+    /**
+     * -------------------------------------------------------
+     * -------- Product Deals (nested: products) -------------
+     * -------------------------------------------------------
+     */
+    Route::get('/products/{product}/deals', function (Product $product) {
+        return Inertia::render('ProductDeals/Index', [
+            'product' => $product->load([
+                'deals',
+            ]),
+        ]);
+    })->name('products.deals.index');
+ 
+    Route::get('/products/{product}/deals/add', function (Product $product) {
+        return Inertia::render('ProductDeals/Add', [
+            'product' => $product,
+            'deals' => Deal::orderBy('title')->get(['id', 'title']),
+        ]);
+    })->name('products.deals.add');
+ 
+    Route::get(
+        '/products/{product}/deals/{deal}/edit',
+        function (Product $product, Deal $deal) {
+            return Inertia::render('ProductDeals/Edit', [
+                'product' => $product,
+                'deal' => $deal,
+            ]);
+        }
+    )->name('products.deals.edit');
+ 
+    /**
+     * -------------------------------------------------------
+     * -------- Product Orders (nested: products) ------------
+     * -------------------------------------------------------
+     */
+    Route::get('/products/{product}/orders', function (Product $product) {
+        return Inertia::render('ProductOrders/Index', [
+            'product' => $product->load([
+                'orders',
+            ]),
+        ]);
+    })->name('products.orders.index');
+ 
+    Route::get('/products/{product}/orders/add', function (Product $product) {
+        return Inertia::render('ProductOrders/Add', [
+            'product' => $product,
+            'orders' => Order::orderBy('id')->get(['id']),
+        ]);
+    })->name('products.orders.add');
+ 
+    Route::get(
+        '/products/{product}/orders/{order}/edit',
+        function (Product $product, Order $order) {
+            return Inertia::render('ProductOrders/Edit', [
+                'product' => $product,
+                'order' => $order,
+            ]);
+        }
+    )->name('products.orders.edit');
+ 
+    /**
+     * -------------------------------------------------------
+     * -------- Product Quotes (nested: products) ------------
+     * -------------------------------------------------------
+     */
+    Route::get('/products/{product}/quotes', function (Product $product) {
+        return Inertia::render('ProductQuotes/Index', [
+            'product' => $product->load([
+                'quotes',
+            ]),
+        ]);
+    })->name('products.quotes.index');
+ 
+    Route::get('/products/{product}/quotes/add', function (Product $product) {
+        return Inertia::render('ProductQuotes/Add', [
+            'product' => $product,
+            'quotes' => Quote::orderBy('id')->get(['id']),
+        ]);
+    })->name('products.quotes.add');
+ 
+    Route::get(
+        '/products/{product}/quotes/{quote}/edit',
+        function (Product $product, Quote $quote) {
+            return Inertia::render('ProductQuotes/Edit', [
+                'product' => $product,
+                'quote' => $quote,
+            ]);
+        }
+    )->name('products.quotes.edit');
+ 
+    /**
+     * -----------------------------------------
+     * --------------- Quotes ------------------
+     * -----------------------------------------
+     */
+    Route::get('/quotes', function (
+        Request $request,
+        QuoteQueryService $service
+    ) {
+        return Inertia::render('Quotes/Index', [
+            'quotes' => $service->list($request),
+        ]);
+    })->name('quotes.index');
+ 
+    Route::get('/quotes/create', function () {
+        return Inertia::render('Quotes/Create', [
+            'deals' => Deal::orderBy('title')->get(['id', 'title']),
+            'products' => Product::orderBy('name')->get(['id', 'name']),
+        ]);
+    })->name('quotes.create');
+ 
+    Route::get('/quotes/{quote}', function (
+        Quote $quote,
+        QuoteQueryService $service
+    ) {
+        return Inertia::render('Quotes/Show', [
+            'quote' => $service->show($quote),
+        ]);
+    })->name('quotes.show');
+ 
+    Route::get('/quotes/{quote}/edit', function (Quote $quote) {
+        return Inertia::render('Quotes/Update', [
+            'quote' => $quote->load([
+                'deal',
+                'products',
+                'creator',
+            ]),
+            'deals' => Deal::orderBy('title')->get(['id', 'title']),
+            'products' => Product::orderBy('name')->get(['id', 'name']),
+        ]);
+    })->name('quotes.edit');
+ 
+    /**
+     * -------------------------------------------------------
+     * -------- Quote Products (nested: quotes) --------------
+     * -------------------------------------------------------
+     */
+    Route::get('/quotes/{quote}/products', function (Quote $quote) {
+        return Inertia::render('QuoteProducts/Index', [
+            'quote' => $quote->load([
+                'products',
+            ]),
+        ]);
+    })->name('quotes.products.index');
+ 
+    Route::get('/quotes/{quote}/products/add', function (Quote $quote) {
+        return Inertia::render('QuoteProducts/Add', [
+            'quote' => $quote,
+            'products' => Product::orderBy('name')->get(['id', 'name']),
+        ]);
+    })->name('quotes.products.add');
+ 
+    Route::get(
+        '/quotes/{quote}/products/{product}/edit',
+        function (Quote $quote, Product $product) {
+            return Inertia::render('QuoteProducts/Edit', [
+                'quote' => $quote,
+                'product' => $product,
+            ]);
+        }
+    )->name('quotes.products.edit');
+ 
+    /**
+     * -----------------------------------------
+     * --------------- Roles -------------------
+     * -----------------------------------------
+     */
+    Route::get('/roles', function (
+        Request $request,
+        RoleQueryService $service
+    ) {
+        return Inertia::render('Roles/Index', [
+            'roles' => $service->list($request),
+        ]);
+    })->name('roles.index');
+ 
+    Route::get('/roles/{role}', function (
+        Role $role,
+        RoleQueryService $service
+    ) {
+        return Inertia::render('Roles/Show', [
+            'role' => $service->show($role),
+        ]);
+    })->name('roles.show');
+ 
+    Route::get('/roles/{role}/edit', function (Role $role) {
+        return Inertia::render('Roles/Update', [
+            'role' => $role->load([
+                'permissions',
+                'users',
+            ]),
+            'permissions' => Permission::orderBy('name')->get(['id', 'name']),
+        ]);
+    })->name('roles.edit');
+ 
+    /**
+     * -----------------------------------------
+     * -------------- Suppliers ----------------
+     * -----------------------------------------
+     */
+    Route::get('/suppliers', function (
+        Request $request,
+        SupplierQueryService $service
+    ) {
+        return Inertia::render('Suppliers/Index', [
+            'suppliers' => $service->list($request),
+        ]);
+    })->name('suppliers.index');
+ 
+    Route::get('/suppliers/create', function () {
+        return Inertia::render('Suppliers/Create');
+    })->name('suppliers.create');
+ 
+    Route::get('/suppliers/{supplier}', function (
+        Supplier $supplier,
+        SupplierQueryService $service
+    ) {
+        return Inertia::render('Suppliers/Show', [
+            'supplier' => $service->show($supplier),
+        ]);
+    })->name('suppliers.show');
+ 
+    Route::get('/suppliers/{supplier}/edit', function (Supplier $supplier) {
+        return Inertia::render('Suppliers/Update', [
+            'supplier' => $supplier->load([
+                'parts',
+                'partSuppliers',
+            ]),
+        ]);
+    })->name('suppliers.edit');
+ 
+    /**
+     * -----------------------------------------
+     * --------------- Tasks -------------------
+     * -----------------------------------------
+     */
+    Route::get('/tasks', function (
+        Request $request,
+        TaskQueryService $service
+    ) {
+        return Inertia::render('Tasks/Index', [
+            'tasks' => $service->list($request),
+        ]);
+    })->name('tasks.index');
+ 
+    Route::get('/tasks/create', function () {
+        return Inertia::render('Tasks/Create', [
+            'users' => User::orderBy('name')->get(['id', 'name']),
+            'taskableTypes' => array_keys(Relation::morphMap()),
+        ]);
+    })->name('tasks.create');
+ 
+    Route::get('/tasks/{task}', function (
+        Task $task,
+        TaskQueryService $service
+    ) {
+        return Inertia::render('Tasks/Show', [
+            'task' => $service->show($task),
+        ]);
+    })->name('tasks.show');
+ 
+    Route::get('/tasks/{task}/edit', function (Task $task) {
+        return Inertia::render('Tasks/Update', [
+            'task' => $task->load([
+                'assignee',
+                'creator',
+                'taskable',
+            ]),
+            'users' => User::orderBy('name')->get(['id', 'name']),
+            'taskableTypes' => array_keys(Relation::morphMap()),
+        ]);
+    })->name('tasks.edit');
 });
 
 require __DIR__.'/settings.php';
