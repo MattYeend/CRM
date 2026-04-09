@@ -10,6 +10,7 @@ use App\Models\InvoiceItem;
 use App\Models\JobTitle;
 use App\Models\Lead;
 use App\Models\Learning;
+use App\Models\Note;
 use App\Models\Pipeline;
 use App\Models\PipelineStage;
 use App\Models\Product;
@@ -25,6 +26,7 @@ use App\Services\Invoices\InvoiceQueryService;
 use App\Services\JobTitles\JobTitleQueryService;
 use App\Services\Leads\LeadQueryService;
 use App\Services\Learnings\LearningQueryService;
+use App\Services\Notes\NoteQueryService;
 use App\Services\Users\UserQueryService;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
@@ -322,9 +324,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     )->name('deals.products.edit');
 
     /**
-     * -------------------------------------
-     * ------------- Invoices -------------
-     * -------------------------------------
+     * --------------------------------------
+     * -------------- Invoices --------------
+     * --------------------------------------
      */
     Route::get('/invoices', function (
         Request $request,
@@ -519,7 +521,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Learning $learning
     ) {
         return Inertia::render('Learnings/Update', [
-            'learning' => app(LearningQueryService::class)->show($learning),
+            'learning' => $learning->load(
+                'creator',
+            ),
             'users' => User::orderBy('name')->get(['id', 'name']),
         ]);
     })->name('learnings.edit');
@@ -549,6 +553,45 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'learning' => $service->show($learning),
         ]);
     })->name('learnings.results');
+
+    /**
+     * -------------------------------
+     * ------------ Notes ------------
+     * -------------------------------
+     */
+    Route::get('/notes', function (
+        Request $request,
+        NoteQueryService $service
+    ) {
+        return Inertia::render('Notes/Index', [
+            'notes' => $service->list($request),
+        ]);
+    })->name('notes.index');
+
+    Route::get('/notes/create', function () {
+        return Inertia::render('Notes/Create', [
+            'notableTypes' => array_keys(Relation::morphMap()),
+        ]);
+    })->name('notes.create');
+
+    Route::get('/notes/{note}', function (
+        Note $note,
+        NoteQueryService $service
+    ) {
+        return Inertia::render('Notes/Show', [
+            'note' => $service->show($note),
+        ]);
+    })->name('notes.show');
+
+    Route::get('/activities/{note}/edit', function (Note $note) {
+        return Inertia::render('Notes/Update', [
+            'note' => $note->load([
+                'user',
+                'notable',
+            ]),
+            'notableTypes' => array_keys(Relation::morphMap()),
+        ]);
+    })->name('notes.edit');
 });
 
 require __DIR__.'/settings.php';
