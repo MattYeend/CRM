@@ -17,14 +17,25 @@ use Illuminate\Support\Facades\Gate;
  */
 class ActivityQueryService
 {
+    /**
+     * Service responsible for applying sort order to activity queries.
+     *
+     * @var ActivitySortingService
+     */
     private ActivitySortingService $sorting;
+
+    /**
+     * Service responsible for applying trash visibility filters to activiy queries.
+     *
+     * @var ActivityTrashFilterService
+     */
     private ActivityTrashFilterService $trashFilter;
 
     /**
      * Create a new service instance.
      *
-     * @param  ActivitySortingService      $sorting
-     * @param  ActivityTrashFilterService  $trashFilter
+     * @param  ActivitySortingService $sorting
+     * @param  ActivityTrashFilterService $trashFilter
      *
      * @return void
      */
@@ -42,7 +53,7 @@ class ActivityQueryService
      * Applies query parameters, eager loads relationships, and appends
      * permission metadata to the paginated result set.
      *
-     * @param  Request  $request  The incoming request containing query
+     * @param  Request $request The incoming request containing query
      * parameters
      *
      * @return LengthAwarePaginator
@@ -95,7 +106,7 @@ class ActivityQueryService
      * Includes core attributes, related user data, derived subject name,
      * and authorisation permissions for the current user.
      *
-     * @param  Activity  $activity
+     * @param  Activity $activity
      *
      * @return array
      */

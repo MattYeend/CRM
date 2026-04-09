@@ -3,8 +3,12 @@
 use App\Models\Activity;
 use App\Models\Attachment;
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Industry;
 use App\Models\JobTitle;
+use App\Models\Pipeline;
+use App\Models\PipelineStage;
+use App\Models\Product;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -231,6 +235,93 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]),
         ]);
     })->name('industries.edit');
+
+    /**
+     * -------------------------------------
+     * --------------- Deals ---------------
+     * -------------------------------------
+     */
+    Route::get('/deals', function () {
+        return Inertia::render('Deals/Index', [
+            'deals' => Deal::with([
+                'company',
+                'owner',
+                'pipeline',
+                'stage',
+            ])->latest()->get(),
+        ]);
+    })->name('deals.index');
+ 
+    Route::get('/deals/create', function () {
+        return Inertia::render('Deals/Create', [
+            'companies' => Company::orderBy('name')->get(['id', 'name']),
+            'owners' => User::orderBy('name')->get(['id', 'name']),
+            'pipelines' => Pipeline::orderBy('name')->get(['id', 'name']),
+            'stages' => PipelineStage::orderBy('name')->get(['id', 'name']),
+        ]);
+    })->name('deals.create');
+ 
+    Route::get('/deals/{deal}', function (Deal $deal) {
+        return Inertia::render('Deals/Show', [
+            'deal' => $deal->load([
+                'company',
+                'owner',
+                'pipeline',
+                'stage',
+                'notes',
+                'tasks',
+                'attachments',
+                'products',
+            ]),
+        ]);
+    })->name('deals.show');
+ 
+    Route::get('/deals/{deal}/edit', function (Deal $deal) {
+        return Inertia::render('Deals/Update', [
+            'deal' => $deal->load([
+                'company',
+                'owner',
+                'pipeline',
+                'stage',
+                'products',
+            ]),
+            'companies' => Company::orderBy('name')->get(['id', 'name']),
+            'owners' => User::orderBy('name')->get(['id', 'name']),
+            'pipelines' => Pipeline::orderBy('name')->get(['id', 'name']),
+            'stages' => PipelineStage::orderBy('name')->get(['id', 'name']),
+        ]);
+    })->name('deals.edit');
+ 
+    /**
+     * -------------------------------------------------------
+     * ------------- Deal Products (nested: deals) -----------
+     * -------------------------------------------------------
+     */
+    Route::get('/deals/{deal}/products', function (Deal $deal) {
+        return Inertia::render('DealProducts/Index', [
+            'deal' => $deal->load([
+                'products',
+            ]),
+        ]);
+    })->name('deals.products.index');
+ 
+    Route::get('/deals/{deal}/products/add', function (Deal $deal) {
+        return Inertia::render('DealProducts/Add', [
+            'deal' => $deal,
+            'products' => Product::orderBy('name')->get(['id', 'name']),
+        ]);
+    })->name('deals.products.add');
+ 
+    Route::get(
+        '/deals/{deal}/products/{product}/edit',
+        function (Deal $deal, Product $product) {
+            return Inertia::render('DealProducts/Edit', [
+                'deal' => $deal,
+                'product' => $product,
+            ]);
+        }
+    )->name('deals.products.edit');
+    
 });
 
 require __DIR__.'/settings.php';
