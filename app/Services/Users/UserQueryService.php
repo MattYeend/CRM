@@ -114,6 +114,11 @@ class UserQueryService
             'avatar_url' => $user->avatar_url,
             'job_title' => $user->jobTitle,
             'role' => $user->role,
+            'notes' => $user->notes,
+            'tasks' => $user->tasks,
+            'deals' => $user->deals,
+            'activities' => $user->activity,
+            'learnings' => $user->learnings,
             'permissions' => [
                 'view' => Gate::allows('view', $user),
                 'update' => Gate::allows('update', $user),

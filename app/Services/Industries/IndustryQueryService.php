@@ -164,6 +164,7 @@ class IndustryQueryService
         return [
             'id' => $industry->id,
             'name' => $industry->name,
+            'slug' => $industry->slug,
         ];
     }
 

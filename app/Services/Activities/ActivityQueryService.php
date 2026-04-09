@@ -25,7 +25,8 @@ class ActivityQueryService
     private ActivitySortingService $sorting;
 
     /**
-     * Service responsible for applying trash visibility filters to activiy queries.
+     * Service responsible for applying trash visibility filters to
+     * activiy queries.
      *
      * @var ActivityTrashFilterService
      */

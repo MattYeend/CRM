@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3'
-import { computed } from 'vue'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
 import { ref, onMounted } from 'vue'
 import { type BreadcrumbItem } from '@/types'
