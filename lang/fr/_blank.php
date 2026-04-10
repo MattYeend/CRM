@@ -11,7 +11,6 @@ return [
     |
     */
 
-    // Translate below to french
     'placeholder' => 'Ceci est un fichier de langue vierge.',
     'example_key' => 'Valeur Exemple',
     'another_key' => 'Une Autre Valeur',
