@@ -2,10 +2,11 @@
 
 namespace App\Services\Users;
 
+use App\Mail\WelcomeEmail;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * Handles the creation of new User records.
@@ -39,12 +40,14 @@ class UserCreatorService
                 ->store('avatars', 'public');
         }
 
+        $plainPassword = $data['password'];
         $data['password'] = Hash::make($data['password']);
         $data['created_by'] = $user->id;
 
         $newUser = User::create($data);
 
-        event(new Registered($newUser));
+        Mail::to($newUser->email)
+            ->queue(new WelcomeEmail($newUser, $plainPassword));
 
         return $newUser;
     }

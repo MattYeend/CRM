@@ -2,13 +2,11 @@
 
 namespace App\Providers;
 
-use App\Listeners\SendWelcomeEmail;
 use App\Models\Company;
 use App\Models\Deal;
 use App\Models\Order;
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Artisan;
@@ -71,11 +69,6 @@ class AppServiceProvider extends ServiceProvider
                 $payload['data']['object']['id']
             )->update(['status' => 'paid']);
         });
-
-        Event::listen(
-            Registered::class,
-            SendWelcomeEmail::class,
-        );
     }
 
     /**
