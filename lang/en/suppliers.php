@@ -4,10 +4,10 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Blank Language Lines
+    | Supplier Language Lines
     |--------------------------------------------------------------------------
     |
-    | The following language lines are used for part-related messages
+    | The following language lines are used for supplier-related messages
     | throughout the CRM application. You can modify these lines to suit your
     | application's requirements.
     |

@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Blank Language Lines
+    | Part Language Lines
     |--------------------------------------------------------------------------
     |
     | The following language lines are used for part-related messages
