@@ -3,6 +3,7 @@
 namespace App\Services\Users;
 
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -21,6 +22,9 @@ class UserCreatorService
      * user before persisting the record. Also handles avatar file upload
      * if provided.
      *
+     * Fires the Registered event after creation so that any listeners
+     * (e.g. SendWelcomeEmail) are triggered automatically.
+     *
      * @param  Request $request Validated request containing user data.
      *
      * @return User The newly created user record.
@@ -38,6 +42,10 @@ class UserCreatorService
         $data['password'] = Hash::make($data['password']);
         $data['created_by'] = $user->id;
 
-        return User::create($data);
+        $newUser = User::create($data);
+
+        event(new Registered($newUser));
+
+        return $newUser;
     }
 }
