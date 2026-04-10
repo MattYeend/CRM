@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
@@ -22,9 +23,10 @@ class WelcomeEmail extends Mailable
     /**
      * Create a new message instance.
      *
-     * No dependencies are required at this time.
+     * @param  User $user The newly registered user to send the welcome
+     * email to.
      */
-    public function __construct()
+    public function __construct(public User $user)
     {
         // Currently Empty
     }
