@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-
 const props = defineProps<{
     form: any
+    errors?: Partial<Record<'password' | 'password_confirmation', string>>
 }>()
 
 const form = props.form
@@ -14,12 +13,26 @@ const form = props.form
 
         <div>
             <label class="block font-medium">Password</label>
-            <input type="password" v-model="form.password" class="border rounded w-full p-2"/>
+            <input
+                type="password"
+                v-model="form.password"
+                :class="{ 'border-red-500': errors?.password_confirmation }"
+            />
+            <p v-if="errors?.password" class="mt-1 text-sm text-red-600">
+                {{ errors.password }}
+            </p>
         </div>
 
         <div>
             <label class="block font-medium">Confirm Password</label>
-            <input type="password" v-model="form.password_confirmation" class="border rounded w-full p-2"/>
+            <input
+                type="password"
+                v-model="form.password_confirmation"
+                :class="{ 'border-red-500': errors?.password_confirmation }"
+            />
+            <p v-if="errors?.password_confirmation" class="mt-1 text-sm text-red-600">
+                {{ errors.password_confirmation }}
+            </p>
         </div>
     </div>
 </template>

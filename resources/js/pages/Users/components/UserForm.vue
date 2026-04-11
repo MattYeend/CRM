@@ -70,7 +70,11 @@ async function submit() {
         console.error(err.response?.data ?? err);
 
         if (err.response?.status === 422) {
-            form.setError(err.response.data.errors);
+            const raw = err.response.data.errors as Record<string, string[]>
+            const flat = Object.fromEntries(
+                Object.entries(raw).map(([key, messages]) => [key, messages[0]])
+            ) as Record<string, string>
+            form.setError(flat)
         }
     }
 }
@@ -78,11 +82,22 @@ async function submit() {
 
 <template>
     <form @submit.prevent="submit" class="space-y-8 max-w-xl">
-        <UserAvatarUpload v-model="form.avatar" :avatar-url="props.user?.avatar_url" />
+        <UserAvatarUpload
+            v-model="form.avatar"
+            :avatar-url="props.user?.avatar_url"
+        />
 
-        <UserDetailsSection :form="form" :roles="props.roles" :jobTitles="props.jobTitles" />
+        <UserDetailsSection
+            :form="form" 
+            :roles="props.roles" 
+            :jobTitles="props.jobTitles" 
+            :errors="form.errors"
+        />
 
-        <UserPasswordSection :form="form" />
+        <UserPasswordSection
+            :form="form"
+            :errors="form.errors"
+        />
 
         <div>
             <button
