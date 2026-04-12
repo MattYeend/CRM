@@ -88,9 +88,9 @@ class CompanyController extends Controller
     {
         $this->authorize('viewAny', Company::class);
 
-        $company = $this->query->list($request);
+        $companies = $this->query->list($request);
 
-        return response()->json($company);
+        return response()->json($companies);
     }
 
     /**
