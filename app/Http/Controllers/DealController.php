@@ -103,9 +103,9 @@ class DealController extends Controller
     public function index(Request $request): JsonResponse
     {
         $this->authorize('viewAny', Deal::class);
- 
+
         $deals = $this->query->list($request);
- 
+
         return response()->json($deals);
     }
 
@@ -300,10 +300,10 @@ class DealController extends Controller
     {
         $items = $request->input('products');
         $this->dealProductManagement->update($deal, $items);
- 
+
         return response()->json(null, 204);
     }
- 
+
     /**
      * Remove a product from a deal.
      *
@@ -319,10 +319,10 @@ class DealController extends Controller
     public function removeProduct(Deal $deal, Product $product): JsonResponse
     {
         $this->dealProductManagement->remove($deal, $product->id);
- 
+
         return response()->json(null, 204);
     }
- 
+
     /**
      * Restore a previously removed product on a deal.
      *
@@ -338,7 +338,7 @@ class DealController extends Controller
     public function restoreProduct(Deal $deal, Product $product): JsonResponse
     {
         $this->dealProductManagement->restore($deal, $product->id);
- 
+
         return response()->json(['message' => 'Product restored on deal']);
     }
 }

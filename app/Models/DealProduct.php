@@ -20,6 +20,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * resolve the correct row to update when setting 'deleted_at', causing
  * delete and restore operations to silently fail.
  *
+ * Incrementing behaviour is explicitly enabled via the getIncrementing()
+ * method instead of a public property, ensuring compatibility with strict
+ * code standards that prohibit public properties.
+ *
  * Relationships defined in this model include:
  * - deal(): Belongs-to relationship to the Deal this line item belongs to.
  * - product(): Belongs-to relationship to the Product referenced by this
@@ -87,18 +91,6 @@ class DealProduct extends Pivot
      */
     protected $table = 'deal_products';
 
-    /**
-     * Indicates that the pivot table has an auto-incrementing primary key.
-     *
-     * Pivot models default to non-incrementing keys. Enabling this allows
-     * Eloquent to locate individual pivot rows by their 'id' column, which
-     * is required for soft delete and restore operations to function
-     * correctly on this model.
-     *
-     * @var bool
-     */
-    public $incrementing = true;
- 
     /**
      * The primary key column for this pivot model.
      *
@@ -204,6 +196,24 @@ class DealProduct extends Pivot
     public function restorer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'restored_by');
+    }
+
+    /**
+     * Determine if the model uses an auto-incrementing primary key.
+     *
+     * Overrides the default Pivot behaviour (which assumes non-incrementing
+     * composite keys) to ensure Eloquent treats this model as having a single,
+     * auto-incrementing 'id' column. This is required for soft delete and
+     * restore operations to correctly target individual rows.
+     *
+     * Implemented as a method rather than a public property to comply with
+     * code standards that disallow public properties.
+     *
+     * @return bool
+     */
+    public function getIncrementing(): bool
+    {
+        return true;
     }
 
     /**
