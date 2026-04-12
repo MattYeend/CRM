@@ -372,7 +372,7 @@ test('update products on a deal', function () {
 
     $response = $this->putJson(route('api.deals.products.update', $deal), $payload);
 
-    $response->assertStatus(200);
+    $response->assertStatus(204);
 
     $this->assertDatabaseHas('deal_products', [
         'deal_id' => $deal->id,
@@ -392,7 +392,7 @@ test('remove a product from a deal', function () {
 
     $response = $this->deleteJson(route('api.deals.products.remove', [$deal, $product]));
 
-    $response->assertStatus(200);
+    $response->assertStatus(204);
 
     // Assert the row is soft-deleted
     $this->assertDatabaseHas('deal_products', [
