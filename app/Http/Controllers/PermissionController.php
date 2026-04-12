@@ -11,7 +11,6 @@ use App\Services\Permissions\PermissionQueryService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -86,9 +85,9 @@ class PermissionController extends Controller
     {
         $this->authorize('viewAny', Permission::class);
 
-        $permission = $this->query->list($request);
+        $permissions = $this->query->list($request);
 
-        return response()->json($permission);
+        return response()->json($permissions);
     }
 
     /**

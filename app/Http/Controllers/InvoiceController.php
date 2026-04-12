@@ -11,7 +11,6 @@ use App\Services\Invoices\InvoiceQueryService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -89,9 +88,9 @@ class InvoiceController extends Controller
     {
         $this->authorize('viewAny', Invoice::class);
 
-        $invoice = $this->query->list($request);
+        $invoices = $this->query->list($request);
 
-        return response()->json($invoice);
+        return response()->json($invoices);
     }
 
     /**

@@ -11,7 +11,6 @@ use App\Services\PipelineStages\PipelineStageQueryService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -91,9 +90,9 @@ class PipelineStageController extends Controller
     {
         $this->authorize('viewAny', PipelineStage::class);
 
-        $pipelineStage = $this->query->list($request);
+        $pipelineStages = $this->query->list($request);
 
-        return response()->json($pipelineStage);
+        return response()->json($pipelineStages);
     }
 
     /**

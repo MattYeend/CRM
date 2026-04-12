@@ -11,7 +11,6 @@ use App\Services\Learnings\LearningQueryService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -89,9 +88,9 @@ class LearningController extends Controller
     {
         $this->authorize('viewAny', Learning::class);
 
-        $learning = $this->query->list($request);
+        $learnings = $this->query->list($request);
 
-        return response()->json($learning);
+        return response()->json($learnings);
     }
 
     /**

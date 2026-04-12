@@ -13,7 +13,6 @@ use App\Services\Quotes\QuoteQueryService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -98,9 +97,9 @@ class QuoteController extends Controller
     {
         $this->authorize('viewAny', Quote::class);
 
-        $quote = $this->query->list($request);
+        $quotes = $this->query->list($request);
 
-        return response()->json($quote);
+        return response()->json($quotes);
     }
 
     /**

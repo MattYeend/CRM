@@ -13,7 +13,6 @@ use App\Services\Orders\OrderQueryService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -102,9 +101,9 @@ class OrderController extends Controller
     {
         $this->authorize('viewAny', Order::class);
 
-        $order = $this->query->list($request);
+        $orders = $this->query->list($request);
 
-        return response()->json($order);
+        return response()->json($orders);
     }
 
     /**

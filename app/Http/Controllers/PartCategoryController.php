@@ -11,7 +11,6 @@ use App\Services\PartCategories\PartCategoryQueryService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -91,9 +90,9 @@ class PartCategoryController extends Controller
     {
         $this->authorize('viewAny', PartCategory::class);
 
-        $part = $this->query->list($request);
+        $partCategories = $this->query->list($request);
 
-        return response()->json($part);
+        return response()->json($partCategories);
     }
 
     /**

@@ -11,7 +11,6 @@ use App\Services\PartStockMovements\PartStockMovementManagementService;
 use App\Services\PartStockMovements\PartStockMovementQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles HTTP requests for the PartStockMovement resource.
@@ -88,9 +87,9 @@ class PartStockMovementController extends Controller
     {
         $this->authorize('viewAny', PartStockMovement::class);
 
-        $partStockMovement = $this->query->list($request, $part);
+        $partStockMovements = $this->query->list($request, $part);
 
-        return response()->json($partStockMovement);
+        return response()->json($partStockMovements);
     }
 
     /**

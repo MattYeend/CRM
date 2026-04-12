@@ -8,7 +8,6 @@ use App\Services\Roles\RoleManagementService;
 use App\Services\Roles\RoleQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles HTTP requests for the Role resource.
@@ -82,9 +81,9 @@ class RoleController extends Controller
     {
         $this->authorize('viewAny', Role::class);
 
-        $role = $this->query->list($request);
+        $roles = $this->query->list($request);
 
-        return response()->json($role);
+        return response()->json($roles);
     }
 
     /**

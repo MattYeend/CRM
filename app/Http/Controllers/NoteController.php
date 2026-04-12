@@ -11,7 +11,6 @@ use App\Services\Notes\NoteQueryService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -87,9 +86,9 @@ class NoteController extends Controller
     {
         $this->authorize('viewAny', Note::class);
 
-        $note = $this->query->list($request);
+        $notes = $this->query->list($request);
 
-        return response()->json($note);
+        return response()->json($notes);
     }
 
     /**

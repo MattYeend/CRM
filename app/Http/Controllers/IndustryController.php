@@ -88,9 +88,9 @@ class IndustryController extends Controller
     {
         $this->authorize('viewAny', Industry::class);
 
-        $industry = $this->query->list($request);
+        $industries = $this->query->list($request);
 
-        return response()->json($industry);
+        return response()->json($industries);
     }
 
     /**

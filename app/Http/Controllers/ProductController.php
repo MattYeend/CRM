@@ -17,7 +17,6 @@ use App\Services\QuoteProducts\QuoteProductManagementService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -133,9 +132,9 @@ class ProductController extends Controller
     {
         $this->authorize('viewAny', Product::class);
 
-        $product = $this->query->list($request);
+        $products = $this->query->list($request);
 
-        return response()->json($product);
+        return response()->json($products);
     }
 
     /**
