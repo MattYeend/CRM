@@ -12,7 +12,6 @@ use App\Services\Attachments\AttachmentQueryService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -106,17 +105,7 @@ class AttachmentController extends Controller
 
         $paginator = $this->query->list($request);
 
-        return response()->json([
-            'data' => $paginator->items(),
-            'current_page' => $paginator->currentPage(),
-            'last_page' => $paginator->lastPage(),
-            'total' => $paginator->total(),
-
-            'permissions' => [
-                'create' => Gate::allows('create', Attachment::class),
-                'viewAny' => Gate::allows('viewAny', Attachment::class),
-            ],
-        ]);
+        return response()->json($paginator);
     }
 
     /**

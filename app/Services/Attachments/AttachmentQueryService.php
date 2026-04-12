@@ -4,7 +4,6 @@ namespace App\Services\Attachments;
 
 use App\Models\Attachment;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -56,9 +55,9 @@ class AttachmentQueryService
      * @param  Request $request Incoming HTTP request; may carry sort, filter,
      * and pagination params.
      *
-     * @return LengthAwarePaginator Paginated attachment results.
+     * @return array Paginated attachment results.
      */
-    public function list(Request $request): LengthAwarePaginator
+    public function list(Request $request): array
     {
         $perPage = max(
             1,
@@ -76,14 +75,14 @@ class AttachmentQueryService
             fn (Attachment $attachment) => $this->formatAttachment($attachment)
         );
 
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Attachment::class),
-                'viewAny' => Gate::allows('viewAny', Attachment::class),
-            ],
-        ]);
+        $result = $paginator->toArray();
 
-        return $paginator;
+        $result['permissions'] = [
+            'create' => Gate::allows('create', Attachment::class),
+            'viewAny' => Gate::allows('viewAny', Attachment::class),
+        ];
+
+        return $result;
     }
 
     /**
