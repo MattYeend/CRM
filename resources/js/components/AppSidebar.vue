@@ -14,7 +14,15 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { Activity, Building2, Globe, Handshake, LayoutGrid, Paperclip, User } from 'lucide-vue-next';
+import {
+    Activity,
+    Building2,
+    Globe,
+    Handshake,
+    LayoutGrid,
+    Paperclip,
+    User
+} from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
