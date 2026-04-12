@@ -236,4 +236,57 @@ class PartController extends Controller
 
         return response()->json($part);
     }
+
+    /**
+     * Display a paginated stock-level listing of all parts.
+     *
+     * Returns only the fields needed for stock management views:
+     * id, name, sku, quantity, and reorder_point. Results are ordered
+     * by quantity ascending so the lowest-stock parts appear first.
+     *
+     * Authorises via the 'viewAny' policy before returning data.
+     *
+     * @param  Request $request Incoming HTTP request; may carry
+     * pagination params.
+     *
+     * @return JsonResponse Paginated part stock data.
+     */
+    public function stock(Request $request): JsonResponse
+    {
+        $this->authorize('viewAny', Part::class);
+
+        $parts = Part::select('id', 'name', 'sku', 'quantity', 'reorder_point')
+            ->orderBy('quantity')
+            ->paginate(25)
+            ->withQueryString();
+
+        return response()->json($parts);
+    }
+
+    /**
+     * Display a paginated listing of parts that are low on stock.
+     *
+     * Applies the lowStock() scope from the Part model, which filters
+     * to parts where quantity is at or below the reorder point.
+     * Results are ordered by quantity ascending.
+     *
+     * Authorises via the 'viewAny' policy before returning data.
+     *
+     * @param  Request $request Incoming HTTP request; may carry
+     * pagination params.
+     *
+     * @return JsonResponse Paginated low-stock part data.
+     */
+    public function lowStock(Request $request): JsonResponse
+    {
+        $this->authorize('viewAny', Part::class);
+
+        $parts = Part::select('id', 'name', 'sku', 'quantity', 'reorder_point')
+            ->lowStock()
+            ->orderBy('quantity')
+            ->paginate(25)
+            ->withQueryString();
+
+        return response()->json($parts);
+    }
 }

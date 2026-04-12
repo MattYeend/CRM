@@ -328,3 +328,217 @@ test('restore returns 404 when part is not deleted', function () {
 
     $response->assertStatus(404);
 });
+
+/**
+ * -------------------------------------------------------------
+ * --------------------------- Stock ---------------------------
+ * -------------------------------------------------------------
+ */
+test('stock returns paginated parts with stock fields', function () {
+    Part::factory()->count(5)->create();
+
+    $response = $this->getJson(route('api.parts.stock'));
+
+    $response->assertStatus(200);
+    $response->assertJsonStructure([
+        'data' => [
+            '*' => [
+                'id',
+                'name',
+                'sku',
+                'quantity',
+                'reorder_point',
+            ],
+        ],
+        'current_page',
+        'per_page',
+        'total',
+    ]);
+});
+
+test('stock returns parts ordered by quantity ascending', function () {
+    Part::factory()->create(['name' => 'High Stock Part', 'quantity' => 100]);
+    Part::factory()->create(['name' => 'Low Stock Part', 'quantity' => 2]);
+    Part::factory()->create(['name' => 'Mid Stock Part', 'quantity' => 50]);
+
+    $response = $this->getJson(route('api.parts.stock'));
+
+    $response->assertStatus(200);
+
+    $quantities = collect($response->json('data'))->pluck('quantity')->values()->all();
+
+    expect($quantities)->toBe(array_values(sort($quantities) ? $quantities : $quantities));
+    expect($quantities[0])->toBeLessThanOrEqual($quantities[1]);
+    expect($quantities[1])->toBeLessThanOrEqual($quantities[2]);
+});
+
+test('stock does not expose fields beyond stock management fields', function () {
+    Part::factory()->create();
+
+    $response = $this->getJson(route('api.parts.stock'));
+
+    $response->assertStatus(200);
+
+    $part = $response->json('data.0');
+
+    expect($part)->not->toHaveKey('price');
+    expect($part)->not->toHaveKey('cost_price');
+    expect($part)->not->toHaveKey('description');
+});
+
+test('stock returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update(['role_id' => $role->id]);
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.parts.stock'));
+
+    $response->assertStatus(403);
+});
+
+test('stock returns empty data when no parts exist', function () {
+    $response = $this->getJson(route('api.parts.stock'));
+
+    $response->assertStatus(200);
+    $response->assertJsonPath('total', 0);
+    $this->assertCount(0, $response->json('data'));
+});
+
+test('stock paginates at 25 per page', function () {
+    Part::factory()->count(30)->create();
+
+    $response = $this->getJson(route('api.parts.stock'));
+
+    $response->assertStatus(200);
+    $this->assertCount(25, $response->json('data'));
+    $response->assertJsonPath('per_page', 25);
+    $response->assertJsonPath('total', 30);
+});
+
+/**
+ * -------------------------------------------------------------
+ * ------------------------- Low Stock -------------------------
+ * -------------------------------------------------------------
+ */
+test('low stock returns only parts at or below reorder point', function () {
+    Part::factory()->create([
+        'name'          => 'Critical Part',
+        'quantity'      => 2,
+        'reorder_point' => 5,
+    ]);
+    Part::factory()->create([
+        'name'          => 'At Reorder Part',
+        'quantity'      => 5,
+        'reorder_point' => 5,
+    ]);
+    Part::factory()->create([
+        'name'          => 'Healthy Part',
+        'quantity'      => 100,
+        'reorder_point' => 10,
+    ]);
+
+    $response = $this->getJson(route('api.parts.stock.low'));
+
+    $response->assertStatus(200);
+    $response->assertJsonPath('total', 2);
+
+    $names = collect($response->json('data'))->pluck('name')->all();
+    expect($names)->toContain('Critical Part');
+    expect($names)->toContain('At Reorder Part');
+    expect($names)->not->toContain('Healthy Part');
+});
+
+test('low stock returns parts ordered by quantity ascending', function () {
+    Part::factory()->create(['quantity' => 4, 'reorder_point' => 10]);
+    Part::factory()->create(['quantity' => 1, 'reorder_point' => 10]);
+    Part::factory()->create(['quantity' => 7, 'reorder_point' => 10]);
+
+    $response = $this->getJson(route('api.parts.stock.low'));
+
+    $response->assertStatus(200);
+
+    $quantities = collect($response->json('data'))->pluck('quantity')->values()->all();
+
+    expect($quantities[0])->toBeLessThanOrEqual($quantities[1]);
+    expect($quantities[1])->toBeLessThanOrEqual($quantities[2]);
+});
+
+test('low stock excludes parts with no reorder point set', function () {
+    Part::factory()->create([
+        'name'          => 'No Reorder Part',
+        'quantity'      => 1,
+        'reorder_point' => null,
+    ]);
+    Part::factory()->create([
+        'name'          => 'Low Reorder Part',
+        'quantity'      => 1,
+        'reorder_point' => 5,
+    ]);
+
+    $response = $this->getJson(route('api.parts.stock.low'));
+
+    $response->assertStatus(200);
+    $response->assertJsonPath('total', 1);
+
+    $names = collect($response->json('data'))->pluck('name')->all();
+    expect($names)->toContain('Low Reorder Part');
+    expect($names)->not->toContain('No Reorder Part');
+});
+
+test('low stock returns empty data when all parts are sufficiently stocked', function () {
+    Part::factory()->create(['quantity' => 100, 'reorder_point' => 10]);
+    Part::factory()->create(['quantity' => 50,  'reorder_point' => 5]);
+
+    $response = $this->getJson(route('api.parts.stock.low'));
+
+    $response->assertStatus(200);
+    $response->assertJsonPath('total', 0);
+    $this->assertCount(0, $response->json('data'));
+});
+
+test('low stock returns correct structure', function () {
+    Part::factory()->create(['quantity' => 1, 'reorder_point' => 10]);
+
+    $response = $this->getJson(route('api.parts.stock.low'));
+
+    $response->assertStatus(200);
+    $response->assertJsonStructure([
+        'data' => [
+            '*' => [
+                'id',
+                'name',
+                'sku',
+                'quantity',
+                'reorder_point',
+            ],
+        ],
+        'current_page',
+        'per_page',
+        'total',
+    ]);
+});
+
+test('low stock returns 403 when user lacks permission', function () {
+    $user = User::factory()->create();
+    $role = Role::factory()->create(['name' => 'user']);
+
+    $user->update(['role_id' => $role->id]);
+    $this->actingAs($user, 'sanctum');
+
+    $response = $this->getJson(route('api.parts.stock.low'));
+
+    $response->assertStatus(403);
+});
+
+test('low stock paginates at 25 per page', function () {
+    Part::factory()->count(30)->create(['quantity' => 1, 'reorder_point' => 10]);
+
+    $response = $this->getJson(route('api.parts.stock.low'));
+
+    $response->assertStatus(200);
+    $this->assertCount(25, $response->json('data'));
+    $response->assertJsonPath('per_page', 25);
+    $response->assertJsonPath('total', 30);
+});

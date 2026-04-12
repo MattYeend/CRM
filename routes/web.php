@@ -723,6 +723,38 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ]);
     })->name('parts.create');
 
+    Route::get('/parts/stock', function (
+        Request $request,
+        PartQueryService $service
+    ) {
+        return Inertia::render('Parts/Stock/Index', [
+            'parts' => Part::select(
+                'id',
+                'name',
+                'sku',
+                'quantity',
+                'reorder_point'
+            )->orderBy('quantity')
+                ->paginate(25)
+                ->withQueryString(),
+        ]);
+    })->name('parts.stock.index');
+
+    Route::get('/parts/stock/low', function (Request $request) {
+        return Inertia::render('Parts/Stock/LowStock', [
+            'parts' => Part::select(
+                'id',
+                'name',
+                'sku',
+                'quantity',
+                'reorder_point'
+            )->lowStock()
+                ->orderBy('quantity')
+                ->paginate(25)
+                ->withQueryString(),
+        ]);
+    })->name('parts.stock.low');
+
     Route::get('/parts/{part}', function (
         Part $part,
         PartQueryService $service
@@ -827,6 +859,28 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]);
         }
     )->name('parts.serialNumbers.edit');
+
+    /**
+     * -------------------------------------------------------
+     * ------------ Part Stock (nested: parts) ---------------
+     * -------------------------------------------------------
+     */
+    Route::get('/parts/{part}/stock', function (
+        Part $part,
+        PartStockMovementQueryService $service,
+        Request $request
+    ) {
+        return Inertia::render('Parts/Stock/Show', [
+            'part' => $part->only(
+                'id',
+                'name',
+                'sku',
+                'quantity',
+                'reorder_point'
+            ),
+            'movements' => $service->list($request, $part),
+        ]);
+    })->name('parts.stock.show');
 
     /**
      * -------------------------------------------------------

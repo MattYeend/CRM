@@ -517,6 +517,16 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
      * -------------------------- Parts --------------------------
      * -----------------------------------------------------------
      */
+    Route::get(
+        'parts/stock',
+        [PartController::class, 'stock']
+    )->name('api.parts.stock');
+
+    Route::get(
+        'parts/stock/low',
+        [PartController::class, 'lowStock']
+    )->name('api.parts.stock.low');
+
     Route::apiResource('parts', PartController::class)
         ->names([
             'index' => 'api.parts.index',
