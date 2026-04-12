@@ -85,7 +85,7 @@ onMounted(() => loadDeal())
 
             <table class="w-full border">
                 <thead>
-                    <tr class="bg-gray-50">
+                    <tr>
                         <th class="p-2 text-left">Product</th>
                         <th class="p-2 text-right">Qty</th>
                         <th class="p-2 text-right">Unit Price</th>

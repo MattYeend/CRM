@@ -203,15 +203,6 @@ async function submit() {
             </div>
         </div>
 
-        <!-- Flags -->
-        <div class="space-y-2">
-            <h2 class="text-lg font-semibold border-b pb-2">Flags</h2>
-            <label class="flex items-center gap-2 cursor-pointer">
-                <input v-model="form.is_test" type="checkbox" class="w-4 h-4" />
-                <span class="text-sm">Test record</span>
-            </label>
-        </div>
-
         <div>
             <button
                 type="submit"

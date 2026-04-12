@@ -2,20 +2,23 @@
 
 namespace App\Services\DealProducts;
 
+use App\Models\DealProduct;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * Handles removal and restoration of product relationships on parent models.
  *
- * Supports detaching products from a parent model and restoring pivot
- * records when soft deletes are enabled on the pivot table.
+ * The deal_products pivot table uses soft deletes, so removal is handled
+ * by soft-deleting the pivot record rather than detaching it. This preserves
+ * the relationship history and allows restoration.
  */
 class DealProductDestructorService
 {
     /**
      * Remove a product relationship from a parent model.
      *
-     * Detaches the specified product from the parent model.
+     * Soft-deletes the pivot record rather than detaching it, so the
+     * relationship can be restored and the audit trail is preserved.
      *
      * @param  Model $parent The parent model.
      * @param  int $productId The ID of the product to remove.
@@ -24,14 +27,17 @@ class DealProductDestructorService
      */
     public function remove(Model $parent, int $productId): void
     {
-        $parent->products()->detach($productId);
+        DealProduct::where('deal_id', $parent->id)
+            ->where('product_id', $productId)
+            ->whereNull('deleted_at')
+            ->first()
+            ?->delete();
     }
 
     /**
      * Restore a previously removed product relationship.
      *
-     * Attempts to locate a soft-deleted pivot record and restore it
-     * if the pivot model supports soft deletes.
+     * Locates the soft-deleted pivot record and restores it.
      *
      * @param  Model $parent The parent model.
      * @param  int $productId The ID of the product to restore.
@@ -40,13 +46,10 @@ class DealProductDestructorService
      */
     public function restore(Model $parent, int $productId): void
     {
-        $pivot = $parent->products()
-            ->withTrashed()
-            ->wherePivot('product_id', $productId)
-            ->first();
-
-        if ($pivot && method_exists($pivot->pivot, 'restore')) {
-            $pivot->pivot->restore();
-        }
+        DealProduct::where('deal_id', $parent->id)
+            ->where('product_id', $productId)
+            ->onlyTrashed()
+            ->first()
+            ?->restore();
     }
 }

@@ -61,12 +61,16 @@ class DealQueryService
      * The per_page value is clamped between 1 and 100. All active query
      * string parameters are appended to the paginator links.
      *
+     * Permissions are merged into the top-level response array so the
+     * frontend can read them as `data.permissions` without colliding
+     * with the paginator's own appends mechanism.
+     *
      * @param  Request $request Incoming HTTP request; may carry search,
      * sort, filter, and pagination params.
      *
-     * @return LengthAwarePaginator Paginated deal results.
+     * @return array Paginated deal results with top-level permissions key.
      */
-    public function list(Request $request): LengthAwarePaginator
+    public function list(Request $request): array
     {
         $perPage = max(
             1,
@@ -106,37 +110,39 @@ class DealQueryService
             'notes',
             'tasks',
             'attachments',
+            'products',
         );
 
         return $this->formatDeal($deal);
     }
 
     /**
-     * Apply transformation and append permissions to the paginator.
+     * Convert the paginator to an array and merge top-level permissions.
      *
-     * Each deal item is formatted into a structured array and
-     * top-level permissions are appended to the paginator response.
+     * Permissions are added as a root-level key so the Vue frontend can
+     * access them as `data.permissions` alongside `data.data`,
+     * `data.current_page`, etc.
      *
      * @param  LengthAwarePaginator $paginator The paginator instance
      * containing Deal models.
      *
-     * @return LengthAwarePaginator The transformed paginator instance.
+     * @return array The transformed paginator data with permissions.
      */
     private function transformPaginator(
         LengthAwarePaginator $paginator
-    ): LengthAwarePaginator {
+    ): array {
         $paginator->through(
             fn (Deal $deal) => $this->formatDeal($deal)
         );
 
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Deal::class),
-                'viewAny' => Gate::allows('viewAny', Deal::class),
-            ],
-        ]);
+        $result = $paginator->toArray();
 
-        return $paginator;
+        $result['permissions'] = [
+            'create' => Gate::allows('create', Deal::class),
+            'viewAny' => Gate::allows('viewAny', Deal::class),
+        ];
+
+        return $result;
     }
 
     /**
@@ -199,6 +205,10 @@ class DealQueryService
     /**
      * Extract related model data for the deal.
      *
+     * Products are included here so they are available in both the Show
+     * page and the DealProducts/Index page, which both call fetchDeal()
+     * against the API show endpoint.
+     *
      * @param  Deal $deal
      *
      * @return array
@@ -211,6 +221,7 @@ class DealQueryService
             'notes' => $deal->notes,
             'owner' => $deal->owner,
             'pipeline' => $deal->pipeline,
+            'products' => $deal->products,
             'stage' => $deal->stage,
             'tasks' => $deal->tasks,
             'creator' => $deal->creator,

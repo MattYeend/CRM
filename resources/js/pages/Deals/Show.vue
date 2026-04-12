@@ -29,7 +29,6 @@ interface Deal {
         pivot?: { quantity: number; price: number; total: number }
     }>
     creator?: { name: string }
-    is_test: boolean
     permissions: UserPermissions
 }
 
@@ -64,7 +63,6 @@ const deal = ref<Deal>({
     stage: props.deal.stage,
     products: props.deal.products ?? [],
     creator: props.deal.creator,
-    is_test: props.deal.is_test ?? false,
     permissions: props.deal.permissions ?? { view: false, update: false, delete: false },
 })
 
@@ -102,9 +100,6 @@ onMounted(() => loadDeal())
                             :class="statusClasses[deal.status] ?? 'bg-gray-100 text-gray-600'"
                         >
                             {{ deal.status }}
-                        </span>
-                        <span v-if="deal.is_test" class="ml-2 px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-full text-xs font-semibold">
-                            Test
                         </span>
                     </div>
 

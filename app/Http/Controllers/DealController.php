@@ -103,10 +103,10 @@ class DealController extends Controller
     public function index(Request $request): JsonResponse
     {
         $this->authorize('viewAny', Deal::class);
-
-        $deal = $this->query->list($request);
-
-        return response()->json($deal);
+ 
+        $deals = $this->query->list($request);
+ 
+        return response()->json($deals);
     }
 
     /**
@@ -294,14 +294,16 @@ class DealController extends Controller
      * @param  Deal $deal Route-model-bound deal instance whose products
      * will be updated.
      *
-     * @return void
+     * @return JsonResponse Empty response with HTTP 204 No Content.
      */
-    public function updateProducts(Request $request, Deal $deal): void
+    public function updateProducts(Request $request, Deal $deal): JsonResponse
     {
         $items = $request->input('products');
         $this->dealProductManagement->update($deal, $items);
+ 
+        return response()->json(null, 204);
     }
-
+ 
     /**
      * Remove a product from a deal.
      *
@@ -312,13 +314,15 @@ class DealController extends Controller
      * product from.
      * @param  Product $product Route-model-bound product instance to detach.
      *
-     * @return void
+     * @return JsonResponse Empty response with HTTP 204 No Content.
      */
-    public function removeProduct(Deal $deal, Product $product): void
+    public function removeProduct(Deal $deal, Product $product): JsonResponse
     {
         $this->dealProductManagement->remove($deal, $product->id);
+ 
+        return response()->json(null, 204);
     }
-
+ 
     /**
      * Restore a previously removed product on a deal.
      *
@@ -329,10 +333,12 @@ class DealController extends Controller
      * product on.
      * @param  Product $product Route-model-bound product instance to restore.
      *
-     * @return void
+     * @return JsonResponse The confirmation message on success.
      */
-    public function restoreProduct(Deal $deal, Product $product): void
+    public function restoreProduct(Deal $deal, Product $product): JsonResponse
     {
         $this->dealProductManagement->restore($deal, $product->id);
+ 
+        return response()->json(['message' => 'Product restored on deal']);
     }
 }
