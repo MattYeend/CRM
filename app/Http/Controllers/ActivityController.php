@@ -11,7 +11,6 @@ use App\Services\Activities\ActivityQueryService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -89,19 +88,9 @@ class ActivityController extends Controller
     {
         $this->authorize('viewAny', Activity::class);
 
-        $paginator = $this->query->list($request);
+        $activities = $this->query->list($request);
 
-        return response()->json([
-            'data' => $paginator->items(),
-            'current_page' => $paginator->currentPage(),
-            'last_page' => $paginator->lastPage(),
-            'total' => $paginator->total(),
-
-            'permissions' => [
-                'create' => Gate::allows('create', Activity::class),
-                'viewAny' => Gate::allows('viewAny', Activity::class),
-            ],
-        ]);
+        return response()->json($activities);
     }
 
     /**

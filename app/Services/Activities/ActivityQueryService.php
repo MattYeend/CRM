@@ -4,7 +4,6 @@ namespace App\Services\Activities;
 
 use App\Models\Activity;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -57,14 +56,11 @@ class ActivityQueryService
      * @param  Request $request The incoming request containing query
      * parameters
      *
-     * @return LengthAwarePaginator
+     * @return array Paginated attachment results.
      */
-    public function list(Request $request): LengthAwarePaginator
+    public function list(Request $request): array
     {
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
 
         $query = Activity::with('user');
 
@@ -77,14 +73,14 @@ class ActivityQueryService
             fn (Activity $activity) => $this->formatActivity($activity)
         );
 
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Activity::class),
-                'viewAny' => Gate::allows('viewAny', Activity::class),
-            ],
-        ]);
+        $result = $paginator->toArray();
 
-        return $paginator;
+        $result['permissions'] = [
+            'create' => Gate::allows('create', Activity::class),
+            'viewAny' => Gate::allows('viewAny', Activity::class),
+        ];
+
+        return $result;
     }
 
     /**
@@ -142,12 +138,14 @@ class ActivityQueryService
      */
     private function subjectName(Activity $activity): string
     {
+        $subjectName = null;
+
         if ($activity->subject) {
             $subjectName = $activity->subject->name
                 ?? $activity->subject->title
                 ?? null;
         }
 
-        return $activity->subject_name = $subjectName;
+        return $activity->subject_name = $subjectName ?? '';
     }
 }
