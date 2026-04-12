@@ -54,22 +54,22 @@ beforeEach(function () {
  * -------------------------------------------------------------
  */
 test('index calls query service and returns list', function () {
-    $users = collect([
-        ['id' => 10, 'name' => 'Alice', 'email' => 'alice@example.test']
-    ]);
-
-    $paginator = new LengthAwarePaginator(
-        $users,
-        $users->count(),
-        10,
-        1
-    );
-
     $queryServiceMock = Mockery::mock(UserQueryService::class);
     $queryServiceMock->shouldReceive('list')
         ->once()
         ->with(Mockery::type(Request::class))
-        ->andReturn($paginator);
+        ->andReturn([
+            'data' => [
+                ['id' => 10, 'name' => 'Alice', 'email' => 'alice@example.test'],
+            ],
+            'current_page' => 1,
+            'last_page'    => 1,
+            'total'        => 1,
+            'permissions'  => [
+                'create'  => true,
+                'viewAny' => true,
+            ],
+        ]);
 
     $this->app->instance(UserQueryService::class, $queryServiceMock);
 

@@ -11,7 +11,6 @@ use App\Services\Users\UserQueryService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -89,19 +88,9 @@ class UserController extends Controller
     {
         $this->authorize('viewAny', User::class);
 
-        $paginator = $this->query->list($request);
+        $users = $this->query->list($request);
 
-        return response()->json([
-            'data' => $paginator->items(),
-            'current_page' => $paginator->currentPage(),
-            'last_page' => $paginator->lastPage(),
-            'total' => $paginator->total(),
-
-            'permissions' => [
-                'create' => Gate::allows('create', User::class),
-                'viewAny' => Gate::allows('viewAny', User::class),
-            ],
-        ]);
+        return response()->json($users);
     }
 
     /**
@@ -173,7 +162,7 @@ class UserController extends Controller
         $auth = auth()->user();
 
         $this->logger->userUpdated(
-            $user,
+            $auth,
             $auth->id,
             $user,
         );

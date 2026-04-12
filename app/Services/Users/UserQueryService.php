@@ -4,7 +4,6 @@ namespace App\Services\Users;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -55,14 +54,11 @@ class UserQueryService
      * @param  Request $request Incoming HTTP request; may carry search,
      * sort, filter, and pagination params.
      *
-     * @return LengthAwarePaginator Paginated users item results.
+     * @return array Paginated users item results.
      */
-    public function list(Request $request): LengthAwarePaginator
+    public function list(Request $request): array
     {
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
 
         $query = User::with('role', 'jobTitle');
         $this->trashFilter->applyTrashFilters($query, $request);
@@ -72,14 +68,14 @@ class UserQueryService
 
         $paginator->through(fn (User $user) => $this->formatUser($user));
 
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', User::class),
-                'viewAny' => Gate::allows('viewAny', User::class),
-            ],
-        ]);
+        $result = $paginator->toArray();
 
-        return $paginator;
+        $result['permissions'] = [
+            'create' => Gate::allows('create', User::class),
+            'viewAny' => Gate::allows('viewAny', User::class),
+        ];
+
+        return $result;
     }
 
     /**
