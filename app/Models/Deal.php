@@ -235,7 +235,8 @@ class Deal extends Model
         return $this->belongsToMany(Product::class, 'deal_products')
             ->using(DealProduct::class)
             ->withPivot(['quantity', 'price', 'total'])
-            ->withTimestamps();
+            ->withTimestamps()
+            ->wherePivotNull('deleted_at');
     }
 
     /**

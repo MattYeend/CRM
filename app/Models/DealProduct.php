@@ -14,6 +14,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Stores the quantity, unit price, and line total for each product on a
  * deal, along with the standard audit and soft-delete tracking columns.
  *
+ * Although this model extends Pivot, it uses an auto-incrementing primary
+ * key ('id') rather than a composite key. This is required to support soft
+ * deletes on the pivot record — without an incrementing key, Eloquent cannot
+ * resolve the correct row to update when setting 'deleted_at', causing
+ * delete and restore operations to silently fail.
+ *
  * Relationships defined in this model include:
  * - deal(): Belongs-to relationship to the Deal this line item belongs to.
  * - product(): Belongs-to relationship to the Product referenced by this
@@ -80,6 +86,29 @@ class DealProduct extends Pivot
      * @var string
      */
     protected $table = 'deal_products';
+
+    /**
+     * Indicates that the pivot table has an auto-incrementing primary key.
+     *
+     * Pivot models default to non-incrementing keys. Enabling this allows
+     * Eloquent to locate individual pivot rows by their 'id' column, which
+     * is required for soft delete and restore operations to function
+     * correctly on this model.
+     *
+     * @var bool
+     */
+    public $incrementing = true;
+ 
+    /**
+     * The primary key column for this pivot model.
+     *
+     * Explicitly set to 'id' to match the auto-incrementing column defined
+     * in the deal_products migration. Required alongside $incrementing = true
+     * to ensure soft delete and restore operations target the correct row.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'id';
 
     /**
      * The attributes that are mass assignable.
