@@ -103,9 +103,9 @@ class AttachmentController extends Controller
     {
         $this->authorize('viewAny', Attachment::class);
 
-        $paginator = $this->query->list($request);
+        $attachments = $this->query->list($request);
 
-        return response()->json($paginator);
+        return response()->json($attachments);
     }
 
     /**
