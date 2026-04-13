@@ -4,7 +4,6 @@ namespace App\Services\Invoices;
 
 use App\Models\Invoice;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -34,8 +33,7 @@ class InvoiceQueryService
      * Inject the required services into the query service.
      *
      * @param  InvoiceSortingService $sorting Handles sort order.
-     * @param  InvoiceTrashFilterService $trashFilter Handles
-     * trash filtering.
+     * @param  InvoiceTrashFilterService $trashFilter Handles trash filtering.
      */
     public function __construct(
         InvoiceSortingService $sorting,
@@ -46,8 +44,8 @@ class InvoiceQueryService
     }
 
     /**
-     * Return a paginated list of invoice with search, sorting,
-     * and trash filters applied.
+     * Return a paginated list of invoices with sorting and trash filters
+     * applied.
      *
      * The per_page value is clamped between 1 and 100. All active query
      * string parameters are appended to the paginator links.
@@ -55,72 +53,68 @@ class InvoiceQueryService
      * @param  Request $request Incoming HTTP request; may carry search,
      * sort, filter, and pagination params.
      *
-     * @return LengthAwarePaginator Paginated invoice results.
+     * @return array Paginated invoice results with top-level permissions.
      */
-    public function list(Request $request): LengthAwarePaginator
+    public function list(Request $request): array
     {
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
-
-        $query = Invoice::with(
-            'company',
-            'items',
-        );
+        $query = Invoice::with('company', 'items');
 
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        $paginator = $query->paginate($perPage)->appends($request->query());
+        $paginator = $this->paginate($query, $request);
 
-        return $this->transformPaginator($paginator);
+        return array_merge(
+            $paginator,
+            ['permissions' => $this->getPermissions()]
+        );
     }
 
     /**
      * Return a single invoice with related data loaded.
      *
-     * @param  Invoice $invoice The route-model-bound invoice
-     * instance.
+     * @param  Invoice $invoice The route-model-bound invoice instance.
      *
      * @return array
      */
     public function show(Invoice $invoice): array
     {
-        $invoice->load(
-            'company',
-            'items',
-        );
+        $invoice->load('company', 'items');
 
         return $this->formatInvoice($invoice);
     }
 
     /**
-     * Apply transformation and append permissions to the paginator.
+     * Paginate and transform the invoice query.
      *
-     * Each invoice item is formatted into a structured array and
-     * top-level permissions are appended to the paginator response.
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  Request $request
      *
-     * @param  LengthAwarePaginator $paginator The paginator instance
-     * containing Invoice models.
-     *
-     * @return LengthAwarePaginator The transformed paginator instance.
+     * @return array
      */
-    private function transformPaginator(
-        LengthAwarePaginator $paginator
-    ): LengthAwarePaginator {
-        $paginator->through(
-            fn (Invoice $invoice) => $this->formatInvoice($invoice)
-        );
+    private function paginate($query, Request $request): array
+    {
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
 
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Invoice::class),
-                'viewAny' => Gate::allows('viewAny', Invoice::class),
-            ],
-        ]);
+        return $query->paginate($perPage)
+            ->appends($request->query())
+            ->through(
+                fn (Invoice $invoice): array => $this->formatInvoice($invoice)
+            )
+            ->toArray();
+    }
 
-        return $paginator;
+    /**
+     * Get permission flags for the current user.
+     *
+     * @return array
+     */
+    private function getPermissions(): array
+    {
+        return [
+            'create' => Gate::allows('create', Invoice::class),
+            'viewAny' => Gate::allows('viewAny', Invoice::class),
+        ];
     }
 
     /**
