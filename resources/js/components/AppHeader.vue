@@ -37,6 +37,7 @@ import { InertiaLinkProps, Link, usePage } from '@inertiajs/vue3';
 import { 
     Activity,
     Building2,
+    FileText,
     Globe,
     Handshake,
     LayoutGrid,
@@ -106,6 +107,11 @@ const mainNavItems: NavItem[] = [
         title: 'Deals',
         href: '/deals',
         icon: Handshake
+    },
+    {
+        title: 'Invoices',
+        href: '/invoices',
+        icon: FileText,
     },
     {
         title: 'Invoice Items',
