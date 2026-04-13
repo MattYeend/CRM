@@ -195,8 +195,10 @@ class InvoiceQueryService
                     'id' => $item->id,
                     'description' => $item->description,
                     'quantity' => $item->quantity,
-                    'formatted_unit_price' => $item->formatted_unit_price ?? number_format($item->unit_price, 2),
-                    'formatted_line_total' => $item->formatted_line_total ?? number_format($item->line_total, 2),
+                    'formatted_unit_price' => $item->formatted_unit_price ??
+                        number_format($item->unit_price, 2),
+                    'formatted_line_total' => $item->formatted_line_total ??
+                        number_format($item->line_total, 2),
                     'product' => $item->product ? [
                         'id' => $item->product->id,
                         'name' => $item->product->name,
