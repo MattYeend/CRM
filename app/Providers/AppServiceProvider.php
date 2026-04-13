@@ -4,9 +4,11 @@ namespace App\Providers;
 
 use App\Models\Company;
 use App\Models\Deal;
+use App\Models\InvoiceItem;
 use App\Models\Order;
 use App\Models\Task;
 use App\Models\User;
+use App\Observers\InvoiceItemObserver;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Artisan;
@@ -55,6 +57,8 @@ class AppServiceProvider extends ServiceProvider
             'task' => Task::class,
             'user' => User::class,
         ]);
+
+        InvoiceItem::observe(InvoiceItemObserver::class);
 
         Cashier::useCustomerModel(User::class);
         Cashier::calculateTaxes();
