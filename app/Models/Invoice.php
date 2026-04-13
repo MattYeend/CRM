@@ -55,6 +55,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * $notes = $invoice->notes; // Get all notes for the invoice
  * ```
  *
+ * Other methods include:
+ * - recalculateTotals(): Recalculates and persists the invoice subtotal and
+ *      total by summing the line totals of all non-deleted items. Called
+ *      automatically by InvoiceItemObserver whenever a line item is saved,
+ *      deleted, or restored.
+ * Example usage of other methods:
+ * ```php
+ * $invoice->recalculateTotals(); // Sync totals after bulk item changes
+ * ```
+ *
  * Accessor methods include:
  * - getNumberAttribute(): Returns the invoice number, applying a test prefix
  *      if the invoice is marked as a test record.
@@ -291,6 +301,25 @@ class Invoice extends Model
     public function notes(): MorphMany
     {
         return $this->morphMany(Note::class, 'notable');
+    }
+
+    /**
+     * Recalculate and persist the invoice totals from its current line items.
+     *
+     * Sums the line totals of all non-deleted items to derive the subtotal,
+     * then adds the existing tax amount to produce the new total. Call this
+     * whenever items are created, updated, or deleted.
+     *
+     * @return void
+     */
+    public function recalculateTotals(): void
+    {
+        $subtotal = $this->items()->sum('line_total');
+
+        $this->subtotal = $subtotal;
+        $this->total    = $subtotal + $this->tax;
+
+        $this->saveQuietly();
     }
 
     /**

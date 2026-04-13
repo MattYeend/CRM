@@ -43,6 +43,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * $notes = $item->notes; // Get all notes for this line item
  * ```
  *
+ * Model lifecycle hooks include:
+ * - booted(): Registers a saving hook that computes and stores the
+ *      line_total as quantity multiplied by unit_price before each save,
+ *      keeping the persisted column in sync with InvoiceItemObserver's
+ *      sum query on the parent invoice.
+ *
  * Accessor methods include:
  * - getDescriptionAttribute(): Returns the description, applying a test
  *      prefix if the record is marked as a test.
@@ -377,5 +383,23 @@ class InvoiceItem extends Model
     public function scopeReal(Builder $query): Builder
     {
         return $query->where('is_test', false);
+    }
+
+    /**
+     * Register model lifecycle hooks for the InvoiceItem.
+     *
+     * Attaches a saving hook that derives and stores the line_total column
+     * as quantity multiplied by unit_price before every create or update.
+     * This ensures the persisted value is always current, which is required
+     * for InvoiceItemObserver to produce an accurate sum when recalculating
+     * the parent invoice's subtotal and total.
+     *
+     * @return void
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (InvoiceItem $item) {
+            $item->line_total = $item->quantity * $item->unit_price;
+        });
     }
 }
