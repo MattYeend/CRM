@@ -4,7 +4,6 @@ namespace App\Services\InvoiceItems;
 
 use App\Models\InvoiceItem;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -55,31 +54,21 @@ class InvoiceItemQueryService
      * @param  Request $request Incoming HTTP request; may carry search,
      * sort, filter, and pagination params.
      *
-     * @return LengthAwarePaginator Paginated invoice item results.
+     * @return array Paginated invoice item results with top-level permissions.
      */
-    public function list(Request $request): LengthAwarePaginator
+    public function list(Request $request): array
     {
-        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
-
         $query = InvoiceItem::with('invoice', 'product');
 
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        $paginator = $query->paginate($perPage)->appends($request->query());
+        $paginator = $this->paginate($query, $request);
 
-        $paginator->through(
-            fn (InvoiceItem $item) => $this->formatInvoiceItem($item)
+        return array_merge(
+            $paginator,
+            ['permissions' => $this->getPermissions()]
         );
-
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', InvoiceItem::class),
-                'viewAny' => Gate::allows('viewAny', InvoiceItem::class),
-            ],
-        ]);
-
-        return $paginator;
     }
 
     /**
@@ -98,6 +87,39 @@ class InvoiceItemQueryService
         );
 
         return $this->formatInvoiceItem($invoiceItem);
+    }
+
+    /**
+     * Paginate and transform the invoice item query.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  Request $request
+     *
+     * @return array
+     */
+    private function paginate($query, Request $request): array
+    {
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
+
+        return $query->paginate($perPage)
+            ->appends($request->query())
+            ->through(
+                fn (InvoiceItem $item): array => $this->formatInvoiceItem($item)
+            )
+            ->toArray();
+    }
+
+    /**
+     * Get permission flags for the current user.
+     *
+     * @return array
+     */
+    private function getPermissions(): array
+    {
+        return [
+            'create' => Gate::allows('create', InvoiceItem::class),
+            'viewAny' => Gate::allows('viewAny', InvoiceItem::class),
+        ];
     }
 
     /**
