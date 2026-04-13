@@ -42,6 +42,7 @@ import {
     LayoutGrid,
     Menu,
     Paperclip,
+    ReceiptIcon,
     Search,
     User
 } from 'lucide-vue-next';
@@ -105,6 +106,11 @@ const mainNavItems: NavItem[] = [
         title: 'Deals',
         href: '/deals',
         icon: Handshake
+    },
+    {
+        title: 'Invoice Items',
+        href: '/invoice-items',
+        icon: ReceiptIcon
     }
 ];
 

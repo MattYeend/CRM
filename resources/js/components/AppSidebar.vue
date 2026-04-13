@@ -21,6 +21,7 @@ import {
     Handshake,
     LayoutGrid,
     Paperclip,
+    ReceiptIcon,
     User
 } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
@@ -61,6 +62,11 @@ const mainNavItems: NavItem[] = [
         href: '/deals',
         icon: Handshake
     },
+    {
+        title: 'Invoice Items',
+        href: '/invoice-items',
+        icon: ReceiptIcon
+    }
 ];
 
 const footerNavItems: NavItem[] = [];
