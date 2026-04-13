@@ -148,7 +148,7 @@ onMounted(() => loadInvoiceItem())
 
                     <div>
                         <span class="font-semibold">Line Total: </span>
-                        <span class="font-semibold text-gray-900">{{ invoiceItem.formatted_line_total }}</span>
+                        <span class="font-semibold">{{ invoiceItem.formatted_line_total }}</span>
                     </div>
 
                     <div v-if="invoiceItem.creator">
