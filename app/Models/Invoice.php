@@ -317,7 +317,7 @@ class Invoice extends Model
         $subtotal = $this->items()->sum('line_total');
 
         $this->subtotal = $subtotal;
-        $this->total    = $subtotal + $this->tax;
+        $this->total = $subtotal + $this->tax;
 
         $this->saveQuietly();
     }

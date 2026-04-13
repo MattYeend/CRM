@@ -31,6 +31,12 @@ class InvoiceCreatorService
 
         $data['created_by'] = $user->id;
 
-        return Invoice::create($data);
+        unset($data['subtotal'], $data['total']);
+
+        $invoice = Invoice::create($data);
+
+        $invoice->recalculateTotals();
+
+        return $invoice;
     }
 }
