@@ -71,9 +71,14 @@ async function submit() {
 
         router.visit(`/deals/${response.data.id}`)
     } catch (err: any) {
-        console.error(err.response?.data ?? err)
+        console.error(err.response?.data ?? err);
+
         if (err.response?.status === 422) {
-            form.setError(err.response.data.errors)
+            const raw = err.response.data.errors as Record<string, string[]>
+            const flat = Object.fromEntries(
+                Object.entries(raw).map(([key, messages]) => [key, messages[0]])
+            ) as Record<string, string>
+            form.setError(flat)
         }
     }
 }
