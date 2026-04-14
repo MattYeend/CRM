@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
 import { fetchJobTitle, deleteJobTitles } from '@/services/jobTitleService'
@@ -43,6 +43,10 @@ const jobTitle = ref<JobTitle>({
     updater: props.jobTitle.updater ?? null,
     permissions: props.jobTitle.permissions ?? { view: false, update: false, delete: false },
 })
+
+const hasUsers = computed(() => jobTitle.value.user_count > 0)
+const canEdit = computed(() => jobTitle.value.permissions?.update && !hasUsers.value)
+const canDelete = computed(() => jobTitle.value.permissions?.delete && !hasUsers.value)
 
 const groupLabels: Record<string, string> = {
     c_suite: 'C-Suite',
@@ -105,12 +109,19 @@ onMounted(() => loadJobTitle())
 
                     <div class="flex items-center space-x-2">
                         <Link
-                            v-if="jobTitle.permissions?.update"
+                            v-if="canEdit"
                             :href="route('job-titles.edit', { jobTitle: jobTitle.id })"
                             class="bg-blue-600 text-white px-4 py-2 rounded"
                         >
                             Edit
                         </Link>
+                        <span
+                            v-else-if="jobTitle.permissions?.update && hasUsers"
+                            class="px-4 py-2 rounded bg-gray-100 text-gray-400 text-sm cursor-not-allowed"
+                            title="Cannot edit a job title with assigned users"
+                        >
+                            Edit
+                        </span>
                         <Link
                             :href="route('job-titles.index')"
                             class="bg-gray-200 text-gray-700 px-4 py-2 rounded"
@@ -118,13 +129,25 @@ onMounted(() => loadJobTitle())
                             Back
                         </Link>
                         <button
-                            v-if="jobTitle.permissions?.delete"
+                            v-if="canDelete"
                             @click="handleDelete"
                             class="bg-red-600 text-white px-4 py-2 rounded"
                         >
                             Delete
                         </button>
+                        <span
+                            v-else-if="jobTitle.permissions?.delete && hasUsers"
+                            class="px-4 py-2 rounded bg-gray-100 text-gray-400 text-sm cursor-not-allowed"
+                            title="Cannot delete a job title with assigned users"
+                        >
+                            Delete
+                        </span>
                     </div>
+                </div>
+
+                <!-- Locked notice -->
+                <div v-if="hasUsers" class="mb-6 px-4 py-3 rounded border border-amber-200 bg-amber-50 text-amber-800 text-sm">
+                    This job title has {{ jobTitle.user_count }} assigned {{ jobTitle.user_count === 1 ? 'user' : 'users' }} and cannot be edited or deleted.
                 </div>
 
                 <!-- Details -->

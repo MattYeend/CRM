@@ -150,13 +150,13 @@ onMounted(() => loadJobTitles())
                                 View
                             </Link>
                             <Link
-                                v-if="jobTitle.permissions.update"
+                                v-if="jobTitle.permissions.update && jobTitle.user_count === 0"
                                 :href="route('job-titles.edit', { jobTitle: jobTitle.id })"
                             >
                                 Edit
                             </Link>
                             <button
-                                v-if="jobTitle.permissions.delete"
+                                v-if="jobTitle.permissions.delete && jobTitle.user_count === 0"
                                 @click="handleDelete(jobTitle.id)"
                                 class="text-red-600"
                             >

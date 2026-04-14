@@ -34,8 +34,9 @@ import { toUrl, urlIsActive } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem, NavItem } from '@/types';
 import { InertiaLinkProps, Link, usePage } from '@inertiajs/vue3';
-import { 
+import {
     Activity,
+    Briefcase,
     Building2,
     FileText,
     Globe,
@@ -45,7 +46,7 @@ import {
     Paperclip,
     ReceiptIcon,
     Search,
-    User
+    Users,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
 
@@ -81,32 +82,37 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Users',
         href: '/users',
-        icon: User
+        icon: Users,
+    },
+    {
+        title: 'Job Titles',
+        href: '/job-titles',
+        icon: Briefcase,
     },
     {
         title: 'Activities',
         href: '/activities',
-        icon: Activity
+        icon: Activity,
     },
     {
         title: 'Attachments',
         href: '/attachments',
-        icon: Paperclip
+        icon: Paperclip,
     },
     {
         title: 'Companies',
         href: '/companies',
-        icon: Building2
+        icon: Building2,
     },
     {
         title: 'Company Industries',
         href: '/industries',
-        icon: Globe
+        icon: Globe,
     },
     {
         title: 'Deals',
         href: '/deals',
-        icon: Handshake
+        icon: Handshake,
     },
     {
         title: 'Invoices',
@@ -116,8 +122,8 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Invoice Items',
         href: '/invoice-items',
-        icon: ReceiptIcon
-    }
+        icon: ReceiptIcon,
+    },
 ];
 
 const rightNavItems: NavItem[] = [];

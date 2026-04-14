@@ -16,6 +16,7 @@ import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
 import {
     Activity,
+    Briefcase,
     Building2,
     FileText,
     Globe,
@@ -23,7 +24,7 @@ import {
     LayoutGrid,
     Paperclip,
     ReceiptIcon,
-    User
+    Users,
 } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
@@ -36,7 +37,14 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Users',
         href: '/users',
-        icon: User,
+        icon: Users,
+        children: [
+            {
+                title: 'Job Titles',
+                href: '/job-titles',
+                icon: Briefcase,
+            },
+        ],
     },
     {
         title: 'Activities',
