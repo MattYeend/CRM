@@ -4,7 +4,6 @@ namespace App\Services\JobTitles;
 
 use App\Models\JobTitle;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -34,8 +33,7 @@ class JobTitleQueryService
      * Inject the required services into the query service.
      *
      * @param  JobTitleSortingService $sorting Handles sort order.
-     * @param  JobTitleTrashFilterService $trashFilter Handles
-     * trash filtering.
+     * @param  JobTitleTrashFilterService $trashFilter Handles trash filtering.
      */
     public function __construct(
         JobTitleSortingService $sorting,
@@ -46,8 +44,8 @@ class JobTitleQueryService
     }
 
     /**
-     * Return a paginated list of job titles with search, sorting,
-     * and trash filters applied.
+     * Return a paginated list of job titles with sorting and trash filters
+     * applied.
      *
      * The per_page value is clamped between 1 and 100. All active query
      * string parameters are appended to the paginator links.
@@ -55,53 +53,68 @@ class JobTitleQueryService
      * @param  Request $request Incoming HTTP request; may carry search,
      * sort, filter, and pagination params.
      *
-     * @return LengthAwarePaginator Paginated job titles item results.
+     * @return array Paginated job title results with top-level permissions.
      */
-    public function list(Request $request): LengthAwarePaginator
+    public function list(Request $request): array
     {
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
-
         $query = JobTitle::with('users', 'creator', 'updater');
 
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        $paginator = $query->paginate($perPage)->appends($request->query());
+        $paginator = $this->paginate($query, $request);
 
-        $paginator->through(
-            fn (JobTitle $jobTitle) => $this->formatJobTitle($jobTitle)
+        return array_merge(
+            $paginator,
+            ['permissions' => $this->getPermissions()]
         );
-
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', JobTitle::class),
-                'viewAny' => Gate::allows('viewAny', JobTitle::class),
-            ],
-        ]);
-
-        return $paginator;
     }
 
     /**
      * Return a single job title with related data loaded.
      *
-     * @param  JobTitle $jobTitle The route-model-bound job title
-     * instance.
+     * @param  JobTitle $jobTitle The route-model-bound job title instance.
      *
      * @return array
      */
     public function show(JobTitle $jobTitle): array
     {
-        $jobTitle->load(
-            'users',
-            'creator',
-            'updater',
-        );
+        $jobTitle->load('users', 'creator', 'updater');
 
         return $this->formatJobTitle($jobTitle);
+    }
+
+    /**
+     * Paginate and transform the job title query.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  Request $request
+     *
+     * @return array
+     */
+    private function paginate($query, Request $request): array
+    {
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
+
+        return $query->paginate($perPage)
+            ->appends($request->query())
+            ->through(
+                fn (JobTitle $jobTitle): array => $this->formatJobTitle($jobTitle)
+            )
+            ->toArray();
+    }
+
+    /**
+     * Get permission flags for the current user.
+     *
+     * @return array
+     */
+    private function getPermissions(): array
+    {
+        return [
+            'create' => Gate::allows('create', JobTitle::class),
+            'viewAny' => Gate::allows('viewAny', JobTitle::class),
+        ];
     }
 
     /**
