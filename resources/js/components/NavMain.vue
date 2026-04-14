@@ -2,7 +2,6 @@
 import {
     Collapsible,
     CollapsibleContent,
-    CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import {
     SidebarGroup,
@@ -32,9 +31,10 @@ function hasActiveChild(item: NavItem): boolean {
 
 const openGroups = ref<Record<string, boolean>>({});
 
-function initOpen(item: NavItem): boolean {
-    if (item.title in openGroups.value) return openGroups.value[item.title];
-    return hasActiveChild(item);
+function toggleGroup(event: MouseEvent, item: NavItem) {
+    event.preventDefault();
+    event.stopPropagation();
+    openGroups.value[item.title] = !openGroups.value[item.title];
 }
 </script>
 
@@ -51,16 +51,26 @@ function initOpen(item: NavItem): boolean {
                     as-child
                 >
                     <SidebarMenuItem>
-                        <CollapsibleTrigger as-child>
-                            <SidebarMenuButton :tooltip="item.title" :is-active="hasActiveChild(item)">
+                        <SidebarMenuButton
+                            as-child
+                            :tooltip="item.title"
+                            :is-active="item.href ? urlIsActive(item.href, page.url) : hasActiveChild(item)"
+                        >
+                            <Link :href="item.href!">
                                 <component :is="item.icon" />
-                                <span>{{ item.title }}</span>
-                                <ChevronRight
-                                    class="ml-auto transition-transform duration-200"
-                                    :class="{ 'rotate-90': openGroups[item.title] }"
-                                />
-                            </SidebarMenuButton>
-                        </CollapsibleTrigger>
+                                <span class="flex-1">{{ item.title }}</span>
+                                <button
+                                    type="button"
+                                    class="ml-auto flex items-center rounded p-0.5"
+                                    @click="toggleGroup($event, item)"
+                                >
+                                    <ChevronRight
+                                        class="size-4 transition-transform duration-200"
+                                        :class="{ 'rotate-90': openGroups[item.title] }"
+                                    />
+                                </button>
+                            </Link>
+                        </SidebarMenuButton>
                         <CollapsibleContent>
                             <SidebarMenuSub>
                                 <SidebarMenuSubItem
