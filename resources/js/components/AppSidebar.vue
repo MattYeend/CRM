@@ -36,43 +36,47 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Users',
         href: '/users',
-        icon: User
+        icon: User,
     },
     {
         title: 'Activities',
         href: '/activities',
-        icon: Activity
+        icon: Activity,
     },
     {
         title: 'Attachments',
         href: '/attachments',
-        icon: Paperclip
+        icon: Paperclip,
     },
     {
         title: 'Companies',
         href: '/companies',
-        icon: Building2
-    },
-    {
-        title: 'Company Industries',
-        href: '/industries',
-        icon: Globe
+        icon: Building2,
+        children: [
+            {
+                title: 'Company Industries',
+                href: '/industries',
+                icon: Globe,
+            },
+        ],
     },
     {
         title: 'Deals',
         href: '/deals',
-        icon: Handshake
+        icon: Handshake,
     },
     {
         title: 'Invoices',
         href: '/invoices',
         icon: FileText,
+        children: [
+            {
+                title: 'Invoice Items',
+                href: '/invoice-items',
+                icon: ReceiptIcon,
+            },
+        ],
     },
-    {
-        title: 'Invoice Items',
-        href: '/invoice-items',
-        icon: ReceiptIcon
-    }
 ];
 
 const footerNavItems: NavItem[] = [];
