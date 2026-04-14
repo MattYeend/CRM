@@ -136,10 +136,30 @@ onMounted(() => loadJobTitles())
                             <span v-else class="text-gray-400">—</span>
                         </td>
                         <td class="p-2">
-                            <span v-if="jobTitle.is_csuite" class="px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-700">C-Suite</span>
-                            <span v-else-if="jobTitle.is_director" class="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">Director</span>
-                            <span v-else-if="jobTitle.is_executive" class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">Executive</span>
-                            <span v-else class="text-gray-400">—</span>
+                            <span
+                                v-if="jobTitle.is_csuite"
+                                class="px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-700"
+                            >
+                                C-Suite
+                            </span>
+                            <span
+                                v-else-if="jobTitle.is_director" 
+                                class="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700"
+                            >
+                                Director
+                            </span>
+                            <span
+                                v-else-if="jobTitle.is_executive" 
+                                class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700"
+                            >
+                                Executive
+                            </span>
+                            <span
+                                v-else 
+                                class="px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-700"
+                            >
+                                Staff
+                            </span>
                         </td>
                         <td class="p-2 text-right">{{ jobTitle.user_count }}</td>
                         <td class="p-2 space-x-2 whitespace-nowrap">
