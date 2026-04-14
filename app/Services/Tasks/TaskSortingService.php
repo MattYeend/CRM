@@ -43,7 +43,7 @@ class TaskSortingService
      *
      * @return void
      */
-    public function applySorting($query, Request $request): void
+    public function applySorting(Builder $query, Request $request): void
     {
         $sortBy = $request->query('sort_by', 'id');
 

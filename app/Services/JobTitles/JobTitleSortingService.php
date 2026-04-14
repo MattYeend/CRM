@@ -38,7 +38,7 @@ class JobTitleSortingService
      *
      * @return void
      */
-    public function applySorting($query, Request $request): void
+    public function applySorting(Builder $query, Request $request): void
     {
         $sortBy = $request->query('sort_by', 'id');
 
@@ -46,7 +46,7 @@ class JobTitleSortingService
             $sortBy = 'id';
         }
 
-        $sortDir = $request->query('sort_dir', 'desc') === 'asc'
+        $sortDir = $request->query('sort_dir', 'asc') === 'asc'
             ? 'asc'
             : 'desc';
 

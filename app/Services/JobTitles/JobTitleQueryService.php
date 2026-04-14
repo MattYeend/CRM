@@ -98,9 +98,9 @@ class JobTitleQueryService
 
         return $query->paginate($perPage)
             ->appends($request->query())
-            ->through(
-                fn (JobTitle $jobTitle): array => $this->formatJobTitle($jobTitle)
-            )
+            ->through(fn (
+                JobTitle $jobTitle
+            ): array => $this->formatJobTitle($jobTitle))
             ->toArray();
     }
 

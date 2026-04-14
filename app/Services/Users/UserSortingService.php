@@ -37,7 +37,7 @@ class UserSortingService
      *
      * @return void
      */
-    public function applySorting($query, Request $request): void
+    public function applySorting(Builder $query, Request $request): void
     {
         $sortBy = $request->query('sort_by', 'id');
 
@@ -45,7 +45,9 @@ class UserSortingService
             $sortBy = 'id';
         }
 
-        $sortDir = $request->query('sort_dir', 'desc') === 'asc'
+        $defaultDir = $sortBy === 'name' ? 'asc' : 'desc';
+
+        $sortDir = $request->query('sort_dir', $defaultDir) === 'asc'
             ? 'asc'
             : 'desc';
 

@@ -44,7 +44,7 @@ class IndustrySortingService
             $sortBy = 'id';
         }
 
-        $sortDir = $request->query('sort_dir', 'desc') === 'asc'
+        $sortDir = $request->query('sort_dir', 'asc') === 'asc'
             ? 'asc'
             : 'desc';
 
