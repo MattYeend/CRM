@@ -24,6 +24,7 @@ import {
     LayoutGrid,
     Paperclip,
     ReceiptIcon,
+    UserPlus,
     Users,
 } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
@@ -84,6 +85,11 @@ const mainNavItems: NavItem[] = [
                 icon: ReceiptIcon,
             },
         ],
+    },
+    {
+        title: 'Leads',
+        href: '/leads',
+        icon: UserPlus,
     },
 ];
 

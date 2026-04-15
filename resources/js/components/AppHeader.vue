@@ -46,6 +46,7 @@ import {
     Paperclip,
     ReceiptIcon,
     Search,
+    UserPlus,
     Users,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
@@ -123,6 +124,11 @@ const mainNavItems: NavItem[] = [
         title: 'Invoice Items',
         href: '/invoice-items',
         icon: ReceiptIcon,
+    },
+    {
+        title: 'Leads',
+        href: '/leads',
+        icon: UserPlus,
     },
 ];
 
