@@ -106,7 +106,7 @@ function formatDate(dateStr: string | null): string {
     })
 }
 
-onMounted(() => loadLead())
+onMounted(() => loadLead()) 
 </script>
 
 <template>

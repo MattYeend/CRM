@@ -425,7 +425,9 @@ class Lead extends Model
      */
     public function getAgeInDaysAttribute(): int
     {
-        return $this->created_at ? now()->diffInDays($this->created_at) : 0;
+        return $this->created_at
+            ? $this->created_at->diffInDays(now())
+            : 0;
     }
 
     /**
