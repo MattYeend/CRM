@@ -101,7 +101,7 @@ onMounted(() => loadLeads())
 
             <table v-else class="w-full border">
                 <thead>
-                    <tr class="bg-gray-50">
+                    <tr>
                         <th class="p-2 text-left">Name</th>
                         <th class="p-2 text-left">Email</th>
                         <th class="p-2 text-left">Phone</th>
@@ -156,21 +156,19 @@ onMounted(() => loadLeads())
                             <Link
                                 v-if="lead.permissions.view"
                                 :href="route('leads.show', { lead: lead.id })"
-                                class="text-blue-600 underline text-sm"
                             >
                                 View
                             </Link>
                             <Link
                                 v-if="lead.permissions.update"
                                 :href="route('leads.edit', { lead: lead.id })"
-                                class="text-blue-600 underline text-sm"
                             >
                                 Edit
                             </Link>
                             <button
                                 v-if="lead.permissions.delete"
                                 @click="handleDelete(lead.id)"
-                                class="text-red-600 text-sm"
+                                class="text-red-600"
                             >
                                 Delete
                             </button>

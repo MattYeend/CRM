@@ -23,7 +23,7 @@ class LeadFactory extends Factory
             'last_name' => fake()->lastName(),
             'email' => fake()->optional()->safeEmail(),
             'phone' => fake()->optional()->phoneNumber(),
-            'source' => fake()->randomElement(['website', 'email', 'phone', 'referral', 'social_media']),
+            'source' => fake()->randomElement(['Website', 'Email', 'Phone', 'Referral', 'Social Media']),
             'owner_id' => User::inRandomOrder()->first()?->id,
             'assigned_to' => User::inRandomOrder()->first()?->id,
             'assigned_at' => now(),

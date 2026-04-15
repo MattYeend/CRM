@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
-import { ref, reactive, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
-import { fetchLeads, deleteLeads } from '@/services/leadService'
+import { fetchLead, deleteLeads } from '@/services/leadService'
+
+interface UserPermissions {
+    view: boolean
+    update: boolean
+    delete: boolean
+}
 
 interface Lead {
     id: number
@@ -15,8 +21,11 @@ interface Lead {
     display_name: string
     email: string | null
     phone: string | null
+    contact_info: string
     source: string | null
     age_in_days: number
+    assigned_at: string | null
+    meta: Record<string, any> | null
     is_stale: boolean
     is_hot: boolean
     is_high_priority: boolean
@@ -24,194 +33,227 @@ interface Lead {
     is_eligible_for_conversion: boolean
     owner: { id: number; name: string } | null
     assigned_to: { id: number; name: string } | null
-    permissions: {
-        view: boolean
-        update: boolean
-        delete: boolean
-    }
+    creator: { name: string } | null
+    updater: { name: string } | null
+    deleter: { name: string } | null
+    created_at: string | null
+    updated_at: string | null
+    permissions: UserPermissions
 }
 
-interface GlobalPermissions {
-    create: boolean
-    viewAny: boolean
-}
+const props = defineProps<{ lead: any }>()
 
-const permissions = ref<GlobalPermissions>({ create: false, viewAny: false })
-const leads = ref<Lead[]>([])
-const loading = ref(true)
-const currentPage = ref(1)
-const perPage = 10
-const pagination = reactive({
-    current_page: 1,
-    last_page: 1,
-    total: 0,
+const lead = ref<Lead>({
+    id: props.lead.id,
+    title: props.lead.title ?? '',
+    first_name: props.lead.first_name ?? null,
+    last_name: props.lead.last_name ?? null,
+    full_name: props.lead.full_name ?? '',
+    display_name: props.lead.display_name ?? '',
+    email: props.lead.email ?? null,
+    phone: props.lead.phone ?? null,
+    contact_info: props.lead.contact_info ?? '',
+    source: props.lead.source ?? null,
+    age_in_days: props.lead.age_in_days ?? 0,
+    assigned_at: props.lead.assigned_at ?? null,
+    meta: props.lead.meta ?? null,
+    is_stale: props.lead.is_stale ?? false,
+    is_hot: props.lead.is_hot ?? false,
+    is_high_priority: props.lead.is_high_priority ?? false,
+    is_low_priority: props.lead.is_low_priority ?? false,
+    is_eligible_for_conversion: props.lead.is_eligible_for_conversion ?? false,
+    owner: props.lead.owner ?? null,
+    assigned_to: props.lead.assigned_to ?? null,
+    creator: props.lead.creator ?? null,
+    updater: props.lead.updater ?? null,
+    deleter: props.lead.deleter ?? null,
+    created_at: props.lead.created_at ?? null,
+    updated_at: props.lead.updated_at ?? null,
+    permissions: props.lead.permissions ?? { view: false, update: false, delete: false },
 })
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Leads', href: route('leads.index') },
+    { title: lead.value.display_name || 'View Lead', href: route('leads.show', { lead: lead.value.id }) },
 ]
 
-async function loadLeads(page = 1) {
-    loading.value = true
-    try {
-        const data = await fetchLeads(perPage, page)
-        leads.value = data.data
-        permissions.value = data.permissions
-        pagination.current_page = data.current_page
-        pagination.last_page = data.last_page
-        pagination.total = data.total
-        currentPage.value = data.current_page
-    } finally {
-        loading.value = false
-    }
+const statusLabel = computed(() => {
+    if (lead.value.is_hot) return { label: 'Hot', classes: 'bg-red-100 text-red-700' }
+    if (lead.value.is_high_priority) return { label: 'High Priority', classes: 'bg-orange-100 text-orange-700' }
+    if (lead.value.is_eligible_for_conversion) return { label: 'Eligible for Conversion', classes: 'bg-purple-100 text-purple-700' }
+    if (lead.value.is_stale) return { label: 'Stale', classes: 'bg-gray-100 text-gray-600' }
+    if (lead.value.is_low_priority) return { label: 'Low Priority', classes: 'bg-blue-100 text-blue-600' }
+    return { label: 'Active', classes: 'bg-green-100 text-green-700' }
+})
+
+async function loadLead() {
+    const data = await fetchLead(lead.value.id)
+    Object.assign(lead.value, data)
 }
 
-async function handleDelete(id: number) {
+async function handleDelete() {
     if (!confirm('Are you sure you want to delete this lead?')) return
-    await deleteLeads(id)
-    loadLeads(currentPage.value)
+    await deleteLeads(lead.value.id)
+    window.location.href = route('leads.index')
 }
 
-function goToPage(page: number) {
-    if (page >= 1 && page <= pagination.last_page) {
-        loadLeads(page)
-    }
+function formatDate(dateStr: string | null): string {
+    if (!dateStr) return '—'
+    return new Date(dateStr).toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+    })
 }
 
-onMounted(() => loadLeads())
+onMounted(() => loadLead())
 </script>
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head title="Leads" />
+        <Head :title="lead.display_name || 'Lead'" />
 
         <div class="p-6">
-            <div class="flex justify-between mb-6">
-                <h1 class="text-2xl font-bold">Leads</h1>
-                <Link
-                    v-if="permissions.create"
-                    :href="route('leads.create')"
-                    class="bg-blue-600 text-white px-4 py-2 rounded"
-                >
-                    Create
-                </Link>
-            </div>
+            <div class="mx-auto border p-6 rounded shadow">
 
-            <div v-if="loading" class="text-center py-6">Loading...</div>
-
-            <table v-else class="w-full border">
-                <thead>
-                    <tr class="bg-gray-50">
-                        <th class="p-2 text-left">Name</th>
-                        <th class="p-2 text-left">Email</th>
-                        <th class="p-2 text-left">Phone</th>
-                        <th class="p-2 text-left">Source</th>
-                        <th class="p-2 text-left">Owner</th>
-                        <th class="p-2 text-left">Status</th>
-                        <th class="p-2 text-right">Age (days)</th>
-                        <th class="p-2"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="lead in leads" :key="lead.id" class="border-t">
-                        <td class="p-2 font-medium">{{ lead.display_name }}</td>
-                        <td class="p-2 text-gray-500">{{ lead.email ?? '—' }}</td>
-                        <td class="p-2 text-gray-500">{{ lead.phone ?? '—' }}</td>
-                        <td class="p-2 text-gray-500">{{ lead.source ?? '—' }}</td>
-                        <td class="p-2 text-gray-500">{{ lead.owner?.name ?? '—' }}</td>
-                        <td class="p-2">
+                <!-- Header -->
+                <div class="flex items-start justify-between mb-6">
+                    <div>
+                        <h1 class="text-2xl font-bold">{{ lead.display_name }}</h1>
+                        <div class="flex items-center gap-2 mt-1 flex-wrap">
                             <span
-                                v-if="lead.is_hot"
-                                class="px-2 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700"
+                                v-if="lead.title"
+                                class="text-sm text-gray-500 italic"
                             >
-                                Hot
+                                {{ lead.title }}
                             </span>
                             <span
-                                v-else-if="lead.is_high_priority"
-                                class="px-2 py-0.5 rounded-full text-xs font-semibold bg-orange-100 text-orange-700"
+                                class="px-2 py-0.5 rounded-full text-xs font-semibold"
+                                :class="statusLabel.classes"
                             >
-                                High Priority
+                                {{ statusLabel.label }}
                             </span>
                             <span
-                                v-else-if="lead.is_stale"
-                                class="px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600"
+                                v-if="lead.is_eligible_for_conversion && !lead.is_hot"
+                                class="px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-700"
                             >
-                                Stale
+                                Eligible for Conversion
                             </span>
-                            <span
-                                v-else-if="lead.is_low_priority"
-                                class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-600"
-                            >
-                                Low Priority
-                            </span>
-                            <span
-                                v-else
-                                class="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700"
-                            >
-                                Active
-                            </span>
-                        </td>
-                        <td class="p-2 text-right">{{ lead.age_in_days }}</td>
-                        <td class="p-2 space-x-2 whitespace-nowrap">
-                            <Link
-                                v-if="lead.permissions.view"
-                                :href="route('leads.show', { lead: lead.id })"
-                                class="text-blue-600 underline text-sm"
-                            >
-                                View
-                            </Link>
-                            <Link
-                                v-if="lead.permissions.update"
-                                :href="route('leads.edit', { lead: lead.id })"
-                                class="text-blue-600 underline text-sm"
-                            >
-                                Edit
-                            </Link>
-                            <button
-                                v-if="lead.permissions.delete"
-                                @click="handleDelete(lead.id)"
-                                class="text-red-600 text-sm"
-                            >
-                                Delete
-                            </button>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
 
-                    <tr v-if="leads.length === 0">
-                        <td colspan="8" class="p-4 text-center text-gray-500">
-                            No leads found.
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                    <div class="flex items-center space-x-2">
+                        <Link
+                            v-if="lead.permissions.update"
+                            :href="route('leads.edit', { lead: lead.id })"
+                            class="bg-blue-600 text-white px-4 py-2 rounded"
+                        >
+                            Edit
+                        </Link>
+                        <Link
+                            :href="route('leads.index')"
+                            class="bg-gray-200 text-gray-700 px-4 py-2 rounded"
+                        >
+                            Back
+                        </Link>
+                        <button
+                            v-if="lead.permissions.delete"
+                            @click="handleDelete"
+                            class="bg-red-600 text-white px-4 py-2 rounded"
+                        >
+                            Delete
+                        </button>
+                    </div>
+                </div>
 
-            <!-- Pagination -->
-            <div v-if="pagination.last_page > 1" class="flex justify-center mt-4 space-x-2">
-                <button
-                    class="px-3 py-1 border rounded disabled:opacity-50"
-                    :disabled="currentPage === 1"
-                    @click="goToPage(currentPage - 1)"
-                >
-                    Previous
-                </button>
+                <!-- Contact Details -->
+                <div class="mb-6">
+                    <h2 class="text-lg font-semibold border-b pb-2 mb-3">Contact Details</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+                        <div>
+                            <span class="font-semibold">First Name: </span>
+                            <span>{{ lead.first_name ?? '—' }}</span>
+                        </div>
+                        <div>
+                            <span class="font-semibold">Last Name: </span>
+                            <span>{{ lead.last_name ?? '—' }}</span>
+                        </div>
+                        <div>
+                            <span class="font-semibold">Email: </span>
+                            <a
+                                v-if="lead.email"
+                                :href="`mailto:${lead.email}`"
+                                class="text-blue-600 underline"
+                            >
+                                {{ lead.email }}
+                            </a>
+                            <span v-else>—</span>
+                        </div>
+                        <div>
+                            <span class="font-semibold">Phone: </span>
+                            <a
+                                v-if="lead.phone"
+                                :href="`tel:${lead.phone}`"
+                                class="text-blue-600 underline"
+                            >
+                                {{ lead.phone }}
+                            </a>
+                            <span v-else>—</span>
+                        </div>
+                        <div>
+                            <span class="font-semibold">Source: </span>
+                            <span>{{ lead.source ?? '—' }}</span>
+                        </div>
+                        <div>
+                            <span class="font-semibold">Age: </span>
+                            <span>{{ lead.age_in_days }} days</span>
+                        </div>
+                    </div>
+                </div>
 
-                <button
-                    v-for="page in pagination.last_page"
-                    :key="page"
-                    class="px-3 py-1 border rounded"
-                    :class="{ 'bg-blue-600 text-white': page === currentPage }"
-                    @click="goToPage(page)"
-                >
-                    {{ page }}
-                </button>
+                <!-- Assignment -->
+                <div class="mb-6">
+                    <h2 class="text-lg font-semibold border-b pb-2 mb-3">Assignment</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+                        <div>
+                            <span class="font-semibold">Owner: </span>
+                            <span>{{ lead.owner?.name ?? '—' }}</span>
+                        </div>
+                        <div>
+                            <span class="font-semibold">Assigned To: </span>
+                            <span>{{ lead.assigned_to?.name ?? '—' }}</span>
+                        </div>
+                        <div v-if="lead.assigned_at">
+                            <span class="font-semibold">Assigned At: </span>
+                            <span>{{ formatDate(lead.assigned_at) }}</span>
+                        </div>
+                    </div>
+                </div>
 
-                <button
-                    class="px-3 py-1 border rounded disabled:opacity-50"
-                    :disabled="currentPage === pagination.last_page"
-                    @click="goToPage(currentPage + 1)"
-                >
-                    Next
-                </button>
+                <!-- Audit -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-sm text-gray-600">
+                    <div v-if="lead.creator">
+                        <span class="font-semibold">Created By: </span>
+                        <span>{{ lead.creator.name }}</span>
+                    </div>
+                    <div v-if="lead.created_at">
+                        <span class="font-semibold">Created: </span>
+                        <span>{{ formatDate(lead.created_at) }}</span>
+                    </div>
+                    <div v-if="lead.updater">
+                        <span class="font-semibold">Last Updated By: </span>
+                        <span>{{ lead.updater.name }}</span>
+                    </div>
+                    <div v-if="lead.updated_at">
+                        <span class="font-semibold">Last Updated: </span>
+                        <span>{{ formatDate(lead.updated_at) }}</span>
+                    </div>
+                    <div v-if="lead.deleter">
+                        <span class="font-semibold">Deleted By: </span>
+                        <span class="text-red-600">{{ lead.deleter.name }}</span>
+                    </div>
+                </div>
+
             </div>
         </div>
     </AppLayout>

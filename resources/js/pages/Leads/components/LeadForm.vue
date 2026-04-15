@@ -16,8 +16,7 @@ interface Lead {
     phone?: string
     source?: string | null
     owner_id?: number | null
-    assigned_to?: number | null
-    is_test?: boolean
+    assigned_to?: { id: number } | number | null
     meta?: Record<string, any> | null
 }
 
@@ -30,25 +29,30 @@ const props = defineProps<{
 }>()
 
 const sourceOptions = [
-    { value: 'website', label: 'Website' },
-    { value: 'referral', label: 'Referral' },
-    { value: 'cold_call', label: 'Cold Call' },
-    { value: 'email', label: 'Email' },
-    { value: 'social_media', label: 'Social Media' },
-    { value: 'trade_show', label: 'Trade Show' },
-    { value: 'other', label: 'Other' },
+    { value: 'Website', label: 'Website' },
+    { value: 'Referral', label: 'Referral' },
+    { value: 'Cold Call', label: 'Cold Call' },
+    { value: 'Email', label: 'Email' },
+    { value: 'Social Media', label: 'Social Media' },
+    { value: 'Trade Show', label: 'Trade Show' },
+    { value: 'Other', label: 'Other' },
 ]
 
+const lead = props.lead
+
 const form = useForm({
-    title: props.lead?.title ?? '',
-    first_name: props.lead?.first_name ?? '',
-    last_name: props.lead?.last_name ?? '',
-    email: props.lead?.email ?? '',
-    phone: props.lead?.phone ?? '',
-    source: props.lead?.source ?? null,
-    owner_id: props.lead?.owner_id ?? null,
-    assigned_to: props.lead?.assigned_to ?? null,
-    is_test: props.lead?.is_test ?? false,
+    title: lead?.title ?? '',
+    first_name: lead?.first_name ?? '',
+    last_name: lead?.last_name ?? '',
+    email: lead?.email ?? '',
+    phone: lead?.phone ?? '',
+    source: lead?.source ?? null,
+    owner_id: lead?.owner_id ?? null,
+    assigned_to: lead?.assigned_to
+        ? typeof lead.assigned_to === 'object'
+            ? lead.assigned_to.id
+            : lead.assigned_to
+        : null,
 })
 
 async function submit() {
@@ -77,7 +81,7 @@ async function submit() {
             form.setError(flat)
         }
     }
-}
+}console.log(props.lead?.assigned_to)
 </script>
 
 <template>

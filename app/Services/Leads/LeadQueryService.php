@@ -4,7 +4,6 @@ namespace App\Services\Leads;
 
 use App\Models\Lead;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -42,8 +41,7 @@ class LeadQueryService
      *
      * @param  LeadSearchService $search Handles search filtering.
      * @param  LeadSortingService $sorting Handles sort order.
-     * @param  LeadTrashFilterService $trashFilter Handles
-     * trash filtering.
+     * @param  LeadTrashFilterService $trashFilter Handles trash filtering.
      */
     public function __construct(
         LeadSearchService $search,
@@ -65,34 +63,34 @@ class LeadQueryService
      * @param  Request $request Incoming HTTP request; may carry search,
      * sort, filter, and pagination params.
      *
-     * @return LengthAwarePaginator Paginated leads item results.
+     * @return array Paginated lead results with top-level permissions.
      */
-    public function list(Request $request): LengthAwarePaginator
+    public function list(Request $request): array
     {
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
-
         $query = Lead::with(
             'owner',
             'assignedTo',
+            'creator',
+            'updater',
+            'deleter',
         );
 
         $this->search->applySearch($query, $request);
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        $paginator = $query->paginate($perPage)->appends($request->query());
+        $paginator = $this->paginate($query, $request);
 
-        return $this->transformPaginator($paginator);
+        return array_merge(
+            $paginator,
+            ['permissions' => $this->getPermissions()]
+        );
     }
 
     /**
      * Return a single lead with related data loaded.
      *
-     * @param  Lead $lead The route-model-bound lead
-     * instance.
+     * @param  Lead $lead The route-model-bound lead instance.
      *
      * @return array
      */
@@ -101,43 +99,52 @@ class LeadQueryService
         $lead->load(
             'owner',
             'assignedTo',
+            'creator',
+            'updater',
+            'deleter',
         );
 
         return $this->formatLead($lead);
     }
 
     /**
-     * Apply transformation and append permissions to the paginator.
+     * Paginate and transform the lead query.
      *
-     * Each lead item is formatted into a structured array and
-     * top-level permissions are appended to the paginator response.
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  Request $request
      *
-     * @param  LengthAwarePaginator $paginator The paginator instance
-     * containing Lead models.
-     *
-     * @return LengthAwarePaginator The transformed paginator instance.
+     * @return array
      */
-    private function transformPaginator(
-        LengthAwarePaginator $paginator
-    ): LengthAwarePaginator {
-        $paginator->through(
-            fn (Lead $lead) => $this->formatLead($lead)
-        );
+    private function paginate($query, Request $request): array
+    {
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
 
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Lead::class),
-                'viewAny' => Gate::allows('viewAny', Lead::class),
-            ],
-        ]);
+        return $query->paginate($perPage)
+            ->appends($request->query())
+            ->through(fn (
+                Lead $lead
+            ): array => $this->formatLead($lead))
+            ->toArray();
+    }
 
-        return $paginator;
+    /**
+     * Get permission flags for the current user.
+     *
+     * @return array
+     */
+    private function getPermissions(): array
+    {
+        return [
+            'create' => Gate::allows('create', Lead::class),
+            'viewAny' => Gate::allows('viewAny', Lead::class),
+        ];
     }
 
     /**
      * Format a lead into a structured array.
      *
-     * Combines core attributes, derived flags, relationships, and permissions.
+     * Combines core attributes, derived flags, relationships,
+     * and authorisation permissions for the current user.
      *
      * @param  Lead $lead
      *
