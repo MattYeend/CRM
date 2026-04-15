@@ -3,8 +3,8 @@
 namespace App\Services\Learnings;
 
 use App\Models\Learning;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -55,36 +55,24 @@ class LearningQueryService
      * @param  Request $request Incoming HTTP request; may carry search,
      * sort, filter, and pagination params.
      *
-     * @return LengthAwarePaginator Paginated learning item results.
+     * @return array Paginated learning item results.
      */
-    public function list(Request $request): LengthAwarePaginator
+    public function list(Request $request): array
     {
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
-
         $query = Learning::with(
             'users',
+            'questions.answers'
         );
 
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        $paginator = $query->paginate($perPage)->appends($request->query());
+        $paginator = $this->paginate($query, $request);
 
-        $paginator->through(
-            fn (Learning $learning) => $this->formatLearning($learning)
+        return array_merge(
+            $paginator,
+            ['permissions' => $this->getPermissions()]
         );
-
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Learning::class),
-                'viewAny' => Gate::allows('viewAny', Learning::class),
-            ],
-        ]);
-
-        return $paginator;
     }
 
     /**
@@ -103,6 +91,40 @@ class LearningQueryService
         );
 
         return $this->formatLearning($learning);
+    }
+
+    /**
+     * Paginate and transform the learning query.
+     *
+     * @param  Builder $query
+     * @param  Request $request
+     *
+     * @return array
+     */
+    private function paginate(Builder $query, Request $request): array
+    {
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
+
+        return $query->paginate($perPage)
+            ->appends($request->query())
+            ->through(fn (
+                Learning $learning
+            ): array => $this->formatLearning($learning)
+            )
+            ->toArray();
+    }
+
+    /**
+     * Get global permission flags for the current user.
+     *
+     * @return array
+     */
+    private function getPermissions(): array
+    {
+        return [
+            'create' => Gate::allows('create', Learning::class),
+            'viewAny' => Gate::allows('viewAny', Learning::class),
+        ];
     }
 
     /**

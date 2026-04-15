@@ -3,6 +3,7 @@
 namespace App\Services\Leads;
 
 use App\Models\Lead;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
@@ -110,12 +111,12 @@ class LeadQueryService
     /**
      * Paginate and transform the lead query.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  Builder $query
      * @param  Request $request
      *
      * @return array
      */
-    private function paginate($query, Request $request): array
+    private function paginate(Builder $query, Request $request): array
     {
         $perPage = max(1, min((int) $request->query('per_page', 10), 100));
 
