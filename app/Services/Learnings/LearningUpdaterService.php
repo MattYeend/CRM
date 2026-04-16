@@ -9,13 +9,15 @@ use Illuminate\Support\Facades\DB;
 /**
  * Handles updates to Learning records.
  *
- * Validates incoming request data, assigns audit fields, and persists
- * updates to the learning.
+ * This service orchestrates:
+ * - Updating the Learning model
+ * - Syncing assigned users
+ * - Recreating learning questions
  */
 class LearningUpdaterService
 {
     /**
-     * Service responsible for updating existing learning questions.
+     * Service responsible for recreating learning questions.
      *
      * @var LearningQuestionsRecreateService
      */
@@ -24,24 +26,15 @@ class LearningUpdaterService
     /**
      * Service responsible for syncing users assigned to a learning.
      *
-     * Handles attaching users and resetting pivot state such as:
-     * - completion status
-     * - score
-     * - completion timestamp
-     *
      * @var LearningUserSyncService
      */
     private LearningUserSyncService $userSyncService;
 
     /**
-     * Create a new LearningUpdaterService instance.
+     * Create a new service instance.
      *
-     * Injects required domain services:
-     * - LearningQuestionsRecreateService: handles question recreation
-     * - LearningUserSyncService: handles user assignment syncing
-     *
-     * @param  LearningQuestionsRecreateService $questionsService
-     * @param  LearningUserSyncService $userSyncService
+     * @param LearningQuestionsRecreateService $questionsService
+     * @param LearningUserSyncService $userSyncService
      */
     public function __construct(
         LearningQuestionsRecreateService $questionsService,
@@ -52,77 +45,84 @@ class LearningUpdaterService
     }
 
     /**
-     * Update an existing learning.
+     * Update an existing Learning record.
      *
-     * Extracts validated data from the request, assigns the authenticated
-     * user and timestamp to audit fields, updates the learning, and returns
-     * a fresh instance.
+     * @param UpdateLearningRequest $request
+     * @param Learning $learning
      *
-     * @param  UpdateLearningRequest $request The request containing
-     * validated learning data.
-     * @param  Learning $learning The learning to update.
-     *
-     * @return Learning The updated learning instance.
+     * @return Learning
      */
     public function update(
         UpdateLearningRequest $request,
         Learning $learning
     ): Learning {
         $user = $request->user();
-
         $data = $request->validated();
 
         return DB::transaction(function () use ($learning, $data, $user) {
-            $learning->update([
-                ...$data,
-                'updated_by' => $user->id,
-            ]);
+            $this->updateLearning($learning, $data, $user->id);
 
             if (isset($data['users'])) {
-                $this->userSyncService->sync(
-                    $learning,
-                    $data['users'],
-                    $user->id
-                );
+                $this->syncUsers($learning, $data['users'], $user->id);
             }
 
-            if (isset($data['questions'])) {
-                $this->questionsService->recreate(
-                    $learning,
-                    $data['questions']
-                );
+            if (isset($data['questions']) && count($data['questions']) > 0) {
+                $this->recreateQuestions($learning, $data['questions']);
             }
+
             return $learning->load('questions.answers');
         });
     }
 
     /**
-     * Helper function to recreate questions
+     * Update base learning model.
      *
      * @param Learning $learning
+     * @param array $data
+     * @param int $userId
      *
+     * @return void
+     */
+    private function updateLearning(
+        Learning $learning,
+        array $data,
+        int $userId
+    ): void {
+        $learning->update([
+            ...$data,
+            'updated_by' => $userId,
+        ]);
+    }
+
+    /**
+     * Sync users to learning.
+     *
+     * @param Learning $learning
+     * @param array $users
+     * @param int $userId
+     *
+     * @return void
+     */
+    private function syncUsers(
+        Learning $learning,
+        array $users,
+        int $userId
+    ): void {
+        $this->userSyncService->sync($learning, $users, $userId);
+    }
+
+    /**
+     * Recreate all questions for a learning.
+     *
+     * @param Learning $learning
      * @param array $questions
+     *
+     * @return void
      */
     private function recreateQuestions(
         Learning $learning,
         array $questions
     ): void {
-        $learning->questions()->each(function ($q) {
-            $q->answers()->delete();
-            $q->delete();
-        });
-
-        foreach ($questions as $questionData) {
-            $question = $learning->questions()->create([
-                'question' => $questionData['question'] ?? null,
-            ]);
-
-            foreach ($questionData['answers'] ?? [] as $answerData) {
-                $question->answers()->create([
-                    'answer' => $answerData['answer'] ?? null,
-                    'is_correct' => $answerData['is_correct'] ?? false,
-                ]);
-            }
-        }
+        $this->questionsService->recreate($learning, $questions);
     }
 }

@@ -152,26 +152,95 @@ class LearningQueryService
     {
         $currentUser = $learning->users
             ->firstWhere('id', auth()->id());
+
+        return array_merge(
+            $this->baseFields($learning),
+            $this->metaFields($learning),
+            $this->relations($learning),
+            $this->currentUserPivot($currentUser),
+            $this->permissions($learning),
+        );
+    }
+
+    /**
+     * Base fields.
+     *
+     * @param  Learning $learning
+     *
+     * @return array
+     */
+    private function baseFields(Learning $learning): array
+    {
         return [
             'id' => $learning->id,
             'title' => $learning->title,
             'description' => $learning->description,
             'date' => $learning->date,
             'pass_score' => $learning->pass_score,
+        ];
+    }
+
+    /**
+     * Meta fields.
+     *
+     * @param  Learning $learning
+     *
+     * @return array
+     */
+    private function metaFields(Learning $learning): array
+    {
+        return [
             'meta_title' => $learning->meta_title,
             'meta_description' => $learning->meta_description,
             'meta_keywords' => $learning->meta_keywords,
             'meta_author' => $learning->meta_author,
+        ];
+    }
+
+    /**
+     * Relations.
+     *
+     * @param  Learning $learning
+     *
+     * @return array
+     */
+    private function relations(Learning $learning): array
+    {
+        return [
             'users' => $learning->users,
-            'current_user' => $currentUser?->pivot
-                ? [
-                    'is_complete' => $currentUser->pivot->is_complete,
-                    'score' => $currentUser->pivot->score,
-                    'completed_at' => $currentUser->pivot->completed_at,
-                ]
-                : null,
             'questions' => $learning->questions,
             'creator' => $learning->creator,
+        ];
+    }
+
+    /**
+     * Current user pivot data.
+     *
+     * @param mixed $currentUser Pivoted user model or null.
+     *
+     * @return array
+     */
+    private function currentUserPivot($currentUser): array
+    {
+        return [
+            'current_user' => $currentUser?->pivot ? [
+                'is_complete' => $currentUser->pivot->is_complete,
+                'score' => $currentUser->pivot->score,
+                'completed_at' => $currentUser->pivot->completed_at,
+            ] : null,
+        ];
+    }
+
+    /**
+     * Permissions for a learning.
+     *
+     * @param  Learning $learning
+     *
+     * @return array
+     */
+    private function permissions(Learning $learning): array
+    {
+        return [
             'permissions' => [
                 'view' => Gate::allows('view', $learning),
                 'update' => Gate::allows('update', $learning),

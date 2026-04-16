@@ -39,7 +39,7 @@ class LearningCreatorService
      *
      * @param  LearningQuestionsCreateService $questionsService
      * Handles learning question creation.
-     * @param LearningUserSyncService $userSyncService
+     * @param  LearningUserSyncService $userSyncService
      */
     public function __construct(
         LearningQuestionsCreateService $questionsService,
@@ -47,7 +47,6 @@ class LearningCreatorService
     ) {
         $this->questionsService = $questionsService;
         $this->userSyncService = $userSyncService;
-
     }
 
     /**
@@ -67,29 +66,63 @@ class LearningCreatorService
         $data = $request->validated();
 
         return DB::transaction(function () use ($data, $user) {
-            $learning = Learning::create([
-                ...$data,
-                'created_by' => $user->id,
-            ]);
+            $learning = $this->createLearning($data, $user->id);
 
             if (isset($data['users'])) {
-                $this->userSyncService->sync(
-                    $learning,
-                    $data['users'],
-                    $user->id
-                );
+                $this->syncUsers($learning, $data['users'], $user->id);
             }
 
             if (isset($data['questions']) && count($data['questions']) > 0) {
-                $this->questionsService->create(
-                    $learning,
-                    $data['questions']
-                );
+                $this->createQuestions($learning, $data['questions']);
             }
 
             return $learning->load('questions.answers');
         });
+    }
 
-        return Learning::create($data);
+    /**
+     * Create the base Learning model.
+     *
+     * @param array $data
+     * @param int $userId
+     *
+     * @return Learning
+     */
+    private function createLearning(array $data, int $userId): Learning
+    {
+        return Learning::create([
+            ...$data,
+            'created_by' => $userId,
+        ]);
+    }
+
+    /**
+     * Sync users to the learning.
+     *
+     * @param Learning $learning
+     * @param array $users
+     * @param int $userId
+     *
+     * @return void
+     */
+    private function syncUsers(
+        Learning $learning,
+        array $users,
+        int $userId
+    ): void {
+        $this->userSyncService->sync($learning, $users, $userId);
+    }
+
+    /**
+     * Create questions for the learning.
+     *
+     * @param Learning $learning
+     * @param array $questions
+     *
+     * @return void
+     */
+    private function createQuestions(Learning $learning, array $questions): void
+    {
+        $this->questionsService->create($learning, $questions);
     }
 }
