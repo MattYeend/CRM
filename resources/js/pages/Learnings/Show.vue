@@ -104,7 +104,7 @@ async function handleDelete() {
 }
 
 async function handleComplete() {
-    await completeLearning(learning.value.id, score.value)
+    await completeLearning(learning.value.id, score.value??0)
     window.location.href = route('learnings.complete', { learning: learning.value.id })
 }
 

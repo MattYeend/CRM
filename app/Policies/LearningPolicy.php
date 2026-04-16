@@ -161,12 +161,13 @@ class LearningPolicy
      */
     public function complete(User $user, Learning $learning)
     {
-        return $this->anyOrOwn(
-            $user,
-            $learning,
-            'learnings.complete.any',
-            'learnings.complete.own'
-        );
+        if ($this->has($user, 'learnings.complete.any')) {
+            return true;
+        }
+
+        return $learning->users()
+            ->where('user_id', $user->id)
+            ->exists();
     }
 
     /**
@@ -179,12 +180,13 @@ class LearningPolicy
      */
     public function incomplete(User $user, Learning $learning)
     {
-        return $this->anyOrOwn(
-            $user,
-            $learning,
-            'learnings.incomplete.any',
-            'learnings.incomplete.own'
-        );
+        if ($this->has($user, 'learnings.incomplete.any')) {
+            return true;
+        }
+
+        return $learning->users()
+            ->where('user_id', $user->id)
+            ->exists();
     }
 
     /**

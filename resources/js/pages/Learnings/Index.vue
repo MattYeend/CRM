@@ -59,8 +59,8 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 // is_complete and score live on the pivot between the learning and the
 // authenticated user — not on the learning itself.
-function currentUserPivot(learning: Learning): LearningUser['pivot'] | null {
-    return learning.users?.[0]?.pivot ?? null
+function currentUserPivot(learning: Learning) {
+    return learning.current_user ?? null
 }
 
 function isComplete(learning: Learning): boolean {

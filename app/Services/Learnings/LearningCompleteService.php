@@ -30,23 +30,16 @@ class LearningCompleteService
     {
         $userId = auth()->id();
 
-        if (
-            $learning->pass_score !== null
-            && ($score === null || $score < $learning->pass_score)
-        ) {
-            $passScore = $learning->pass_score;
-            abort(422, sprintf(
-                'Score of %s does not meet the pass score of %s.',
-                $score,
-                $passScore,
-            ));
-        }
+        $passed = $learning->pass_score === null
+            || ($score !== null && $score >= $learning->pass_score);
 
         $learning->users()->updateExistingPivot($userId, [
             'is_complete' => true,
-            'completed_at' => now(),
             'score' => $score,
-            'updated_by' => $userId,
+            'completed_at' => now(),
+            'meta' => json_encode([
+                'passed' => $passed,
+            ]),
         ]);
 
         return $learning;

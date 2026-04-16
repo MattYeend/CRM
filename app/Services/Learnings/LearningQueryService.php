@@ -59,10 +59,16 @@ class LearningQueryService
      */
     public function list(Request $request): array
     {
-        $query = Learning::with(
-            'users',
-            'questions.answers'
-        );
+        $query = Learning::with([
+            'users' => function ($q) {
+                $q->withPivot([
+                    'is_complete',
+                    'score',
+                    'completed_at',
+                ]);
+            },
+            'questions.answers',
+        ]);
 
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
@@ -85,10 +91,16 @@ class LearningQueryService
      */
     public function show(Learning $learning): array
     {
-        $learning->load(
-            'users',
+        $learning->load([
+            'users' => function ($q) {
+                $q->withPivot([
+                    'is_complete',
+                    'score',
+                    'completed_at',
+                ]);
+            },
             'questions.answers',
-        );
+        ]);
 
         return $this->formatLearning($learning);
     }
@@ -109,8 +121,7 @@ class LearningQueryService
             ->appends($request->query())
             ->through(fn (
                 Learning $learning
-            ): array => $this->formatLearning($learning)
-            )
+            ): array => $this->formatLearning($learning))
             ->toArray();
     }
 
@@ -139,6 +150,8 @@ class LearningQueryService
      */
     private function formatLearning(Learning $learning): array
     {
+        $currentUser = $learning->users
+            ->firstWhere('id', auth()->id());
         return [
             'id' => $learning->id,
             'title' => $learning->title,
@@ -149,11 +162,14 @@ class LearningQueryService
             'meta_description' => $learning->meta_description,
             'meta_keywords' => $learning->meta_keywords,
             'meta_author' => $learning->meta_author,
-            // 'users' => $learning->users,
-            'current_user' => $learning->users
-                ->firstWhere('id', auth()->id())
-                ?->pivot
-                ?->only(['is_complete', 'score', 'completed_at']),
+            'users' => $learning->users,
+            'current_user' => $currentUser?->pivot
+                ? [
+                    'is_complete' => $currentUser->pivot->is_complete,
+                    'score' => $currentUser->pivot->score,
+                    'completed_at' => $currentUser->pivot->completed_at,
+                ]
+                : null,
             'questions' => $learning->questions,
             'creator' => $learning->creator,
             'permissions' => [

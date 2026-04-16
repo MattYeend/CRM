@@ -547,9 +547,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Learning $learning
     ) {
         return Inertia::render('Learnings/Update', [
-            'learning' => $learning->load(
+            'learning' => $learning->load([
                 'creator',
-            ),
+                'users',
+                'questions.answers',
+            ]),
             'users' => User::orderBy('name')->get(['id', 'name']),
         ]);
     })->name('learnings.edit');

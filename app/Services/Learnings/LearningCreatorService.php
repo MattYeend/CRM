@@ -55,6 +55,19 @@ class LearningCreatorService
                 'created_by' => $user->id,
             ]);
 
+            if (! empty($data['users'])) {
+                $learning->users()->sync(
+                    collect($data['users'])->mapWithKeys(fn ($userId) => [
+                        $userId => [
+                            'is_complete' => false,
+                            'score' => null,
+                            'completed_at' => null,
+                            'created_by' => $user->id,
+                        ],
+                    ])->toArray()
+                );
+            }
+
             if (isset($data['questions']) && count($data['questions']) > 0) {
                 $this->questionsService->create(
                     $learning,

@@ -138,12 +138,13 @@ class LearningManagementService
      * learning progress.
      *
      * @param  Learning $learning The learning to mark as complete.
+     * @param  int $score The score of the complete learning.
      *
      * @return void
      */
-    public function complete(Learning $learning): void
+    public function complete(Learning $learning, ?int $score = null): void
     {
-        $this->complete->complete($learning);
+        $this->complete->complete($learning, $score);
     }
 
     /**

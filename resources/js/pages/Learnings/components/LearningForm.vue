@@ -22,8 +22,9 @@ interface Learning {
     id?: number
     title?: string
     description?: string | null
-    is_test?: boolean
+    pass_score?: number
     questions?: LearningQuestion[]
+    users?: User[] 
 }
 
 const props = defineProps<{
@@ -37,7 +38,8 @@ const props = defineProps<{
 const form = useForm({
     title: props.learning?.title ?? '',
     description: props.learning?.description ?? '',
-    is_test: props.learning?.is_test ?? false,
+    pass_score: props.learning?.pass_score ?? null,
+    users: props.learning?.users?.map(u => u.id) ?? [],
 })
 
 // Local reactive questions state (not part of useForm to allow dynamic add/remove)
@@ -143,6 +145,42 @@ async function submit() {
                     placeholder="Brief description of this learning module..."
                 />
                 <p v-if="form.errors.description" class="text-red-500 text-sm mt-1">{{ form.errors.description }}</p>
+            </div>
+
+            <div class="space-y-2">
+                <h2 class="text-lg font-semibold border-b pb-2">Assign Users</h2>
+
+                <div
+                    v-for="user in props.users"
+                    :key="user.id"
+                    class="flex items-center gap-2"
+                >
+                    <input
+                        type="checkbox"
+                        :value="user.id"
+                        v-model="form.users"
+                    />
+                    <span>{{ user.name }}</span>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1">
+                    Pass Score (%)
+                </label>
+
+                <input
+                    v-model.number="form.pass_score"
+                    type="number"
+                    min="0"
+                    max="100"
+                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="e.g. 70"
+                />
+
+                <p v-if="form.errors.pass_score" class="text-red-500 text-sm mt-1">
+                    {{ form.errors.pass_score }}
+                </p>
             </div>
         </div>
 
