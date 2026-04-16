@@ -1,21 +1,28 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { fetchLearning } from '@/services/learningService'
+interface LearningUser {
+    id: number
+    name: string
+    pivot?: {
+        is_complete: boolean
+        score: number | null
+        completed_at: string | null
+    }
+}
 
 interface Learning {
     id: number
     title: string
     description: string | null
-    is_complete: boolean
-    score: number | null
-    completed_at: string | null
+    users: LearningUser[]
     permissions: {
         view: boolean
-        incomplete: boolean
     }
 }
 
@@ -25,10 +32,8 @@ const learning = ref<Learning>({
     id: props.learning.id,
     title: props.learning.title ?? '',
     description: props.learning.description ?? null,
-    is_complete: props.learning.is_complete ?? false,
-    score: props.learning.score ?? null,
-    completed_at: props.learning.completed_at ?? null,
-    permissions: props.learning.permissions ?? { view: false, incomplete: false },
+    users: props.learning.users ?? [],
+    permissions: props.learning.permissions ?? { view: false },
 })
 
 const breadcrumbItems: BreadcrumbItem[] = [
@@ -37,8 +42,12 @@ const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Results', href: route('learnings.results', { learning: learning.value.id }) },
 ]
 
+const userPivot = computed(() => learning.value.users?.[0]?.pivot ?? null)
+const score = computed(() => userPivot.value?.score ?? null)
+const completedAt = computed(() => userPivot.value?.completed_at ?? null)
+
 const scoreLabel = computed(() => {
-    const s = learning.value.score
+    const s = score.value
     if (s === null) return null
     if (s >= 80) return { label: 'Excellent', classes: 'text-green-700' }
     if (s >= 60) return { label: 'Good', classes: 'text-blue-700' }
@@ -57,12 +66,6 @@ function formatDate(dateStr: string | null): string {
     })
 }
 
-async function loadLearning() {
-    const data = await fetchLearning(learning.value.id)
-    Object.assign(learning.value, data)
-}
-
-onMounted(() => loadLearning())
 </script>
 
 <template>
@@ -74,27 +77,24 @@ onMounted(() => loadLearning())
 
                 <!-- Icon -->
                 <div class="text-5xl mb-4">
-                    {{ learning.score !== null && learning.score >= 60 ? '🎉' : '📋' }}
+                    {{ score !== null && score >= 60 ? '🎉' : '📋' }}
                 </div>
 
                 <h1 class="text-2xl font-bold mb-1">{{ learning.title }}</h1>
                 <p class="text-gray-500 mb-6">Learning complete</p>
 
                 <!-- Score -->
-                <div
-                    v-if="learning.score !== null"
-                    class="mb-6"
-                >
+                <div v-if="score !== null" class="mb-6">
                     <div class="text-6xl font-bold mb-1" :class="scoreLabel?.classes">
-                        {{ learning.score }}%
+                        {{ score }}%
                     </div>
                     <p class="text-sm font-medium" :class="scoreLabel?.classes">
                         {{ scoreLabel?.label }}
                     </p>
                 </div>
 
-                <div v-if="learning.completed_at" class="text-sm text-gray-400 mb-8">
-                    Completed {{ formatDate(learning.completed_at) }}
+                <div v-if="completedAt" class="text-sm text-gray-400 mb-8">
+                    Completed {{ formatDate(completedAt) }}
                 </div>
 
                 <!-- Actions -->

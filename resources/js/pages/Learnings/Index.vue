@@ -6,20 +6,34 @@ import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
 import { fetchLearnings, deleteLearnings } from '@/services/learningService'
 
+interface LearningUser {
+    id: number
+    name: string
+    pivot?: {
+        is_complete: boolean
+        score: number | null
+        completed_at: string | null
+    }
+}
+
 interface Learning {
     id: number
     title: string
     description: string | null
-    is_complete: boolean
-    score: number | null
-    completed_at: string | null
+    date: string | null
+    pass_score: number | null
+    users: LearningUser[]
+    current_user?: {
+        is_complete: boolean
+        score: number | null
+        completed_at: string | null
+    }
+    questions: Array<{ id: number; question: string }>
     creator: { id: number; name: string } | null
     permissions: {
         view: boolean
         update: boolean
         delete: boolean
-        complete: boolean
-        incomplete: boolean
     }
 }
 
@@ -42,6 +56,20 @@ const pagination = reactive({
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Learnings', href: route('learnings.index') },
 ]
+
+// is_complete and score live on the pivot between the learning and the
+// authenticated user — not on the learning itself.
+function currentUserPivot(learning: Learning): LearningUser['pivot'] | null {
+    return learning.users?.[0]?.pivot ?? null
+}
+
+function isComplete(learning: Learning): boolean {
+    return currentUserPivot(learning)?.is_complete ?? false
+}
+
+function getScore(learning: Learning): number | null {
+    return currentUserPivot(learning)?.score ?? null
+}
 
 async function loadLearnings(page = 1) {
     loading.value = true
@@ -97,6 +125,7 @@ onMounted(() => loadLearnings())
                         <th class="p-2 text-left">Title</th>
                         <th class="p-2 text-left">Description</th>
                         <th class="p-2 text-left">Created By</th>
+                        <th class="p-2 text-center">Questions</th>
                         <th class="p-2 text-left">Status</th>
                         <th class="p-2 text-right">Score</th>
                         <th class="p-2"></th>
@@ -109,9 +138,12 @@ onMounted(() => loadLearnings())
                             {{ learning.description ?? '—' }}
                         </td>
                         <td class="p-2 text-gray-500">{{ learning.creator?.name ?? '—' }}</td>
+                        <td class="p-2 text-center text-gray-500">
+                            {{ learning.questions?.length ?? 0 }}
+                        </td>
                         <td class="p-2">
                             <span
-                                v-if="learning.is_complete"
+                                v-if="isComplete(learning)"
                                 class="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700"
                             >
                                 Complete
@@ -124,7 +156,10 @@ onMounted(() => loadLearnings())
                             </span>
                         </td>
                         <td class="p-2 text-right">
-                            {{ learning.score !== null ? `${learning.score}%` : '—' }}
+                            <template v-if="getScore(learning) !== null">
+                                {{ getScore(learning) }}%
+                            </template>
+                            <template v-else>—</template>
                         </td>
                         <td class="p-2 space-x-2 whitespace-nowrap">
                             <Link
@@ -134,7 +169,7 @@ onMounted(() => loadLearnings())
                                 View
                             </Link>
                             <Link
-                                v-if="learning.permissions.complete && !learning.is_complete"
+                                v-if="!isComplete(learning)"
                                 :href="route('learnings.complete', { learning: learning.id })"
                             >
                                 Take
@@ -156,7 +191,7 @@ onMounted(() => loadLearnings())
                     </tr>
 
                     <tr v-if="learnings.length === 0">
-                        <td colspan="6" class="p-4 text-center text-gray-500">
+                        <td colspan="7" class="p-4 text-center text-gray-500">
                             No learnings found.
                         </td>
                     </tr>

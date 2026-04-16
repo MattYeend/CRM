@@ -87,7 +87,7 @@ class LearningQueryService
     {
         $learning->load(
             'users',
-            'questions',
+            'questions.answers',
         );
 
         return $this->formatLearning($learning);
@@ -149,7 +149,11 @@ class LearningQueryService
             'meta_description' => $learning->meta_description,
             'meta_keywords' => $learning->meta_keywords,
             'meta_author' => $learning->meta_author,
-            'users' => $learning->users,
+            // 'users' => $learning->users,
+            'current_user' => $learning->users
+                ->firstWhere('id', auth()->id())
+                ?->pivot
+                ?->only(['is_complete', 'score', 'completed_at']),
             'questions' => $learning->questions,
             'creator' => $learning->creator,
             'permissions' => [

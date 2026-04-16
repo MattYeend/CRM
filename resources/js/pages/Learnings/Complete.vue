@@ -124,10 +124,7 @@ async function handleSubmit() {
                             <label
                                 v-for="answer in question.answers"
                                 :key="answer.id"
-                                class="flex items-center gap-3 p-2 rounded cursor-pointer hover:bg-gray-50"
-                                :class="selectedAnswers[question.id] === answer.id
-                                    ? 'bg-blue-50 border border-blue-200'
-                                    : ''"
+                                class="flex items-center gap-3 p-2 rounded cursor-pointer"
                             >
                                 <input
                                     type="radio"

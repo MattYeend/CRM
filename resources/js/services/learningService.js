@@ -24,9 +24,11 @@ export async function deleteLearnings(id) {
     await api.delete(`/learnings/${id}`);
 }
 
-export async function completeLearning(id) {
-    const response = await api.post(`/learnings/${id}/complete`);
-    return response.data;
+export async function completeLearning(id, score) {
+    const response = await api.post(`/learnings/${id}/complete`, {
+        score,
+    })
+    return response.data
 }
 
 export async function incompleteLearning(id) {

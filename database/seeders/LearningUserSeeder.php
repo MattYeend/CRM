@@ -27,6 +27,7 @@ class LearningUserSeeder extends Seeder
                     'is_complete' => rand(0, 1),
                     'completed_at' => now(),
                     'is_test' => true,
+                    'score' => rand(20, 100),
                     'meta' => ['score' => rand(50, 100)],
                     'created_by' => User::inRandomOrder()->first()?->id,
                 ]);
