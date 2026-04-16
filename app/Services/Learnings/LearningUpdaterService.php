@@ -22,16 +22,35 @@ class LearningUpdaterService
     private LearningQuestionsRecreateService $questionsService;
 
     /**
-     * Inject the required services into the management service.
+     * Service responsible for syncing users assigned to a learning.
+     *
+     * Handles attaching users and resetting pivot state such as:
+     * - completion status
+     * - score
+     * - completion timestamp
+     *
+     * @var LearningUserSyncService
+     */
+    private LearningUserSyncService $userSyncService;
+
+    /**
+     * Create a new LearningUpdaterService instance.
+     *
+     * Injects required domain services:
+     * - LearningQuestionsRecreateService: handles question recreation
+     * - LearningUserSyncService: handles user assignment syncing
      *
      * @param  LearningQuestionsRecreateService $questionsService
-     * Handles learning question updates.
+     * @param  LearningUserSyncService $userSyncService
      */
     public function __construct(
         LearningQuestionsRecreateService $questionsService,
+        LearningUserSyncService $userSyncService,
     ) {
         $this->questionsService = $questionsService;
+        $this->userSyncService = $userSyncService;
     }
+
     /**
      * Update an existing learning.
      *
@@ -59,16 +78,11 @@ class LearningUpdaterService
                 'updated_by' => $user->id,
             ]);
 
-            if (! empty($data['users'])) {
-                $learning->users()->sync(
-                    collect($data['users'])->mapWithKeys(fn ($userId) => [
-                        $userId => [
-                            'is_complete' => false,
-                            'score' => null,
-                            'completed_at' => null,
-                            'created_by' => $user->id,
-                        ],
-                    ])->toArray()
+            if (isset($data['users'])) {
+                $this->userSyncService->sync(
+                    $learning,
+                    $data['users'],
+                    $user->id
                 );
             }
 

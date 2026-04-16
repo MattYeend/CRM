@@ -22,15 +22,32 @@ class LearningCreatorService
     private LearningQuestionsCreateService $questionsService;
 
     /**
+     * Service responsible for syncing users assigned to a learning.
+     *
+     * Handles attaching users and resetting pivot state:
+     * - is_complete
+     * - score
+     * - completed_at
+     * - created_by
+     *
+     * @var LearningUserSyncService
+     */
+    private LearningUserSyncService $userSyncService;
+
+    /**
      * Inject the required services into the management service.
      *
      * @param  LearningQuestionsCreateService $questionsService
      * Handles learning question creation.
+     * @param LearningUserSyncService $userSyncService
      */
     public function __construct(
         LearningQuestionsCreateService $questionsService,
+        LearningUserSyncService $userSyncService,
     ) {
         $this->questionsService = $questionsService;
+        $this->userSyncService = $userSyncService;
+
     }
 
     /**
@@ -55,16 +72,11 @@ class LearningCreatorService
                 'created_by' => $user->id,
             ]);
 
-            if (! empty($data['users'])) {
-                $learning->users()->sync(
-                    collect($data['users'])->mapWithKeys(fn ($userId) => [
-                        $userId => [
-                            'is_complete' => false,
-                            'score' => null,
-                            'completed_at' => null,
-                            'created_by' => $user->id,
-                        ],
-                    ])->toArray()
+            if (isset($data['users'])) {
+                $this->userSyncService->sync(
+                    $learning,
+                    $data['users'],
+                    $user->id
                 );
             }
 
