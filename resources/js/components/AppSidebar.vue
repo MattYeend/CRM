@@ -16,6 +16,7 @@ import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
 import {
     Activity,
+    BookOpen,
     Briefcase,
     Building2,
     FileText,
@@ -90,6 +91,11 @@ const mainNavItems: NavItem[] = [
         title: 'Leads',
         href: '/leads',
         icon: UserPlus,
+    },
+    {
+        title: 'Learnings',
+        href: '/learnings',
+        icon: BookOpen,
     },
 ];
 

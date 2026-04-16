@@ -93,7 +93,7 @@ onMounted(() => loadLearnings())
 
             <table v-else class="w-full border">
                 <thead>
-                    <tr class="bg-gray-50">
+                    <tr>
                         <th class="p-2 text-left">Title</th>
                         <th class="p-2 text-left">Description</th>
                         <th class="p-2 text-left">Created By</th>
@@ -130,28 +130,25 @@ onMounted(() => loadLearnings())
                             <Link
                                 v-if="learning.permissions.view"
                                 :href="route('learnings.show', { learning: learning.id })"
-                                class="text-blue-600 underline text-sm"
                             >
                                 View
                             </Link>
                             <Link
                                 v-if="learning.permissions.complete && !learning.is_complete"
                                 :href="route('learnings.complete', { learning: learning.id })"
-                                class="text-green-600 underline text-sm"
                             >
                                 Take
                             </Link>
                             <Link
                                 v-if="learning.permissions.update"
                                 :href="route('learnings.edit', { learning: learning.id })"
-                                class="text-blue-600 underline text-sm"
                             >
                                 Edit
                             </Link>
                             <button
                                 v-if="learning.permissions.delete"
                                 @click="handleDelete(learning.id)"
-                                class="text-red-600 text-sm"
+                                class="text-red-600"
                             >
                                 Delete
                             </button>

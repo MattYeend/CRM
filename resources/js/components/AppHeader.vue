@@ -36,6 +36,7 @@ import type { BreadcrumbItem, NavItem } from '@/types';
 import { InertiaLinkProps, Link, usePage } from '@inertiajs/vue3';
 import {
     Activity,
+    BookOpen,
     Briefcase,
     Building2,
     FileText,
@@ -129,6 +130,11 @@ const mainNavItems: NavItem[] = [
         title: 'Leads',
         href: '/leads',
         icon: UserPlus,
+    },
+    {
+        title: 'Learnings',
+        href: '/learnings',
+        icon: BookOpen,
     },
 ];
 
