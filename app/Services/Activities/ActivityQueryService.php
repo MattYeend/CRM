@@ -134,18 +134,16 @@ class ActivityQueryService
      *
      * @param  Activity $activity
      *
-     * @return string
+     * @return string|null
      */
-    private function subjectName(Activity $activity): string
+    private function subjectName(Activity $activity): ?string
     {
-        $subjectName = null;
-
         if ($activity->subject) {
-            $subjectName = $activity->subject->name
+            return $activity->subject->name
                 ?? $activity->subject->title
                 ?? null;
         }
 
-        return $activity->subject_name = $subjectName ?? '';
+        return null;
     }
 }

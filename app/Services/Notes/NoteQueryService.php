@@ -4,7 +4,6 @@ namespace App\Services\Notes;
 
 use App\Models\Note;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -55,15 +54,10 @@ class NoteQueryService
      * @param  Request $request Incoming HTTP request; may carry search,
      * sort, filter, and pagination params.
      *
-     * @return LengthAwarePaginator Paginated notes item results.
+     * @return array Paginated note results with top-level permissions.
      */
-    public function list(Request $request): LengthAwarePaginator
+    public function list(Request $request): array
     {
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
-
         $query = Note::with(
             'user',
             'notable',
@@ -72,16 +66,18 @@ class NoteQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        $paginator = $query->paginate($perPage)->appends($request->query());
+        $paginator = $this->paginate($query, $request);
 
-        return $this->transformPaginator($paginator);
+        return array_merge(
+            $paginator,
+            ['permissions' => $this->getPermissions()]
+        );
     }
 
     /**
      * Return a single note with related data loaded.
      *
-     * @param  Note $note The route-model-bound note
-     * instance.
+     * @param  Note $note The route-model-bound note instance.
      *
      * @return array
      */
@@ -96,31 +92,34 @@ class NoteQueryService
     }
 
     /**
-     * Apply transformation and append permissions to the paginator.
+     * Paginate and transform the note query.
      *
-     * Each note item is formatted into a structured array and
-     * top-level permissions are appended to the paginator response.
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  Request $request
      *
-     * @param  LengthAwarePaginator $paginator The paginator instance
-     * containing Note models.
-     *
-     * @return LengthAwarePaginator The transformed paginator instance.
+     * @return array
      */
-    private function transformPaginator(
-        LengthAwarePaginator $paginator
-    ): LengthAwarePaginator {
-        $paginator->through(
-            fn (Note $note) => $this->formatNote($note)
-        );
+    private function paginate($query, Request $request): array
+    {
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
 
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Note::class),
-                'viewAny' => Gate::allows('viewAny', Note::class),
-            ],
-        ]);
+        return $query->paginate($perPage)
+            ->appends($request->query())
+            ->through(fn (Note $note): array => $this->formatNote($note))
+            ->toArray();
+    }
 
-        return $paginator;
+    /**
+     * Get permission flags for the current user.
+     *
+     * @return array
+     */
+    private function getPermissions(): array
+    {
+        return [
+            'create' => Gate::allows('create', Note::class),
+            'viewAny' => Gate::allows('viewAny', Note::class),
+        ];
     }
 
     /**
@@ -129,7 +128,7 @@ class NoteQueryService
      * Includes core attributes, related user data, derived notable name,
      * and authorisation permissions for the current user.
      *
-     * @param  Note  $note
+     * @param  Note $note
      *
      * @return array
      */
@@ -137,7 +136,7 @@ class NoteQueryService
     {
         return [
             'id' => $note->id,
-            'body' => $note->type,
+            'body' => $note->body,
             'notable_type' => $note->notable_type,
             'notable_id' => $note->notable_id,
             'notable_name' => $this->notableName($note),
