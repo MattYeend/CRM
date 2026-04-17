@@ -6,7 +6,7 @@ export async function fetchNotes(perPage = 10, page = 1) {
 }
 
 export async function fetchNote(id) {
-    const response = await api.get(`/leads/${id}`);
+    const response = await api.get(`/notes/${id}`);
     return response.data;
 }
 
