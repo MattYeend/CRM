@@ -1,114 +1,134 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { InertiaForm } from '@inertiajs/vue3';
+import axios from 'axios'
+import { useForm, router } from '@inertiajs/vue3'
+import { ref, watch } from 'vue'
+import NoteBodySection from './NoteBodySection.vue'
+import NoteNotableSection from './NoteNotableSection.vue'
 
-export interface NoteFormData {
-    body: string;
-    notable_type: string;
-    notable_id: number | null;
+interface Note {
+    id?: number
+    body: string
+    notable_type?: string
+    notable_id?: number
 }
 
 const props = defineProps<{
-    form: InertiaForm<NoteFormData>;
-    notableTypes: string[];
-    submitLabel?: string;
-}>();
+    note?: Note
+    method?: 'post' | 'put'
+    submitLabel?: string
+    notableTypes: string[]
+}>()
 
-const emit = defineEmits<{
-    (e: 'submit'): void;
-}>();
+function normalizeType(type?: string): string {
+    if (!type) return ''
+    return type.split('\\').pop()?.toLowerCase() ?? ''
+}
 
-const notableTypeOptions = computed(() =>
-    props.notableTypes.map((type) => ({
-        value: type,
-        label: type.split('\\').pop() ?? type,
-    }))
-);
+const form = useForm({
+    body: props.note?.body ?? '',
+    notable_type: normalizeType(props.note?.notable_type),
+    notable_id: props.note?.notable_id ?? null as number | null,
+})
+
+const notableOptions = ref<{ id: number; name: string }[]>([])
+
+const typeApiMap: Record<string, string> = {
+    company: 'companies',
+    deal: 'deals',
+    contact: 'contacts',
+    user: 'users',
+}
+
+watch(
+    () => form.notable_type,
+    async (type) => {
+        form.notable_id = null
+        notableOptions.value = []
+
+        if (!type) return
+
+        const endpoint = typeApiMap[type.toLowerCase()]
+        if (!endpoint) return
+
+        try {
+            const response = await axios.get(`/api/${endpoint}`)
+            const items = response.data.data ?? response.data ?? []
+
+            notableOptions.value = items.map((item: any) => ({
+                id: item.id,
+                name: item.name ?? item.title ?? `#${item.id}`,
+            }))
+
+            // Preserve value when editing
+            if (props.note?.notable_id) {
+                const exists = notableOptions.value.find(i => i.id === props.note!.notable_id)
+                if (exists) form.notable_id = props.note!.notable_id!
+            }
+        } catch (err) {
+            console.error('Failed to load notables:', err)
+        }
+    },
+    { immediate: true }
+)
+
+async function submit() {
+    try {
+        await axios.get('/sanctum/csrf-cookie', { withCredentials: true })
+
+        const formData = new FormData()
+
+        Object.entries(form.data()).forEach(([key, value]) => {
+            if (value !== null && value !== undefined) {
+                formData.append(key, String(value))
+            }
+        })
+
+        const url =
+            props.method === 'put' && props.note?.id
+                ? `/api/notes/${props.note.id}`
+                : '/api/notes'
+
+        const response = await axios({
+            method: props.method === 'put' ? 'put' : 'post',
+            url,
+            data: formData,
+            withCredentials: true,
+        })
+
+        router.visit(`/notes/${response.data.id}`)
+    } catch (err: any) {
+        console.error(err.response?.data ?? err)
+
+        if (err.response?.status === 422) {
+            const raw = err.response.data.errors as Record<string, string[]>
+
+            const flat = Object.fromEntries(
+                Object.entries(raw).map(([k, v]) => [k, v[0]])
+            ) as Record<string, string>
+
+            form.setError(flat)
+        }
+    }
+}
 </script>
 
 <template>
-    <form class="space-y-6" @submit.prevent="emit('submit')">
-        <!-- Body -->
+    <form @submit.prevent="submit" class="space-y-8 max-w-xl">
+
+        <NoteBodySection :form="form" />
+
+        <NoteNotableSection
+            :form="form"
+            :notable-types="props.notableTypes"
+            :notable-options="notableOptions"
+        />
+
         <div>
-            <label for="body" class="block text-sm font-medium text-gray-700">
-                Note Body <span class="text-red-500">*</span>
-            </label>
-            <div class="mt-1">
-                <textarea
-                    id="body"
-                    v-model="form.body"
-                    rows="6"
-                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    :class="{ 'border-red-300': form.errors.body }"
-                    placeholder="Enter note content…"
-                />
-            </div>
-            <p v-if="form.errors.body" class="mt-1 text-xs text-red-600">{{ form.errors.body }}</p>
-        </div>
-
-        <!-- Notable Type -->
-        <div>
-            <label for="notable_type" class="block text-sm font-medium text-gray-700">
-                Related To (Type)
-            </label>
-            <div class="mt-1">
-                <select
-                    id="notable_type"
-                    v-model="form.notable_type"
-                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    :class="{ 'border-red-300': form.errors.notable_type }"
-                >
-                    <option value="">— None —</option>
-                    <option
-                        v-for="option in notableTypeOptions"
-                        :key="option.value"
-                        :value="option.value"
-                    >
-                        {{ option.label }}
-                    </option>
-                </select>
-            </div>
-            <p v-if="form.errors.notable_type" class="mt-1 text-xs text-red-600">{{ form.errors.notable_type }}</p>
-        </div>
-
-        <!-- Notable ID -->
-        <div v-if="form.notable_type">
-            <label for="notable_id" class="block text-sm font-medium text-gray-700">
-                Related Record ID
-            </label>
-            <div class="mt-1">
-                <input
-                    id="notable_id"
-                    v-model.number="form.notable_id"
-                    type="number"
-                    min="1"
-                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    :class="{ 'border-red-300': form.errors.notable_id }"
-                    placeholder="Enter the record ID"
-                />
-            </div>
-            <p v-if="form.errors.notable_id" class="mt-1 text-xs text-red-600">{{ form.errors.notable_id }}</p>
-            <p class="mt-1 text-xs text-gray-400">Enter the ID of the related {{ form.notable_type.split('\\').pop() }}.</p>
-        </div>
-
-        <!-- Actions -->
-        <div class="flex items-center justify-end gap-3 pt-2">
-            <slot name="actions-left" />
             <button
-                type="submit"
+                class="bg-blue-600 text-white px-5 py-2 rounded"
                 :disabled="form.processing"
-                class="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 transition-colors"
             >
-                <svg
-                    v-if="form.processing"
-                    class="h-4 w-4 animate-spin"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                >
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-                {{ submitLabel ?? 'Save' }}
+                {{ form.processing ? 'Saving...' : submitLabel ?? 'Save Note' }}
             </button>
         </div>
     </form>
