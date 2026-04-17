@@ -75,7 +75,7 @@ class UpdateNoteRequest extends FormRequest
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
-    public function baseRules(): array
+    private function baseRules(): array
     {
         return [
             'body' => 'sometimes|required|string',
@@ -90,7 +90,7 @@ class UpdateNoteRequest extends FormRequest
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
-    public function noteRules(): array
+    private function noteRules(): array
     {
         return [
             'notable_type' => [
@@ -110,7 +110,7 @@ class UpdateNoteRequest extends FormRequest
      *
      * @return array
      */
-    public function metaRules(): array
+    private function metaRules(): array
     {
         return [
             'meta' => 'nullable|array',
