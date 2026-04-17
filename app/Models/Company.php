@@ -236,7 +236,7 @@ class Company extends Model
      *
      * @return BelongsTo<Industry,Company>
      */
-    public function industry(): BelongsTo
+    public function industries(): BelongsTo
     {
         return $this->belongsTo(Industry::class);
     }

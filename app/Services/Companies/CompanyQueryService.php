@@ -70,7 +70,7 @@ class CompanyQueryService
     {
         $query = Company::with(
             'deals',
-            'industry',
+            'industries',
             'invoices',
             'attachments'
         );
@@ -98,7 +98,7 @@ class CompanyQueryService
     {
         $company->load(
             'deals',
-            'industry',
+            'industries',
             'invoices',
             'attachments',
         );
