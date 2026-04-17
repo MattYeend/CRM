@@ -17,8 +17,6 @@ const form = props.form
 
 <template>
     <div class="space-y-4">
-
-        <!-- TYPE -->
         <div>
             <label class="block text-sm font-medium mb-1">Related To</label>
 
@@ -39,7 +37,6 @@ const form = props.form
             </p>
         </div>
 
-        <!-- RECORD -->
         <div v-if="props.notableOptions.length">
             <label class="block text-sm font-medium mb-1">Record</label>
 

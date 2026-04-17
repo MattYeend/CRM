@@ -228,7 +228,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('Companies/Update', [
             'company' => $company->load([
                 'deals',
-                'industries',
+                'industry',
                 'invoices',
                 'attachments',
             ]),

@@ -2,7 +2,6 @@
 import axios from 'axios'
 import { useForm, router } from '@inertiajs/vue3'
 import { ref, watch } from 'vue'
-
 import NoteBodySection from './NoteBodySection.vue'
 import NoteNotableSection from './NoteNotableSection.vue'
 
@@ -20,14 +19,14 @@ const props = defineProps<{
     notableTypes: string[]
 }>()
 
-function normalizeNotableType(type?: string): string {
-    if (!type) return ''
-    return type.split('\\').pop()?.toLowerCase() ?? ''
+function normalizeNotableType(type?: string): string | undefined {
+    if (!type) return undefined
+    return type.split('\\').pop()?.toLowerCase()
 }
 
 const form = useForm({
     body: props.note?.body ?? '',
-    notable_type: normalizeNotableType(props.note?.notable_type),
+    notable_type: normalizeNotableType(props.note?.notable_type) ?? '',
     notable_id: props.note?.notable_id ?? null as number | null,
 })
 
@@ -48,7 +47,7 @@ watch(
 
         if (!type) return
 
-        const endpoint = typeApiMap[type.toLowerCase()]
+        const endpoint = typeApiMap[type]
         if (!endpoint) return
 
         try {
@@ -59,6 +58,16 @@ watch(
                 id: item.id,
                 name: item.name ?? item.title ?? `#${item.id}`,
             }))
+
+            if (props.note?.notable_id) {
+                const exists = notableOptions.value.find(
+                    i => i.id === props.note!.notable_id
+                )
+
+                if (exists) {
+                    form.notable_id = props.note!.notable_id
+                }
+            }
         } catch (err) {
             console.error('Failed to load notables:', err)
             notableOptions.value = []
@@ -110,7 +119,6 @@ async function submit() {
 
 <template>
     <form @submit.prevent="submit" class="space-y-8 max-w-xl">
-
         <NoteBodySection :form="form" />
 
         <NoteNotableSection
@@ -127,5 +135,6 @@ async function submit() {
                 {{ form.processing ? 'Saving...' : submitLabel ?? 'Save Note' }}
             </button>
         </div>
+
     </form>
 </template>
