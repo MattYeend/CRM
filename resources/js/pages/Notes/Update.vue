@@ -35,10 +35,8 @@ const props = defineProps<{
 }>();
 
 const breadcrumbItems: BreadcrumbItem[] = [
-    {
-        title: 'Update Note',
-        href: edit().url
-    }
+    { title: 'Notes', href: route('notes.index') },
+    { title: 'Update Note', href: edit().url }
 ];
 
 const form = useForm({

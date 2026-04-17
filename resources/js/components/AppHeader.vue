@@ -47,6 +47,7 @@ import {
     Paperclip,
     ReceiptIcon,
     Search,
+    StickyNote,
     UserPlus,
     Users,
 } from 'lucide-vue-next';
@@ -136,6 +137,11 @@ const mainNavItems: NavItem[] = [
         href: '/learnings',
         icon: BookOpen,
     },
+    {
+        title: 'Notes',
+        href: '/notes',
+        icon: StickyNote
+    }
 ];
 
 const rightNavItems: NavItem[] = [];

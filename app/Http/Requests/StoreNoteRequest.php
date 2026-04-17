@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Note;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -44,6 +45,27 @@ class StoreNoteRequest extends FormRequest
             $this->noteRules(),
             $this->metaRules(),
         );
+    }
+
+    /**
+     * Resolve the notable_type morph key to its full class name before
+     * validation runs.
+     *
+     * Ensures that polymorphic type values sent as morph aliases are
+     * expanded to their fully-qualified class names so they pass the
+     * Rule::in check in noteRules().
+     *
+     * @return void
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->notable_type) {
+            $this->merge([
+                'notable_type' => Relation::getMorphedModel(
+                    $this->notable_type
+                ),
+            ]);
+        }
     }
 
     /**

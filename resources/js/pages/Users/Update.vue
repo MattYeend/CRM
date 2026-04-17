@@ -2,7 +2,7 @@
     import { Head } from '@inertiajs/vue3'
     import UserForm from './components/UserForm.vue'
     import { type BreadcrumbItem } from '@/types';
-
+    import { route } from 'ziggy-js'
     import AppLayout from '@/layouts/AppLayout.vue';
     import { edit } from '@/routes/appearance';
 
@@ -13,10 +13,8 @@
     }>()
 
     const breadcrumbItems: BreadcrumbItem[] = [
-        {
-            title: 'Update user',
-            href: edit().url,
-        },
+        { title: 'Users', href: route('users.index') },
+        { title: 'Update user', href: edit().url },
     ];
 </script>
 

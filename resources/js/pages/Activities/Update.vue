@@ -2,9 +2,9 @@
     import { Head } from '@inertiajs/vue3'
     import ActivityForm from './components/ActivityForm.vue'
     import { type BreadcrumbItem } from '@/types';
-
     import AppLayout from '@/layouts/AppLayout.vue';
     import { edit } from '@/routes/appearance';
+    import { route } from 'ziggy-js'
 
     defineProps<{
         subjectTypes: string[]
@@ -13,10 +13,8 @@
     }>()
 
     const breadcrumbItems: BreadcrumbItem[] = [
-        {
-            title: 'Update Activity',
-            href: edit().url,
-        },
+        { title: 'Activities', href: route('activities.index') },
+        { title: 'Update Activity', href: edit().url },
     ];
 </script>
 

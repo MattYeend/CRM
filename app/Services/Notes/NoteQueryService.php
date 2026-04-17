@@ -58,6 +58,8 @@ class NoteQueryService
      */
     public function list(Request $request): array
     {
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
+
         $query = Note::with(
             'user',
             'notable',
@@ -66,12 +68,17 @@ class NoteQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        $paginator = $this->paginate($query, $request);
+        $paginator = $query->paginate($perPage)->appends($request->query());
 
-        return array_merge(
-            $paginator,
-            ['permissions' => $this->getPermissions()]
+        $paginator->through(
+            fn (Note $note) => $this->formatNote($note)
         );
+
+        $result = $paginator->toArray();
+
+        $result['permissions'] = $this->getPermissions();
+
+        return $result;
     }
 
     /**
@@ -89,24 +96,6 @@ class NoteQueryService
         );
 
         return $this->formatNote($note);
-    }
-
-    /**
-     * Paginate and transform the note query.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder $query
-     * @param  Request $request
-     *
-     * @return array
-     */
-    private function paginate($query, Request $request): array
-    {
-        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
-
-        return $query->paginate($perPage)
-            ->appends($request->query())
-            ->through(fn (Note $note): array => $this->formatNote($note))
-            ->toArray();
     }
 
     /**

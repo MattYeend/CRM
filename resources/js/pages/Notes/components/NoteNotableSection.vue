@@ -3,6 +3,7 @@ interface NoteForm {
     notable_type: string
     notable_id: number | null
     errors: Record<string, string>
+    [key: string]: any
 }
 
 const props = defineProps<{
@@ -16,19 +17,20 @@ const form = props.form
 
 <template>
     <div class="space-y-4">
-        <!-- Type -->
+
+        <!-- TYPE -->
         <div>
             <label class="block text-sm font-medium mb-1">Related To</label>
 
             <select v-model="form.notable_type" class="border rounded w-full p-2">
-                <option value="">None</option>
+                <option value="">Select type</option>
 
                 <option
                     v-for="type in props.notableTypes"
                     :key="type"
-                    :value="type.split('\\').pop()?.toLowerCase()"
+                    :value="type"
                 >
-                    {{ type.split('\\').pop() }}
+                    {{ type }}
                 </option>
             </select>
 
@@ -37,12 +39,12 @@ const form = props.form
             </p>
         </div>
 
-        <!-- Record -->
+        <!-- RECORD -->
         <div v-if="props.notableOptions.length">
-            <label class="block text-sm font-medium mb-1">Select Record</label>
+            <label class="block text-sm font-medium mb-1">Record</label>
 
             <select v-model="form.notable_id" class="border rounded w-full p-2">
-                <option value="">Select record</option>
+                <option :value="null">Select record</option>
 
                 <option
                     v-for="item in props.notableOptions"
@@ -57,5 +59,6 @@ const form = props.form
                 {{ form.errors.notable_id }}
             </p>
         </div>
+
     </div>
 </template>
