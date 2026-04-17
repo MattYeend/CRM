@@ -146,7 +146,7 @@ test('store creates a new note and returns 201', function () {
 
     $payload = [
         'user_id' => $this->auth->id,
-        'notable_type' => Deal::class,
+        'notable_type' => 'deal',
         'notable_id' => $notable->id,
         'body' => 'This is a test note',
         'meta' => ['priority' => 'high'],
