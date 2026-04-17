@@ -25,6 +25,6 @@ export async function deleteActivities(id) {
 }
 
 export async function restoreActivity(id) {
-    const response = await api.post(`/activites/${id}/restore`);
+    const response = await api.post(`/activities/${id}/restore`);
     return response.data;
 }

@@ -31,10 +31,16 @@ const form = props.form
             </p>
         </div>
 
-        <div v-if="props.users.length">
+        <div>
             <label class="block text-sm font-medium mb-1">Assign User</label>
-            <select v-model="form.selected_assigned_to" class="border rounded w-full p-2">
-                <option value="">Select user</option>
+            <select
+                v-model="form.selected_assigned_to"
+                class="border rounded w-full p-2"
+                :disabled="!props.users.length"
+            >
+                <option :value="null">
+                    {{ !props.users.length ? 'Loading...' : 'Select user' }}
+                </option>
                 <option v-for="user in props.users" :key="user.id" :value="user.id">
                     {{ user.name }}
                 </option>

@@ -38,8 +38,7 @@ const form = props.form
         </div>
 
         <div v-if="props.notableOptions.length">
-            <label class="block text-sm font-medium mb-1">Record</label>
-
+            <label class="block text-sm font-medium mb-1">Select</label>
             <select v-model="form.notable_id" class="border rounded w-full p-2">
                 <option :value="null">Select record</option>
 

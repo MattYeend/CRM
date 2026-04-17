@@ -47,8 +47,11 @@ const typeApiMap: Record<string, string> = {
 
 watch(
     () => form.subject_type,
-    async (type) => {
-        form.subject_id = null
+    async (type, oldType) => {
+        // Only reset subject_id if the user actually changed the type
+        if (oldType !== undefined) {
+            form.subject_id = null
+        }
         subjectOptions.value = []
 
         if (!type) return
@@ -65,13 +68,10 @@ watch(
                 name: item.name ?? item.title ?? `#${item.id}`,
             }))
 
-            if (props.activity) {
-                const activityType = normalizeSubjectType(props.activity.subject_type)
-                const activityId = props.activity.subject_id
-                if (activityType === type && activityId) {
-                    const exists = subjectOptions.value.find(i => i.id === activityId)
-                    if (exists) form.subject_id = activityId
-                }
+            // Always restore the saved subject_id after loading options
+            if (props.activity?.subject_id) {
+                const exists = subjectOptions.value.find(i => i.id === props.activity!.subject_id)
+                if (exists) form.subject_id = props.activity!.subject_id
             }
         } catch (err) {
             console.error('Failed to load subjects:', err)
