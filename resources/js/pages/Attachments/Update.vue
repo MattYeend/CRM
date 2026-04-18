@@ -141,9 +141,11 @@ async function submit() {
                     <AttachmentForm
                         v-model="form"
                         :cancel-href="route('attachments.show', { attachment: attachment.id })"
+                        :submit-route="`/api/attachments/${attachment.id}`"
+                        method="put"
                         :attachable-type="attachableTypes"
-                        :current-filename="attachment.filename"
                         :show-entity-fields="true"
+                        :current-filename="attachment.filename"
                         submit-label="Update Attachment"
                     />
                 </form>

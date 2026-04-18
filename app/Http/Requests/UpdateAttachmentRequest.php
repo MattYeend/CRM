@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Attachment;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -14,6 +15,9 @@ use Illuminate\Validation\Rule;
  * rules(), keeping each concern isolated and easy to maintain:
  *   - baseRules — optional replacement file and its size constraint
  *   - metaRules — optional meta payload
+ *
+ * prepareForValidation resolves the incoming morph key to its full class
+ * name before the ruleset is applied.
  */
 class UpdateAttachmentRequest extends FormRequest
 {
@@ -46,6 +50,27 @@ class UpdateAttachmentRequest extends FormRequest
             $this->attachmentRules(),
             $this->metaRules(),
         );
+    }
+
+    /**
+     * Resolve the attachable_type morph key to its full class name before
+     * validation runs.
+     *
+     * Ensures that polymorphic type values sent as morph aliases are
+     * expanded to their fully-qualified class names so they pass the
+     * Rule::in check in attachmentRules().
+     *
+     * @return void
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->attachable_type) {
+            $this->merge([
+                'attachable_type' => Relation::getMorphedModel(
+                    $this->attachable_type
+                ),
+            ]);
+        }
     }
 
     /**

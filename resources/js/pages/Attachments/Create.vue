@@ -76,12 +76,11 @@ async function submit() {
                     <AttachmentForm
                         v-model="form"
                         :cancel-href="route('attachments.index')"
+                        :submit-route="'/api/attachments'"
+                        method="post"
                         :attachable-type="attachableTypes"
                         :show-entity-fields="true"
                         submit-label="Upload Attachment"
-                        @update:file="form.file = $event"
-                        @update:attachable_type="form.attachable_type = $event"
-                        @update:attachable_id="form.attachable_id = $event"
                     />
                 </form>
             </div>

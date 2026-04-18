@@ -162,7 +162,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/attachments/create', function () {
         return Inertia::render('Attachments/Create', [
-            'attachableTypes' => Attachment::ATTACHABLE_TYPES,
+            'attachableTypes' => array_keys(Relation::morphMap()),
         ]);
     })->name('attachments.create');
 
@@ -179,8 +179,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         '/attachments/{attachment}/edit',
         function (Attachment $attachment) {
             return Inertia::render('Attachments/Update', [
-                'attachment' => $attachment->load(['uploader']),
-                'attachableTypes' => Attachment::ATTACHABLE_TYPES,
+                'attachment' => $attachment->load([
+                    'uploader'
+                ]),
+                'attachableTypes' => array_keys(Relation::morphMap()),
             ]);
         }
     )->name('attachments.edit');
