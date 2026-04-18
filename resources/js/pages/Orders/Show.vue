@@ -184,19 +184,19 @@ onMounted(() => loadOrder())
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm">
                         <div v-if="order.payment_intent_id">
                             <span class="font-semibold">Payment Intent ID: </span>
-                            <code class="bg-gray-100 px-1 rounded">{{ order.payment_intent_id }}</code>
+                            <code class="px-1 rounded">{{ order.payment_intent_id }}</code>
                         </div>
                         <div v-if="order.charge_id">
                             <span class="font-semibold">Charge ID: </span>
-                            <code class="bg-gray-100 px-1 rounded">{{ order.charge_id }}</code>
+                            <code class="px-1 rounded">{{ order.charge_id }}</code>
                         </div>
                         <div v-if="order.stripe_payment_intent">
                             <span class="font-semibold">Stripe Payment Intent: </span>
-                            <code class="bg-gray-100 px-1 rounded">{{ order.stripe_payment_intent }}</code>
+                            <code class="px-1 rounded">{{ order.stripe_payment_intent }}</code>
                         </div>
                         <div v-if="order.stripe_invoice_id">
                             <span class="font-semibold">Stripe Invoice ID: </span>
-                            <code class="bg-gray-100 px-1 rounded">{{ order.stripe_invoice_id }}</code>
+                            <code class="px-1 rounded">{{ order.stripe_invoice_id }}</code>
                         </div>
                     </div>
                 </div>
@@ -206,7 +206,7 @@ onMounted(() => loadOrder())
                     <h2 class="text-lg font-semibold border-b pb-2 mb-3">Products</h2>
                     <table class="w-full border text-sm">
                         <thead>
-                            <tr class="bg-gray-50">
+                            <tr>
                                 <th class="p-2 text-left">Product</th>
                                 <th class="p-2 text-right">Qty</th>
                                 <th class="p-2 text-right">Price</th>
