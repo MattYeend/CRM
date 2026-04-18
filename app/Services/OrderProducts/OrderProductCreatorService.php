@@ -19,6 +19,9 @@ class OrderProductCreatorService
      * parent model without removing existing relationships. Defaults are
      * applied for missing quantity, price, and meta values.
      *
+     * The total is derived from quantity * price and stored on the pivot
+     * automatically — it does not need to be supplied by the caller.
+     *
      * @param  Model $parent The parent model to attach products to.
      * @param  array $items Array of product data, each containing:
      *                      - product_id (int)
@@ -31,17 +34,34 @@ class OrderProductCreatorService
     public function create(Model $parent, array $items): void
     {
         foreach ($items as $item) {
+            $productId = $item['product_id'];
             $quantity = $item['quantity'] ?? 1;
             $price = $item['price'] ?? 0;
+            $total = $quantity * $price;
             $meta = $item['meta'] ?? null;
 
-            $parent->products()->syncWithoutDetaching([
-                $item['product_id'] => [
+            $existing = $parent->products()
+                ->where('product_id', $productId)
+                ->first();
+
+            if ($existing) {
+                $newQuantity = $existing->pivot->quantity + $quantity;
+                $total = $newQuantity * $price;
+
+                $parent->products()->updateExistingPivot($productId, [
+                    'quantity' => $newQuantity,
+                    'price' => $price,
+                    'total' => $total,
+                    'meta' => $meta,
+                ]);
+            } else {
+                $parent->products()->attach($productId, [
                     'quantity' => $quantity,
                     'price' => $price,
+                    'total' => $quantity * $price,
                     'meta' => $meta,
-                ],
-            ]);
+                ]);
+            }
         }
     }
 }

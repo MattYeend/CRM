@@ -342,6 +342,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get(
         '/deals/{deal}/products/{product}/edit',
         function (Deal $deal, Product $product) {
+            $product = $deal->products()
+                ->where('products.id', $product->id)
+                ->firstOrFail();
             return Inertia::render('DealProducts/Edit', [
                 'deal' => $deal,
                 'product' => $product,
@@ -697,6 +700,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get(
         '/orders/{order}/products/{product}/edit',
         function (Order $order, Product $product) {
+            $product = $order->products()
+                ->where('products.id', $product->id)
+                ->firstOrFail();
             return Inertia::render('OrderProducts/Edit', [
                 'order' => $order,
                 'product' => $product,

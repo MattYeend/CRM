@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3'
+import { Head, Link, router } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
 import { ref } from 'vue'
 import { type BreadcrumbItem } from '@/types'
@@ -8,6 +8,7 @@ import { updateOrderProducts } from '@/services/orderService'
 
 interface Order {
     id: number
+    name?: string
     currency?: string
 }
 
@@ -36,7 +37,7 @@ const errors = ref<string | null>(null)
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Orders', href: route('orders.index') },
-    { title: `Order #${props.order.id}`, href: route('orders.show', { order: props.order.id }) },
+    { title: props.order.name || `Order #${props.order.id}`, href: route('orders.show', { order: props.order.id }) },
     { title: 'Products', href: route('orders.products.index', { order: props.order.id }) },
     { title: `Edit ${props.product.name}`, href: route('orders.products.edit', { order: props.order.id, product: props.product.id }) },
 ]
@@ -44,6 +45,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
 async function submit() {
     errors.value = null
     submitting.value = true
+
     try {
         await updateOrderProducts(props.order.id, {
             products: [
@@ -54,7 +56,8 @@ async function submit() {
                 },
             ],
         })
-        window.location.href = route('orders.products.index', { order: props.order.id })
+
+        router.visit(route('orders.products.index', { order: props.order.id }))
     } catch (err: any) {
         errors.value = err.response?.data?.message ?? 'An error occurred.'
     } finally {
@@ -65,10 +68,12 @@ async function submit() {
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head :title="`Edit Product — Order #${order.id}`" />
+        <Head :title="`Edit Product — ${order.name || 'Order #' + order.id}`" />
+
         <div class="p-6">
             <div class="flex justify-between mb-6">
                 <h1 class="text-2xl font-bold">Edit: {{ product.name }}</h1>
+
                 <Link
                     :href="route('orders.products.index', { order: order.id })"
                     class="bg-gray-200 text-gray-700 px-4 py-2 rounded"
@@ -77,41 +82,27 @@ async function submit() {
                 </Link>
             </div>
 
-            <p class="text-gray-500 mb-6">Updating product on order: <span class="font-medium text-gray-800">#{{ order.id }}</span></p>
+            <p class="text-gray-500 mb-6">
+                Updating product on
+                <span class="font-medium">{{ order.name || `Order #${order.id}` }}</span>
+            </p>
 
             <p v-if="errors" class="text-red-600 mb-4">{{ errors }}</p>
 
             <div class="space-y-4 max-w-sm">
                 <div>
                     <label class="block text-sm font-medium mb-1">Quantity</label>
-                    <input
-                        v-model.number="form.quantity"
-                        type="number"
-                        min="1"
-                        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    <input v-model.number="form.quantity" type="number" min="1" class="w-full border rounded px-3 py-2" />
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium mb-1">Unit Price</label>
-                    <input
-                        v-model.number="form.price"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    <input v-model.number="form.price" type="number" min="0" step="0.01" class="w-full border rounded px-3 py-2" />
                 </div>
 
-                <div>
-                    <button
-                        @click="submit"
-                        :disabled="submitting"
-                        class="bg-blue-600 text-white px-5 py-2 rounded disabled:opacity-50"
-                    >
-                        {{ submitting ? 'Saving...' : 'Update Product' }}
-                    </button>
-                </div>
+                <button @click="submit" :disabled="submitting" class="bg-blue-600 text-white px-5 py-2 rounded">
+                    {{ submitting ? 'Saving...' : 'Update Product' }}
+                </button>
             </div>
         </div>
     </AppLayout>

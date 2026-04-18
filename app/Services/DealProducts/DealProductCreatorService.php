@@ -34,19 +34,34 @@ class DealProductCreatorService
     public function create(Model $parent, array $items): void
     {
         foreach ($items as $item) {
+            $productId = $item['product_id'];
             $quantity = $item['quantity'] ?? 1;
             $price = $item['price'] ?? 0;
             $total = $quantity * $price;
             $meta = $item['meta'] ?? null;
 
-            $parent->products()->syncWithoutDetaching([
-                $item['product_id'] => [
-                    'quantity' => $quantity,
+            $existing = $parent->products()
+                ->where('product_id', $productId)
+                ->first();
+
+            if ($existing) {
+                $newQuantity = $existing->pivot->quantity + $quantity;
+                $total = $newQuantity * $price;
+
+                $parent->products()->updateExistingPivot($productId, [
+                    'quantity' => $newQuantity,
                     'price' => $price,
                     'total' => $total,
                     'meta' => $meta,
-                ],
-            ]);
+                ]);
+            } else {
+                $parent->products()->attach($productId, [
+                    'quantity' => $quantity,
+                    'price' => $price,
+                    'total' => $quantity * $price,
+                    'meta' => $meta,
+                ]);
+            }
         }
     }
 }
