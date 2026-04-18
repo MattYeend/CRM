@@ -40,28 +40,12 @@ class DealProductCreatorService
             $total = $quantity * $price;
             $meta = $item['meta'] ?? null;
 
-            $existing = $parent->products()
-                ->where('product_id', $productId)
-                ->first();
-
-            if ($existing) {
-                $newQuantity = $existing->pivot->quantity + $quantity;
-                $total = $newQuantity * $price;
-
-                $parent->products()->updateExistingPivot($productId, [
-                    'quantity' => $newQuantity,
-                    'price' => $price,
-                    'total' => $total,
-                    'meta' => $meta,
-                ]);
-            } else {
-                $parent->products()->attach($productId, [
-                    'quantity' => $quantity,
-                    'price' => $price,
-                    'total' => $quantity * $price,
-                    'meta' => $meta,
-                ]);
-            }
+            $parent->products()->attach($productId, [
+                'quantity' => $quantity,
+                'price' => $price,
+                'total' => $total,
+                'meta' => $meta,
+            ]);
         }
     }
 }
