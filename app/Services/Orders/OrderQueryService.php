@@ -52,37 +52,33 @@ class OrderQueryService
      * The per_page value is clamped between 1 and 100. All active query
      * string parameters are appended to the paginator links.
      *
+     * Permissions are merged into the top-level response array so the
+     * frontend can read them as `data.permissions` without colliding
+     * with the paginator's own appends mechanism.
+     *
      * @param  Request $request Incoming HTTP request; may carry search,
      * sort, filter, and pagination params.
      *
-     * @return LengthAwarePaginator Paginated orders item results.
+     * @return array Paginated order results with top-level permissions key.
      */
-    public function list(Request $request): LengthAwarePaginator
+    public function list(Request $request): array
     {
         $perPage = max(
             1,
             min((int) $request->query('per_page', 10), 100)
         );
 
-        $query = Order::query();
+        $query = Order::with(
+            'user',
+            'deal',
+        );
 
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
         $paginator = $query->paginate($perPage)->appends($request->query());
 
-        $paginator->through(
-            fn (Order $order) => $this->formatOrder($order)
-        );
-
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Order::class),
-                'viewAny' => Gate::allows('viewAny', Order::class),
-            ],
-        ]);
-
-        return $paginator;
+        return $this->transformPaginator($paginator);
     }
 
     /**
@@ -102,6 +98,35 @@ class OrderQueryService
         );
 
         return $this->formatOrder($order);
+    }
+
+    /**
+     * Convert the paginator to an array and merge top-level permissions.
+     *
+     * Permissions are added as a root-level key so the Vue frontend can
+     * access them as `data.permissions` alongside `data.data`,
+     * `data.current_page`, etc.
+     *
+     * @param  LengthAwarePaginator $paginator The paginator instance
+     * containing Order models.
+     *
+     * @return array The transformed paginator data with permissions.
+     */
+    private function transformPaginator(
+        LengthAwarePaginator $paginator
+    ): array {
+        $paginator->through(
+            fn (Order $order) => $this->formatOrder($order)
+        );
+
+        $result = $paginator->toArray();
+
+        $result['permissions'] = [
+            'create' => Gate::allows('create', Order::class),
+            'viewAny' => Gate::allows('viewAny', Order::class),
+        ];
+
+        return $result;
     }
 
     /**
@@ -148,6 +173,10 @@ class OrderQueryService
 
     /**
      * Extract related model data for the order.
+     *
+     * Products are included here so they are available in both the Show
+     * page and the OrderProducts/Index page, which both call fetchOrder()
+     * against the API show endpoint.
      *
      * @param  Order $order
      *
