@@ -26,7 +26,7 @@ const industry = ref<Industry>({
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Industries', href: route('industries.index') },
-    { title: 'View Industry', href: route('industries.show', { industry: industry.value.id }) },
+    { title: props.industry.name, href: route('industries.show', { industry: industry.value.id }) },
 ]
 
 async function loadIndustry() {

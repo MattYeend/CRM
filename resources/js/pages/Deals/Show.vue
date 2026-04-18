@@ -68,7 +68,7 @@ const deal = ref<Deal>({
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Deals', href: route('deals.index') },
-    { title: 'View Deal', href: route('deals.show', { deal: deal.value.id }) },
+    { title: props.deal.title, href: route('deals.show', { deal: deal.value.id }) },
 ]
 
 async function loadDeal() {

@@ -43,7 +43,7 @@ const props = defineProps<{
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Notes', href: route('notes.index') },
-    { title: 'View Note', href: route('notes.show', { note: props.note.id }) },
+    { title: `Note #${props.note.id}`, href: route('notes.show', { note: props.note.id }) },
 ];
 
 const deleting = ref(false);

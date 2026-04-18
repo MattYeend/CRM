@@ -110,7 +110,7 @@ const user = ref<User>({
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Users', href: route('users.index') },
-    { title: 'View User', href: route('users.show', { user: user.value.id }) },
+    { title: props.user.name, href: route('users.show', { user: user.value.id }) },
 ]
 
 // Fetch the user via API to get correct permissions

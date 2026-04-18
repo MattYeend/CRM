@@ -86,7 +86,7 @@ const invoice = ref<Invoice>({
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Invoices', href: route('invoices.index') },
-    { title: invoice.value.number || 'View Invoice', href: route('invoices.show', { invoice: invoice.value.id }) },
+    { title: invoice.value.number, href: route('invoices.show', { invoice: invoice.value.id }) },
 ]
 
 async function loadInvoice() {

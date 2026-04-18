@@ -62,7 +62,7 @@ const groupClasses: Record<string, string> = {
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Job Titles', href: route('job-titles.index') },
-    { title: jobTitle.value.title || 'View Job Title', href: route('job-titles.show', { jobTitle: jobTitle.value.id }) },
+    { title: jobTitle.value.title, href: route('job-titles.show', { jobTitle: jobTitle.value.id }) },
 ]
 
 async function loadJobTitle() {

@@ -74,7 +74,7 @@ const lead = ref<Lead>({
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Leads', href: route('leads.index') },
-    { title: lead.value.display_name || 'View Lead', href: route('leads.show', { lead: lead.value.id }) },
+    { title: lead.value.display_name, href: route('leads.show', { lead: lead.value.id }) },
 ]
 
 const statusLabel = computed(() => {

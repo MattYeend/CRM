@@ -26,7 +26,7 @@ const props = defineProps<{
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Attachments', href: route('attachments.index') },
     { title: props.attachment.filename, href: route('attachments.show', { attachment: props.attachment.id }) },
-    { title: 'Edit', href: route('attachments.edit', { attachment: props.attachment.id }) },
+    { title: `Edit ${props.attachment.filename}`, href: route('attachments.edit', { attachment: props.attachment.id }) },
 ]
 
 const isImage = computed(() => props.attachment.mime?.startsWith('image/'))

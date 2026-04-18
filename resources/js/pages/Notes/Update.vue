@@ -34,7 +34,7 @@ const props = defineProps<{
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Notes', href: route('notes.index') },
     { title: `Note #${props.note.id}`, href: route('notes.show', { note: props.note.id }) },
-    { title: 'Edit', href: route('notes.edit', { note: props.note.id }) },
+    { title: `Edit Note #${props.note.id}`, href: route('notes.edit', { note: props.note.id }) },
 ]
 </script>
 

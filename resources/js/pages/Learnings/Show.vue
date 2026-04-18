@@ -86,10 +86,7 @@ const completedAt = computed(() => learning.value.current_user?.completed_at ?? 
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Learnings', href: route('learnings.index') },
-    {
-        title: learning.value.title || 'View Learning',
-        href: route('learnings.show', { learning: learning.value.id }),
-    },
+    { title: learning.value.title, href: route('learnings.show', { learning: learning.value.id }) },
 ]
 
 async function loadLearning() {

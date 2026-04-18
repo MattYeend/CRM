@@ -63,7 +63,7 @@ const company = ref<Company>({
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Companies', href: route('companies.index') },
-    { title: 'View Company', href: route('companies.show', { company: company.value.id }) },
+    { title: props.company.name, href: route('companies.show', { company: company.value.id }) },
 ]
 
 async function loadCompany() {

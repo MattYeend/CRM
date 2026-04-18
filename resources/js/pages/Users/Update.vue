@@ -1,21 +1,21 @@
 <script setup lang="ts">
-    import { Head } from '@inertiajs/vue3'
-    import UserForm from './components/UserForm.vue'
-    import { type BreadcrumbItem } from '@/types';
-    import { route } from 'ziggy-js'
-    import AppLayout from '@/layouts/AppLayout.vue';
-    import { edit } from '@/routes/appearance';
+import { Head } from '@inertiajs/vue3'
+import UserForm from './components/UserForm.vue'
+import { type BreadcrumbItem } from '@/types';
+import { route } from 'ziggy-js'
+import AppLayout from '@/layouts/AppLayout.vue';
 
-    defineProps<{
-        user: any
-        roles: any[]
-        jobTitles: any[]
-    }>()
+const props = defineProps<{
+    user: any
+    roles: any[]
+    jobTitles: any[]
+}>()
 
-    const breadcrumbItems: BreadcrumbItem[] = [
-        { title: 'Users', href: route('users.index') },
-        { title: 'Update user', href: edit().url },
-    ];
+const breadcrumbItems: BreadcrumbItem[] = [
+    { title: 'Users', href: route('users.index') },
+    { title: props.user.name, href: route('users.show', { user: props.user.id }) },
+    { title: `Update ${props.user.name}`, href: route('users.edit', { user: props.user.id}) },
+];
 </script>
 
 <template>

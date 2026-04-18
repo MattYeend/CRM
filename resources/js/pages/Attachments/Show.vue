@@ -55,7 +55,7 @@ const attachment = ref<Attachment>({
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Attachments', href: route('attachments.index') },
-    { title: 'View Attachment', href: route('attachments.show', { attachment: attachment.value.id }) },
+    { title: props.attachment.filename, href: route('attachments.show', { attachment: attachment.value.id }) },
 ]
 
 function capitalize(str: string | null | undefined) {

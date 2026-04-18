@@ -18,6 +18,7 @@ const props = defineProps<{
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Orders', href: route('orders.index') },
+    { title: `Order #${props.order.id}` , href: route('orders.show', { order: props.order.id }) },
     { title: `Edit Order #${props.order.id}`, href: route('orders.edit', { order: props.order.id }) },
 ]
 </script>

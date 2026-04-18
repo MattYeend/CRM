@@ -45,7 +45,7 @@ const activity = ref<Activity>({
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Activities', href: route('activities.index') },
-    { title: 'View Activity', href: route('activities.show', { activity: activity.value.id }) },
+    { title: props.activity.type, href: route('activities.show', { activity: activity.value.id }) },
 ]
 
 // Fetch the activity via API to get correct permissions

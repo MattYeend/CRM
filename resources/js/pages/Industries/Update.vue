@@ -9,7 +9,8 @@ const props = defineProps<{ industry: any }>()
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Industries', href: route('industries.index') },
-    { title: 'Edit Industry', href: route('industries.edit', { industry: props.industry.id }) },
+    { title: props.industry.name, href: route('industries.show', { industry: props.industry.id }) },
+    { title: `Edit ${props.industry.name}`, href: route('industries.edit', { industry: props.industry.id }) },
 ]
 </script>
 

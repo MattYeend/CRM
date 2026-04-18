@@ -5,14 +5,15 @@ import { type BreadcrumbItem } from '@/types'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
 import { route } from 'ziggy-js'
 
-defineProps<{
+const props = defineProps<{
     subjectTypes: string[]
     activity: any
 }>()
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Activities', href: route('activities.index') },
-    { title: 'Edit Activity', href: '#' },
+    { title: props.activity.type, href: route('activities.show', { activity: props.activity.id }) },
+    { title: `Edit ${props.activity.type}`, href: '#' },
 ]
 </script>
 
