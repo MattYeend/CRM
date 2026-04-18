@@ -25,6 +25,7 @@ import {
     LayoutGrid,
     Paperclip,
     ReceiptIcon,
+    ShoppingCart,
     StickyNote,
     UserPlus,
     Users,
@@ -102,6 +103,11 @@ const mainNavItems: NavItem[] = [
         title: 'Notes',
         href: '/notes',
         icon: StickyNote
+    },
+    {
+        title: 'Orders',
+        href: '/orders',
+        icon: ShoppingCart
     }
 ];
 
