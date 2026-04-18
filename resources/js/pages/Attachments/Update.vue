@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
-import { reactive, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
 import axios from 'axios'
@@ -31,7 +31,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 const isImage = computed(() => props.attachment.mime?.startsWith('image/'))
 
-const form = reactive({
+const form = ref({
     file: null as File | null,
     attachable_type: props.attachment.attachable_type ?? '',
     attachable_id: props.attachment.attachable_id ?? null as number | null,
@@ -47,17 +47,17 @@ function formatSize(bytes: number | null): string {
 }
 
 async function submit() {
-    form.errors = {}
-    form.processing = true
+    form.value.errors = {}
+    form.value.processing = true
 
     try {
         await axios.get('/sanctum/csrf-cookie', { withCredentials: true })
 
         const formData = new FormData()
         formData.append('_method', 'PUT')
-        if (form.file) formData.append('file', form.file)
-        if (form.attachable_type) formData.append('attachable_type', form.attachable_type)
-        if (form.attachable_id !== null) formData.append('attachable_id', String(form.attachable_id))
+        if (form.value.file) formData.append('file', form.value.file)
+        if (form.value.attachable_type) formData.append('attachable_type', form.value.attachable_type)
+        if (form.value.attachable_id !== null) formData.append('attachable_id', String(form.value.attachable_id))
 
         const response = await axios.post(
             `/api/attachments/${props.attachment.id}`,
@@ -72,10 +72,10 @@ async function submit() {
     } catch (err: any) {
         console.error(err.response?.data ?? err)
         if (err.response?.status === 422) {
-            form.errors = err.response.data.errors ?? {}
+            form.value.errors = err.response.data.errors ?? {}
         }
     } finally {
-        form.processing = false
+        form.value.processing = false
     }
 }
 </script>
@@ -100,7 +100,6 @@ async function submit() {
                 </div>
             </div>
 
-            <!-- Current file info -->
             <div class="border rounded p-4">
                 <p class="text-xs block text-sm font-medium mb-3">Current File</p>
                 <div class="flex items-center gap-4">
@@ -135,20 +134,17 @@ async function submit() {
                 </div>
             </div>
 
-            <!-- Edit form -->
             <div class="border rounded p-6">
                 <h2 class="text-base font-semibold mb-2">Update Details</h2>
 
                 <form @submit.prevent="submit" class="space-y-8 max-w-xl">
                     <AttachmentForm
-                        :form="form"
+                        v-model="form"
                         :cancel-href="route('attachments.show', { attachment: attachment.id })"
                         :attachable-type="attachableTypes"
+                        :current-filename="attachment.filename"
                         :show-entity-fields="true"
                         submit-label="Update Attachment"
-                        @update:file="form.file = $event"
-                        @update:attachable_type="form.attachable_type = $event"
-                        @update:attachable_id="form.attachable_id = $event"
                     />
                 </form>
             </div>

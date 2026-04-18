@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 
-interface AttachmentFormData {
+interface EntityOption {
+    id: number
+    name: string
+}
+
+interface FormData {
     file: File | null
     attachable_type: string
     attachable_id: number | null
@@ -9,24 +14,15 @@ interface AttachmentFormData {
     processing: boolean
 }
 
-interface EntityOption {
-    id: number
-    name: string
-}
-
 const props = defineProps<{
-    form: AttachmentFormData
     cancelHref: string
     submitLabel?: string
     showEntityFields?: boolean
     attachableType?: string[]
+    currentFilename?: string
 }>()
 
-const emit = defineEmits<{
-    (e: 'update:file', value: File | null): void
-    (e: 'update:attachable_type', value: string): void
-    (e: 'update:attachable_id', value: number | null): void
-}>()
+const form = defineModel<FormData>({ required: true })
 
 const isDragging = ref(false)
 const selectedFileName = ref('')
@@ -44,54 +40,75 @@ const typeApiMap: Record<string, string> = {
     user: 'users',
 }
 
-// Each entry keeps the original value (sent to backend) and a display label
 const normalizedAttachableTypes = computed(() =>
     (props.attachableType ?? []).map(t => {
-        const short = t.split('\\').pop()?.toLowerCase() ?? t
+        const short = t.split('\\').pop()?.toLowerCase() ?? t.toLowerCase()
         return {
-            value: t, // original full class name or whatever the backend expects
+            value: short, // Store the short version (e.g., 'task', 'company')
             label: short.charAt(0).toUpperCase() + short.slice(1),
             short,
         }
     })
 )
 
-watch(
-    () => props.form.attachable_type,
-    async (type) => {
-        emit('update:attachable_id', null)
+async function loadEntities(type: string) {
+    if (!type) {
         entityOptions.value = []
+        return
+    }
 
-        if (!type) return
+    const short = type.split('\\').pop()?.toLowerCase() ?? type.toLowerCase()
+    const endpoint = typeApiMap[short]
+    if (!endpoint) {
+        console.warn(`No API endpoint found for type: ${type} (short: ${short})`)
+        entityOptions.value = []
+        return
+    }
 
-        // resolve short name from either a full class string or already-short string
-        const short = type.split('\\').pop()?.toLowerCase() ?? type
-        const endpoint = typeApiMap[short]
-        if (!endpoint) return
+    loadingEntities.value = true
+    try {
+        const { default: axios } = await import('axios')
+        const response = await axios.get(`/api/${endpoint}`)
+        const items = response.data.data ?? response.data ?? []
+        entityOptions.value = items.map((item: any) => ({
+            id: item.id,
+            name: item.name ?? item.title ?? `#${item.id}`,
+        }))
+    } catch (err) {
+        console.error('Failed to load entities:', err)
+        entityOptions.value = []
+    } finally {
+        loadingEntities.value = false
+    }
+}
 
-        loadingEntities.value = true
-        try {
-            const { default: axios } = await import('axios')
-            const response = await axios.get(`/api/${endpoint}`)
-            const items = response.data.data ?? response.data ?? []
-            entityOptions.value = items.map((item: any) => ({
-                id: item.id,
-                name: item.name ?? item.title ?? `#${item.id}`,
-            }))
-        } catch (err) {
-            console.error('Failed to load entities:', err)
-            entityOptions.value = []
-        } finally {
-            loadingEntities.value = false
+watch(
+    () => form.value.attachable_type,
+    async (newType, oldType) => {
+        // Only reset attachable_id if type actually changed (and not on initial mount)
+        if (newType !== oldType && oldType !== undefined) {
+            form.value.attachable_id = null
         }
+        await loadEntities(newType)
     }
 )
+
+onMounted(() => {
+    // Load entities on mount if type is already set (edit mode)
+    if (form.value.attachable_type) {
+        loadEntities(form.value.attachable_type)
+    }
+    // Set current filename if provided
+    if (props.currentFilename) {
+        selectedFileName.value = props.currentFilename
+    }
+})
 
 function handleFileChange(event: Event) {
     const input = event.target as HTMLInputElement
     const file = input.files?.[0] ?? null
     if (file) {
-        emit('update:file', file)
+        form.value.file = file
         selectedFileName.value = file.name
     }
 }
@@ -100,12 +117,10 @@ function handleDrop(event: DragEvent) {
     isDragging.value = false
     const file = event.dataTransfer?.files?.[0] ?? null
     if (file) {
-        emit('update:file', file)
+        form.value.file = file
         selectedFileName.value = file.name
     }
 }
-
-
 </script>
 
 <template>
@@ -165,9 +180,8 @@ function handleDrop(event: DragEvent) {
             <label for="attachable_type" class="block text-sm font-medium mb-1">Attachable Type</label>
             <select
                 id="attachable_type"
-                :value="form.attachable_type"
+                v-model="form.attachable_type"
                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                @change="emit('update:attachable_type', ($event.target as HTMLSelectElement).value)"
             >
                 <option value="">Attachable Type</option>
                 <option
@@ -186,10 +200,9 @@ function handleDrop(event: DragEvent) {
             <label for="attachable_id" class="block text-sm font-medium mb-1">Attachable Name</label>
             <select
                 id="attachable_id"
-                :value="form.attachable_id"
+                v-model.number="form.attachable_id"
                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 :disabled="loadingEntities"
-                @change="emit('update:attachable_id', Number(($event.target as HTMLSelectElement).value) || null)"
             >
                 <option :value="null">{{ loadingEntities ? 'Loading...' : 'Select Attachable Name' }}</option>
                 <option

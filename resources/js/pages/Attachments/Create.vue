@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
-import { reactive } from 'vue'
+import { ref } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
 import axios from 'axios'
@@ -18,7 +18,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Add Attachment', href: route('attachments.create') },
 ]
 
-const form = reactive({
+const form = ref({
     file: null as File | null,
     attachable_type: props.attachableType ?? '',
     attachable_id: props.attachableId ? Number(props.attachableId) : null as number | null,
@@ -27,16 +27,18 @@ const form = reactive({
 })
 
 async function submit() {
-    form.errors = {}
-    form.processing = true
+    form.value.errors = {}
+    form.value.processing = true
 
     try {
         await axios.get('/sanctum/csrf-cookie', { withCredentials: true })
 
         const formData = new FormData()
-        if (form.file) formData.append('file', form.file)
-        if (form.attachable_type) formData.append('attachable_type', form.attachable_type)
-        if (form.attachable_id !== null) formData.append('attachable_id', String(form.attachable_id))
+        if (form.value.file) formData.append('file', form.value.file)
+        if (form.value.attachable_type) formData.append('attachable_type', form.value.attachable_type)
+        if (form.value.attachable_id !== null) {
+            formData.append('attachable_id', String(form.value.attachable_id))
+        }
 
         const response = await axios.post('/api/attachments', formData, {
             withCredentials: true,
@@ -47,10 +49,10 @@ async function submit() {
     } catch (err: any) {
         console.error(err.response?.data ?? err)
         if (err.response?.status === 422) {
-            form.errors = err.response.data.errors ?? {}
+            form.value.errors = err.response.data.errors ?? {}
         }
     } finally {
-        form.processing = false
+        form.value.processing = false
     }
 }
 </script>
@@ -72,7 +74,7 @@ async function submit() {
 
                 <form @submit.prevent="submit" class="space-y-8 max-w-xl">
                     <AttachmentForm
-                        :form="form"
+                        v-model="form"
                         :cancel-href="route('attachments.index')"
                         :attachable-type="attachableTypes"
                         :show-entity-fields="true"
