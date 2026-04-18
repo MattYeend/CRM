@@ -4,7 +4,8 @@ import { useForm, router } from '@inertiajs/vue3'
 
 interface SelectOption {
     id: number
-    name: string
+    name?: string
+    title?: string
 }
 
 interface Order {
@@ -21,6 +22,7 @@ interface Order {
     meta?: Record<string, any> | null
     user_id?: number | null
     deal_id?: number | null
+    assigned_to?: number | null
 }
 
 const props = defineProps<{
@@ -62,6 +64,7 @@ const form = useForm({
     paid_at: props.order?.paid_at?.slice(0, 16) ?? '',
     user_id: props.order?.user_id ?? null,
     deal_id: props.order?.deal_id ?? null,
+    assigned_to: props.order?.assigned_to ?? null,
 })
 
 async function submit() {
@@ -185,27 +188,33 @@ async function submit() {
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium mb-1">User</label>
+                    <label class="block text-sm font-medium mb-1">
+                        Assigned To <span class="text-red-500">*</span>
+                    </label>
                     <select
-                        v-model="form.user_id"
+                        v-model="form.assigned_to"
                         class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         <option :value="null">— None —</option>
                         <option v-for="u in users" :key="u.id" :value="u.id">{{ u.name }}</option>
                     </select>
-                    <p v-if="form.errors.user_id" class="text-red-500 text-sm mt-1">
-                        {{ form.errors.user_id }}
+                    <p v-if="form.errors.assigned_to" class="text-red-500 text-sm mt-1">
+                        {{ form.errors.assigned_to }}
                     </p>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-1">Deal</label>
+                    <label class="block text-sm font-medium mb-1">
+                        Deal <span class="text-red-500">*</span>
+                    </label>
                     <select
                         v-model="form.deal_id"
                         class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         <option :value="null">— None —</option>
-                        <option v-for="d in deals" :key="d.id" :value="d.id">{{ d.name }}</option>
+                        <option v-for="d in deals" :key="d.id" :value="d.id">
+                            {{ d.title || d.name }}
+                        </option>
                     </select>
                     <p v-if="form.errors.deal_id" class="text-red-500 text-sm mt-1">
                         {{ form.errors.deal_id }}

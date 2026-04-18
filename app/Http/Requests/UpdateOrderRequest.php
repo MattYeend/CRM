@@ -13,7 +13,7 @@ use Illuminate\Validation\Rule;
  * Validation rules are split into focused private methods and merged in
  * rules(), keeping each concern isolated and easy to maintain:
  *   - baseRules — aggregates relationship, core, and status rule groups
- *   - relationshipBaseRules — optional order and user associations
+ *   - relationshipBaseRules — optional deal, user, and assigned_to associations
  *   - coreBaseRules — financial and payment-related fields
  *   - statusBaseRules — order status constrained to allowed values
  *   - metaRules — optional metadata payload
@@ -67,7 +67,7 @@ class UpdateOrderRequest extends FormRequest
     }
 
     /**
-     * Validation rules for optional order and user associations.
+     * Validation rules for optional deal, user, and assigned_to associations.
      *
      * Ensures provided IDs reference existing records when present.
      *
@@ -76,15 +76,15 @@ class UpdateOrderRequest extends FormRequest
     private function relationshipBaseRules(): array
     {
         return [
+            'deal_id' => [
+                'sometimes',
+                'integer',
+                Rule::exists('deals', 'id'),
+            ],
             'assigned_to' => [
                 'sometimes',
                 'integer',
                 Rule::exists('users', 'id'),
-            ],
-            'order_id' => [
-                'sometimes',
-                'integer',
-                Rule::exists('orders', 'id'),
             ],
         ];
     }
@@ -106,6 +106,8 @@ class UpdateOrderRequest extends FormRequest
             'paid_at' => 'nullable|date',
             'payment_intent_id' => 'nullable|string|max:255',
             'charge_id' => 'nullable|string|max:255',
+            'stripe_payment_intent' => 'nullable|string|max:255',
+            'stripe_invoice_id' => 'nullable|string|max:255',
         ];
     }
 
