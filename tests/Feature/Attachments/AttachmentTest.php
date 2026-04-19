@@ -190,7 +190,7 @@ test('store saves uploaded file, creates attachment and calls attacher', functio
 
     $payload = [
         'file' => $file,
-        'attachable_type' => Task::class,
+        'attachable_type' => 'task',
         'attachable_id' => 1, 
         'uploaded_by' => $this->auth->id,
     ];
