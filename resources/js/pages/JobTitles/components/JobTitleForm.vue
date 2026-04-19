@@ -2,6 +2,8 @@
 import axios from 'axios'
 import { useForm, router } from '@inertiajs/vue3'
 
+import JobTitleDetailsSection from './JobTitleDetailsSection.vue'
+
 interface JobTitle {
     id?: number
     title?: string
@@ -17,12 +19,6 @@ const props = defineProps<{
     submitLabel?: string
     submitRoute: string
 }>()
-
-const groupOptions = [
-    { value: 'c_suite', label: 'C-Suite' },
-    { value: 'executive', label: 'Executive' },
-    { value: 'director', label: 'Director' },
-]
 
 const form = useForm({
     title: props.jobTitle?.title ?? '',
@@ -63,56 +59,23 @@ async function submit() {
 <template>
     <form @submit.prevent="submit" class="space-y-8 max-w-2xl">
 
-        <div class="space-y-4">
-            <h2 class="text-lg font-semibold border-b pb-2">Job Title Details</h2>
+        <JobTitleDetailsSection
+            :title="form.title"
+            :short-code="form.short_code"
+            :group="form.group"
+            :errors="form.errors"
+            @update:title="form.title = $event"
+            @update:short-code="form.short_code = $event"
+            @update:group="form.group = $event"
+        />
 
-            <div>
-                <label class="block text-sm font-medium mb-1">
-                    Title <span class="text-red-500">*</span>
-                </label>
-                <input
-                    v-model="form.title"
-                    type="text"
-                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="e.g. Chief Executive Officer"
-                />
-                <p v-if="form.errors.title" class="text-red-500 text-sm mt-1">{{ form.errors.title }}</p>
-            </div>
+        <button
+            type="submit"
+            class="bg-blue-600 text-white px-5 py-2 rounded disabled:opacity-50"
+            :disabled="form.processing"
+        >
+            {{ form.processing ? 'Saving...' : (submitLabel ?? 'Save Job Title') }}
+        </button>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium mb-1">Short Code</label>
-                    <input
-                        v-model="form.short_code"
-                        type="text"
-                        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="e.g. CEO"
-                    />
-                    <p v-if="form.errors.short_code" class="text-red-500 text-sm mt-1">{{ form.errors.short_code }}</p>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-1">Group</label>
-                    <select
-                        v-model="form.group"
-                        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option :value="null">- None -</option>
-                        <option v-for="g in groupOptions" :key="g.value" :value="g.value">{{ g.label }}</option>
-                    </select>
-                    <p v-if="form.errors.group" class="text-red-500 text-sm mt-1">{{ form.errors.group }}</p>
-                </div>
-            </div>
-        </div>
-
-        <div>
-            <button
-                type="submit"
-                class="bg-blue-600 text-white px-5 py-2 rounded disabled:opacity-50"
-                :disabled="form.processing"
-            >
-                {{ form.processing ? 'Saving...' : (submitLabel ?? 'Save Job Title') }}
-            </button>
-        </div>
     </form>
 </template>
