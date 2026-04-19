@@ -47,6 +47,7 @@ import {
     Paperclip,
     ReceiptIcon,
     Search,
+    Shield,
     ShoppingCart,
     StickyNote,
     UserPlus,
@@ -147,6 +148,11 @@ const mainNavItems: NavItem[] = [
         title: 'Orders',
         href: '/orders',
         icon: ShoppingCart
+    },
+    {
+        title: 'Permissions',
+        href: '/permissions',
+        icon: Shield
     }
 ];
 
