@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { route } from 'ziggy-js'
 import { fetchPermissions, deletePermissions } from '@/services/permissionService'
 
@@ -60,6 +60,33 @@ async function loadPermissions(page = 1) {
         loading.value = false
     }
 }
+
+const visiblePages = computed(() => {
+    const total = pagination.last_page
+    const current = currentPage.value
+    const delta = 2
+
+    const pages: (number | string)[] = []
+
+    const start = Math.max(1, current - delta)
+    const end = Math.min(total, current + delta)
+
+    if (start > 1) {
+        pages.push(1)
+        if (start > 2) pages.push('...')
+    }
+
+    for (let i = start; i <= end; i++) {
+        pages.push(i)
+    }
+
+    if (end < total) {
+        if (end < total - 1) pages.push('...')
+        pages.push(total)
+    }
+
+    return pages
+})
 
 function goToPage(page: number) {
     if (page >= 1 && page <= pagination.last_page) {
@@ -131,7 +158,7 @@ onMounted(() => loadPermissions())
 
                         <td class="p-2">{{ permission.label }}</td>
 
-                        <td class="p-2 text-gray-600">
+                        <td class="p-2">
                             {{ permission.role_count }}
                         </td>
 
@@ -155,14 +182,14 @@ onMounted(() => loadPermissions())
                             </Link>
 
                             <Link
-                                v-if="permission.permissions.update"
+                                v-if="permission.permissions.update && permission.role_count === 0"
                                 :href="route('permissions.edit', permission.id)"
                             >
                                 Edit
                             </Link>
 
                             <button
-                                v-if="permission.permissions.delete"
+                                v-if="permission.permissions.delete && permission.role_count === 0"
                                 class="text-red-600"
                                 :disabled="deletingId === permission.id"
                                 @click="handleDelete(permission.id)"
@@ -185,11 +212,12 @@ onMounted(() => loadPermissions())
                 </button>
 
                 <button
-                    v-for="page in pagination.last_page"
+                    v-for="page in visiblePages"
                     :key="page"
                     class="px-3 py-1 border rounded"
                     :class="{ 'bg-blue-600 text-white': page === currentPage }"
-                    @click="goToPage(page)"
+                    :disabled="page === '...'"
+                    @click="typeof page === 'number' && goToPage(page)"
                 >
                     {{ page }}
                 </button>
@@ -202,7 +230,6 @@ onMounted(() => loadPermissions())
                     Next
                 </button>
             </div>
-
         </div>
     </AppLayout>
 </template>

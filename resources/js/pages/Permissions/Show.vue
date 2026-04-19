@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { Head, Link } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
-import { ref, onMounted } from 'vue'
 import { route } from 'ziggy-js'
-import { fetchPermission, deletePermissions } from '@/services/permissionService'
+import { type BreadcrumbItem } from '@/types'
+import { deletePermissions } from '@/services/permissionService'
 
 interface Role {
     id: number
@@ -31,75 +32,67 @@ interface Permission {
 }
 
 const props = defineProps<{
-    id: number
+    permission: Permission
 }>()
 
-const permission = ref<Permission | null>(null)
-const loading = ref(true)
+const breadcrumbItems: BreadcrumbItem[] = [
+    { title: 'Permissions', href: route('permissions.index') },
+    { title: `Permission ${props.permission.name}`, href: route('permissions.show', { permission: props.permission.id }) },
+]
+
 const deleting = ref(false)
 
-async function loadPermission() {
-    loading.value = true
-    try {
-        permission.value = await fetchPermission(props.id)
-    } finally {
-        loading.value = false
-    }
-}
-
 async function handleDelete() {
-    if (!permission.value) return
     if (!confirm('Are you sure?')) return
 
     deleting.value = true
     try {
-        await deletePermissions(permission.value.id)
+        await deletePermissions(props.permission.id)
         window.location.href = route('permissions.index')
-    } finally {
+    } catch {
         deleting.value = false
     }
 }
-
-onMounted(loadPermission)
 </script>
 
 <template>
-    <AppLayout title="Permission">
-
-        <Head :title="permission ? permission.name : 'Permission'" />
+    <AppLayout :breadcrumbs="breadcrumbItems">
+        <Head :title="permission.name" />
 
         <div class="p-6">
-
-            <div v-if="loading">Loading...</div>
-
-            <div v-else-if="permission" class="border p-6 rounded shadow">
+            <div class="mx-auto border p-6 rounded shadow">
 
                 <!-- Header -->
-                <div class="flex justify-between mb-6">
-                    <h1 class="text-2xl font-bold">
-                        {{ permission.name }}
-                    </h1>
+                <div class="flex items-start justify-between mb-6">
+                    <div class="flex items-center space-x-4">
+                        <h1 class="text-2xl font-bold">
+                            {{ permission.name }}
+                        </h1>
+                        <p v-if="permission.creator" class="text-gray-600">
+                            {{ permission.creator.name }}
+                        </p>
+                    </div>
 
-                    <div class="space-x-2">
+                    <div class="flex items-center space-x-2">
                         <Link
-                            :href="route('permissions.index')"
-                            class="bg-gray-200 px-4 py-2 rounded"
-                        >
-                            Back
-                        </Link>
-
-                        <Link
-                            v-if="permission.permissions.update"
-                            :href="route('permissions.edit', permission.id)"
+                            v-if="permission.permissions.update && permission.role_count === 0"
+                            :href="route('permissions.edit', { permission: permission.id })"
                             class="bg-blue-600 text-white px-4 py-2 rounded"
                         >
                             Edit
                         </Link>
 
+                        <Link
+                            :href="route('permissions.index')"
+                            class="bg-gray-200 text-gray-700 px-4 py-2 rounded"
+                        >
+                            Back
+                        </Link>
+
                         <button
-                            v-if="permission.permissions.delete"
-                            class="bg-red-600 text-white px-4 py-2 rounded"
+                            v-if="permission.permissions.delete && permission.role_count === 0"
                             :disabled="deleting"
+                            class="bg-red-600 text-white px-4 py-2 rounded disabled:opacity-50"
                             @click="handleDelete"
                         >
                             {{ deleting ? 'Deleting…' : 'Delete' }}
@@ -109,29 +102,41 @@ onMounted(loadPermission)
 
                 <!-- Details -->
                 <div class="space-y-2">
-                    <div><strong>Label:</strong> {{ permission.label }}</div>
-                    <div><strong>Roles:</strong> {{ permission.role_count }}</div>
-                    <div><strong>Status:</strong> {{ permission.is_assigned ? 'Assigned' : 'Unassigned' }}</div>
-                    <div v-if="permission.creator">
-                        <strong>Created By:</strong> {{ permission.creator.name }}
+                    <div>
+                        <span class="font-semibold">Label: </span>
+                        <span>{{ permission.label }}</span>
+                    </div>
+
+                    <div>
+                        <span class="font-semibold">Status: </span>
+                        <span>
+                            {{ permission.is_assigned ? 'Assigned' : 'Unassigned' }}
+                        </span>
+                    </div>
+
+                    <div>
+                        <span class="font-semibold">Roles: </span>
+                        <span>{{ permission.role_count }}</span>
                     </div>
                 </div>
 
                 <!-- Roles -->
-                <div class="mt-6">
-                    <h2 class="font-semibold mb-2">
-                        Roles ({{ permission.roles.length }})
-                    </h2>
+                <div class="space-y-2 mt-4">
+                    <div>
+                        <span class="font-semibold">
+                            Assigned Roles ({{ permission.roles.length }}):
+                        </span>
+                    </div>
 
                     <div v-if="permission.roles.length">
                         <div
                             v-for="role in permission.roles"
                             :key="role.id"
-                            class="flex justify-between p-2 bg-gray-50 rounded"
+                            class="flex justify-between p-2 rounded"
                         >
                             <span>{{ role.name }}</span>
                             <Link
-                                :href="route('roles.show', role.id)"
+                                :href="route('roles.show', { role: role.id })"
                                 class="text-blue-600"
                             >
                                 View

@@ -58,7 +58,7 @@ function isRoleSelected(roleId: number): boolean {
                     />
                     <label
                         :for="`role-${role.id}`"
-                        class="ml-2 text-sm text-gray-700 cursor-pointer"
+                        class="ml-2 text-sm cursor-pointer"
                     >
                         {{ role.name }}
                     </label>
