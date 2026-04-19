@@ -3,6 +3,9 @@ import axios from 'axios'
 import { useForm, router } from '@inertiajs/vue3'
 import { ref } from 'vue'
 
+import LearningDetailsSection from './LearningDetailsSection.vue'
+import LearningQuestionsSection from './LearningQuestionsSection.vue'
+
 interface User {
     id: number
     name: string
@@ -24,7 +27,7 @@ interface Learning {
     description?: string | null
     pass_score?: number
     questions?: LearningQuestion[]
-    users?: User[] 
+    users?: User[]
 }
 
 const props = defineProps<{
@@ -42,7 +45,6 @@ const form = useForm({
     users: props.learning?.users?.map(u => u.id) ?? [],
 })
 
-// Local reactive questions state (not part of useForm to allow dynamic add/remove)
 const questions = ref<LearningQuestion[]>(
     props.learning?.questions?.map(q => ({
         question: q.question,
@@ -78,7 +80,6 @@ function removeAnswer(qIndex: number, aIndex: number) {
 }
 
 function setCorrect(qIndex: number, aIndex: number) {
-    // Only one correct answer per question
     questions.value[qIndex].answers.forEach((a, i) => {
         a.is_correct = i === aIndex
     })
@@ -110,6 +111,7 @@ async function submit() {
             const flat = Object.fromEntries(
                 Object.entries(raw).map(([key, messages]) => [key, messages[0]])
             ) as Record<string, string>
+
             form.setError(flat)
         }
     }
@@ -119,168 +121,26 @@ async function submit() {
 <template>
     <form @submit.prevent="submit" class="space-y-8 max-w-3xl">
 
-        <!-- Learning Details -->
-        <div class="space-y-4">
-            <h2 class="text-lg font-semibold border-b pb-2">Learning Details</h2>
+        <LearningDetailsSection
+            :form="form"
+            :users="users"
+        />
 
-            <div>
-                <label class="block text-sm font-medium mb-1">
-                    Title <span class="text-red-500">*</span>
-                </label>
-                <input
-                    v-model="form.title"
-                    type="text"
-                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="e.g. Health & Safety Induction"
-                />
-                <p v-if="form.errors.title" class="text-red-500 text-sm mt-1">{{ form.errors.title }}</p>
-            </div>
+        <LearningQuestionsSection
+            :questions="questions"
+            :addQuestion="addQuestion"
+            :removeQuestion="removeQuestion"
+            :addAnswer="addAnswer"
+            :removeAnswer="removeAnswer"
+            :setCorrect="setCorrect"
+        />
 
-            <div>
-                <label class="block text-sm font-medium mb-1">Description</label>
-                <textarea
-                    v-model="form.description"
-                    rows="3"
-                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Brief description of this learning module..."
-                />
-                <p v-if="form.errors.description" class="text-red-500 text-sm mt-1">{{ form.errors.description }}</p>
-            </div>
-
-            <div class="space-y-2">
-                <h2 class="text-lg font-semibold border-b pb-2">Assign Users</h2>
-
-                <div
-                    v-for="user in props.users"
-                    :key="user.id"
-                    class="flex items-center gap-2"
-                >
-                    <input
-                        type="checkbox"
-                        :value="user.id"
-                        v-model="form.users"
-                    />
-                    <span>{{ user.name }}</span>
-                </div>
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium mb-1">
-                    Pass Score (%)
-                </label>
-
-                <input
-                    v-model.number="form.pass_score"
-                    type="number"
-                    min="0"
-                    max="100"
-                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="e.g. 70"
-                />
-
-                <p v-if="form.errors.pass_score" class="text-red-500 text-sm mt-1">
-                    {{ form.errors.pass_score }}
-                </p>
-            </div>
-        </div>
-
-        <!-- Questions -->
-        <div class="space-y-4">
-            <div class="flex items-center justify-between border-b pb-2">
-                <h2 class="text-lg font-semibold">Questions</h2>
-                <button
-                    type="button"
-                    @click="addQuestion"
-                    class="text-sm bg-blue-50 text-blue-600 border border-blue-200 px-3 py-1 rounded hover:bg-blue-100"
-                >
-                    + Add Question
-                </button>
-            </div>
-
-            <div v-if="questions.length === 0" class="text-sm text-gray-400 italic">
-                No questions added yet. Click "Add Question" to begin.
-            </div>
-
-            <div
-                v-for="(question, qIndex) in questions"
-                :key="qIndex"
-                class="border rounded p-4 space-y-3"
-            >
-                <div class="flex items-start justify-between gap-3">
-                    <div class="flex-1">
-                        <label class="block text-sm font-medium mb-1">
-                            Question {{ qIndex + 1 }}
-                        </label>
-                        <input
-                            v-model="question.question"
-                            type="text"
-                            class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Enter question text..."
-                        />
-                    </div>
-                    <button
-                        type="button"
-                        @click="removeQuestion(qIndex)"
-                        class="text-red-500 text-sm mt-6 hover:text-red-700 shrink-0"
-                    >
-                        Remove
-                    </button>
-                </div>
-
-                <!-- Answers -->
-                <div class="ml-4 space-y-2">
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                        Answers — select the correct one
-                    </p>
-
-                    <div
-                        v-for="(answer, aIndex) in question.answers"
-                        :key="aIndex"
-                        class="flex items-center gap-2"
-                    >
-                        <input
-                            type="radio"
-                            :name="`question-${qIndex}-correct`"
-                            :checked="answer.is_correct"
-                            @change="setCorrect(qIndex, aIndex)"
-                            class="accent-green-600 shrink-0"
-                            title="Mark as correct answer"
-                        />
-                        <input
-                            v-model="answer.answer"
-                            type="text"
-                            class="flex-1 border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            :placeholder="`Answer ${aIndex + 1}`"
-                        />
-                        <button
-                            v-if="question.answers.length > 2"
-                            type="button"
-                            @click="removeAnswer(qIndex, aIndex)"
-                            class="text-red-400 text-xs hover:text-red-600 shrink-0"
-                        >
-                            ✕
-                        </button>
-                    </div>
-
-                    <button
-                        type="button"
-                        @click="addAnswer(qIndex)"
-                        class="text-xs text-blue-500 hover:text-blue-700"
-                    >
-                        + Add Answer
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div>
-            <button
-                type="submit"
-                class="bg-blue-600 text-white px-5 py-2 rounded disabled:opacity-50"
-                :disabled="form.processing"
-            >
-                {{ form.processing ? 'Saving...' : (submitLabel ?? 'Save Learning') }}
-            </button>
-        </div>
+        <button
+            type="submit"
+            class="bg-blue-600 text-white px-5 py-2 rounded disabled:opacity-50"
+            :disabled="form.processing"
+        >
+            {{ form.processing ? 'Saving...' : (submitLabel ?? 'Save Learning') }}
+        </button>
     </form>
 </template>
