@@ -16,7 +16,11 @@ const breadcrumbItems: BreadcrumbItem[] = [
         <Head title="Create Industry" />
         <div class="p-6">
             <h1 class="text-2xl font-bold mb-6">Create Industry</h1>
-            <IndustryForm submit-route="/api/industries" method="post" />
+            <IndustryForm
+                :submitRoute="route('industries.store')"
+                method="post"
+                submitLabel="Save Industry"
+            />
         </div>
     </AppLayout>
 </template>

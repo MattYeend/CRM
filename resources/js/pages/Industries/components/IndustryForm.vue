@@ -2,6 +2,8 @@
 import axios from 'axios'
 import { useForm, router } from '@inertiajs/vue3'
 
+import IndustryDetailsSection from './IndustryDetailsSection.vue'
+
 interface Industry {
     id?: number
     name?: string
@@ -39,6 +41,7 @@ async function submit() {
             const flat = Object.fromEntries(
                 Object.entries(raw).map(([key, messages]) => [key, messages[0]])
             ) as Record<string, string>
+
             form.setError(flat)
         }
     }
@@ -47,16 +50,8 @@ async function submit() {
 
 <template>
     <form @submit.prevent="submit" class="space-y-6 max-w-md">
-        <div>
-            <label class="block text-sm font-medium mb-1">Name *</label>
-            <input
-                v-model="form.name"
-                type="text"
-                class="w-full border rounded px-3 py-2"
-                placeholder="e.g. Technology"
-            />
-            <p v-if="form.errors.name" class="text-red-500 text-sm mt-1">{{ form.errors.name }}</p>
-        </div>
+
+        <IndustryDetailsSection :form="form" />
 
         <button
             type="submit"

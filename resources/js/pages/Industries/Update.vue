@@ -23,6 +23,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
                 :industry="industry"
                 :submit-route="`/api/industries/${industry.id}`"
                 method="put"
+                submitLabel="Update Industry"
             />
         </div>
     </AppLayout>
