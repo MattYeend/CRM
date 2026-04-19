@@ -180,7 +180,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         function (Attachment $attachment) {
             return Inertia::render('Attachments/Update', [
                 'attachment' => $attachment->load([
-                    'uploader'
+                    'uploader',
                 ]),
                 'attachableTypes' => array_keys(Relation::morphMap()),
             ]);
