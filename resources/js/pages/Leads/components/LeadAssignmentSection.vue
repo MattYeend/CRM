@@ -23,7 +23,7 @@ const form = props.form
                     v-model="form.owner_id"
                     class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                    <option :value="null">— None —</option>
+                    <option :value="null">- None -</option>
                     <option
                         v-for="user in users"
                         :key="user.id"
@@ -41,7 +41,7 @@ const form = props.form
                     v-model="form.assigned_to"
                     class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                    <option :value="null">— None —</option>
+                    <option :value="null">- None -</option>
                     <option
                         v-for="user in users"
                         :key="user.id"
