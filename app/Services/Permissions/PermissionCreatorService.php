@@ -36,10 +36,9 @@ class PermissionCreatorService
 
         $permission = Permission::create($data);
 
-        if (!empty($roleIds)) {
+        if (count($roleIds) > 0) {
             $permission->roles()->sync($roleIds);
         }
-
 
         return $permission->fresh(['roles']);
     }

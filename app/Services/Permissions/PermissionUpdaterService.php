@@ -36,12 +36,12 @@ class PermissionUpdaterService
 
         $data['updated_by'] = $user->id;
 
-        $roleIds = $data['role_ids'] ?? null;
+        $roleIds = $data['role_ids'] ?? [];
         unset($data['role_ids']);
 
         $permission->update($data);
 
-        if ($roleIds !== null) {
+        if (count($roleIds) > 0) {
             $permission->roles()->sync($roleIds);
         }
 
