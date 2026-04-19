@@ -3,8 +3,8 @@
 namespace App\Services\Permissions;
 
 use App\Models\Permission;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -55,34 +55,21 @@ class PermissionQueryService
      * @param  Request $request Incoming HTTP request; may carry search,
      * sort, filter, and pagination params.
      *
-     * @return LengthAwarePaginator Paginated permissions item results.
+     * @return array
      */
-    public function list(Request $request): LengthAwarePaginator
+    public function list(Request $request): array
     {
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
-
         $query = Permission::with('roles');
 
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        $paginator = $query->paginate($perPage)->appends($request->query());
+        $paginator = $this->paginate($query, $request);
 
-        $paginator->through(
-            fn (Permission $permission) => $this->formatPermission($permission)
+        return array_merge(
+            $paginator,
+            ['permissions' => $this->getPermissions()]
         );
-
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Permission::class),
-                'viewAny' => Gate::allows('viewAny', Permission::class),
-            ],
-        ]);
-
-        return $paginator;
     }
 
     /**
@@ -101,10 +88,42 @@ class PermissionQueryService
     }
 
     /**
+     * Paginate and transform the permission query.
+     *
+     * @param Builder $query
+     * @param Request $request
+     *
+     * @return array
+     */
+    private function paginate($query, Request $request): array
+    {
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
+
+        return $query->paginate($perPage)
+            ->appends($request->query())
+            ->through(fn (
+                Permission $permission
+            ): array => $this->formatPermission($permission))
+            ->toArray();
+    }
+
+    /**
+     * Get permission flags for the current user.
+     *
+     * @return array
+     */
+    private function getPermissions(): array
+    {
+        return [
+            'create' => Gate::allows('create', Permission::class),
+            'viewAny' => Gate::allows('viewAny', Permission::class),
+        ];
+    }
+
+    /**
      * Format a permission into a structured array.
      *
-     * Includes core attributes, related role data, derived assignment state,
-     * and authorisation permissions for the current user.
+     * Combines core attributes, derived flags, relationships, and permissions.
      *
      * @param  Permission $permission
      *
@@ -112,14 +131,70 @@ class PermissionQueryService
      */
     private function formatPermission(Permission $permission): array
     {
+        return array_merge(
+            $this->baseData($permission),
+            $this->derivedData($permission),
+            $this->relationshipData($permission),
+            $this->permissionData($permission),
+        );
+    }
+
+    /**
+     * Extract core permission attributes.
+     *
+     * @param  Permission $permission
+     *
+     * @return array
+     */
+    private function baseData(Permission $permission): array
+    {
         return [
             'id' => $permission->id,
             'name' => $permission->name,
             'label' => $permission->label,
+        ];
+    }
+
+    /**
+     * Extract derived flags for the permission.
+     *
+     * @param  Permission $permission
+     *
+     * @return array
+     */
+    private function derivedData(Permission $permission): array
+    {
+        return [
             'is_assigned' => $permission->getIsAssignedAttribute(),
             'role_count' => $permission->getRoleCountAttribute(),
+        ];
+    }
+
+    /**
+     * Extract related role and creator data for the permission.
+     *
+     * @param  Permission $permission
+     *
+     * @return array
+     */
+    private function relationshipData(Permission $permission): array
+    {
+        return [
             'roles' => $permission->roles,
             'creator' => $permission->creator,
+        ];
+    }
+
+    /**
+     * Determine authorisation permissions for the permission.
+     *
+     * @param  Permission $permission
+     *
+     * @return array
+     */
+    private function permissionData(Permission $permission): array
+    {
+        return [
             'permissions' => [
                 'view' => Gate::allows('view', $permission),
                 'update' => Gate::allows('update', $permission),
