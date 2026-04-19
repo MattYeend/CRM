@@ -97,7 +97,7 @@ async function submit() {
                         v-model="form.group"
                         class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                        <option :value="null">— None —</option>
+                        <option :value="null">- None -</option>
                         <option v-for="g in groupOptions" :key="g.value" :value="g.value">{{ g.label }}</option>
                     </select>
                     <p v-if="form.errors.group" class="text-red-500 text-sm mt-1">{{ form.errors.group }}</p>

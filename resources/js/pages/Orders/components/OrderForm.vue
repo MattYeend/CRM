@@ -158,7 +158,7 @@ async function submit() {
                         v-model="form.payment_method"
                         class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                        <option :value="null">— None —</option>
+                        <option :value="null">- None -</option>
                         <option v-for="m in paymentMethodOptions" :key="m.value" :value="m.value">
                             {{ m.label }}
                         </option>
@@ -195,7 +195,7 @@ async function submit() {
                         v-model="form.assigned_to"
                         class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                        <option :value="null">— None —</option>
+                        <option :value="null">- None -</option>
                         <option v-for="u in users" :key="u.id" :value="u.id">{{ u.name }}</option>
                     </select>
                     <p v-if="form.errors.assigned_to" class="text-red-500 text-sm mt-1">
@@ -211,7 +211,7 @@ async function submit() {
                         v-model="form.deal_id"
                         class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                        <option :value="null">— None —</option>
+                        <option :value="null">- None -</option>
                         <option v-for="d in deals" :key="d.id" :value="d.id">
                             {{ d.title || d.name }}
                         </option>

@@ -22,7 +22,7 @@ const form = props.form
                 v-model="form.company_id"
                 class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-                <option :value="null">— None —</option>
+                <option :value="null">- None -</option>
                 <option v-for="c in companies" :key="c.id" :value="c.id">{{ c.name }}</option>
             </select>
             <p v-if="form.errors.company_id" class="text-red-500 text-sm mt-1">{{ form.errors.company_id }}</p>
