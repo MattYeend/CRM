@@ -32,6 +32,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
                 :companies="companies"
                 :submit-route="`/api/invoices/${invoice.id}`"
                 method="put"
+                submitLabel="Update Invoice"
             />
         </div>
     </AppLayout>

@@ -24,7 +24,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
             <NoteForm
                 :notable-types="notableTypes"
-                submit-label="Create Note"
+                submitLabel = "Create Note"
             />
         </div>
     </AppLayout>

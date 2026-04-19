@@ -19,6 +19,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
             <JobTitleForm
                 submit-route="/api/job-titles"
                 method="post"
+                submitLabel="Save Job Title"
             />
         </div>
     </AppLayout>

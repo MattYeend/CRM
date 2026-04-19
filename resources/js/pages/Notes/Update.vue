@@ -49,7 +49,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
                 :note="note"
                 :notable-types="notableTypes"
                 method="put"
-                submit-label="Save Changes"
+                submitLabel="Update Note"
             />
         </div>
     </AppLayout>

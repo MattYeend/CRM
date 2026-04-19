@@ -25,6 +25,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
                 :job-title="jobTitle"
                 :submit-route="`/api/job-titles/${jobTitle.id}`"
                 method="put"
+                submitLabel="Update Job Title"
             />
         </div>
     </AppLayout>

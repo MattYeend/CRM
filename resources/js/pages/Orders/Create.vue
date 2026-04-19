@@ -31,6 +31,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
                 :deals="deals"
                 submit-route="/api/orders"
                 method="post"
+                submitLabel="Save Order"
             />
         </div>
     </AppLayout>

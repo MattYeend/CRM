@@ -24,6 +24,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
                 :users="users"
                 submit-route="/api/learnings"
                 method="post"
+                submitLabel="Save Learning"
             />
         </div>
     </AppLayout>

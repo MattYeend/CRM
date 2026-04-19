@@ -27,6 +27,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
                 :users="users"
                 :submit-route="`/api/learnings/${learning.id}`"
                 method="put"
+                submitLabel="Update Learning"
             />
         </div>
     </AppLayout>

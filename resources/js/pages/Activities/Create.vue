@@ -29,6 +29,7 @@
                 :subject-types="subjectTypes"
                 submit-route="/activities"
                 method="post"
+                submitLabel="Save Activity"
             />
         </div>
     </AppLayout>

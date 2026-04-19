@@ -31,6 +31,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
                 :jobTitles="jobTitles"
                 :submit-route="`/users/${user.id}`"
                 method="put"
+                submitLabel="Update User"
             />
         </div>
     </AppLayout>

@@ -31,6 +31,7 @@
                 :job-titles="jobTitles"
                 submit-route="/users"
                 method="post"
+                submitLabel="Save User"
             />
         </div>
     </AppLayout>

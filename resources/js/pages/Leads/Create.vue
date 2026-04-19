@@ -24,6 +24,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
                 :users="users"
                 submit-route="/api/leads"
                 method="post"
+                submitLabel="Save Lead"
             />
         </div>
     </AppLayout>
