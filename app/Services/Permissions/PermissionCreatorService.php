@@ -31,6 +31,16 @@ class PermissionCreatorService
 
         $data['created_by'] = $user->id;
 
-        return Permission::create($data);
+        $roleIds = $data['role_ids'] ?? [];
+        unset($data['role_ids']);
+
+        $permission = Permission::create($data);
+
+        if (!empty($roleIds)) {
+            $permission->roles()->sync($roleIds);
+        }
+
+
+        return $permission->fresh(['roles']);
     }
 }

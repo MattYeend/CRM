@@ -182,7 +182,7 @@ onMounted(() => loadPermissions())
                             </Link>
 
                             <Link
-                                v-if="permission.permissions.update && permission.role_count === 0"
+                                v-if="permission.permissions.update"
                                 :href="route('permissions.edit', permission.id)"
                             >
                                 Edit

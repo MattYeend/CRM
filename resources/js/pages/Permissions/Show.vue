@@ -75,7 +75,7 @@ async function handleDelete() {
 
                     <div class="flex items-center space-x-2">
                         <Link
-                            v-if="permission.permissions.update && permission.role_count === 0"
+                            v-if="permission.permissions.update"
                             :href="route('permissions.edit', { permission: permission.id })"
                             class="bg-blue-600 text-white px-4 py-2 rounded"
                         >

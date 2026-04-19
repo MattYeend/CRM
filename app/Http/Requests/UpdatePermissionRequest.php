@@ -75,6 +75,11 @@ class UpdatePermissionRequest extends FormRequest
     {
         return [
             'label' => 'nullable|string',
+            'role_ids' => 'sometimes|array',
+            'role_ids.*' => [
+                'integer',
+                Rule::exists('roles', 'id'),
+            ],
         ];
     }
 }

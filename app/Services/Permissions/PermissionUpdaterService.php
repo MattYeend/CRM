@@ -36,8 +36,15 @@ class PermissionUpdaterService
 
         $data['updated_by'] = $user->id;
 
+        $roleIds = $data['role_ids'] ?? null;
+        unset($data['role_ids']);
+
         $permission->update($data);
 
-        return $permission->fresh();
+        if ($roleIds !== null) {
+            $permission->roles()->sync($roleIds);
+        }
+
+        return $permission->fresh(['roles']);
     }
 }

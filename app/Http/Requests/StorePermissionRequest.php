@@ -63,7 +63,7 @@ class StorePermissionRequest extends FormRequest
     }
 
     /**
-     * Validation rules for the optional human-readable label.
+     * Validation rules for the optional human-readable label and role ids.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -71,6 +71,11 @@ class StorePermissionRequest extends FormRequest
     {
         return [
             'label' => 'nullable|string',
+            'role_ids' => 'nullable|array',
+            'role_ids.*' => [
+                'integer',
+                Rule::exists('roles', 'id'),
+            ],
         ];
     }
 }
