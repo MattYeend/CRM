@@ -1090,53 +1090,39 @@ Route::middleware(['auth', 'verified'])->group(function () {
      * -------------------------------------------------------
      */
     Route::get('/pipeline-stages', function (
-        Pipeline $pipeline,
         Request $request,
         PipelineStageQueryService $service
     ) {
         return Inertia::render('PipelineStages/Index', [
-            'pipeline' => $pipeline,
-            'stages' => $service->list($request),
+            'pipelineStages' => $service->list($request),
         ]);
     })->name('pipeline-stages.index');
 
-    Route::get('/pipelines/{pipeline}/stages/create', function (
-        Pipeline $pipeline
-    ) {
+    Route::get('/pipeline-stages/create', function () {
         return Inertia::render('PipelineStages/Create', [
-            'pipeline' => $pipeline,
+            'pipelines' => Pipeline::orderBy('id')->get(['id', 'name']),
+            'deals' => Deal::orderBy('id')->get(['id', 'name']),
         ]);
     })->name('pipeline-stages.create');
 
-    Route::get(
-        '/pipelines/{pipeline}/stages/{stage}',
-        function (
-            Pipeline $pipeline,
-            PipelineStage $stage,
-            PipelineStageQueryService $service
-        ) {
-            return Inertia::render('PipelineStages/Show', [
-                'pipeline' => $pipeline,
-                'stage' => $service->show($stage),
-            ]);
-        }
-    )->name('pipeline-stages.show');
+    Route::get('/pipeline-stages/{pipelineStage}', function (
+        PipelineStage $pipelineStage,
+        PipelineStageQueryService $service
+    ) {
+        return Inertia::render('PipelineStages/Show', [
+            'pipelineStage' => $service->show($pipelineStage),
+        ]);
+    })->name('pipeline-stages.show');
 
-    Route::get(
-        '/pipelines/{pipeline}/stages/{stage}/edit',
-        function (Pipeline $pipeline, PipelineStage $stage) {
-            return Inertia::render('PipelineStages/Update', [
-                'pipeline' => $pipeline,
-                'stage' => $stage->load([
-                    'pipeline',
-                    'deals',
-                    'notes',
-                    'tasks',
-                    'attachments',
-                ]),
-            ]);
-        }
-    )->name('pipeline-stages.edit');
+    Route::get('/pipeline-stages/{pipelineStage}/edit', function (
+        PipelineStage $pipelineStage
+    ) {
+        return Inertia::render('PipelineStages/Update', [
+            'stage' => $pipelineStage->load('pipeline'),
+            'pipelines' => Pipeline::orderBy('id')->get(['id', 'name']),
+            'deals' => Deal::orderBy('id')->get(['id', 'title']),
+        ]);
+    })->name('pipeline-stages.edit');
 
     /**
      * -----------------------------------------

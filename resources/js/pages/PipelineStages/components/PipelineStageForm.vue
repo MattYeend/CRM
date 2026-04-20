@@ -1,69 +1,80 @@
 <script setup lang="ts">
+import axios from 'axios'
 import { useForm, router } from '@inertiajs/vue3'
-import { createPipelineStages, updatePipelineStages } from '@/services/pipelineStageService'
+import { computed } from 'vue'
 import PipelineStageDetailsSection from './PipelineStageDetailsSection.vue'
+import PipelineDealAssociationsSection from './PipelineDealAssociationsSection.vue'
 
-interface Pipeline {
+interface PipelineSelectOption {
     id: number
     name: string
 }
 
+interface DealSelectOption {
+    id: number
+    title: string
+}
+
 interface PipelineStage {
     id?: number
-    pipeline_id?: number
+    pipeline_id?: number | null
+    deal_id?: number | null
     name?: string
     position?: number
     is_won_stage?: boolean
     is_lost_stage?: boolean
-    is_test?: boolean
-    meta?: Record<string, any> | null
-}
-
-interface PipelineStageFormData {
-    pipeline_id: number
-    name: string
-    position: number
-    is_won_stage: boolean
-    is_lost_stage: boolean
-    is_test: boolean
+    is_open?: boolean
 }
 
 const props = defineProps<{
     stage?: PipelineStage
-    pipeline: Pipeline
+    pipelines: PipelineSelectOption[]
+    deals: DealSelectOption[]
     method?: 'post' | 'put'
     submitLabel?: string
     submitRoute: string
 }>()
 
-const form = useForm<PipelineStageFormData>({
-    pipeline_id: props.stage?.pipeline_id ?? props.pipeline.id,
+const form = useForm({
+    pipeline_id: props.stage?.pipeline_id ?? null,
+    deal_id: props.stage?.deal_id ?? null,
     name: props.stage?.name ?? '',
     position: props.stage?.position ?? 0,
     is_won_stage: props.stage?.is_won_stage ?? false,
     is_lost_stage: props.stage?.is_lost_stage ?? false,
-    is_test: props.stage?.is_test ?? false,
+    is_open: props.stage?.is_open ?? false,
+})
+
+const selectedPipelineName = computed(() => {
+    return props.pipelines.find(p => p.id === form.pipeline_id)?.name ?? 'N/A'
 })
 
 async function submit() {
-    form.clearErrors()
-    
     try {
+        await axios.get('/sanctum/csrf-cookie', { withCredentials: true })
+
         const payload = { ...form.data() }
 
-        const response = props.method === 'put' && props.stage?.id
-            ? await updatePipelineStages(props.stage.id, payload)
-            : await createPipelineStages(payload)
+        const response = await axios({
+            method: props.method === 'put' ? 'put' : 'post',
+            url: props.submitRoute,
+            data: payload,
+            withCredentials: true,
+            headers: { 'Content-Type': 'application/json' },
+        })
 
-        router.visit(`/pipelines/${props.pipeline.id}/stages/${response.id}`)
+        router.visit(`/pipeline-stages/${response.data.id}`)
     } catch (err: any) {
-        console.error(err.response?.data ?? err);
+        console.error(err.response?.data ?? err)
 
-        if (err.response?.status === 422 && err.response.data.errors) {
-            const errors = err.response.data.errors as Record<string, string[]>
-            Object.keys(errors).forEach(key => {
-                form.setError(key as keyof PipelineStageFormData, errors[key][0])
-            })
+        if (err.response?.status === 422) {
+            const raw = err.response.data.errors as Record<string, string[]>
+
+            const flat = Object.fromEntries(
+                Object.entries(raw).map(([key, messages]) => [key, messages[0]])
+            ) as Record<string, string>
+
+            form.setError(flat)
         }
     }
 }
@@ -71,20 +82,32 @@ async function submit() {
 
 <template>
     <form @submit.prevent="submit" class="space-y-8 max-w-2xl">
-
         <PipelineStageDetailsSection
             :name="form.name"
             :position="form.position"
             :is-won-stage="form.is_won_stage"
             :is-lost-stage="form.is_lost_stage"
-            :pipeline-name="pipeline.name"
+            :pipeline-name="selectedPipelineName"
+            :is-open="form.is_open"
             :errors="form.errors"
             @update:name="form.name = $event"
             @update:position="form.position = $event"
             @update:is-won-stage="form.is_won_stage = $event"
             @update:is-lost-stage="form.is_lost_stage = $event"
+            @update:is-open="form.is_open = $event"
         />
 
+        <PipelineDealAssociationsSection
+            :pipeline-id="form.pipeline_id"
+            :deal-id="form.deal_id"
+            :pipelines="pipelines"
+            :deals="deals"
+            :errors="form.errors"
+            @update:pipeline-id="form.pipeline_id = $event"
+            @update:deal-id="form.deal_id = $event"
+        />
+
+        <!-- Submit -->
         <button
             type="submit"
             class="bg-blue-600 text-white px-5 py-2 rounded disabled:opacity-50"

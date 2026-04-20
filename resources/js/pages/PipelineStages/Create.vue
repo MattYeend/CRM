@@ -2,39 +2,45 @@
 import { Head } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
 import { route } from 'ziggy-js'
+import { type BreadcrumbItem } from '@/types'
 import PipelineStageForm from './components/PipelineStageForm.vue'
 
-interface Pipeline {
+interface SelectOption {
     id: number
     name: string
 }
 
-const props = defineProps<{
-    pipeline: Pipeline
+interface DealSelectOption {
+    id: number
+    title: string
+}
+
+defineProps<{
+    pipelines: SelectOption[]
+    deals: DealSelectOption[]
 }>()
 
-const breadcrumbItems = [
-    { title: 'Pipelines', href: route('pipelines.index') },
-    { title: props.pipeline.name, href: route('pipelines.show', { pipeline: props.pipeline.id }) },
-    { title: 'Stages', href: route('pipelines.stages.index', { pipeline: props.pipeline.id }) },
-    { title: 'Create Stage', href: route('pipelines.stages.create', { pipeline: props.pipeline.id }) },
+const breadcrumbItems: BreadcrumbItem[] = [
+    { title: 'Pipeline Stages', href: route('pipeline-stages.index') },
+    { title: 'Create Pipeline Stage', href: route('pipeline-stages.create') },
 ]
 </script>
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head :title="`Create Stage - ${pipeline.name}`" />
+        <Head title="Create Pipeline Stage" />
 
         <div class="p-6">
             <h1 class="text-2xl font-bold mb-6">
-                Create Stage for {{ pipeline.name }}
+                Create Pipeline Stage
             </h1>
 
             <PipelineStageForm
-                :pipeline="pipeline"
+                :pipelines="pipelines"
+                :deals="deals"
+                submit-route="/api/pipeline-stages"
                 method="post"
-                submit-route="/api/pipelineStages"
-                submit-label="Create Stage"
+                submitLabel="Save Pipeline Stage"
             />
         </div>
     </AppLayout>

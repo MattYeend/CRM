@@ -64,6 +64,11 @@ class UpdatePipelineStageRequest extends FormRequest
                 'integer',
                 Rule::exists('pipelines', 'id'),
             ],
+            'deal_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('deals', 'id'),
+            ],
             'name' => 'sometimes|string',
         ];
     }

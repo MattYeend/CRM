@@ -6,119 +6,132 @@ const props = defineProps<{
     position: number
     isWonStage: boolean
     isLostStage: boolean
+    isOpen: boolean
     pipelineName: string
     errors: {
         name?: string
         position?: string
         is_won_stage?: string
         is_lost_stage?: string
+        is_open?: string
     }
 }>()
 
 const emit = defineEmits<{
-    'update:name': [value: string]
-    'update:position': [value: number]
-    'update:isWonStage': [value: boolean]
-    'update:isLostStage': [value: boolean]
+    'update:name': [string]
+    'update:position': [number]
+    'update:isWonStage': [boolean]
+    'update:isLostStage': [boolean]
+    'update:isOpen': [boolean]
 }>()
 
+/**
+ * Basic fields
+ */
 const nameModel = computed({
     get: () => props.name,
-    set: (value: string) => emit('update:name', value)
+    set: v => emit('update:name', v)
 })
 
 const positionModel = computed({
     get: () => props.position,
-    set: (value: number) => emit('update:position', value)
+    set: v => emit('update:position', v)
 })
 
-const isWonStageModel = computed({
-    get: () => props.isWonStage,
-    set: (value: boolean) => emit('update:isWonStage', value)
-})
-
-const isLostStageModel = computed({
-    get: () => props.isLostStage,
-    set: (value: boolean) => emit('update:isLostStage', value)
+/**
+ * ✅ Single source of truth for stage outcome
+ */
+const stageOutcome = computed({
+    get: () => {
+        if (props.isWonStage) return 'won'
+        if (props.isLostStage) return 'lost'
+        return 'open'
+    },
+    set: (value: 'won' | 'lost' | 'open') => {
+        emit('update:isWonStage', value === 'won')
+        emit('update:isLostStage', value === 'lost')
+        emit('update:isOpen', value === 'open')
+    }
 })
 </script>
 
 <template>
     <div class="space-y-4">
-        <h2 class="text-lg font-semibold border-b pb-2">Stage Details</h2>
 
-        <div>
-            <span class="font-medium">Pipeline:</span> {{ pipelineName }}
+        <h2 class="text-lg font-semibold border-b pb-2">
+            Stage Details
+        </h2>
+
+        <!-- Pipeline name -->
+        <div class="text-sm">
+            <span class="font-medium">Pipeline:</span>
+            {{ pipelineName || 'N/A' }}
         </div>
 
+        <!-- Name -->
         <div>
-            <label class="block text-sm font-medium mb-1">
-                Name <span class="text-red-500">*</span>
-            </label>
+            <label class="block text-sm font-medium mb-1">Name</label>
             <input
                 v-model="nameModel"
-                type="text"
-                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="e.g. Qualification"
+                class="w-full border rounded px-3 py-2"
             />
-            <p v-if="errors.name" class="text-red-500 text-sm mt-1">
+            <p v-if="errors.name" class="text-red-500 text-sm">
                 {{ errors.name }}
             </p>
         </div>
 
+        <!-- Position -->
         <div>
-            <label class="block text-sm font-medium mb-1">
-                Position <span class="text-red-500">*</span>
-            </label>
+            <label class="block text-sm font-medium mb-1">Position</label>
             <input
                 v-model.number="positionModel"
                 type="number"
-                min="0"
-                step="1"
-                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="0"
+                class="w-full border rounded px-3 py-2"
             />
-            <p v-if="errors.position" class="text-red-500 text-sm mt-1">
+            <p v-if="errors.position" class="text-red-500 text-sm">
                 {{ errors.position }}
             </p>
-            <p class="text-gray-500 text-sm mt-1">
-                Order of this stage in the pipeline
-            </p>
         </div>
 
+        <!-- ✅ Stage Outcome (fixed) -->
         <div class="space-y-2">
-            <label class="block text-sm font-medium">Stage Type</label>
-            
-            <div class="flex items-center">
+            <label class="block text-sm font-medium">Stage Outcome</label>
+
+            <div class="flex items-center gap-2">
                 <input
-                    id="is-won-stage"
-                    v-model="isWonStageModel"
-                    type="checkbox"
-                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    type="radio"
+                    name="stage-type"
+                    value="open"
+                    v-model="stageOutcome"
                 />
-                <label for="is-won-stage" class="ml-2 text-sm cursor-pointer">
-                    Won Stage (deals moved here are marked as won)
-                </label>
+                <span>Open</span>
             </div>
 
-            <div class="flex items-center">
+            <div class="flex items-center gap-2">
                 <input
-                    id="is-lost-stage"
-                    v-model="isLostStageModel"
-                    type="checkbox"
-                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    type="radio"
+                    name="stage-type"
+                    value="won"
+                    v-model="stageOutcome"
                 />
-                <label for="is-lost-stage" class="ml-2 text-sm cursor-pointer">
-                    Lost Stage (deals moved here are marked as lost)
-                </label>
+                <span>Won</span>
             </div>
 
-            <p v-if="errors.is_won_stage" class="text-red-500 text-sm">
-                {{ errors.is_won_stage }}
-            </p>
-            <p v-if="errors.is_lost_stage" class="text-red-500 text-sm">
-                {{ errors.is_lost_stage }}
-            </p>
+            <div class="flex items-center gap-2">
+                <input
+                    type="radio"
+                    name="stage-type"
+                    value="lost"
+                    v-model="stageOutcome"
+                />
+                <span>Lost</span>
+            </div>
         </div>
+
+        <!-- Optional error display -->
+        <p v-if="errors.is_won_stage || errors.is_lost_stage" class="text-red-500 text-sm">
+            {{ errors.is_won_stage || errors.is_lost_stage }}
+        </p>
+
     </div>
 </template>

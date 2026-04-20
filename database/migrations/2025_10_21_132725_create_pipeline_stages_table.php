@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('pipeline_stages', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pipeline_id')->constrained('pipelines')->cascadeOnDelete();
+            $table->foreignId('deal_id')->nullable()->constrained('deals')->cascadeOnDelete();
             $table->string('name');
             $table->integer('position')->default(0);
             $table->boolean('is_won_stage')->default(false);

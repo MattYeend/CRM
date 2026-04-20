@@ -1,60 +1,49 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3'
+import { type BreadcrumbItem } from '@/types'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
-import { route } from 'ziggy-js'
 import PipelineStageForm from './components/PipelineStageForm.vue'
+import { route } from 'ziggy-js'
 
-interface Pipeline {
+interface SelectOption {
     id: number
     name: string
 }
 
-interface PipelineStage {
+interface DealSelectOption {
     id: number
-    name: string
+    title: string
 }
 
 const props = defineProps<{
-    pipeline: Pipeline
-    stage: PipelineStage
+    stage: any
+    pipelines: SelectOption[]
+    deals: DealSelectOption[]
 }>()
 
-const breadcrumbItems = [
-    { title: 'Pipelines', href: route('pipelines.index') },
-    { title: props.pipeline.name, href: route('pipelines.show', { pipeline: props.pipeline.id }) },
-    { title: 'Stages', href: route('pipelines.stages.index', { pipeline: props.pipeline.id }) },
-    {
-        title: props.stage.name,
-        href: route('pipelines.stages.show', {
-            pipeline: props.pipeline.id,
-            stage: props.stage.id
-        })
-    },
-    {
-        title: 'Edit Stage',
-        href: route('pipelines.stages.edit', {
-            pipeline: props.pipeline.id,
-            stage: props.stage.id
-        })
-    },
+const breadcrumbItems: BreadcrumbItem[] = [
+    { title: 'Pipeline Stages', href: route('pipeline-stages.index') },
+    { title: `Pipeline Stage #${props.stage.id}`, href: route('pipeline-stages.show', { pipelineStage: props.stage.id }) },
+    { title: `Edit Pipeline Stage #${props.stage.id}`, href: route('pipeline-stages.edit', { pipelineStage: props.stage.id }) },
 ]
 </script>
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head :title="`Edit ${stage.name} - ${pipeline.name}`" />
+        <Head title="Edit Pipeline Stage" />
 
         <div class="p-6">
             <h1 class="text-2xl font-bold mb-6">
-                Edit Stage {{ stage.name }}
+                Edit Pipeline Stage
             </h1>
 
             <PipelineStageForm
-                :pipeline="pipeline"
                 :stage="stage"
+                :pipelines="pipelines"
+                :deals="deals"
+                :submit-route="`/api/pipeline-stages/${stage.id}`"
                 method="put"
-                :submit-route="`/api/pipelineStages/${stage.id}`"
-                submit-label="Update Stage"
+                submitLabel="Update Pipeline Stage"
             />
         </div>
     </AppLayout>

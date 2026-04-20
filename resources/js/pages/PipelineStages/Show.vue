@@ -1,200 +1,158 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { Head, Link } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
-import { route } from 'ziggy-js'
+import { ref, onMounted } from 'vue'
 import { type BreadcrumbItem } from '@/types'
-import { deletePipelineStages } from '@/services/pipelineStageService'
+import { route } from 'ziggy-js'
+import { fetchPipelineStage, deletePipelineStages } from '@/services/pipelineStageService'
 
-interface Pipeline {
-    id: number
-    name: string
-}
-
-interface User {
-    id: number
-    name: string
+interface UserPermissions {
+    view: boolean
+    update: boolean
+    delete: boolean
 }
 
 interface PipelineStage {
     id: number
     pipeline_id: number
-    pipeline: Pipeline
     name: string
     position: number
     is_won_stage: boolean
     is_lost_stage: boolean
     is_open: boolean
-    is_won: boolean
-    is_lost: boolean
     deal_count: number
-    creator: User | null
-    permissions: {
-        view: boolean
-        update: boolean
-        delete: boolean
-    }
+    pipeline?: { id: number; name: string } | null
+    creator?: { name: string } | null
+    permissions: UserPermissions
 }
 
-const props = defineProps<{
-    pipeline: Pipeline
-    stage: PipelineStage
-}>()
+const props = defineProps<{ pipelineStage: any }>()
+
+const pipelineStage = ref<PipelineStage>({
+    id: props.pipelineStage.id,
+    pipeline_id: props.pipelineStage.pipeline_id,
+    name: props.pipelineStage.name ?? '',
+    position: props.pipelineStage.position ?? 0,
+    is_won_stage: props.pipelineStage.is_won_stage ?? false,
+    is_lost_stage: props.pipelineStage.is_lost_stage ?? false,
+    is_open: props.pipelineStage.is_open ?? true,
+    deal_count: props.pipelineStage.deal_count ?? 0,
+    pipeline: props.pipelineStage.pipeline ?? null,
+    creator: props.pipelineStage.creator ?? null,
+    permissions: props.pipelineStage.permissions ?? { view: false, update: false, delete: false },
+})
 
 const breadcrumbItems: BreadcrumbItem[] = [
-    { title: 'Pipelines', href: route('pipelines.index') },
-    { title: `Pipeline ${props.pipeline.name}`, href: route('pipelines.show', { pipeline: props.pipeline.id }) },
-    { title: 'Stages', href: route('pipelines.stages.index', { pipeline: props.pipeline.id }) },
-    { title: `Stage ${props.stage.name}`, href: route('pipelines.stages.show', { pipeline: props.pipeline.id, stage: props.stage.id }) },
+    { title: 'Pipeline Stages', href: route('pipeline-stages.index') },
+    { title: `Pipeline Stage #${props.pipelineStage.id}`, href: route('pipeline-stages.show', { pipelineStage: pipelineStage.value.id }) },
 ]
 
-const deleting = ref(false)
+async function loadPipelineStage() {
+    const data = await fetchPipelineStage(pipelineStage.value.id)
+    Object.assign(pipelineStage.value, data)
+}
 
 async function handleDelete() {
-    if (!confirm('Are you sure?')) return
-
-    deleting.value = true
-    try {
-        await deletePipelineStages(props.stage.id)
-        window.location.href = route('pipelines.stages.index', { pipeline: props.pipeline.id })
-    } catch {
-        deleting.value = false
-    }
+    if (!confirm('Are you sure you want to delete this pipeline stage?')) return
+    await deletePipelineStages(pipelineStage.value.id)
+    window.location.href = route('pipeline-stages.index')
 }
+
+onMounted(() => loadPipelineStage())
 </script>
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head :title="`${pipeline.name} - ${stage.name}`" />
+        <Head title="View Pipeline Stage" />
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                
+        <div class="p-6">
+            <div class="mx-auto border p-6 rounded shadow">
+
+                <!-- Header -->
                 <div class="flex items-start justify-between mb-6">
-                    <div class="flex items-center space-x-4">
-                        <h1 class="text-2xl font-bold">
-                            {{ stage.name }}
-                        </h1>
-                        <p v-if="stage.creator" class="text-gray-600">
-                            {{ stage.creator.name }}
-                        </p>
+                    <div>
+                        <h1 class="text-2xl font-bold">{{ pipelineStage.name }}</h1>
+                        <span
+                            v-if="pipelineStage.is_won_stage"
+                            class="mt-1 inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700"
+                        >
+                            Won Stage
+                        </span>
+                        <span
+                            v-else-if="pipelineStage.is_lost_stage"
+                            class="mt-1 inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700"
+                        >
+                            Lost Stage
+                        </span>
+                        <span
+                            v-else
+                            class="mt-1 inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600"
+                        >
+                            Active Stage
+                        </span>
                     </div>
 
                     <div class="flex items-center space-x-2">
                         <Link
-                            v-if="stage.permissions.update"
-                            :href="route('pipelines.stages.edit', { pipeline: pipeline.id, stage: stage.id })"
+                            v-if="pipelineStage.permissions?.update"
+                            :href="route('pipeline-stages.edit', { pipelineStage: pipelineStage.id })"
                             class="bg-blue-600 text-white px-4 py-2 rounded"
                         >
                             Edit
                         </Link>
-
                         <Link
-                            :href="route('pipelines.stages.index', { pipeline: pipeline.id })"
+                            :href="route('pipeline-stages.index')"
                             class="bg-gray-200 text-gray-700 px-4 py-2 rounded"
                         >
                             Back
                         </Link>
-
                         <button
-                            v-if="stage.permissions.delete && stage.deal_count === 0"
-                            :disabled="deleting"
-                            class="bg-red-600 text-white px-4 py-2 rounded disabled:opacity-50"
+                            v-if="pipelineStage.permissions?.delete && pipelineStage.deal_count === 0"
                             @click="handleDelete"
+                            class="bg-red-600 text-white px-4 py-2 rounded"
                         >
-                            {{ deleting ? 'Deleting…' : 'Delete' }}
+                            Delete
                         </button>
                     </div>
                 </div>
 
-                <!-- Stage Details -->
-                <div class="overflow-hidden shadow-xl sm:rounded-lg">
-                    <div class="p-6 space-y-6">
-                        <div>
-                            <h3 class="text-lg font-semibold border-b pb-2 mb-4">
-                                Stage Information
-                            </h3>
-                            
-                            <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <dt class="text-sm font-medium">Pipeline</dt>
-                                    <dd class="mt-1 text-sm font-medium">
-                                        <Link
-                                            :href="route('pipelines.show', { pipeline: pipeline.id })"
-                                            class="text-blue-600 hover:text-blue-900"
-                                        >
-                                            {{ pipeline.name }}
-                                        </Link>
-                                    </dd>
-                                </div>
+                <!-- Details -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 mb-6">
+                    <div v-if="pipelineStage.pipeline">
+                        <span class="font-semibold">Pipeline: </span>
+                        <Link
+                            :href="route('pipelines.show', { pipeline: pipelineStage.pipeline.id })"
+                            class="text-blue-600 underline"
+                        >
+                            {{ pipelineStage.pipeline.name }}
+                        </Link>
+                    </div>
 
-                                <div>
-                                    <dt class="text-sm font-medium">Name</dt>
-                                    <dd class="mt-1 text-sm font-medium">
-                                        {{ stage.name }}
-                                    </dd>
-                                </div>
+                    <div>
+                        <span class="font-semibold">Position: </span>
+                        <span>#{{ pipelineStage.position }}</span>
+                    </div>
 
-                                <div>
-                                    <dt class="text-sm font-medium">Position</dt>
-                                    <dd class="mt-1 text-sm">
-                                        #{{ stage.position }}
-                                    </dd>
-                                </div>
+                    <div>
+                        <span class="font-semibold">Status: </span>
+                        <span
+                            :class="pipelineStage.is_open
+                                ? 'bg-blue-100 text-blue-800'
+                                : 'bg-gray-100 text-gray-800'"
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                        >
+                            {{ pipelineStage.is_open ? 'Open' : 'Closed' }}
+                        </span>
+                    </div>
 
-                                <div>
-                                    <dt class="text-sm font-medium">Type</dt>
-                                    <dd class="mt-1">
-                                        <span
-                                            v-if="stage.is_won_stage"
-                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
-                                        >
-                                            Won Stage
-                                        </span>
-                                        <span
-                                            v-else-if="stage.is_lost_stage"
-                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800"
-                                        >
-                                            Lost Stage
-                                        </span>
-                                        <span
-                                            v-else
-                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800"
-                                        >
-                                            Active Stage
-                                        </span>
-                                    </dd>
-                                </div>
+                    <div>
+                        <span class="font-semibold">Deal Count: </span>
+                        <span>{{ pipelineStage.deal_count }} deal{{ pipelineStage.deal_count !== 1 ? 's' : '' }}</span>
+                    </div>
 
-                                <div>
-                                    <dt class="text-sm font-medium">Status</dt>
-                                    <dd class="mt-1">
-                                        <span
-                                            :class="stage.is_open
-                                                ? 'bg-blue-100 text-blue-800'
-                                                : 'bg-gray-100 text-gray-800'"
-                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
-                                        >
-                                            {{ stage.is_open ? 'Open' : 'Closed' }}
-                                        </span>
-                                    </dd>
-                                </div>
-
-                                <div>
-                                    <dt class="text-sm font-medium">Deal Count</dt>
-                                    <dd class="mt-1 text-sm">
-                                        {{ stage.deal_count }} deal{{ stage.deal_count !== 1 ? 's' : '' }}
-                                    </dd>
-                                </div>
-
-                                <div v-if="stage.creator">
-                                    <dt class="text-sm font-medium">Created By</dt>
-                                    <dd class="mt-1 text-sm">
-                                        {{ stage.creator.name }}
-                                    </dd>
-                                </div>
-                            </dl>
-                        </div>
+                    <div v-if="pipelineStage.creator">
+                        <span class="font-semibold">Created By: </span>
+                        <span>{{ pipelineStage.creator.name }}</span>
                     </div>
                 </div>
 

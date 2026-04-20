@@ -145,6 +145,7 @@ class PipelineStage extends Model
      */
     protected $fillable = [
         'pipeline_id',
+        'deal_id',
         'name',
         'position',
         'is_won_stage',
