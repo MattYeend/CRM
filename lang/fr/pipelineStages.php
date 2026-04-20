@@ -21,6 +21,7 @@ return [
     'name' => 'Nom',
     'description' => 'Description',
     'pipeline' => 'Pipeline',
+    'deal' => 'Opportunité',
     'position' => 'Position',
     'is_won_stage' => 'Est une étape gagnée',
     'is_lost_stage' => 'Est une étape perdue',

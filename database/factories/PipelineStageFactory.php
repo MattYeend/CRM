@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\PipelineStage;
+use App\Models\Deal;
 use App\Models\Pipeline;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -21,6 +21,7 @@ class PipelineStageFactory extends Factory
     {
         return [
             'pipeline_id' => Pipeline::inRandomOrder()->first()?->id ?? Pipeline::factory()->create()->id,
+            'deal_id' => Deal::inRandomOrder()->first()?->id ?? Deal::factory()->create()->id,
             'name' => fake()->word(),
             'position' => 0,
             'is_won_stage' => false,

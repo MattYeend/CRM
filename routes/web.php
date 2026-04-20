@@ -1119,8 +1119,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ) {
         return Inertia::render('PipelineStages/Update', [
             'stage' => $pipelineStage->load('pipeline'),
+            'pipeline' => $pipelineStage->pipeline,
             'pipelines' => Pipeline::orderBy('id')->get(['id', 'name']),
-            'deals' => Deal::orderBy('id')->get(['id', 'title']),
+            'deals' => Invoice::orderBy('id')->get(['id', 'title as name']),
         ]);
     })->name('pipeline-stages.edit');
 

@@ -191,11 +191,11 @@ class PipelineStage extends Model
     /**
      * Get the deals currently assigned to this stage.
      *
-     * @return HasMany<Deal>
+     * @return BelongsTo<Deal,PipelineStage>
      */
-    public function deals(): HasMany
+    public function deals(): BelongsTo
     {
-        return $this->hasMany(Deal::class, 'stage_id');
+        return $this->belongsTo(Deal::class, 'deal_id');
     }
 
     /**

@@ -21,6 +21,7 @@ return [
     'name' => 'Enw',
     'description' => 'Disgrifiad',
     'pipeline' => 'Piblinell',
+    'deal' => 'Bargen',
     'position' => 'Sefyllfa',
     'is_won_stage' => 'Ydy\'n Gam Wedi Ennill',
     'is_lost_stage' => 'Ydy\'n Gam Wedi Colli',

@@ -21,6 +21,7 @@ return [
     'name' => 'Nombre',
     'description' => 'Descripción',
     'pipeline' => 'Canal',
+    'deal' => 'Oportunidad',
     'position' => 'Posición',
     'is_won_stage' => 'Es Etapa Ganada',
     'is_lost_stage' => 'Es Etapa Perdida',
