@@ -38,7 +38,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head :title="`Edit ${permission.name}`"></Head>
+        <Head :title="`Edit ${permission.name}`" />
 
         <PermissionForm
             :permission="permission"
