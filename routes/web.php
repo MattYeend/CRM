@@ -1086,10 +1086,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     /**
      * -------------------------------------------------------
-     * ------- Pipeline Stages (nested: pipelines) -----------
+     * ------------------- Pipeline Stages -------------------
      * -------------------------------------------------------
      */
-    Route::get('/pipelines/{pipeline}/stages', function (
+    Route::get('/pipeline-stages', function (
         Pipeline $pipeline,
         Request $request,
         PipelineStageQueryService $service
@@ -1098,7 +1098,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'pipeline' => $pipeline,
             'stages' => $service->list($request),
         ]);
-    })->name('pipelines.stages.index');
+    })->name('pipeline-stages.index');
 
     Route::get('/pipelines/{pipeline}/stages/create', function (
         Pipeline $pipeline
@@ -1106,7 +1106,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('PipelineStages/Create', [
             'pipeline' => $pipeline,
         ]);
-    })->name('pipelines.stages.create');
+    })->name('pipeline-stages.create');
 
     Route::get(
         '/pipelines/{pipeline}/stages/{stage}',
@@ -1120,7 +1120,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'stage' => $service->show($stage),
             ]);
         }
-    )->name('pipelines.stages.show');
+    )->name('pipeline-stages.show');
 
     Route::get(
         '/pipelines/{pipeline}/stages/{stage}/edit',
@@ -1136,7 +1136,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 ]),
             ]);
         }
-    )->name('pipelines.stages.edit');
+    )->name('pipeline-stages.edit');
 
     /**
      * -----------------------------------------

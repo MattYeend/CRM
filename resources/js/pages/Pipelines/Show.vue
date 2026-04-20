@@ -82,7 +82,13 @@ async function handleDelete() {
                         >
                             Edit
                         </Link>
-
+                        <Link
+                            v-if="pipeline.permissions.update"
+                            :href="route('pipelines.stages.create', { pipeline: pipeline.id })"
+                            class="bg-green-600 text-white px-4 py-2 rounded"
+                        >
+                            Add Stage
+                        </Link>
                         <Link
                             :href="route('pipelines.index')"
                             class="bg-gray-200 text-gray-700 px-4 py-2 rounded"

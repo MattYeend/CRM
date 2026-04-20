@@ -47,7 +47,7 @@ const isLostStageModel = computed({
     <div class="space-y-4">
         <h2 class="text-lg font-semibold border-b pb-2">Stage Details</h2>
 
-        <div class="bg-blue-50 border border-blue-200 rounded px-3 py-2 text-sm">
+        <div>
             <span class="font-medium">Pipeline:</span> {{ pipelineName }}
         </div>
 

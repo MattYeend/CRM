@@ -53,6 +53,7 @@ import {
     StickyNote,
     UserPlus,
     Users,
+    Workflow,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
 
@@ -159,6 +160,11 @@ const mainNavItems: NavItem[] = [
         title: 'Pipelines',
         href: '/pipelines',
         icon: GitBranch
+    },
+    {
+        title: 'Pipeline Stages',
+        href: '/pipeline-stages',
+        icon: Workflow
     }
 ];
 
