@@ -40,6 +40,7 @@ import {
     Briefcase,
     Building2,
     FileText,
+    GitBranch,
     Globe,
     Handshake,
     LayoutGrid,
@@ -153,6 +154,11 @@ const mainNavItems: NavItem[] = [
         title: 'Permissions',
         href: '/permissions',
         icon: Shield
+    },
+    {
+        title: 'Pipelines',
+        href: '/pipelines',
+        icon: GitBranch
     }
 ];
 
