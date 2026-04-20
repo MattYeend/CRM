@@ -3,8 +3,8 @@
 namespace App\Services\Pipelines;
 
 use App\Models\Pipeline;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -55,34 +55,21 @@ class PipelineQueryService
      * @param  Request $request Incoming HTTP request; may carry search,
      * sort, filter, and pagination params.
      *
-     * @return LengthAwarePaginator Paginated pipelines item results.
+     * @return array
      */
-    public function list(Request $request): LengthAwarePaginator
+    public function list(Request $request): array
     {
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
-
         $query = Pipeline::with('stages');
 
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        $paginator = $query->paginate($perPage)->appends($request->query());
+        $paginator = $this->paginate($query, $request);
 
-        $paginator->through(
-            fn (Pipeline $pipeline) => $this->formatPipeline($pipeline)
+        return array_merge(
+            $paginator,
+            ['permissions' => $this->getPermissions()]
         );
-
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Pipeline::class),
-                'viewAny' => Gate::allows('viewAny', Pipeline::class),
-            ],
-        ]);
-
-        return $paginator;
     }
 
     /**
@@ -101,10 +88,42 @@ class PipelineQueryService
     }
 
     /**
+     * Paginate and transform the pipeline query.
+     *
+     * @param Builder $query
+     * @param Request $request
+     *
+     * @return array
+     */
+    private function paginate($query, Request $request): array
+    {
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
+
+        return $query->paginate($perPage)
+            ->appends($request->query())
+            ->through(fn (
+                Pipeline $pipeline
+            ): array => $this->formatPipeline($pipeline))
+            ->toArray();
+    }
+
+    /**
+     * Get permission flags for the current user.
+     *
+     * @return array
+     */
+    private function getPermissions(): array
+    {
+        return [
+            'create' => Gate::allows('create', Pipeline::class),
+            'viewAny' => Gate::allows('viewAny', Pipeline::class),
+        ];
+    }
+
+    /**
      * Format a pipeline into a structured array.
      *
-     * Includes core attributes, related stage data, derived counts, and
-     * authorisation permissions for the current user.
+     * Combines core attributes, derived flags, relationships, and permissions.
      *
      * @param  Pipeline $pipeline
      *
@@ -112,15 +131,71 @@ class PipelineQueryService
      */
     private function formatPipeline(Pipeline $pipeline): array
     {
+        return array_merge(
+            $this->baseData($pipeline),
+            $this->derivedData($pipeline),
+            $this->relationshipData($pipeline),
+            $this->permissionData($pipeline),
+        );
+    }
+
+    /**
+     * Extract core pipeline attributes.
+     *
+     * @param  Pipeline $pipeline
+     *
+     * @return array
+     */
+    private function baseData(Pipeline $pipeline): array
+    {
         return [
             'id' => $pipeline->id,
             'name' => $pipeline->name,
             'description' => $pipeline->description,
+        ];
+    }
+
+    /**
+     * Extract derived flags for the pipeline.
+     *
+     * @param  Pipeline $pipeline
+     *
+     * @return array
+     */
+    private function derivedData(Pipeline $pipeline): array
+    {
+        return [
             'is_default' => $pipeline->getIsDefaultAttribute(),
             'stage_count' => $pipeline->getStageCountAttribute(),
             'deal_count' => $pipeline->getDealCountAttribute(),
+        ];
+    }
+
+    /**
+     * Extract related stage and creator data for the pipeline.
+     *
+     * @param  Pipeline $pipeline
+     *
+     * @return array
+     */
+    private function relationshipData(Pipeline $pipeline): array
+    {
+        return [
             'stages' => $pipeline->stages,
             'creator' => $pipeline->creator,
+        ];
+    }
+
+    /**
+     * Determine authorisation permissions for the pipeline.
+     *
+     * @param  Pipeline $pipeline
+     *
+     * @return array
+     */
+    private function permissionData(Pipeline $pipeline): array
+    {
+        return [
             'permissions' => [
                 'view' => Gate::allows('view', $pipeline),
                 'update' => Gate::allows('update', $pipeline),
