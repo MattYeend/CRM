@@ -35,11 +35,14 @@ const breadcrumbItems: BreadcrumbItem[] = [
     <AppLayout :breadcrumbs="breadcrumbItems">
         <Head :title="`Edit ${pipeline.name}`" />
 
-        <PipelineForm
-            :pipeline="pipeline"
-            method="put"
-            :submit-route="`/api/pipelines/${pipeline.id}`"
-            submitLabel="Update Pipeline"
-        />
+        <div class="p-6">
+            <h1 class="text-2xl font-bold mb-6">Edit Pipeline {{ pipeline.name }}</h1>
+            <PipelineForm
+                :pipeline="pipeline"
+                method="put"
+                :submit-route="`/api/pipelines/${pipeline.id}`"
+                submitLabel="Update Pipeline"
+            />
+        </div>
     </AppLayout>
 </template>

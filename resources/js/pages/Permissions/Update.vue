@@ -40,12 +40,16 @@ const breadcrumbItems: BreadcrumbItem[] = [
     <AppLayout :breadcrumbs="breadcrumbItems">
         <Head :title="`Edit ${permission.name}`" />
 
-        <PermissionForm
-            :permission="permission"
-            :roles="roles"
-            method="put"
-            :submit-route="`/api/permissions/${permission.id}`"
-            submitLabel="Update Permission"
-        />
+        <div class="p-6">
+            <h1 class="text-2xl font-bold mb-6">Edit Permission {{ permission.name }}</h1>
+
+            <PermissionForm
+                :permission="permission"
+                :roles="roles"
+                method="put"
+                :submit-route="`/api/permissions/${permission.id}`"
+                submitLabel="Update Permission"
+            />
+        </div>
     </AppLayout>
 </template>

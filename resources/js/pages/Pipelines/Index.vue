@@ -190,7 +190,7 @@ onMounted(() => loadPipelines())
                             </Link>
 
                             <button
-                                v-if="pipeline.permissions.delete && pipeline.deal_count === 0"
+                                v-if="pipeline.permissions.delete && pipeline.stage_count === 0"
                                 class="text-red-600"
                                 :disabled="deletingId === pipeline.id"
                                 @click="handleDelete(pipeline.id)"

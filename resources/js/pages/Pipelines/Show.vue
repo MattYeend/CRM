@@ -50,7 +50,7 @@ async function handleDelete() {
     deleting.value = true
     try {
         await deletePipelines(props.pipeline.id)
-        window.location.href = route('permissions.index')
+        window.location.href = route('pipelines.index')
     } catch {
         deleting.value = false
     }
@@ -101,7 +101,7 @@ async function handleDelete() {
                     </div>
                 </div>
                 <!-- Pipeline Details -->
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+                <div class="overflow-hidden shadow-xl sm:rounded-lg">
                     <div class="p-6 space-y-6">
                         <div>
                             <h3 class="text-lg font-semibold border-b pb-2 mb-4">
@@ -167,7 +167,7 @@ async function handleDelete() {
                 </div>
 
                 <!-- Pipeline Stages -->
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+                <div class="overflow-hidden shadow-xl sm:rounded-lg">
                     <div class="p-6">
                         <h3 class="text-lg font-semibold border-b pb-2 mb-4">
                             Pipeline Stages ({{ pipeline.stages.length }})
@@ -181,14 +181,14 @@ async function handleDelete() {
                             >
                                 <div class="flex items-center space-x-3">
                                     <span class="text-sm font-medium">
-                                        #{{ stage.order }}
+                                        #{{ stage.id }}
                                     </span>
                                     <span class="text-sm font-medium">
                                         {{ stage.name }}
                                     </span>
                                 </div>
                                 <Link
-                                    :href="route('stages.show', stage.id)"
+                                    :href="route('pipelines.stages.show', { pipeline: pipeline.id, stage: stage.id })"
                                     class="text-blue-600 hover:text-blue-900 text-sm"
                                 >
                                     View Stage
