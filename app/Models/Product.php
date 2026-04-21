@@ -227,10 +227,10 @@ class Product extends Model
             'product_id',
             'deal_id'
         )
-        ->using(DealProduct::class)
-        ->withPivot(['quantity', 'price', 'total', 'deleted_at'])
-        ->withTimestamps()
-        ->whereNull('deal_products.deleted_at');
+            ->using(DealProduct::class)
+            ->withPivot(['quantity', 'price', 'total', 'deleted_at'])
+            ->withTimestamps()
+            ->whereNull('deal_products.deleted_at');
     }
 
     /**
