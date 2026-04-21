@@ -29,7 +29,7 @@ const props = defineProps<{ product: any }>()
 const product = ref<Product>({
     id: props.product.id,
     name: props.product.name,
-    currency: props.product.currency ?? 'USD',
+    currency: props.product.currency ?? 'GBP',
     deals: props.product.deals ?? []
 })
 
@@ -49,7 +49,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 async function loadProduct() {
     const data = await fetchProduct(product.value.id)
-    product.value.currency = data.currency ?? 'USD'
+    product.value.currency = data.currency ?? 'GBP'
     product.value.deals = data.deals ?? []
     product.value.name = data.name
 }
@@ -59,7 +59,6 @@ async function remove(dealId: number) {
     await removeProductDeal(product.value.id, dealId)
     loadProduct()
 }
-
 onMounted(() => loadProduct())
 </script>
 
@@ -92,14 +91,19 @@ onMounted(() => loadProduct())
 
                 <tbody>
                     <tr v-for="d in product.deals" :key="d.id" class="border-t">
-                        <td class="p-2">{{ d.title }}</td>
+                        <td class="p-2">
+                            <Link
+                                :href="route('deals.show', { deal: d.id })"
+                            >
+                                {{ d.title }}
+                            </Link>
+                        </td>
                         <td class="p-2 text-right">{{ d.pivot?.quantity }}</td>
                         <td class="p-2 text-right">{{ formatCurrency(d.pivot?.price ?? 0, product.currency) }}</td>
                         <td class="p-2 text-right">{{ formatCurrency(d.pivot?.total ?? 0, product.currency) }}</td>
                         <td class="p-2 text-right space-x-2">
                             <Link
                                 :href="route('products.deals.edit', { product: product.id, deal: d.id })"
-                                class="text-blue-600"
                             >
                                 Edit
                             </Link>

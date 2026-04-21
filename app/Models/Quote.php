@@ -201,10 +201,16 @@ class Quote extends Model
      */
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class, 'quote_products')
+        return $this->belongsToMany(
+            Product::class,
+            'quote_products',
+            'quote_id',
+            'product_id'
+        )
             ->using(QuoteProduct::class)
-            ->withPivot(['quantity', 'price', 'total'])
-            ->withTimestamps();
+            ->withPivot(['quantity', 'price', 'total', 'meta', 'deleted_at'])
+            ->withTimestamps()
+            ->whereNull('quote_products.deleted_at');
     }
 
     /**

@@ -95,6 +95,13 @@ function getStatusBadgeClass(status: string): string {
     }
 }
 
+function formatCurrency(value: number, currency: string) {
+    return new Intl.NumberFormat('en-GB', {
+        style: 'currency',
+        currency,
+    }).format(value)
+}
+
 function formatStatus(status: string): string {
     return status
         .replace(/_/g, ' ')
@@ -142,14 +149,13 @@ onMounted(() => loadProducts())
                             <Link
                                 v-if="product.permissions.view"
                                 :href="route('products.show', { product: product.id })"
-                                class="text-blue-600 underline"
                             >
                                 {{ product.name }}
                             </Link>
                             <span v-else>{{ product.name }}</span>
                         </td>
                         <td class="p-2 text-right font-medium">
-                            {{ product.formatted_price }}
+                            {{ formatCurrency(product.price, product.currency) }}
                         </td>
                         <td class="p-2 text-right">
                             <span

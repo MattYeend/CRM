@@ -99,7 +99,6 @@ onMounted(() => loadOrder())
                         <td class="p-2 space-x-2 whitespace-nowrap text-right">
                             <Link
                                 :href="route('orders.products.edit', { order: order.id, product: product.id })"
-                                class="text-blue-600"
                             >
                                 Edit
                             </Link>

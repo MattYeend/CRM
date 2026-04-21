@@ -77,8 +77,8 @@ async function submit() {
                 </Link>
             </div>
 
-            <p class="text-gray-500 mb-6">
-                Updating deal on product: <span class="font-medium text-gray-800">{{ product.name }}</span>
+            <p class="mb-6">
+                Updating deal on product: <span class="font-medium">{{ product.name }}</span>
             </p>
 
             <p v-if="errors" class="text-red-600 mb-4">{{ errors }}</p>

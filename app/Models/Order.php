@@ -170,11 +170,18 @@ class Order extends Model
      */
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class, 'order_products')
+        return $this->belongsToMany(
+            Product::class,
+            'order_products',
+            'order_id',
+            'product_id'
+        )
             ->using(OrderProduct::class)
-            ->withPivot(['quantity', 'price', 'total'])
-            ->withTimestamps();
+            ->withPivot(['quantity', 'price', 'total', 'meta', 'deleted_at'])
+            ->withTimestamps()
+            ->whereNull('order_products.deleted_at');
     }
+
     /**
      * Get the user that created the order.
      *

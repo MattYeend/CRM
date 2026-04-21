@@ -82,7 +82,7 @@ class ProductQueryService
      */
     public function show(Product $product): array
     {
-        $product->load('creator');
+        $product->load('creator', 'deals', 'orders', 'quotes');
 
         return $this->formatProduct($product);
     }
@@ -224,6 +224,9 @@ class ProductQueryService
     {
         return [
             'creator' => $product->creator,
+            'deals' => $product->deals,
+            'orders' => $product->orders,
+            'quotes' => $product->quotes,
         ];
     }
 

@@ -126,8 +126,6 @@ async function submit() {
 
         router.visit(`/attachments/${response.data.id}`)
     } catch (err: any) {
-        console.log('422 ERROR:', err.response?.data)
-
         if (err.response?.status === 422) {
             const raw = err.response.data.errors
             errors.value = Object.fromEntries(

@@ -1176,7 +1176,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/products/{product}/deals/add', function (Product $product) {
         return Inertia::render('ProductDeals/Add', [
             'product' => $product,
-            'deal' => Deal::orderBy('title')->get(['id', 'title']),
+            'deals' => Deal::orderBy('title')->get(['id', 'title']),
         ]);
     })->name('products.deals.add');
 
@@ -1186,7 +1186,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             $deal = $product->deals()
                 ->where('deals.id', $deal->id)
                 ->firstOrFail();
-            return Inertia::render('DealProducts/Edit', [
+            return Inertia::render('ProductDeals/Edit', [
                 'deal' => $deal,
                 'product' => $product,
             ]);
@@ -1216,6 +1216,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get(
         '/products/{product}/orders/{order}/edit',
         function (Product $product, Order $order) {
+            $order = $product->orders()
+                ->where('orders.id', $order->id)
+                ->firstOrFail();
             return Inertia::render('ProductOrders/Edit', [
                 'product' => $product,
                 'order' => $order,
@@ -1246,6 +1249,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get(
         '/products/{product}/quotes/{quote}/edit',
         function (Product $product, Quote $quote) {
+            $quote = $product->quotes()
+                ->where('quotes.id', $quote->id)
+                ->firstOrFail();
             return Inertia::render('ProductQuotes/Edit', [
                 'product' => $product,
                 'quote' => $quote,
