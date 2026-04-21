@@ -3,24 +3,43 @@ import { Head, Link } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
-import { removeProductQuote } from '@/services/productService'
+import { ref, onMounted } from 'vue'
+import { fetchProduct, removeProductQuote } from '@/services/productService'
+
+interface Quote {
+    id: number
+    currency: string
+    pivot?: {
+        quantity: number
+        price: number
+        total: number
+    }
+}
 
 interface Product {
     id: number
     name: string
+    currency: string
     quotes: Quote[]
-}
-
-interface Quote {
-    id: number
-    status: string
-    total: number
-    formatted_total?: string
 }
 
 const props = defineProps<{
     product: Product
 }>()
+
+const product = ref<Product>({
+    id: props.product.id,
+    name: props.product.name,
+    currency: props.product.currency ?? 'GBP',
+    quotes: props.product.quotes ?? []
+})
+
+function formatCurrency(value: number, currency: string) {
+    return new Intl.NumberFormat('en-GB', {
+        style: 'currency',
+        currency,
+    }).format(value)
+}
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Products', href: route('products.index') },
@@ -28,11 +47,21 @@ const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Quotes', href: route('products.quotes.index', { product: props.product.id }) },
 ]
 
+async function loadProduct() {
+    const data = await fetchProduct(product.value.id)
+    console.log(data)
+    product.value.currency = data.currency ?? 'GBP'
+    product.value.quotes = data.quotes ?? []
+    product.value.name = data.name
+}
+
 async function handleRemove(quoteId: number) {
     if (!confirm('Are you sure you want to remove this quote from the product?')) return
     await removeProductQuote(props.product.id, quoteId)
     window.location.reload()
 }
+
+onMounted(() => loadProduct())
 </script>
 
 <template>
@@ -54,8 +83,9 @@ async function handleRemove(quoteId: number) {
                 <thead>
                     <tr>
                         <th class="p-2 text-left">Quote ID</th>
+                        <th class="p-2 text-right">Qty</th>
+                        <th class="p-2 text-right">Price</th>
                         <th class="p-2 text-right">Total</th>
-                        <th class="p-2 text-left">Status</th>
                         <th class="p-2"></th>
                     </tr>
                 </thead>
@@ -64,13 +94,13 @@ async function handleRemove(quoteId: number) {
                         <td class="p-2">
                             <Link
                                 :href="route('quotes.show', { quote: quote.id })"
-                                class="text-blue-600 underline"
                             >
                                 #{{ quote.id }}
                             </Link>
                         </td>
-                        <td class="p-2 text-right">{{ quote.formatted_total }}</td>
-                        <td class="p-2">{{ quote.status }}</td>
+                        <td class="p-2 text-right">{{ quote.pivot?.quantity }}</td>
+                        <td class="p-2 text-right">{{ formatCurrency(quote.pivot?.price ?? 0, product.currency) }}</td>
+                        <td class="p-2 text-right">{{ formatCurrency(quote.pivot?.total ?? 0, product.currency) }}</td>
                         <td class="p-2 space-x-2 text-right">
                             <Link
                                 :href="route('products.quotes.edit', { product: product.id, quote: quote.id })"
