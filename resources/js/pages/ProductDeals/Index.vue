@@ -1,95 +1,118 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
+import { ref, onMounted } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
-import { removeProductDeal } from '@/services/productService'
-
-interface Product {
-    id: number
-    name: string
-    deals: Deal[]
-}
+import { fetchProduct, removeProductDeal } from '@/services/productService'
 
 interface Deal {
     id: number
     title: string
-    value: number
-    formatted_value?: string
-    status: string
+    currency: string
+    pivot?: {
+        quantity: number
+        price: number
+        total: number
+    }
 }
 
-const props = defineProps<{
-    product: Product
-}>()
+interface Product {
+    id: number
+    name: string
+    currency: string
+    deals: Deal[]
+}
+
+const props = defineProps<{ product: any }>()
+
+const product = ref<Product>({
+    id: props.product.id,
+    name: props.product.name,
+    currency: props.product.currency ?? 'USD',
+    deals: props.product.deals ?? []
+})
+
+
+function formatCurrency(value: number, currency: string) {
+    return new Intl.NumberFormat('en-GB', {
+        style: 'currency',
+        currency,
+    }).format(value)
+}
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Products', href: route('products.index') },
-    { title: props.product.name, href: route('products.show', { product: props.product.id }) },
-    { title: 'Deals', href: route('products.deals.index', { product: props.product.id }) },
+    { title: product.value.name, href: route('products.show', { product: product.value.id }) },
+    { title: 'Deals', href: route('products.deals.index', { product: product.value.id }) },
 ]
 
-async function handleRemove(dealId: number) {
-    if (!confirm('Are you sure you want to remove this deal from the product?')) return
-    await removeProductDeal(props.product.id, dealId)
-    window.location.reload()
+async function loadProduct() {
+    const data = await fetchProduct(product.value.id)
+    product.value.currency = data.currency ?? 'USD'
+    product.value.deals = data.deals ?? []
+    product.value.name = data.name
 }
+
+async function remove(dealId: number) {
+    if (!confirm('Remove deal?')) return
+    await removeProductDeal(product.value.id, dealId)
+    loadProduct()
+}
+
+onMounted(() => loadProduct())
 </script>
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head :title="`${product.name} - Deals`" />
+        <Head :title="`${product.name} — Deals`" />
 
         <div class="p-6">
             <div class="flex justify-between mb-6">
-                <h1 class="text-2xl font-bold">Deals for {{ product.name }}</h1>
+                <h1 class="text-2xl font-bold">{{ product.name }}</h1>
+
                 <Link
                     :href="route('products.deals.add', { product: product.id })"
                     class="bg-blue-600 text-white px-4 py-2 rounded"
                 >
-                    Add Deal
+                    Add Deals
                 </Link>
             </div>
 
             <table class="w-full border">
                 <thead>
                     <tr>
-                        <th class="p-2 text-left">Title</th>
-                        <th class="p-2 text-right">Value</th>
-                        <th class="p-2 text-left">Status</th>
-                        <th class="p-2"></th>
+                        <th class="p-2 text-left">Deal</th>
+                        <th class="p-2 text-right">Qty</th>
+                        <th class="p-2 text-right">Price</th>
+                        <th class="p-2 text-right">Total</th>
+                        <th></th>
                     </tr>
                 </thead>
+
                 <tbody>
-                    <tr v-for="deal in product.deals" :key="deal.id" class="border-t">
-                        <td class="p-2">
+                    <tr v-for="d in product.deals" :key="d.id" class="border-t">
+                        <td class="p-2">{{ d.title }}</td>
+                        <td class="p-2 text-right">{{ d.pivot?.quantity }}</td>
+                        <td class="p-2 text-right">{{ formatCurrency(d.pivot?.price ?? 0, product.currency) }}</td>
+                        <td class="p-2 text-right">{{ formatCurrency(d.pivot?.total ?? 0, product.currency) }}</td>
+                        <td class="p-2 text-right space-x-2">
                             <Link
-                                :href="route('deals.show', { deal: deal.id })"
-                                class="text-blue-600 underline"
-                            >
-                                {{ deal.title }}
-                            </Link>
-                        </td>
-                        <td class="p-2 text-right">{{ deal.formatted_value }}</td>
-                        <td class="p-2">{{ deal.status }}</td>
-                        <td class="p-2 space-x-2 text-right">
-                            <Link
-                                :href="route('products.deals.edit', { product: product.id, deal: deal.id })"
+                                :href="route('products.deals.edit', { product: product.id, deal: d.id })"
+                                class="text-blue-600"
                             >
                                 Edit
                             </Link>
-                            <button
-                                @click="handleRemove(deal.id)"
-                                class="text-red-600"
-                            >
+
+                            <button @click="remove(d.id)" class="text-red-600">
                                 Remove
                             </button>
                         </td>
                     </tr>
 
                     <tr v-if="product.deals.length === 0">
-                        <td colspan="4" class="p-4 text-center text-gray-500">
-                            No deals associated with this product.
+                        <td colspan="5" class="text-center p-4 text-gray-500">
+                            No deals
                         </td>
                     </tr>
                 </tbody>

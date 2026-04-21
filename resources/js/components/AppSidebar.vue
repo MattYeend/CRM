@@ -24,6 +24,7 @@ import {
     Globe,
     Handshake,
     LayoutGrid,
+    Package,
     Paperclip,
     ReceiptIcon,
     Shield,
@@ -128,6 +129,11 @@ const mainNavItems: NavItem[] = [
                 icon: Workflow,
             },
         ],
+    },
+    {
+        title: 'Products',
+        href: '/products',
+        icon: Package
     }
 ];
 

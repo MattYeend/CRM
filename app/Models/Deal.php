@@ -232,11 +232,16 @@ class Deal extends Model
      */
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class, 'deal_products')
-            ->using(DealProduct::class)
-            ->withPivot(['quantity', 'price', 'total'])
-            ->withTimestamps()
-            ->wherePivotNull('deleted_at');
+        return $this->belongsToMany(
+            Product::class,
+            'deal_products',
+            'deal_id',
+            'product_id'
+        )
+        ->using(DealProduct::class)
+        ->withPivot(['quantity', 'price', 'total', 'deleted_at'])
+        ->withTimestamps()
+        ->whereNull('deal_products.deleted_at');
     }
 
     /**
@@ -404,7 +409,9 @@ class Deal extends Model
      */
     public function getFormattedValueAttribute(): string
     {
-        return number_format((float) $this->value, 2, '.', '');
+        $value = $this->pivot?->value ?? $this->value;
+
+        return number_format((float) $value, 2, '.', '');
     }
 
     /**

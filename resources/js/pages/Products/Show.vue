@@ -20,7 +20,7 @@ interface Product {
     price: number
     formatted_price: string
     currency: string
-    status: 'active' | 'inactive' | 'discontinued'
+    status: 'active' | 'discontinued' | 'pending' | 'out_of_stock'
     quantity: number
     min_stock_level: number | null
     max_stock_level: number | null
@@ -80,13 +80,21 @@ function getStatusBadgeClass(status: string): string {
     switch (status) {
         case 'active':
             return 'bg-green-100 text-green-700'
-        case 'inactive':
+        case 'pending':
             return 'bg-yellow-100 text-yellow-700'
+        case 'out_of_stock':
+            return 'bg-orange-100 text-orange-700'
         case 'discontinued':
             return 'bg-red-100 text-red-700'
         default:
             return 'bg-gray-100 text-gray-600'
     }
+}
+
+function formatStatus(status: string): string {
+    return status
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, l => l.toUpperCase())
 }
 
 onMounted(() => loadProduct())
@@ -108,7 +116,7 @@ onMounted(() => loadProduct())
                             :class="getStatusBadgeClass(product.status)"
                             class="mt-2 inline-block px-2 py-0.5 rounded-full text-xs font-semibold"
                         >
-                            {{ product.status }}
+                            {{ formatStatus(product.status) }}
                         </span>
                     </div>
 

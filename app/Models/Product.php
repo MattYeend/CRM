@@ -221,10 +221,16 @@ class Product extends Model
      */
     public function deals(): BelongsToMany
     {
-        return $this->belongsToMany(Deal::class, 'deal_products')
-            ->withPivot('quantity', 'price', 'deleted_at')
-            ->withTimestamps()
-            ->using(DealProduct::class);
+        return $this->belongsToMany(
+            Deal::class,
+            'deal_products',
+            'product_id',
+            'deal_id'
+        )
+        ->using(DealProduct::class)
+        ->withPivot(['quantity', 'price', 'total', 'deleted_at'])
+        ->withTimestamps()
+        ->whereNull('deal_products.deleted_at');
     }
 
     /**

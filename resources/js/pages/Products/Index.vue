@@ -14,7 +14,7 @@ interface Product {
     price: number
     formatted_price: string
     currency: string
-    status: 'active' | 'inactive' | 'discontinued'
+    status: 'active' | 'discontinued' | 'pending' | 'out_of_stock'
     quantity: number
     is_active: boolean
     is_discontinued: boolean
@@ -83,14 +83,22 @@ function goToPage(page: number) {
 function getStatusBadgeClass(status: string): string {
     switch (status) {
         case 'active':
-            return 'bg-green-100 text-green-800'
-        case 'inactive':
-            return 'bg-yellow-100 text-yellow-800'
+            return 'bg-green-100 text-green-700'
+        case 'pending':
+            return 'bg-yellow-100 text-yellow-700'
+        case 'out_of_stock':
+            return 'bg-orange-100 text-orange-700'
         case 'discontinued':
-            return 'bg-red-100 text-red-800'
+            return 'bg-red-100 text-red-700'
         default:
-            return 'bg-gray-100 text-gray-800'
+            return 'bg-gray-100 text-gray-600'
     }
+}
+
+function formatStatus(status: string): string {
+    return status
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, l => l.toUpperCase())
 }
 
 onMounted(() => loadProducts())
@@ -158,7 +166,7 @@ onMounted(() => loadProducts())
                                 :class="getStatusBadgeClass(product.status)"
                                 class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
                             >
-                                {{ product.status }}
+                                {{ formatStatus(product.status) }}
                             </span>
                         </td>
                         <td class="p-2 space-x-2 whitespace-nowrap">

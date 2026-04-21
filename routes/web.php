@@ -1176,16 +1176,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/products/{product}/deals/add', function (Product $product) {
         return Inertia::render('ProductDeals/Add', [
             'product' => $product,
-            'deals' => Deal::orderBy('title')->get(['id', 'title']),
+            'deal' => Deal::orderBy('title')->get(['id', 'title']),
         ]);
     })->name('products.deals.add');
 
     Route::get(
         '/products/{product}/deals/{deal}/edit',
         function (Product $product, Deal $deal) {
-            return Inertia::render('ProductDeals/Edit', [
-                'product' => $product,
+            $deal = $product->deals()
+                ->where('deals.id', $deal->id)
+                ->firstOrFail();
+            return Inertia::render('DealProducts/Edit', [
                 'deal' => $deal,
+                'product' => $product,
             ]);
         }
     )->name('products.deals.edit');

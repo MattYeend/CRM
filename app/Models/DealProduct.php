@@ -55,6 +55,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      two decimal places as a string.
  * - getCalculatedTotalAttribute(): Returns the line total derived from
  *      quantity multiplied by unit price.
+ * - getFormattedValueAttribute(): Returns the line item total formatted to
+ *      two decimal places as a string (alias for formatted_total used for
+ *      frontend compatibility).
  * Example usage of accessors:
  * ```php
  * $lineItem = DealProduct::find(1);
@@ -136,6 +139,15 @@ class DealProduct extends Pivot
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
         'restored_at' => 'datetime',
+    ];
+
+    /**
+     * Ensure computed attributes are returned in JSON
+     */
+    protected $appends = [
+        'formatted_price',
+        'formatted_total',
+        'formatted_value',
     ];
 
     /**
@@ -239,6 +251,24 @@ class DealProduct extends Pivot
      * @return string
      */
     public function getFormattedTotalAttribute(): string
+    {
+        return number_format((float) $this->total, 2, '.', '');
+    }
+
+    /**
+     * Get the line item value formatted to two decimal places.
+     *
+     * Returns the stored total value as a string without currency symbols.
+     * This is an alias-style accessor used for frontend compatibility where
+     * "formatted_value" is expected. Internally it maps to the line total
+     * of the deal product (quantity × unit price).
+     *
+     * Pair with the parent deal's currency field for full monetary display
+     * in deal tables, summaries, and exports.
+     *
+     * @return string
+     */
+    public function getFormattedValueAttribute(): string
     {
         return number_format((float) $this->total, 2, '.', '');
     }

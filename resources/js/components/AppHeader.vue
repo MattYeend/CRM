@@ -45,6 +45,7 @@ import {
     Handshake,
     LayoutGrid,
     Menu,
+    Package,
     Paperclip,
     ReceiptIcon,
     Search,
@@ -165,6 +166,11 @@ const mainNavItems: NavItem[] = [
         title: 'Pipeline Stages',
         href: '/pipeline-stages',
         icon: Workflow
+    },
+    {
+        title: 'Products',
+        href: '/products',
+        icon: Package
     }
 ];
 

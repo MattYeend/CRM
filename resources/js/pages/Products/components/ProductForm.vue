@@ -12,7 +12,7 @@ interface Product {
     description?: string | null
     price?: number
     currency?: string
-    status?: 'active' | 'inactive' | 'discontinued'
+    status?: 'active' | 'discontinued' | 'pending' | 'out_of_stock'
     quantity?: number
     min_stock_level?: number | null
     max_stock_level?: number | null

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3'
+import { Head, Link } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
 import { ref } from 'vue'
 import { type BreadcrumbItem } from '@/types'
@@ -44,7 +44,6 @@ const breadcrumbItems: BreadcrumbItem[] = [
 async function submit() {
     errors.value = null
     submitting.value = true
-
     try {
         await updateProductDeals(props.product.id, {
             deals: [
@@ -55,8 +54,7 @@ async function submit() {
                 },
             ],
         })
-
-        router.visit(route('products.deals.index', { product: props.product.id }))
+        window.location.href = route('products.deals.index', { product: props.product.id })
     } catch (err: any) {
         errors.value = err.response?.data?.message ?? 'An error occurred.'
     } finally {
@@ -68,11 +66,9 @@ async function submit() {
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
         <Head :title="`Edit Deal — ${product.name}`" />
-
         <div class="p-6">
             <div class="flex justify-between mb-6">
                 <h1 class="text-2xl font-bold">Edit: {{ deal.title }}</h1>
-
                 <Link
                     :href="route('products.deals.index', { product: product.id })"
                     class="bg-gray-200 text-gray-700 px-4 py-2 rounded"
@@ -82,8 +78,7 @@ async function submit() {
             </div>
 
             <p class="text-gray-500 mb-6">
-                Updating deal on
-                <span class="font-medium">{{ product.name }}</span>
+                Updating deal on product: <span class="font-medium text-gray-800">{{ product.name }}</span>
             </p>
 
             <p v-if="errors" class="text-red-600 mb-4">{{ errors }}</p>
@@ -91,17 +86,34 @@ async function submit() {
             <div class="space-y-4 max-w-sm">
                 <div>
                     <label class="block text-sm font-medium mb-1">Quantity</label>
-                    <input v-model.number="form.quantity" type="number" min="1" class="w-full border rounded px-3 py-2" />
+                    <input
+                        v-model.number="form.quantity"
+                        type="number"
+                        min="1"
+                        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium mb-1">Unit Price</label>
-                    <input v-model.number="form.price" type="number" min="0" step="0.01" class="w-full border rounded px-3 py-2" />
+                    <input
+                        v-model.number="form.price"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
                 </div>
 
-                <button @click="submit" :disabled="submitting" class="bg-blue-600 text-white px-5 py-2 rounded">
-                    {{ submitting ? 'Saving...' : 'Update Deal' }}
-                </button>
+                <div>
+                    <button
+                        @click="submit"
+                        :disabled="submitting"
+                        class="bg-blue-600 text-white px-5 py-2 rounded disabled:opacity-50"
+                    >
+                        {{ submitting ? 'Saving...' : 'Update Deal' }}
+                    </button>
+                </div>
             </div>
         </div>
     </AppLayout>

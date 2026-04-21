@@ -3,7 +3,8 @@ const form = defineModel<any>({ required: true })
 
 const statusOptions = [
     { value: 'active', label: 'Active' },
-    { value: 'inactive', label: 'Inactive' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'out_of_stock', label: 'Out of Stock' },
     { value: 'discontinued', label: 'Discontinued' },
 ]
 
