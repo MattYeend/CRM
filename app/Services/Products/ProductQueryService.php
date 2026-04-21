@@ -3,8 +3,8 @@
 namespace App\Services\Products;
 
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -55,34 +55,21 @@ class ProductQueryService
      * @param  Request $request Incoming HTTP request; may carry search,
      * sort, filter, and pagination params.
      *
-     * @return LengthAwarePaginator Paginated products item results.
+     * @return array
      */
-    public function list(Request $request): LengthAwarePaginator
+    public function list(Request $request): array
     {
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
-
-        $query = Product::query();
+        $query = Product::with('creator');
 
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        $paginator = $query->paginate($perPage)->appends($request->query());
+        $paginator = $this->paginate($query, $request);
 
-        $paginator->through(
-            fn (Product $product) => $this->formatProduct($product)
+        return array_merge(
+            $paginator,
+            ['permissions' => $this->getPermissions()]
         );
-
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Product::class),
-                'viewAny' => Gate::allows('viewAny', Product::class),
-            ],
-        ]);
-
-        return $paginator;
     }
 
     /**
@@ -98,6 +85,39 @@ class ProductQueryService
         $product->load('creator');
 
         return $this->formatProduct($product);
+    }
+
+    /**
+     * Paginate and transform the product query.
+     *
+     * @param Builder $query
+     * @param Request $request
+     *
+     * @return array
+     */
+    private function paginate($query, Request $request): array
+    {
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
+
+        return $query->paginate($perPage)
+            ->appends($request->query())
+            ->through(fn (
+                Product $product
+            ): array => $this->formatProduct($product))
+            ->toArray();
+    }
+
+    /**
+     * Get permission flags for the current user.
+     *
+     * @return array
+     */
+    private function getPermissions(): array
+    {
+        return [
+            'create' => Gate::allows('create', Product::class),
+            'viewAny' => Gate::allows('viewAny', Product::class),
+        ];
     }
 
     /**
