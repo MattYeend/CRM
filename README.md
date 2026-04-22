@@ -1657,6 +1657,7 @@ For further CLI commands, visit <a href="https://artisan.page/">here</a>
 | Command | Description |
 | --- | --- |
 | `php artisan make:service ServiceName` | Creates a new service class |
+| `php artisan make:class NameRegistry` |  Creates a custom class (e.g. registry/helper/service class such as a NameRegistry) |
 | `php artisan permission:clear` | Clear permissions if changed |
 | `php artisan insights` | Run insights package |
 
