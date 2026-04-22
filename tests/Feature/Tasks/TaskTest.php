@@ -186,7 +186,7 @@ test('store creates a task, handles polymorphic assignment and returns 201', fun
         'description' => 'Call the client to confirm details',
         'assigned_to' => $assignee->id,
         'created_by' => $creator->id,
-        'taskable_type' => Deal::class,
+        'taskable_type' => 'deal',
         'taskable_id' => $taskable->id,
         'priority' => 'high',
         'status' => 'pending',

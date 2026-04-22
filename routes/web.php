@@ -58,7 +58,6 @@ use App\Support\ActivityRegistry;
 use App\Support\AttachableRegistry;
 use App\Support\NotableRegistry;
 use App\Support\TaskableRegistry;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -607,7 +606,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/notes/create', function () {
         return Inertia::render('Notes/Create', [
-            'notableTypes' => NotableRegistry::keys()
+            'notableTypes' => NotableRegistry::keys(),
         ]);
     })->name('notes.create');
 
@@ -626,7 +625,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'user',
                 'notable',
             ]),
-            'notableTypes' => NotableRegistry::keys()
+            'notableTypes' => NotableRegistry::keys(),
         ]);
     })->name('notes.edit');
 

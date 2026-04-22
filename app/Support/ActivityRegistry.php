@@ -2,8 +2,23 @@
 
 namespace App\Support;
 
+/**
+ * Registry of entities that can have activity tracked against them.
+ *
+ * Central definition of activity-enabled entity types with labels
+ * and API endpoints.
+ */
 class ActivityRegistry
 {
+    /**
+     * Get all activity-enabled entity types with metadata.
+     *
+     * Each entry contains:
+     * - label: Human-readable name
+     * - endpoint: API endpoint to fetch all records of that type
+     *
+     * @return array<string, array{label: string, endpoint: string}>
+     */
     public static function all(): array
     {
         return [
@@ -26,11 +41,25 @@ class ActivityRegistry
         ];
     }
 
+    /**
+     * Get all activity registry keys.
+     *
+     * Example: ['company', 'deal', 'task', 'user']
+     *
+     * @return string
+     */
     public static function keys(): array
     {
         return array_keys(self::all());
     }
 
+    /**
+     * Get the API endpoint for a given activity registry type.
+     *
+     * @param string $type The registry type key
+     *
+     * @return string|null The endpoint URL or null if not found
+     */
     public static function endpoint(string $type): ?string
     {
         return self::all()[$type]['endpoint'] ?? null;

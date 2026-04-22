@@ -47,7 +47,6 @@ Route::get('/tasks/all', function () {
 Route::get('/users/all', function () {
     return User::orderBy('name')->get(['id', 'name']);
 });
-
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware(['web','auth:sanctum']);
