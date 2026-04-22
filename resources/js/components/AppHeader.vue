@@ -39,6 +39,7 @@ import {
     BookOpen,
     Briefcase,
     Building2,
+    FileSignature,
     FileText,
     GitBranch,
     Globe,
@@ -171,6 +172,11 @@ const mainNavItems: NavItem[] = [
         title: 'Products',
         href: '/products',
         icon: Package
+    },
+    {
+        title: 'Quotes',
+        href: '/quotes',
+        icon: FileSignature
     }
 ];
 

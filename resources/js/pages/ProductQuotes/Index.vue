@@ -49,7 +49,6 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 async function loadProduct() {
     const data = await fetchProduct(product.value.id)
-    console.log(data)
     product.value.currency = data.currency ?? 'GBP'
     product.value.quotes = data.quotes ?? []
     product.value.name = data.name
