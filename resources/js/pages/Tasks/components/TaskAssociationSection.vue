@@ -49,10 +49,10 @@ const form = props.form
 
         <!-- Related Type -->
         <div>
-            <label class="block text-sm font-medium mb-1">Related To</label>
+            <label class="block text-sm font-medium mb-1">Related To <span class="text-red-500">*</span></label>
 
             <select v-model="form.taskable_type" class="border rounded w-full p-2">
-                <option :value="null">Select type</option>
+                <option value="">Select type</option>
 
                 <option
                     v-for="type in props.taskableTypes"
@@ -70,7 +70,7 @@ const form = props.form
 
         <!-- Related Record -->
         <div v-if="props.taskableOptions.length">
-            <label class="block text-sm font-medium mb-1">Select record</label>
+            <label class="block text-sm font-medium mb-1">Select <span class="text-red-500">*</span></label>
 
             <select v-model="form.taskable_id" class="border rounded w-full p-2">
                 <option :value="null">Select record</option>

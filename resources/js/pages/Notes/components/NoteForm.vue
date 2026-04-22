@@ -33,10 +33,10 @@ const form = useForm({
 const notableOptions = ref<{ id: number; name: string }[]>([])
 
 const typeApiMap: Record<string, string> = {
-    company: 'companies',
-    deal: 'deals',
-    contact: 'contacts',
-    user: 'users',
+    company: 'companies/all',
+    deal: 'deals/all',
+    task: 'task/all',
+    user: 'users/all',
 }
 
 watch(

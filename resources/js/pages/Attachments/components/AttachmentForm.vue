@@ -48,10 +48,10 @@ const entityOptions = ref<any[]>([])
 const loadingEntities = ref(false)
 
 const typeApiMap: Record<string, string> = {
-    company: 'companies',
-    deal: 'deals',
-    task: 'tasks',
-    user: 'users',
+    company: 'companies/all',
+    deal: 'deals/all',
+    task: 'tasks/all',
+    user: 'users/all',
 }
 
 function getKey(type: string) {

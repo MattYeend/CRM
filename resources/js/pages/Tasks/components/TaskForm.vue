@@ -63,10 +63,9 @@ const form = useForm({
 const taskableOptions = ref<SelectOption[]>([])
 
 const typeApiMap: Record<string, string> = {
-    company: 'companies',
-    deal: 'deals',
-    contact: 'contacts',
-    user: 'users',
+    company: 'companies/all',
+    deal: 'deals/all',
+    user: 'users/all',
 }
 
 watch(

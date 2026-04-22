@@ -39,10 +39,10 @@ const subjectOptions = ref<{ id: number; name: string }[]>([])
 const usersOptions = ref<{ id: number; name: string }[]>([])
 
 const typeApiMap: Record<string, string> = {
-    company: 'companies',
-    deal: 'deals',
-    task: 'tasks',
-    user: 'users',
+    company: 'companies/all',
+    deal: 'deals/all',
+    task: 'tasks/all',
+    user: 'users/all',
 }
 
 watch(

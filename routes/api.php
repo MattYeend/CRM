@@ -28,8 +28,25 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
+use App\Models\Company;
+use App\Models\Deal;
+use App\Models\Task;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/companies/all', function () {
+    return Company::orderBy('name')->get(['id', 'name']);
+});
+Route::get('/deals/all', function () {
+    return Deal::orderBy('title')->get(['id', 'title']);
+});
+Route::get('/tasks/all', function () {
+    return Task::orderBy('title')->get(['id', 'title']);
+});
+Route::get('/users/all', function () {
+    return User::orderBy('name')->get(['id', 'name']);
+});
 
 Route::get('/user', function (Request $request) {
     return $request->user();

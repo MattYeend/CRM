@@ -54,6 +54,10 @@ use App\Services\Roles\RoleQueryService;
 use App\Services\Suppliers\SupplierQueryService;
 use App\Services\Tasks\TaskQueryService;
 use App\Services\Users\UserQueryService;
+use App\Support\ActivityRegistry;
+use App\Support\AttachableRegistry;
+use App\Support\NotableRegistry;
+use App\Support\TaskableRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -123,7 +127,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/activities/create', function () {
         return Inertia::render('Activities/Create', [
-            'subjectTypes' => array_keys(Relation::morphMap()),
+            'subjectTypes' => ActivityRegistry::keys(),
         ]);
     })->name('activities.create');
 
@@ -142,7 +146,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'user',
                 'subject',
             ]),
-            'subjectTypes' => array_keys(Relation::morphMap()),
+            'subjectTypes' => ActivityRegistry::keys(),
         ]);
     })->name('activities.edit');
 
@@ -162,7 +166,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/attachments/create', function () {
         return Inertia::render('Attachments/Create', [
-            'attachableTypes' => array_keys(Relation::morphMap()),
+            'attachableTypes' => AttachableRegistry::keys(),
         ]);
     })->name('attachments.create');
 
@@ -182,7 +186,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'attachment' => $attachment->load([
                     'uploader',
                 ]),
-                'attachableTypes' => array_keys(Relation::morphMap()),
+                'attachableTypes' => AttachableRegistry::keys(),
             ]);
         }
     )->name('attachments.edit');
@@ -603,7 +607,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/notes/create', function () {
         return Inertia::render('Notes/Create', [
-            'notableTypes' => array_keys(Relation::morphMap()),
+            'notableTypes' => NotableRegistry::keys()
         ]);
     })->name('notes.create');
 
@@ -622,7 +626,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'user',
                 'notable',
             ]),
-            'notableTypes' => array_keys(Relation::morphMap()),
+            'notableTypes' => NotableRegistry::keys()
         ]);
     })->name('notes.edit');
 
@@ -1420,7 +1424,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/tasks/create', function () {
         return Inertia::render('Tasks/Create', [
             'users' => User::orderBy('name')->get(['id', 'name']),
-            'taskableTypes' => array_keys(Relation::morphMap()),
+            'taskableTypes' => TaskableRegistry::keys(),
         ]);
     })->name('tasks.create');
 
@@ -1441,7 +1445,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'taskable',
             ]),
             'users' => User::orderBy('name')->get(['id', 'name']),
-            'taskableTypes' => array_keys(Relation::morphMap()),
+            'taskableTypes' => TaskableRegistry::keys(),
         ]);
     })->name('tasks.edit');
 });
