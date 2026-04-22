@@ -39,6 +39,7 @@ import {
     BookOpen,
     Briefcase,
     Building2,
+    CheckSquare,
     FileSignature,
     FileText,
     GitBranch,
@@ -183,6 +184,11 @@ const mainNavItems: NavItem[] = [
         title: 'Roles',
         href: '/roles',
         icon: UserCog
+    },
+    {
+        title: 'Tasks',
+        href: '/tasks',
+        icon: CheckSquare
     }
 ];
 
