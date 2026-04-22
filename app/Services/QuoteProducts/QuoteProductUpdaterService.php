@@ -18,6 +18,9 @@ class QuoteProductUpdaterService
      * Iterates over the provided items and updates the pivot data for
      * each associated product. Defaults are applied for missing values.
      *
+     * The total is derived from quantity * price and stored on the pivot
+     * automatically - it does not need to be supplied by the caller.
+     *
      * @param  Model $parent The parent model.
      * @param  array $items Array of product data, each containing:
      *                      - product_id (int)
@@ -30,13 +33,16 @@ class QuoteProductUpdaterService
     public function update(Model $parent, array $items): void
     {
         foreach ($items as $item) {
+            $productId = $item['product_id'];
             $quantity = $item['quantity'] ?? 1;
             $price = $item['price'] ?? 0;
+            $total = $quantity * $price;
             $meta = $item['meta'] ?? null;
 
-            $parent->products()->updateExistingPivot($item['product_id'], [
+            $parent->products()->updateExistingPivot($productId, [
                 'quantity' => $quantity,
                 'price' => $price,
+                'total' => $total,
                 'meta' => $meta,
             ]);
         }

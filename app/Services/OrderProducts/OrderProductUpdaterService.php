@@ -19,7 +19,7 @@ class OrderProductUpdaterService
      * each associated product. Defaults are applied for missing values.
      *
      * The total is derived from quantity * price and stored on the pivot
-     * automatically — it does not need to be supplied by the caller.
+     * automatically - it does not need to be supplied by the caller.
      *
      * @param  Model $parent The parent model.
      * @param  array $items Array of product data, each containing:

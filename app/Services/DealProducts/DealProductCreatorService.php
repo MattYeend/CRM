@@ -20,7 +20,7 @@ class DealProductCreatorService
      * applied for missing quantity, price, and meta values.
      *
      * The total is derived from quantity * price and stored on the pivot
-     * automatically — it does not need to be supplied by the caller.
+     * automatically - it does not need to be supplied by the caller.
      *
      * @param  Model $parent The parent model to attach products to.
      * @param  array $items Array of product data, each containing:
