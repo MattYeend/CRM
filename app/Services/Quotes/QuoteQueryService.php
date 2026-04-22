@@ -3,8 +3,8 @@
 namespace App\Services\Quotes;
 
 use App\Models\Quote;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -55,34 +55,27 @@ class QuoteQueryService
      * @param  Request $request Incoming HTTP request; may carry search,
      * sort, filter, and pagination params.
      *
-     * @return LengthAwarePaginator Paginated quotes item results.
+     * @return array
      */
-    public function list(Request $request): LengthAwarePaginator
+    public function list(Request $request): array
     {
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
-
-        $query = Quote::with(
-            'creator',
-            'updater',
-            'deal',
-        );
+        $query = Quote::with('creator', 'updater', 'deal');
 
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        $paginator = $query->paginate($perPage)->appends($request->query());
+        $paginator = $this->paginate($query, $request);
 
-        return $this->transformPaginator($paginator);
+        return array_merge(
+            $paginator,
+            ['permissions' => $this->getPermissions()]
+        );
     }
 
     /**
      * Return a single quote with related data loaded.
      *
-     * @param  Quote $quote The route-model-bound oquoterder
-     * instance.
+     * @param  Quote $quote The route-model-bound quote instance.
      *
      * @return array
      */
@@ -98,31 +91,36 @@ class QuoteQueryService
     }
 
     /**
-     * Apply transformation and append permissions to the paginator.
+     * Paginate and transform the quote query.
      *
-     * Each quote item is formatted into a structured array and
-     * top-level permissions are appended to the paginator response.
+     * @param Builder $query
+     * @param Request $request
      *
-     * @param  LengthAwarePaginator $paginator The paginator instance
-     * containing Quote models.
-     *
-     * @return LengthAwarePaginator The transformed paginator instance.
+     * @return array
      */
-    private function transformPaginator(
-        LengthAwarePaginator $paginator
-    ): LengthAwarePaginator {
-        $paginator->through(
-            fn (Quote $quote) => $this->formatQuote($quote)
-        );
+    private function paginate($query, Request $request): array
+    {
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
 
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Quote::class),
-                'viewAny' => Gate::allows('viewAny', Quote::class),
-            ],
-        ]);
+        return $query->paginate($perPage)
+            ->appends($request->query())
+            ->through(fn (
+                Quote $quote
+            ): array => $this->formatQuote($quote))
+            ->toArray();
+    }
 
-        return $paginator;
+    /**
+     * Get permission flags for the current user.
+     *
+     * @return array
+     */
+    private function getPermissions(): array
+    {
+        return [
+            'create' => Gate::allows('create', Quote::class),
+            'viewAny' => Gate::allows('viewAny', Quote::class),
+        ];
     }
 
     /**
@@ -159,8 +157,6 @@ class QuoteQueryService
     {
         return [
             'id' => $quote->id,
-            'deal' => $quote->deal,
-            'products' => $quote->products,
         ];
     }
 
@@ -193,7 +189,7 @@ class QuoteQueryService
     /**
      * Extract quote relationship data.
      *
-     * Includes related deal id and creator.
+     * Includes related deal, products, and creator.
      *
      * @param  Quote $quote
      *
@@ -203,6 +199,8 @@ class QuoteQueryService
     {
         return [
             'deal_id' => $quote->deal_id,
+            'deal' => $quote->deal,
+            'products' => $quote->products,
             'creator' => $quote->creator,
         ];
     }
