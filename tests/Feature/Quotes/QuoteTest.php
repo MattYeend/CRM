@@ -401,7 +401,7 @@ test('add products to a quote', function () {
         'product_id' => $product->id,
         'quantity' => 2,
         'price' => 25.50,
-        'total' => 50,
+        'total' => 51.00,
     ]);
 });
 
