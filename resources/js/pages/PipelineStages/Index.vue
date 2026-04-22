@@ -117,7 +117,6 @@ onMounted(() => loadPipelineStages())
                             <Link
                                 v-if="stage.permissions.view"
                                 :href="route('pipeline-stages.show', { pipelineStage: stage.id })"
-                                class="text-blue-600 underline"
                             >
                                 {{ stage.name }}
                             </Link>
@@ -127,7 +126,6 @@ onMounted(() => loadPipelineStages())
                             <Link
                                 v-if="stage.pipeline"
                                 :href="route('pipelines.show', { pipeline: stage.pipeline.id })"
-                                class="text-blue-600 underline"
                             >
                                 {{ stage.pipeline.name }}
                             </Link>

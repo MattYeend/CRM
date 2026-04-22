@@ -136,7 +136,6 @@ onMounted(() => loadInvoices())
                             <Link
                                 v-if="invoice.company"
                                 :href="route('companies.show', { company: invoice.company.id })"
-                                class="text-blue-600 underline"
                             >
                                 {{ invoice.company.name }}
                             </Link>

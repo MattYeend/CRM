@@ -167,7 +167,6 @@ onMounted(() => loadOrder())
                         <span class="font-semibold">Deal: </span>
                         <Link
                             :href="route('deals.show', { deal: order.deal.id })"
-                            class="text-blue-600 underline"
                         >
                             {{ order.deal.title }}
                         </Link>

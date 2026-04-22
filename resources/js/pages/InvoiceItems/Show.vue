@@ -120,7 +120,6 @@ onMounted(() => loadInvoiceItem())
                         <span class="font-semibold">Invoice: </span>
                         <Link
                             :href="route('invoices.show', { invoice: invoiceItem.invoice.id })"
-                            class="text-blue-600 underline"
                         >
                             #{{ invoiceItem.invoice.id }}
                         </Link>
@@ -130,7 +129,6 @@ onMounted(() => loadInvoiceItem())
                         <span class="font-semibold">Product: </span>
                         <Link
                             :href="route('products.show', { product: invoiceItem.product.id })"
-                            class="text-blue-600 underline"
                         >
                             {{ invoiceItem.product.name }}
                         </Link>

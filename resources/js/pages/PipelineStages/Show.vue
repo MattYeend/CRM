@@ -122,7 +122,6 @@ onMounted(() => loadPipelineStage())
                         <span class="font-semibold">Pipeline: </span>
                         <Link
                             :href="route('pipelines.show', { pipeline: pipelineStage.pipeline.id })"
-                            class="text-blue-600 underline"
                         >
                             {{ pipelineStage.pipeline.name }}
                         </Link>

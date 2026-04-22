@@ -137,7 +137,6 @@ async function handleDelete() {
                             <span>{{ role.name }}</span>
                             <Link
                                 :href="route('roles.show', { role: role.id })"
-                                class="text-blue-600"
                             >
                                 View
                             </Link>

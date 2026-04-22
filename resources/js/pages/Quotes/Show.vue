@@ -158,7 +158,6 @@ onMounted(() => loadQuote())
                         <span class="font-semibold">Deal: </span>
                         <Link
                             :href="route('deals.show', { deal: quote.deal.id })"
-                            class="text-blue-600 underline"
                         >
                             {{ quote.deal.title }}
                         </Link>

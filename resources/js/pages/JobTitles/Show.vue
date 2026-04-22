@@ -184,7 +184,7 @@ onMounted(() => loadJobTitle())
                                 <td class="p-2 text-right">
                                     <Link
                                         :href="route('users.show', { user: user.id })"
-                                        class="text-blue-600 underline text-xs"
+                                        class="text-xs"
                                     >
                                         View
                                     </Link>

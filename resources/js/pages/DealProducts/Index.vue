@@ -102,7 +102,6 @@ onMounted(() => loadDeal())
                         <td class="p-2 space-x-2 whitespace-nowrap text-right">
                             <Link
                                 :href="route('deals.products.edit', { deal: deal.id, product: product.id })"
-                                class="text-blue-600"
                             >
                                 Edit
                             </Link>

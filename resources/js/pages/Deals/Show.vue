@@ -147,7 +147,6 @@ onMounted(() => loadDeal())
                         <span class="font-semibold">Company: </span>
                         <Link
                             :href="route('companies.show', { company: deal.company.id })"
-                            class="text-blue-600 underline"
                         >
                             {{ deal.company.name }}
                         </Link>

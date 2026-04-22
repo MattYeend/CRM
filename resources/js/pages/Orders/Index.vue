@@ -137,7 +137,6 @@ onMounted(() => loadOrders())
                             <Link
                                 v-if="order.deal"
                                 :href="route('deals.show', { deal: order.deal.id })"
-                                class="text-blue-600 underline"
                             >
                                 {{ order.deal.title }}
                             </Link>

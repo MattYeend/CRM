@@ -147,7 +147,6 @@ onMounted(() => loadPipelines())
                         <td class="p-2 font-medium">
                             <Link
                                 :href="route('pipelines.show', pipeline.id)"
-                                class="text-blue-600"
                             >
                                 {{ pipeline.name }}
                             </Link>

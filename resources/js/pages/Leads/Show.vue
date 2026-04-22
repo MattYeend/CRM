@@ -183,7 +183,6 @@ onMounted(() => loadLead())
                             <a
                                 v-if="lead.email"
                                 :href="`mailto:${lead.email}`"
-                                class="text-blue-600 underline"
                             >
                                 {{ lead.email }}
                             </a>
@@ -194,7 +193,6 @@ onMounted(() => loadLead())
                             <a
                                 v-if="lead.phone"
                                 :href="`tel:${lead.phone}`"
-                                class="text-blue-600 underline"
                             >
                                 {{ lead.phone }}
                             </a>

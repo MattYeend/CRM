@@ -99,7 +99,6 @@ onMounted(() => loadQuote())
                         <td class="p-2 space-x-2 whitespace-nowrap text-right">
                             <Link
                                 :href="route('quotes.products.edit', { quote: quote.id, product: product.id })"
-                                class="text-blue-600"
                             >
                                 Edit
                             </Link>

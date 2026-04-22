@@ -158,7 +158,6 @@ onMounted(() => loadInvoice())
                         <span class="font-semibold">Company: </span>
                         <Link
                             :href="route('companies.show', { company: invoice.company.id })"
-                            class="text-blue-600 underline"
                         >
                             {{ invoice.company.name }}
                         </Link>

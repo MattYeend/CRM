@@ -148,7 +148,6 @@ onMounted(() => loadQuotes())
                             <Link
                                 v-if="quote.deal"
                                 :href="route('deals.show', { deal: quote.deal.id })"
-                                class="text-blue-600 underline"
                             >
                                 {{ quote.deal.title }}
                             </Link>

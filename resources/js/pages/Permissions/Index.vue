@@ -150,7 +150,6 @@ onMounted(() => loadPermissions())
                         <td class="p-2 font-mono">
                             <Link
                                 :href="route('permissions.show', permission.id)"
-                                class="text-blue-600"
                             >
                                 {{ permission.name }}
                             </Link>

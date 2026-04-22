@@ -130,7 +130,7 @@ onMounted(() => loadCompany())
                     </div>
                     <div v-if="company.website_host">
                         <span class="font-semibold">Website: </span>
-                        <a :href="company.website" target="_blank" class="text-blue-600 underline">
+                        <a :href="company.website" target="_blank">
                             {{ company.website_host }}
                         </a>
                     </div>

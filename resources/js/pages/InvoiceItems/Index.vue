@@ -119,7 +119,6 @@ onMounted(() => loadInvoiceItems())
                             <Link
                                 v-if="item.invoice"
                                 :href="route('invoices.show', { invoice: item.invoice.id })"
-                                class="text-blue-600 underline"
                             >
                                 #{{ item.invoice.id }}
                             </Link>
