@@ -3,16 +3,16 @@
 namespace App\Services\Tasks;
 
 use App\Models\Task;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for Task records.
  *
- * Delegates searching, sorting, and trash filtering to dedicated
- * sub-services and returns paginated or single task results with
- * the appropriate relationships loaded.
+ * Delegates sorting and trash filtering to dedicated sub-services
+ * and returns paginated or single task results with the appropriate
+ * relationships loaded.
  */
 class TaskQueryService
 {
@@ -34,8 +34,7 @@ class TaskQueryService
      * Inject the required services into the query service.
      *
      * @param  TaskSortingService $sorting Handles sort order.
-     * @param  TaskTrashFilterService $trashFilter Handles
-     * trash filtering.
+     * @param  TaskTrashFilterService $trashFilter Handles trash filtering.
      */
     public function __construct(
         TaskSortingService $sorting,
@@ -46,50 +45,35 @@ class TaskQueryService
     }
 
     /**
-     * Return a paginated list of tasks with search, sorting,
-     * and trash filters applied.
+     * Return a paginated list of tasks with sorting and trash filters applied.
      *
      * The per_page value is clamped between 1 and 100. All active query
      * string parameters are appended to the paginator links.
      *
-     * @param  Request $request Incoming HTTP request; may carry search,
-     * sort, filter, and pagination params.
+     * @param  Request $request Incoming HTTP request; may carry sort,
+     * filter, and pagination params.
      *
-     * @return LengthAwarePaginator Paginated tasks item results.
+     * @return array
      */
-    public function list(Request $request): LengthAwarePaginator
+    public function list(Request $request): array
     {
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
-
         $query = Task::with('assignee', 'creator', 'taskable');
 
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        $paginator = $query->paginate($perPage)->appends($request->query());
+        $paginator = $this->paginate($query, $request);
 
-        $paginator->through(
-            fn (Task $task) => $this->formatTask($task)
+        return array_merge(
+            $paginator,
+            ['permissions' => $this->getPermissions()]
         );
-
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Task::class),
-                'viewAny' => Gate::allows('viewAny', Task::class),
-            ],
-        ]);
-
-        return $paginator;
     }
 
     /**
      * Return a single task with related data loaded.
      *
-     * @param  Task $task The route-model-bound task
-     * instance.
+     * @param  Task $task The route-model-bound task instance.
      *
      * @return array
      */
@@ -105,10 +89,40 @@ class TaskQueryService
     }
 
     /**
+     * Paginate and transform the task query.
+     *
+     * @param Builder $query
+     * @param Request $request
+     *
+     * @return array
+     */
+    private function paginate($query, Request $request): array
+    {
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
+
+        return $query->paginate($perPage)
+            ->appends($request->query())
+            ->through(fn (Task $task): array => $this->formatTask($task))
+            ->toArray();
+    }
+
+    /**
+     * Get permission flags for the current user.
+     *
+     * @return array
+     */
+    private function getPermissions(): array
+    {
+        return [
+            'create' => Gate::allows('create', Task::class),
+            'viewAny' => Gate::allows('viewAny', Task::class),
+        ];
+    }
+
+    /**
      * Format a task into a structured array.
      *
-     * Combines core attributes, assignment and polymorphic data,
-     * derived lifecycle flags, metadata, and permissions.
+     * Combines core attributes, derived flags, relationships, and permissions.
      *
      * @param  Task $task
      *
@@ -187,10 +201,10 @@ class TaskQueryService
     private function stateData(Task $task): array
     {
         return [
-            'is_overdue' => $task->getIsOverdueAttribute(),
-            'is_pending' => $task->getIsPendingAttribute(),
-            'is_completed' => $task->getIsCompletedAttribute(),
-            'is_cancelled' => $task->getIsCancelledAttribute(),
+            'is_overdue' => $task->is_overdue,
+            'is_pending' => $task->is_pending,
+            'is_completed' => $task->is_completed,
+            'is_cancelled' => $task->is_cancelled,
         ];
     }
 
