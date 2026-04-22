@@ -163,7 +163,8 @@ class RoleQueryService
         return [
             'is_admin' => $role->is_admin,
             'is_super_admin' => $role->is_super_admin,
-            'user_count' => $role->users_count ?? $role->getUserCountAttribute(),
+            'user_count' => $role->users_count ??
+                $role->getUserCountAttribute(),
         ];
     }
 
