@@ -29,9 +29,8 @@ const breadcrumbItems: BreadcrumbItem[] = [
             <TaskForm
                 :users="users"
                 :taskableTypes="taskableTypes"
-                submit-route="/api/tasks"
                 method="post"
-                submitLabel="Save Task"
+                submitLabel="Create Task"
             />
         </div>
     </AppLayout>

@@ -12,6 +12,13 @@ interface UserPermissions {
     delete: boolean
 }
 
+interface Taskable {
+    id: number;
+    name?: string;
+    title?: string;
+}
+
+
 interface Task {
     id: number
     title: string
@@ -21,10 +28,10 @@ interface Task {
     due_at?: string | null
     assigned_to?: number | null
     assignee?: { id: number; name: string } | null
-    taskable_type?: string | null
-    taskable_id?: number | null
-    taskable_name?: string | null
-    taskable?: any
+    taskable_type: string
+    taskable_id: number | null
+    taskable_name: string | null
+    taskable: Taskable
     is_overdue: boolean
     is_pending: boolean
     is_completed: boolean
@@ -56,43 +63,33 @@ function formatDate(date?: string | null) {
     })
 }
 
-const props = defineProps<{ task: any }>()
+const props = defineProps<{ task: Task }>()
 
-const task = ref<Task>({
-    id: props.task.id,
-    title: props.task.title,
-    description: props.task.description,
-    priority: props.task.priority ?? 'medium',
-    status: props.task.status ?? 'pending',
-    due_at: props.task.due_at,
-    assigned_to: props.task.assigned_to,
-    assignee: props.task.assignee,
-    taskable_type: props.task.taskable_type,
-    taskable_id: props.task.taskable_id,
-    taskable_name: props.task.taskable_name,
-    taskable: props.task.taskable,
-    is_overdue: props.task.is_overdue ?? false,
-    is_pending: props.task.is_pending ?? false,
-    is_completed: props.task.is_completed ?? false,
-    is_cancelled: props.task.is_cancelled ?? false,
-    creator: props.task.creator,
-    permissions: props.task.permissions ?? { view: false, update: false, delete: false },
-})
+const deleting = ref(false);
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Tasks', href: route('tasks.index') },
-    { title: task.value.title, href: route('tasks.show', { task: task.value.id }) },
+    { title: props.task.title, href: route('tasks.show', { task: props.task.id }) },
 ]
 
 async function loadTask() {
-    const data = await fetchTask(task.value.id)
-    Object.assign(task.value, data)
+    const data = await fetchTask(props.task.id)
+    Object.assign(props.task, data)
+}
+
+function taskableTypeLabel(type: string): string {
+    return type.split('\\').pop() ?? type;
 }
 
 async function handleDelete() {
-    if (!confirm('Are you sure you want to delete this task?')) return
-    await deleteTasks(task.value.id)
-    window.location.href = route('tasks.index')
+    if (!confirm('Are you sure?')) return;
+    deleting.value = true;
+    try {
+        await deleteTasks(props.task.id);
+        window.location.href = route('tasks.index');
+    } catch {
+        deleting.value = false;
+    }
 }
 
 onMounted(() => loadTask())
@@ -170,9 +167,17 @@ onMounted(() => loadTask())
                         <span class="font-semibold">Due Date: </span>
                         <span>{{ formatDate(task.due_at) }}</span>
                     </div>
-                    <div v-if="task.taskable_name">
-                        <span class="font-semibold">Related To: </span>
-                        <span>{{ task.taskable_name }}</span>
+                    <div class="space-y-2 mt-2">
+                        <div>
+                            <span class="font-semibold">Related To: </span>
+                            <span v-if="task.taskable_name">
+                                <span class="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600">
+                                    {{ taskableTypeLabel(task.taskable_type) }}
+                                </span>
+                                {{ task.taskable_name }}
+                            </span>
+                            <span v-else>—</span>
+                        </div>
                     </div>
                     <div v-if="task.creator">
                         <span class="font-semibold">Created By: </span>

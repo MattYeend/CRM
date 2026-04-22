@@ -18,7 +18,7 @@ interface Task {
     priority?: string
     due_at?: string | null
     assigned_to?: number | null
-    taskable_type?: string | null
+    taskable_type?: string
     taskable_id?: number | null
 }
 
@@ -28,8 +28,12 @@ const props = defineProps<{
     taskableTypes: string[]
     method?: 'post' | 'put'
     submitLabel?: string
-    submitRoute: string
 }>()
+
+function normalizeTaskableType(type?: string): string | undefined {
+    if (!type) return undefined
+    return type.split('\\').pop()?.toLowerCase()
+}
 
 const statusOptions = [
     { value: 'pending', label: 'Pending' },
@@ -52,8 +56,8 @@ const form = useForm({
     priority: props.task?.priority ?? 'medium',
     due_at: props.task?.due_at?.slice(0, 16) ?? '',
     assigned_to: props.task?.assigned_to ?? null,
-    taskable_type: props.task?.taskable_type ?? null,
-    taskable_id: props.task?.taskable_id ?? null,
+    taskable_type: normalizeTaskableType(props.task?.taskable_type) ?? '',
+    taskable_id: props.task?.taskable_id ?? null as number | null,
 })
 
 const taskableOptions = ref<SelectOption[]>([])
@@ -78,15 +82,25 @@ watch(
 
         try {
             const response = await axios.get(`/api/${endpoint}`)
-
             const items = response.data.data ?? response.data ?? []
 
             taskableOptions.value = items.map((item: any) => ({
                 id: item.id,
                 name: item.name ?? item.title ?? `#${item.id}`,
             }))
+
+            if (props.task?.taskable_id) {
+                const exists = taskableOptions.value.find(
+                    i => i.id === props.task!.taskable_id
+                )
+
+                if (exists) {
+                    form.taskable_id = props.task!.taskable_id
+                }
+            }
         } catch (err) {
-            console.error('Failed loading taskable options:', err)
+            console.error('Failed to load taskable options:', err)
+            taskableOptions.value = []
         }
     },
     { immediate: true }
@@ -96,9 +110,14 @@ async function submit() {
     try {
         await axios.get('/sanctum/csrf-cookie', { withCredentials: true })
 
+        const url =
+            props.method === 'put' && props.task?.id
+                ? `/api/tasks/${props.task.id}`
+                : '/api/tasks'
+
         const response = await axios({
             method: props.method === 'put' ? 'put' : 'post',
-            url: props.submitRoute,
+            url,
             data: form.data(),
             withCredentials: true,
             headers: { 'Content-Type': 'application/json' },

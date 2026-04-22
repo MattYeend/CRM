@@ -24,17 +24,23 @@ interface Taskable {
 interface Task {
     id: number
     title: string
-    taskable_type: string
-    taskable_id: number
-    taskable_name: string | null
-    taskable: Taskable | null
-    user: User | null
+    description?: string | null
+    priority: string
+    status: string
+    due_at?: string | null
+    assigned_to?: number | null
+    taskable_type?: string 
+    taskable_id?: number 
+    taskable_name?: string | null
+    taskable?: Taskable | null
+    assignee?: User | null
+    creator?: User | null
 }
 
 const props = defineProps<{
     task: Task
-    taskableTypes: string[]
     users: SelectOption[]
+    taskableTypes: string[]
 }>()
 
 const breadcrumbItems: BreadcrumbItem[] = [
@@ -46,14 +52,13 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head title="Edit Task" />
+        <Head :title="`Edit Task: ${task.title}`" />
         <div class="p-6">
             <h1 class="text-2xl font-bold mb-6">Edit Task: {{ task.title }}</h1>
             <TaskForm
                 :task="task"
                 :users="users"
                 :taskableTypes="taskableTypes"
-                :submit-route="`/api/tasks/${task.id}`"
                 method="put"
                 submitLabel="Update Task"
             />
