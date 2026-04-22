@@ -40,7 +40,7 @@ class QuoteProductCreatorService
             $total = $quantity * $price;
             $meta = $item['meta'] ?? null;
 
-            $parent->products()->updateExistingPivot($productId, [
+            $parent->products()->attach($productId, [
                 'quantity' => $quantity,
                 'price' => $price,
                 'total' => $total,
