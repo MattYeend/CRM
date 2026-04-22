@@ -53,6 +53,7 @@ import {
     Shield,
     ShoppingCart,
     StickyNote,
+    UserCog,
     UserPlus,
     Users,
     Workflow,
@@ -177,6 +178,11 @@ const mainNavItems: NavItem[] = [
         title: 'Quotes',
         href: '/quotes',
         icon: FileSignature
+    },
+    {
+        title: 'Roles',
+        href: '/roles',
+        icon: UserCog
     }
 ];
 

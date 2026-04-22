@@ -49,11 +49,6 @@ const role = ref<Role>({
     permissions_meta: props.role.permissions_meta ?? { view: false, update: false, delete: false },
 })
 
-const breadcrumbItems: BreadcrumbItem[] = [
-    { title: 'Roles', href: route('roles.index') },
-    { title: role.value.label, href: route('roles.show', { role: role.value.id }) },
-]
-
 function getRoleTypeLabel(role: Role): string {
     if (role.is_super_admin) return 'Super Admin'
     if (role.is_admin) return 'Admin'
@@ -82,7 +77,22 @@ function groupPermissionsByResource(permissions: Permission[]) {
     return grouped
 }
 
+function toTitleCase(value: string): string {
+    return value
+        .replace(/([A-Z])/g, ' $1')
+        .replace(/[_-]/g, ' ')
+        .trim()
+        .replace(/\w\S*/g, word =>
+            word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        )
+}
+
 const groupedPermissions = groupPermissionsByResource(role.value.permissions)
+
+const breadcrumbItems: BreadcrumbItem[] = [
+    { title: 'Roles', href: route('roles.index') },
+    { title: toTitleCase(role.value.label), href: route('roles.show', { role: role.value.id }) },
+]
 
 async function loadRole() {
     const data = await fetchRole(role.value.id)
@@ -94,14 +104,14 @@ onMounted(() => loadRole())
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head :title="`Role: ${role.label}`" />
+        <Head :title="`Role: ${toTitleCase(role.label)}`" />
         <div class="p-6">
             <div class="mx-auto border p-6 rounded shadow">
 
                 <!-- Header -->
                 <div class="flex items-start justify-between mb-6">
                     <div>
-                        <h1 class="text-2xl font-bold">{{ role.label }}</h1>
+                        <h1 class="text-2xl font-bold">{{ toTitleCase(role.label) }}</h1>
                         <p class="mt-1 text-sm text-gray-600">
                             System name: <code class="bg-gray-100 px-2 py-1 rounded text-xs">{{ role.name }}</code>
                         </p>
@@ -144,8 +154,8 @@ onMounted(() => loadRole())
                             :key="resource"
                             class="border-l-4 border-indigo-500 pl-4"
                         >
-                            <h3 class="text-sm font-semibold text-gray-900 uppercase mb-2">
-                                {{ resource }}
+                            <h3 class="text-sm font-semibold mb-2">
+                                {{ toTitleCase(resource) }}
                             </h3>
                             <div class="flex flex-wrap gap-2">
                                 <span
@@ -184,6 +194,7 @@ onMounted(() => loadRole())
                         </tbody>
                     </table>
                 </div>
+
             </div>
         </div>
     </AppLayout>

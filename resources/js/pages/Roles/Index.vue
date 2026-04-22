@@ -97,7 +97,6 @@ onMounted(() => loadRoles())
             <table v-else class="w-full border">
                 <thead>
                     <tr>
-                        <th class="p-2 text-left">ID</th>
                         <th class="p-2 text-left">Name</th>
                         <th class="p-2 text-left">Label</th>
                         <th class="p-2 text-left">Users</th>
@@ -108,7 +107,6 @@ onMounted(() => loadRoles())
                 </thead>
                 <tbody>
                     <tr v-for="role in roles" :key="role.id" class="border-t">
-                        <td class="p-2 font-medium">{{ role.id }}</td>
                         <td class="p-2">{{ role.name }}</td>
                         <td class="p-2">{{ role.label }}</td>
                         <td class="p-2">{{ role.user_count }}</td>
