@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Task;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -34,7 +35,7 @@ class UpdateTaskRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * Merges base and meta rule groups into a single ruleset.
+     * Merges base, taskable and meta rule groups into a single ruleset.
      *
      * @return array<string,ValidationRule|array<mixed>|string>
      */
@@ -42,8 +43,30 @@ class UpdateTaskRequest extends FormRequest
     {
         return array_merge(
             $this->baseRules(),
+            $this->taskableRules(),
             $this->metaRules(),
         );
+    }
+
+    /**
+     * Resolve the taskable_type morph key to its full class name before
+     * validation runs.
+     *
+     * Ensures that polymorphic type values sent as morph aliases are
+     * expanded to their fully-qualified class names so they pass the
+     * Rule::in check in noteRules().
+     *
+     * @return void
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->taskable_type) {
+            $this->merge([
+                'taskable_type' => Relation::getMorphedModel(
+                    $this->taskable_type
+                ),
+            ]);
+        }
     }
 
     /**
@@ -63,6 +86,29 @@ class UpdateTaskRequest extends FormRequest
                 'nullable',
                 'integer',
                 Rule::exists('users', 'id'),
+            ],
+        ];
+    }
+
+    /**
+     * Validation rules for the polymorphic notable relationship.
+     *
+     * Ensures notable_type is one of the registered notable types and
+     * that notable_id is present whenever a notable_type is provided.
+     *
+     * @return array<string,ValidationRule|array<mixed>|string>
+     */
+    private function taskableRules(): array
+    {
+        return [
+            'taskable_type' => [
+                'nullable',
+                Rule::in(Task::TASKABLE_TYPES),
+            ],
+            'taskable_id' => [
+                'nullable',
+                'integer',
+                'required_with:taskable_type',
             ],
         ];
     }

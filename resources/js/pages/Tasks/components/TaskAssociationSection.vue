@@ -4,10 +4,19 @@ interface SelectOption {
     name: string
 }
 
+interface TaskForm {
+    assigned_to: number | null
+    taskable_type: string | null
+    taskable_id: number | null
+    errors: Record<string, string>
+    [key: string]: any
+}
+
 const props = defineProps<{
-    form: any
+    form: TaskForm
     users: SelectOption[]
     taskableTypes: string[]
+    taskableOptions: { id: number; name: string }[]
 }>()
 
 const form = props.form
@@ -17,53 +26,65 @@ const form = props.form
     <div class="space-y-4">
         <h2 class="text-lg font-semibold border-b pb-2">Associations</h2>
 
-        <div class="grid grid-cols-2 gap-4">
-            <div>
-                <label class="block text-sm font-medium mb-1">
-                    Assigned To
-                </label>
-                <select
-                    v-model="form.assigned_to"
-                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                    <option :value="null">- None -</option>
-                    <option v-for="u in users" :key="u.id" :value="u.id">{{ u.name }}</option>
-                </select>
-                <p v-if="form.errors.assigned_to" class="text-red-500 text-sm mt-1">
-                    {{ form.errors.assigned_to }}
-                </p>
-            </div>
+        <!-- Assigned To -->
+        <div>
+            <label class="block text-sm font-medium mb-1">Assigned To</label>
 
-            <div>
-                <label class="block text-sm font-medium mb-1">
-                    Related Type
-                </label>
-                <select
-                    v-model="form.taskable_type"
-                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            <select v-model="form.assigned_to" class="border rounded w-full p-2">
+                <option :value="null">- None -</option>
+
+                <option
+                    v-for="user in props.users"
+                    :key="user.id"
+                    :value="user.id"
                 >
-                    <option :value="null">- None -</option>
-                    <option v-for="type in taskableTypes" :key="type" :value="type">
-                        {{ type }}
-                    </option>
-                </select>
-                <p v-if="form.errors.taskable_type" class="text-red-500 text-sm mt-1">
-                    {{ form.errors.taskable_type }}
-                </p>
-            </div>
+                    {{ user.name }}
+                </option>
+            </select>
+
+            <p v-if="form.errors.assigned_to" class="text-red-500 text-sm">
+                {{ form.errors.assigned_to }}
+            </p>
         </div>
 
-        <div v-if="form.taskable_type">
-            <label class="block text-sm font-medium mb-1">
-                Related ID
-            </label>
-            <input
-                v-model="form.taskable_id"
-                type="number"
-                min="1"
-                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <p v-if="form.errors.taskable_id" class="text-red-500 text-sm mt-1">
+        <!-- Related Type -->
+        <div>
+            <label class="block text-sm font-medium mb-1">Related To</label>
+
+            <select v-model="form.taskable_type" class="border rounded w-full p-2">
+                <option :value="null">Select type</option>
+
+                <option
+                    v-for="type in props.taskableTypes"
+                    :key="type"
+                    :value="type"
+                >
+                    {{ type }}
+                </option>
+            </select>
+
+            <p v-if="form.errors.taskable_type" class="text-red-500 text-sm">
+                {{ form.errors.taskable_type }}
+            </p>
+        </div>
+
+        <!-- Related Record -->
+        <div v-if="props.taskableOptions.length">
+            <label class="block text-sm font-medium mb-1">Select record</label>
+
+            <select v-model="form.taskable_id" class="border rounded w-full p-2">
+                <option :value="null">Select record</option>
+
+                <option
+                    v-for="item in props.taskableOptions"
+                    :key="item.id"
+                    :value="item.id"
+                >
+                    {{ item.name }}
+                </option>
+            </select>
+
+            <p v-if="form.errors.taskable_id" class="text-red-500 text-sm">
                 {{ form.errors.taskable_id }}
             </p>
         </div>

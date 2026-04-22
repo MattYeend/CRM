@@ -130,7 +130,6 @@ onMounted(() => loadQuotes())
             <table v-else class="w-full border">
                 <thead>
                     <tr>
-                        <th class="p-2 text-left">ID</th>
                         <th class="p-2 text-left">Deal</th>
                         <th class="p-2 text-left">Subtotal</th>
                         <th class="p-2 text-left">Tax</th>
@@ -143,7 +142,6 @@ onMounted(() => loadQuotes())
                 </thead>
                 <tbody>
                     <tr v-for="quote in quotes" :key="quote.id" class="border-t">
-                        <td class="p-2 font-medium">{{ quote.id }}</td>
                         <td class="p-2">
                             <Link
                                 v-if="quote.deal"

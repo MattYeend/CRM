@@ -10,10 +10,31 @@ interface SelectOption {
     name: string
 }
 
+interface User {
+    id: number
+    name: string
+}
+
+interface Taskable {
+    id: number
+    name?: string
+    title?: string
+}
+
+interface Task {
+    id: number
+    title: string
+    taskable_type: string
+    taskable_id: number
+    taskable_name: string | null
+    taskable: Taskable | null
+    user: User | null
+}
+
 const props = defineProps<{
-    task: any
-    users: SelectOption[]
+    task: Task
     taskableTypes: string[]
+    users: SelectOption[]
 }>()
 
 const breadcrumbItems: BreadcrumbItem[] = [

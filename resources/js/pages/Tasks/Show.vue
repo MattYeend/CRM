@@ -157,7 +157,7 @@ onMounted(() => loadTask())
                 <!-- Description -->
                 <div v-if="task.description" class="mb-6">
                     <h2 class="text-lg font-semibold border-b pb-2 mb-3">Description</h2>
-                    <p class="text-gray-700 whitespace-pre-wrap">{{ task.description }}</p>
+                    <p class="whitespace-pre-wrap">{{ task.description }}</p>
                 </div>
 
                 <!-- Details -->

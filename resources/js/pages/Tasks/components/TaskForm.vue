@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import axios from 'axios'
 import { useForm, router } from '@inertiajs/vue3'
+import { ref, watch } from 'vue'
 import TaskDetailsSection from './TaskDetailsSection.vue'
 import TaskAssociationSection from './TaskAssociationSection.vue'
 
@@ -55,6 +56,42 @@ const form = useForm({
     taskable_id: props.task?.taskable_id ?? null,
 })
 
+const taskableOptions = ref<SelectOption[]>([])
+
+const typeApiMap: Record<string, string> = {
+    company: 'companies',
+    deal: 'deals',
+    contact: 'contacts',
+    user: 'users',
+}
+
+watch(
+    () => form.taskable_type,
+    async (type) => {
+        form.taskable_id = null
+        taskableOptions.value = []
+
+        if (!type) return
+
+        const endpoint = typeApiMap[type]
+        if (!endpoint) return
+
+        try {
+            const response = await axios.get(`/api/${endpoint}`)
+
+            const items = response.data.data ?? response.data ?? []
+
+            taskableOptions.value = items.map((item: any) => ({
+                id: item.id,
+                name: item.name ?? item.title ?? `#${item.id}`,
+            }))
+        } catch (err) {
+            console.error('Failed loading taskable options:', err)
+        }
+    },
+    { immediate: true }
+)
+
 async function submit() {
     try {
         await axios.get('/sanctum/csrf-cookie', { withCredentials: true })
@@ -73,8 +110,9 @@ async function submit() {
 
         if (err.response?.status === 422) {
             const raw = err.response.data.errors as Record<string, string[]>
+
             const flat = Object.fromEntries(
-                Object.entries(raw).map(([key, messages]) => [key, messages[0]])
+                Object.entries(raw).map(([k, v]) => [k, v[0]])
             ) as Record<string, string>
 
             form.setError(flat)
@@ -96,6 +134,7 @@ async function submit() {
             :form="form"
             :users="users"
             :taskableTypes="taskableTypes"
+            :taskableOptions="taskableOptions"
         />
 
         <button

@@ -487,6 +487,46 @@ class Task extends Model
     }
 
     /**
+     * Scope a query to only include task of a given taskable type.
+     *
+     * @param  Builder<Task> $query The query builder instance.
+     * @param  string $taskableType The taskable type to filter by, as a class
+     * basename (e.g. "Company" instead of "App\Models\Company").
+     *
+     * @return Builder<Task> The modified query builder instance.
+     */
+    public function scopeOfTaskableType(
+        Builder $query,
+        string $taskableType
+    ): Builder {
+        $taskableTypeClass = collect(self::TASKABLE_TYPES)
+            ->first(fn ($type) => class_basename($type) === $taskableType);
+
+        if (! $taskableTypeClass) {
+            throw new \InvalidArgumentException(
+                "Invalid taskable type: {$taskableType}"
+            );
+        }
+
+        return $query->where('taskable_type', $taskableTypeClass);
+    }
+
+    /**
+     * Scope a query to only include tasks associated with a given
+     * taskable model.
+     *
+     * @param  Builder<Task> $query The query builder instance.
+     * @param  Model $taskable The taskable model to filter by.
+     *
+     * @return Builder<Task> The modified query builder instance.
+     */
+    public function scopeForTaskable(Builder $query, Model $taskable): Builder
+    {
+        return $query->where('taskable_type', $taskable->getMorphClass())
+            ->where('taskable_id', $taskable->id);
+    }
+
+    /**
      * Scope a query to only include non-test tasks.
      *
      * Filters out any task records where the 'is_test' flag is true,
