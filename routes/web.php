@@ -1324,6 +1324,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get(
         '/quotes/{quote}/products/{product}/edit',
         function (Quote $quote, Product $product) {
+            $product = $quote->products()
+                ->where('products.id', $product->id)
+                ->firstOrFail();
             return Inertia::render('QuoteProducts/Edit', [
                 'quote' => $quote,
                 'product' => $product,
