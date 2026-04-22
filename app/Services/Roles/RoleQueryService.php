@@ -3,21 +3,21 @@
 namespace App\Services\Roles;
 
 use App\Models\Role;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
 /**
  * Handles read queries for Role records.
  *
- * Delegates searching, sorting, and trash filtering to dedicated
- * sub-services and returns paginated or single role results with
- * the appropriate relationships loaded.
+ * Delegates sorting and trash filtering to dedicated sub-services
+ * and returns paginated or single role results with the appropriate
+ * relationships loaded.
  */
 class RoleQueryService
 {
     /**
-     * Service responsible for applying sort role.
+     * Service responsible for applying sort order.
      *
      * @var RoleSortingService
      */
@@ -34,8 +34,7 @@ class RoleQueryService
      * Inject the required services into the query service.
      *
      * @param  RoleSortingService $sorting Handles sort order.
-     * @param  RoleTrashFilterService $trashFilter Handles
-     * trash filtering.
+     * @param  RoleTrashFilterService $trashFilter Handles trash filtering.
      */
     public function __construct(
         RoleSortingService $sorting,
@@ -46,51 +45,36 @@ class RoleQueryService
     }
 
     /**
-     * Return a paginated list of roles with search, sorting,
-     * and trash filters applied.
+     * Return a paginated list of roles with sorting and trash filters applied.
      *
      * The per_page value is clamped between 1 and 100. All active query
      * string parameters are appended to the paginator links.
      *
-     * @param  Request $request Incoming HTTP request; may carry search,
-     * sort, filter, and pagination params.
+     * @param  Request $request Incoming HTTP request; may carry sort,
+     * filter, and pagination params.
      *
-     * @return LengthAwarePaginator Paginated roles item results.
+     * @return array
      */
-    public function list(Request $request): LengthAwarePaginator
+    public function list(Request $request): array
     {
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
-
         $query = Role::withCount('users')
             ->with('permissions');
 
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        $paginator = $query->paginate($perPage)->appends($request->query());
+        $paginator = $this->paginate($query, $request);
 
-        $paginator->through(
-            fn (Role $role) => $this->formatRole($role)
+        return array_merge(
+            $paginator,
+            ['permissions' => $this->getPermissions()]
         );
-
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Role::class),
-                'viewAny' => Gate::allows('viewAny', Role::class),
-            ],
-        ]);
-
-        return $paginator;
     }
 
     /**
      * Return a single role with related data loaded.
      *
-     * @param  Role $role The route-model-bound role
-     * instance.
+     * @param  Role $role The route-model-bound role instance.
      *
      * @return array
      */
@@ -102,10 +86,40 @@ class RoleQueryService
     }
 
     /**
+     * Paginate and transform the role query.
+     *
+     * @param Builder $query
+     * @param Request $request
+     *
+     * @return array
+     */
+    private function paginate($query, Request $request): array
+    {
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
+
+        return $query->paginate($perPage)
+            ->appends($request->query())
+            ->through(fn (Role $role): array => $this->formatRole($role))
+            ->toArray();
+    }
+
+    /**
+     * Get permission flags for the current user.
+     *
+     * @return array
+     */
+    private function getPermissions(): array
+    {
+        return [
+            'create' => Gate::allows('create', Role::class),
+            'viewAny' => Gate::allows('viewAny', Role::class),
+        ];
+    }
+
+    /**
      * Format a role into a structured array.
      *
-     * Includes core attributes, related permission and user data, derived
-     * admin state flags, and authorisation permissions for the current user.
+     * Combines core attributes, derived flags, relationships, and permissions.
      *
      * @param  Role $role
      *
@@ -113,16 +127,71 @@ class RoleQueryService
      */
     private function formatRole(Role $role): array
     {
+        return array_merge(
+            $this->baseData($role),
+            $this->derivedData($role),
+            $this->relationshipData($role),
+            $this->permissionData($role),
+        );
+    }
+
+    /**
+     * Extract core role attributes.
+     *
+     * @param  Role $role
+     *
+     * @return array
+     */
+    private function baseData(Role $role): array
+    {
         return [
             'id' => $role->id,
             'name' => $role->name,
             'label' => $role->label,
-            'is_admin' => $role->getIsAdminAttribute(),
-            'is_super_admin' => $role->getIsSuperAdminAttribute(),
-            'user_count' => $role->users_count ??
-                $role->getUserCountAttribute(),
+        ];
+    }
+
+    /**
+     * Extract derived flags for the role.
+     *
+     * @param  Role $role
+     *
+     * @return array
+     */
+    private function derivedData(Role $role): array
+    {
+        return [
+            'is_admin' => $role->is_admin,
+            'is_super_admin' => $role->is_super_admin,
+            'user_count' => $role->users_count ?? $role->getUserCountAttribute(),
+        ];
+    }
+
+    /**
+     * Extract related permissions and users for the role.
+     *
+     * @param  Role $role
+     *
+     * @return array
+     */
+    private function relationshipData(Role $role): array
+    {
+        return [
             'permissions' => $role->permissions,
             'users' => $role->relationLoaded('users') ? $role->users : null,
+        ];
+    }
+
+    /**
+     * Determine authorisation permissions for the role.
+     *
+     * @param  Role $role
+     *
+     * @return array
+     */
+    private function permissionData(Role $role): array
+    {
+        return [
             'permissions_meta' => [
                 'view' => Gate::allows('view', $role),
                 'update' => Gate::allows('update', $role),
