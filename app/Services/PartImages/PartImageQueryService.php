@@ -3,8 +3,8 @@
 namespace App\Services\PartImages;
 
 use App\Models\PartImage;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -50,43 +50,27 @@ class PartImageQueryService
      * Return a paginated list of part images with sorting and trash filters
      * applied.
      *
-     * Each result eager-loads the part relationship. The per_page value is
-     * clamped between 1 and 100. All active query string parameters are
-     * appended to the paginator links.
+     * The per_page value is clamped between 1 and 100. All active query
+     * string parameters are appended to the paginator links.
      *
      * @param  Request $request Incoming HTTP request; may carry sort, filter,
      * and pagination params.
      *
-     * @return LengthAwarePaginator Paginated part image results.
+     * @return array
      */
-    public function list(Request $request): LengthAwarePaginator
+    public function list(Request $request): array
     {
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
-
-        $query = PartImage::with(
-            'part',
-        );
+        $query = PartImage::with('part');
 
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        $paginator = $query->paginate($perPage)->appends($request->query());
+        $paginator = $this->paginate($query, $request);
 
-        $paginator->through(
-            fn (PartImage $partImage) => $this->formatPartImage($partImage)
+        return array_merge(
+            $paginator,
+            ['permissions' => $this->getPermissions()]
         );
-
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', PartImage::class),
-                'viewAny' => Gate::allows('viewAny', PartImage::class),
-            ],
-        ]);
-
-        return $paginator;
     }
 
     /**
@@ -101,6 +85,37 @@ class PartImageQueryService
         $partImage->load('part');
 
         return $this->formatPartImage($partImage);
+    }
+
+    /**
+     * Paginate and transform the part image query.
+     *
+     * @param Builder $query
+     * @param Request $request
+     *
+     * @return array
+     */
+    private function paginate($query, Request $request): array
+    {
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
+
+        return $query->paginate($perPage)
+            ->appends($request->query())
+            ->through(fn (PartImage $partImage): array => $this->formatPartImage($partImage))
+            ->toArray();
+    }
+
+    /**
+     * Get permission flags for the current user.
+     *
+     * @return array
+     */
+    private function getPermissions(): array
+    {
+        return [
+            'create' => Gate::allows('create', PartImage::class),
+            'viewAny' => Gate::allows('viewAny', PartImage::class),
+        ];
     }
 
     /**

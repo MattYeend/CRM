@@ -4,8 +4,8 @@ namespace App\Services\BillOfMaterials;
 
 use App\Models\BillOfMaterial;
 use App\Models\Part;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -57,15 +57,10 @@ class BillOfMaterialQueryService
      * @param  Request $request Incoming HTTP request; may carry sort, filter,
      * and pagination params.
      *
-     * @return LengthAwarePaginator Paginated BOM results.
+     * @return array
      */
-    public function list(Part $part, Request $request): LengthAwarePaginator
+    public function list(Part $part, Request $request): array
     {
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
-
         $query = $part->billOfMaterials()
             ->with('childPart:id,sku,name,quantity,unit_of_measure')
             ->getQuery();
@@ -73,26 +68,51 @@ class BillOfMaterialQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        $paginator = $query->paginate($perPage)->appends($request->query());
+        $paginator = $this->paginate($query, $request);
 
-        $paginator->through(function (BillOfMaterial $billOfMaterial) {
-            return $this->formatBOM($billOfMaterial);
-        });
+        return array_merge(
+            $paginator,
+            ['permissions' => $this->getPermissions()]
+        );
+    }
 
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', BillOfMaterial::class),
-                'viewAny' => Gate::allows('viewAny', BillOfMaterial::class),
-            ],
-        ]);
+    /**
+     * Paginate and transform the BOM query.
+     *
+     * @param  Builder $query
+     * @param  Request $request
+     *
+     * @return array
+     */
+    private function paginate(Builder $query, Request $request): array
+    {
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
 
-        return $paginator;
+        return $query->paginate($perPage)
+            ->appends($request->query())
+            ->through(
+                fn (BillOfMaterial $bom): array => $this->formatBOM($bom)
+            )
+            ->toArray();
+    }
+
+    /**
+     * Get top-level permission flags for the current user.
+     *
+     * @return array
+     */
+    private function getPermissions(): array
+    {
+        return [
+            'create' => Gate::allows('create', BillOfMaterial::class),
+            'viewAny' => Gate::allows('viewAny', BillOfMaterial::class),
+        ];
     }
 
     /**
      * Format a Bill Of Material into a structured array.
      *
-     * Includes core attributes, related user data, derived subject name,
+     * Includes core attributes, related child part data, creator,
      * and authorisation permissions for the current user.
      *
      * @param  BillOfMaterial $billOfMaterial
@@ -100,6 +120,22 @@ class BillOfMaterialQueryService
      * @return array
      */
     private function formatBOM(BillOfMaterial $billOfMaterial): array
+    {
+        return array_merge(
+            $this->baseData($billOfMaterial),
+            $this->relationshipData($billOfMaterial),
+            $this->permissionData($billOfMaterial),
+        );
+    }
+
+    /**
+     * Extract core BOM attributes.
+     *
+     * @param  BillOfMaterial $billOfMaterial
+     *
+     * @return array
+     */
+    private function baseData(BillOfMaterial $billOfMaterial): array
     {
         return [
             'id' => $billOfMaterial->id,
@@ -109,7 +145,34 @@ class BillOfMaterialQueryService
             'unit_of_measure' => $billOfMaterial->unit_of_measure,
             'scrap_percentage' => $billOfMaterial->scrap_percentage,
             'notes' => $billOfMaterial->notes,
+        ];
+    }
+
+    /**
+     * Extract related model data for the BOM entry.
+     *
+     * @param  BillOfMaterial $billOfMaterial
+     *
+     * @return array
+     */
+    private function relationshipData(BillOfMaterial $billOfMaterial): array
+    {
+        return [
+            'child_part' => $billOfMaterial->childPart,
             'creator' => $billOfMaterial->creator,
+        ];
+    }
+
+    /**
+     * Determine authorisation permissions for the BOM entry.
+     *
+     * @param  BillOfMaterial $billOfMaterial
+     *
+     * @return array
+     */
+    private function permissionData(BillOfMaterial $billOfMaterial): array
+    {
+        return [
             'permissions' => [
                 'view' => Gate::allows('view', $billOfMaterial),
                 'update' => Gate::allows('update', $billOfMaterial),

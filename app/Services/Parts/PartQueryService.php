@@ -3,8 +3,8 @@
 namespace App\Services\Parts;
 
 use App\Models\Part;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -49,23 +49,16 @@ class PartQueryService
     /**
      * Return a paginated list of parts with sorting and trash filters applied.
      *
-     * Each result eager-loads the product, category, primary supplier, primary
-     * image, stock movements, serial numbers, bill of materials, and assembly
-     * usage relationships. The per_page value is clamped between 1 and 100.
-     * All active query string parameters are appended to the paginator links.
+     * The per_page value is clamped between 1 and 100. All active query
+     * string parameters are appended to the paginator links.
      *
      * @param  Request $request Incoming HTTP request; may carry sort, filter,
      * and pagination params.
      *
-     * @return LengthAwarePaginator Paginated part results.
+     * @return array
      */
-    public function list(Request $request): LengthAwarePaginator
+    public function list(Request $request): array
     {
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
-
         $query = Part::with(
             'product',
             'category',
@@ -80,9 +73,12 @@ class PartQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        $paginator = $query->paginate($perPage)->appends($request->query());
+        $paginator = $this->paginate($query, $request);
 
-        return $this->transformPaginator($paginator);
+        return array_merge(
+            $paginator,
+            ['permissions' => $this->getPermissions()]
+        );
     }
 
     /**
@@ -109,38 +105,41 @@ class PartQueryService
     }
 
     /**
-     * Apply transformation and append permissions to the paginator.
+     * Paginate and transform the part query.
      *
-     * Each part item is formatted into a structured array and
-     * top-level permissions are appended to the paginator response.
+     * @param  Builder $query
+     * @param  Request $request
      *
-     * @param  LengthAwarePaginator $paginator The paginator instance
-     * containing Part models.
-     *
-     * @return LengthAwarePaginator The transformed paginator instance.
+     * @return array
      */
-    private function transformPaginator(
-        LengthAwarePaginator $paginator
-    ): LengthAwarePaginator {
-        $paginator->through(
-            fn (Part $part) => $this->formatPart($part)
-        );
+    private function paginate(Builder $query, Request $request): array
+    {
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
 
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Part::class),
-                'viewAny' => Gate::allows('viewAny', Part::class),
-            ],
-        ]);
+        return $query->paginate($perPage)
+            ->appends($request->query())
+            ->through(fn (Part $part): array => $this->formatPart($part))
+            ->toArray();
+    }
 
-        return $paginator;
+    /**
+     * Get top-level permission flags for the current user.
+     *
+     * @return array
+     */
+    private function getPermissions(): array
+    {
+        return [
+            'create' => Gate::allows('create', Part::class),
+            'viewAny' => Gate::allows('viewAny', Part::class),
+        ];
     }
 
     /**
      * Format a part into a structured array.
      *
      * Combines core attributes, dimensions, pricing, stock data,
-     * relationships, derived values, and permissions into a single array.
+     * flags, derived values, relationships, and permissions.
      *
      * @param  Part $part
      *
