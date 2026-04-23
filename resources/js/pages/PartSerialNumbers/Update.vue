@@ -1,148 +1,35 @@
 <script setup lang="ts">
-import { Head, Link, useForm } from '@inertiajs/vue3'
+import { Head } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
-import { type BreadcrumbItem } from '@/types'
+import SerialNumberForm from './components/SerialNumberForm.vue'
 import { route } from 'ziggy-js'
 
-interface Part {
-    id: number
-    name: string
-    sku: string
-}
-
-interface SerialNumber {
-    id: number
-    part_id: number
-    serial_number: string
-    status?: string
-    batch_number?: string
-    manufactured_at?: string
-    expires_at?: string
-}
-
 const props = defineProps<{
-    part: Part
-    serialNumber: SerialNumber
+    part: any
+    serialNumber: any
 }>()
 
-const breadcrumbItems: BreadcrumbItem[] = [
+const breadcrumbs = [
     { title: 'Parts', href: route('parts.index') },
     { title: props.part.name, href: route('parts.show', { part: props.part.id }) },
     { title: 'Serial Numbers', href: route('parts.serialNumbers.index', { part: props.part.id }) },
     { title: 'Edit', href: route('parts.serialNumbers.edit', { part: props.part.id, serialNumber: props.serialNumber.id }) },
 ]
-
-const form = useForm({
-    serial_number: props.serialNumber.serial_number,
-    status: props.serialNumber.status ?? '',
-    batch_number: props.serialNumber.batch_number ?? '',
-    manufactured_at: props.serialNumber.manufactured_at ?? '',
-    expires_at: props.serialNumber.expires_at ?? '',
-})
-
-function submit() {
-    form.put(route('parts.serialNumbers.update', {
-        part: props.part.id,
-        serialNumber: props.serialNumber.id,
-    }))
-}
 </script>
 
 <template>
-    <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head :title="`Edit ${serialNumber.serial_number} — ${part.name}`" />
+    <AppLayout :breadcrumbs="breadcrumbs">
+        <Head title="Edit Serial Number" />
 
         <div class="p-6">
-            <div class="flex justify-between mb-6">
-                <div>
-                    <h1 class="text-2xl font-bold">Edit Serial Number</h1>
-                    <p class="text-sm text-gray-500 mt-1 font-mono">
-                        {{ serialNumber.serial_number }} · {{ part.name }}
-                    </p>
-                </div>
-                <Link
-                    :href="route('parts.serialNumbers.index', { part: part.id })"
-                    class="bg-gray-200 text-gray-700 px-4 py-2 rounded"
-                >
-                    Back
-                </Link>
-            </div>
+            <h1 class="text-2xl font-bold mb-6">Edit Serial Number</h1>
 
-            <div class="border rounded p-6 shadow max-w-lg">
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">
-                            Serial Number <span class="text-red-500">*</span>
-                        </label>
-                        <input
-                            v-model="form.serial_number"
-                            type="text"
-                            class="w-full border rounded px-3 py-2 text-sm font-mono"
-                        />
-                        <p v-if="form.errors.serial_number" class="text-red-600 text-xs mt-1">
-                            {{ form.errors.serial_number }}
-                        </p>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                        <input
-                            v-model="form.status"
-                            type="text"
-                            class="w-full border rounded px-3 py-2 text-sm"
-                        />
-                        <p v-if="form.errors.status" class="text-red-600 text-xs mt-1">
-                            {{ form.errors.status }}
-                        </p>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Batch Number</label>
-                        <input
-                            v-model="form.batch_number"
-                            type="text"
-                            class="w-full border rounded px-3 py-2 text-sm font-mono"
-                        />
-                        <p v-if="form.errors.batch_number" class="text-red-600 text-xs mt-1">
-                            {{ form.errors.batch_number }}
-                        </p>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Manufactured At</label>
-                        <input
-                            v-model="form.manufactured_at"
-                            type="date"
-                            class="w-full border rounded px-3 py-2 text-sm"
-                        />
-                        <p v-if="form.errors.manufactured_at" class="text-red-600 text-xs mt-1">
-                            {{ form.errors.manufactured_at }}
-                        </p>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Expires At</label>
-                        <input
-                            v-model="form.expires_at"
-                            type="date"
-                            class="w-full border rounded px-3 py-2 text-sm"
-                        />
-                        <p v-if="form.errors.expires_at" class="text-red-600 text-xs mt-1">
-                            {{ form.errors.expires_at }}
-                        </p>
-                    </div>
-
-                    <div class="pt-2">
-                        <button
-                            :disabled="form.processing"
-                            class="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
-                            @click="submit"
-                        >
-                            Update
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <SerialNumberForm
+                :part="part"
+                :serial-number="serialNumber"
+                method="put"
+                submit-label="Update Serial Number"
+            />
         </div>
     </AppLayout>
 </template>

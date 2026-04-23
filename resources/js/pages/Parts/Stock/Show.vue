@@ -131,7 +131,7 @@ onMounted(() => loadStock())
             <div class="flex justify-between items-start">
                 <div>
                     <h1 class="text-2xl font-bold">Stock Overview</h1>
-                    <p class="text-sm text-gray-500 mt-1 font-mono">{{ part.name }} · {{ part.sku }}</p>
+                    <p class="text-sm mt-1 font-mono">{{ part.name }} · {{ part.sku }}</p>
                 </div>
                 <div class="flex items-center gap-2">
                     <Link
@@ -153,22 +153,22 @@ onMounted(() => loadStock())
             <!-- Stock summary cards -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div class="border rounded p-4">
-                    <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Current Stock</p>
+                    <p class="text-xs uppercase tracking-wide mb-1">Current Stock</p>
                     <p
                         class="text-3xl font-bold tabular-nums"
-                        :class="isLowStock ? 'text-red-600' : 'text-gray-900'"
+                        :class="isLowStock ? 'text-red-600' : 'text-gray-200'"
                     >
                         {{ part.quantity }}
                     </p>
                     <p v-if="isLowStock" class="text-xs text-red-500 mt-1">Below reorder point</p>
                 </div>
                 <div v-if="part.reorder_point != null" class="border rounded p-4">
-                    <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Reorder Point</p>
-                    <p class="text-3xl font-bold tabular-nums text-gray-900">{{ part.reorder_point }}</p>
+                    <p class="text-xs uppercase tracking-wide mb-1">Reorder Point</p>
+                    <p class="text-3xl font-bold tabular-nums">{{ part.reorder_point }}</p>
                 </div>
                 <div class="border rounded p-4">
-                    <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Total Movements</p>
-                    <p class="text-3xl font-bold tabular-nums text-gray-900">{{ pagination.total }}</p>
+                    <p class="text-xs uppercase tracking-wide mb-1">Total Movements</p>
+                    <p class="text-3xl font-bold tabular-nums">{{ pagination.total }}</p>
                 </div>
             </div>
 
@@ -178,14 +178,13 @@ onMounted(() => loadStock())
 
                 <table class="w-full border text-sm">
                     <thead>
-                        <tr class="bg-gray-50">
+                        <tr>
                             <th class="p-2 text-left">Type</th>
                             <th class="p-2 text-right">Qty</th>
                             <th class="p-2 text-right">Before</th>
                             <th class="p-2 text-right">After</th>
                             <th class="p-2 text-left">Reference</th>
                             <th class="p-2 text-left">By</th>
-                            <th class="p-2"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -213,14 +212,6 @@ onMounted(() => loadStock())
                             <td class="p-2 text-right tabular-nums">{{ movement.quantity_after }}</td>
                             <td class="p-2 font-mono text-xs">{{ movement.reference ?? '—' }}</td>
                             <td class="p-2">{{ movement.created_by?.name ?? '—' }}</td>
-                            <td class="p-2 whitespace-nowrap">
-                                <Link
-                                    v-if="movement.permissions.view"
-                                    :href="route('parts.stockMovements.show', { part: part.id, stockMovement: movement.id })"
-                                >
-                                    View
-                                </Link>
-                            </td>
                         </tr>
 
                         <tr v-if="movements.data.length === 0">

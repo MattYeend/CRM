@@ -123,6 +123,13 @@ onMounted(() => loadPart())
                             Bill of Materials
                         </Link>
                         <Link
+                            v-if="part.is_serialised"
+                            :href="route('parts.serialNumbers.index', { part: part.id })"
+                            class="bg-gray-100 text-gray-700 px-4 py-2 rounded"
+                        >
+                            Serial Numbers
+                        </Link>
+                        <Link
                             v-if="part.permissions?.update"
                             :href="route('parts.edit', { part: part.id })"
                             class="bg-blue-600 text-white px-4 py-2 rounded"

@@ -98,18 +98,6 @@ onMounted(() => loadParts())
                 <h1 class="text-2xl font-bold">Parts</h1>
                 <div class="flex gap-2">
                     <Link
-                        :href="route('parts.stock.index')"
-                        class="bg-gray-100 text-gray-700 px-4 py-2 rounded"
-                    >
-                        Stock
-                    </Link>
-                    <Link
-                        :href="route('parts.stock.low')"
-                        class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded"
-                    >
-                        Low Stock
-                    </Link>
-                    <Link
                         v-if="permissions.create"
                         :href="route('parts.create')"
                         class="bg-blue-600 text-white px-4 py-2 rounded"

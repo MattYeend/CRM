@@ -24,8 +24,8 @@ interface SerialNumber {
     serial_number: string
     status?: string
     batch_number?: string
-    manufactured_at?: string
-    expires_at?: string
+    manufactured_at: string | null 
+    expires_at: string | null 
     is_expired: boolean
     is_expiring_soon: boolean
     permissions: UserPermissions
@@ -89,10 +89,18 @@ function statusClass(serialNumber: SerialNumber): string {
     return 'bg-green-100 text-green-700'
 }
 
+function formatStatus(value: string): string {
+    return value
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, char => char.toUpperCase())
+}
+
 function statusLabel(serialNumber: SerialNumber): string {
     if (serialNumber.is_expired) return 'Expired'
     if (serialNumber.is_expiring_soon) return 'Expiring Soon'
-    return serialNumber.status ?? 'Active'
+
+    const status = serialNumber.status ?? 'active'
+    return formatStatus(status)
 }
 
 function goToPage(page: number) {
@@ -103,6 +111,16 @@ function goToPage(page: number) {
         })
     }
 }
+
+function formatDate(dateStr: string | null): string {
+    if (!dateStr) return '—'
+    return new Date(dateStr).toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+    })
+}
+
 </script>
 
 <template>
@@ -113,7 +131,7 @@ function goToPage(page: number) {
             <div class="flex justify-between mb-6">
                 <div>
                     <h1 class="text-2xl font-bold">Serial Numbers</h1>
-                    <p class="text-sm text-gray-500 mt-1 font-mono">{{ part.name }} · {{ part.sku }}</p>
+                    <p class="text-sm mt-1 font-mono">{{ part.name }} · {{ part.sku }}</p>
                 </div>
                 <Link
                     v-if="serialNumbers.permissions?.create"
@@ -126,7 +144,7 @@ function goToPage(page: number) {
 
             <table class="w-full border text-sm">
                 <thead>
-                    <tr class="bg-gray-50">
+                    <tr>
                         <th class="p-2 text-left">Serial Number</th>
                         <th class="p-2 text-left">Batch</th>
                         <th class="p-2 text-left">Status</th>
@@ -142,7 +160,7 @@ function goToPage(page: number) {
                         class="border-t"
                     >
                         <td class="p-2 font-mono">{{ sn.serial_number }}</td>
-                        <td class="p-2 text-gray-500">{{ sn.batch_number ?? '—' }}</td>
+                        <td class="p-2">{{ sn.batch_number ?? '—' }}</td>
                         <td class="p-2">
                             <span
                                 class="text-xs px-2 py-0.5 rounded-full"
@@ -151,13 +169,12 @@ function goToPage(page: number) {
                                 {{ statusLabel(sn) }}
                             </span>
                         </td>
-                        <td class="p-2 text-gray-500">{{ sn.manufactured_at ?? '—' }}</td>
-                        <td class="p-2 text-gray-500">{{ sn.expires_at ?? '—' }}</td>
+                        <td class="p-2">{{ formatDate(sn.manufactured_at) }}</td>
+                        <td class="p-2">{{ formatDate(sn.expires_at) }}</td>
                         <td class="p-2 space-x-2 whitespace-nowrap">
                             <Link
                                 v-if="sn.permissions.update"
                                 :href="route('parts.serialNumbers.edit', { part: part.id, serialNumber: sn.id })"
-                                class="text-blue-600 hover:underline"
                             >
                                 Edit
                             </Link>
