@@ -2,6 +2,7 @@
 
 namespace App\Services\PartStockMovements;
 
+use App\Models\Part;
 use App\Models\PartStockMovement;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -10,13 +11,13 @@ use Illuminate\Support\Facades\Gate;
 /**
  * Handles read queries for PartStockMovement records.
  *
- * Delegates sorting to dedicated sub-services and returns
- * paginated serial number results scoped to a given part.
+ * Delegates sorting to dedicated sub-services and returns paginated stock
+ * movement results, optionally scoped to a given part.
  */
 class PartStockMovementQueryService
 {
     /**
-     * Service responsible for applying sort order to part serial number
+     * Service responsible for applying sort order to part stock movement
      * queries.
      *
      * @var PartStockMovementSortingService
@@ -36,23 +37,25 @@ class PartStockMovementQueryService
     }
 
     /**
-     * Return a paginated list of serial numbers for the given part, with
-     * sorting applied.
+     * Return a paginated list of stock movements, optionally scoped to a
+     * given part, with sorting applied.
      *
      * The per_page value is clamped between 1 and 100. All active query
      * string parameters are appended to the paginator links.
      *
-     * @param  Request $request Incoming HTTP request; may carry search, sort,
-     * filter, and pagination params.
-     * @param  Part $part The part whose serial numbers should be listed.
+     * @param  Request   $request Incoming HTTP request; may carry sort and
+     * pagination params.
+     * @param  Part|null $part    Optional part to scope movements to.
      *
-     * @return LengthAwarePaginator Paginated part serial number results.
+     * @return LengthAwarePaginator Paginated part stock movement results.
      */
-    public function list(Request $request): LengthAwarePaginator
+    public function list(Request $request, ?Part $part = null): LengthAwarePaginator
     {
         $perPage = max(1, min((int) $request->query('per_page', 10), 100));
 
-        $query = PartStockMovement::query();
+        $query = $part
+            ? $part->stockMovements()->with('part')->getQuery()
+            : PartStockMovement::query()->with('part');
 
         $this->sorting->applySorting($query, $request);
 
@@ -61,6 +64,7 @@ class PartStockMovementQueryService
         $paginator->through(function (PartStockMovement $movement) {
             return $this->formatPartStockMovement($movement);
         });
+
         $paginator->appends([
             'permissions' => [
                 'create' => Gate::allows('create', PartStockMovement::class),
@@ -80,10 +84,9 @@ class PartStockMovementQueryService
      *
      * @return array
      */
-    public function show(
-        PartStockMovement $partStockMovement
-    ): array {
-        $partStockMovement->load('part');
+    public function show(PartStockMovement $partStockMovement): array
+    {
+        $partStockMovement->load('part', 'createdBy');
 
         return $this->formatPartStockMovement($partStockMovement);
     }
@@ -119,11 +122,11 @@ class PartStockMovementQueryService
     private function baseData(PartStockMovement $movement): array
     {
         return [
-            'id' => $movement->id,
-            'part_id' => $movement->part_id,
-            'type' => $movement->type,
+            'id'        => $movement->id,
+            'part_id'   => $movement->part_id,
+            'type'      => $movement->type,
             'reference' => $movement->reference,
-            'notes' => $movement->notes,
+            'notes'     => $movement->notes,
         ];
     }
 
@@ -137,9 +140,9 @@ class PartStockMovementQueryService
     private function quantityData(PartStockMovement $movement): array
     {
         return [
-            'quantity' => $movement->quantity,
+            'quantity'        => $movement->quantity,
             'quantity_before' => $movement->quantity_before,
-            'quantity_after' => $movement->quantity_after,
+            'quantity_after'  => $movement->quantity_after,
         ];
     }
 
@@ -153,7 +156,7 @@ class PartStockMovementQueryService
     private function derivedData(PartStockMovement $movement): array
     {
         return [
-            'is_inbound' => $movement->getIsInbound(),
+            'is_inbound'  => $movement->getIsInbound(),
             'is_outbound' => $movement->getIsOutbound(),
         ];
     }
@@ -168,7 +171,7 @@ class PartStockMovementQueryService
     private function relationshipData(PartStockMovement $movement): array
     {
         return [
-            'part' => $movement->part,
+            'part'       => $movement->part,
             'created_by' => $movement->createdBy,
         ];
     }
@@ -184,7 +187,7 @@ class PartStockMovementQueryService
     {
         return [
             'permissions' => [
-                'view' => Gate::allows('view', $movement),
+                'view'   => Gate::allows('view', $movement),
                 'update' => Gate::allows('update', $movement),
                 'delete' => Gate::allows('delete', $movement),
             ],

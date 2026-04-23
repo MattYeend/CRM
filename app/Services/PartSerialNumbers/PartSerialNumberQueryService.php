@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Gate;
  * Handles read queries for PartSerialNumber records.
  *
  * Delegates search, sorting, and trash filtering to dedicated sub-services
- * and returns paginated serial number results scoped to a given part.
+ * and returns paginated serial number results, optionally scoped to a given
+ * part.
  */
 class PartSerialNumberQueryService
 {
@@ -43,10 +44,10 @@ class PartSerialNumberQueryService
     /**
      * Inject the required services into the query service.
      *
-     * @param  PartSerialNumberSearchService $search Handles search filter
-     * application.
-     * @param  PartSerialNumberSortingService $sorting Handles sort order
-     * application.
+     * @param  PartSerialNumberSearchService      $search      Handles search
+     * filter application.
+     * @param  PartSerialNumberSortingService     $sorting     Handles sort
+     * order application.
      * @param  PartSerialNumberTrashFilterService $trashFilter Handles trash
      * visibility filtering.
      */
@@ -55,32 +56,31 @@ class PartSerialNumberQueryService
         PartSerialNumberSortingService $sorting,
         PartSerialNumberTrashFilterService $trashFilter,
     ) {
-        $this->search = $search;
-        $this->sorting = $sorting;
+        $this->search      = $search;
+        $this->sorting     = $sorting;
         $this->trashFilter = $trashFilter;
     }
 
     /**
-     * Return a paginated list of serial numbers for the given part, with
-     * search, sorting, and trash filters applied.
+     * Return a paginated list of serial numbers, optionally scoped to a given
+     * part, with search, sorting, and trash filters applied.
      *
      * The per_page value is clamped between 1 and 100. All active query
      * string parameters are appended to the paginator links.
      *
-     * @param  Request $request Incoming HTTP request; may carry search, sort,
-     * filter, and pagination params.
-     * @param  Part $part The part whose serial numbers should be listed.
+     * @param  Request   $request Incoming HTTP request; may carry search,
+     * sort, filter, and pagination params.
+     * @param  Part|null $part    Optional part to scope serial numbers to.
      *
      * @return LengthAwarePaginator Paginated part serial number results.
      */
-    public function list(Request $request, Part $part): LengthAwarePaginator
+    public function list(Request $request, ?Part $part = null): LengthAwarePaginator
     {
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
 
-        $query = $part->serialNumbers()->with('part')->getQuery();
+        $query = $part
+            ? $part->serialNumbers()->with('part')->getQuery()
+            : PartSerialNumber::query()->with('part');
 
         $this->search->applySearch($query, $request);
         $this->sorting->applySorting($query, $request);
@@ -94,12 +94,28 @@ class PartSerialNumberQueryService
 
         $paginator->appends([
             'permissions' => [
-                'create' => Gate::allows('create', PartSerialNumber::class),
+                'create'  => Gate::allows('create', PartSerialNumber::class),
                 'viewAny' => Gate::allows('viewAny', PartSerialNumber::class),
             ],
         ]);
 
         return $paginator;
+    }
+
+    /**
+     * Return a single part serial number with all relevant relationships
+     * loaded.
+     *
+     * @param  PartSerialNumber $serialNumber The route-model-bound serial
+     * number instance.
+     *
+     * @return array
+     */
+    public function show(PartSerialNumber $serialNumber): array
+    {
+        $serialNumber->load('part', 'creator');
+
+        return $this->formatPartSerialNumber($serialNumber);
     }
 
     /**
@@ -112,23 +128,22 @@ class PartSerialNumberQueryService
      *
      * @return array
      */
-    private function formatPartSerialNumber(
-        PartSerialNumber $serialNumber
-    ): array {
+    private function formatPartSerialNumber(PartSerialNumber $serialNumber): array
+    {
         return [
-            'id' => $serialNumber->id,
-            'part_id' => $serialNumber->part_id,
-            'part' => $serialNumber->part,
-            'serial_number' => $serialNumber->serial_number,
-            'status' => $serialNumber->status,
-            'batch_number' => $serialNumber->batch_number,
-            'manufactured_at' => $serialNumber->manufactured_at,
-            'expires_at' => $serialNumber->expires_at,
-            'is_expired' => $serialNumber->getIsExpired(),
+            'id'               => $serialNumber->id,
+            'part_id'          => $serialNumber->part_id,
+            'part'             => $serialNumber->part,
+            'serial_number'    => $serialNumber->serial_number,
+            'status'           => $serialNumber->status,
+            'batch_number'     => $serialNumber->batch_number,
+            'manufactured_at'  => $serialNumber->manufactured_at,
+            'expires_at'       => $serialNumber->expires_at,
+            'is_expired'       => $serialNumber->getIsExpired(),
             'is_expiring_soon' => $serialNumber->getIsExpiringSoon(),
-            'creator' => $serialNumber->creator,
-            'permissions' => [
-                'view' => Gate::allows('view', $serialNumber),
+            'creator'          => $serialNumber->creator,
+            'permissions'      => [
+                'view'   => Gate::allows('view', $serialNumber),
                 'update' => Gate::allows('update', $serialNumber),
                 'delete' => Gate::allows('delete', $serialNumber),
             ],
