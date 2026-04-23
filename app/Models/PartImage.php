@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\PartImages\PartImagePrimaryService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -305,11 +306,8 @@ class PartImage extends Model
     protected static function booted(): void
     {
         static::saving(function (PartImage $image) {
-            if ($image->is_primary) {
-                static::where('part_id', $image->part_id)
-                    ->where('id', '!=', $image->id ?? 0)
-                    ->update(['is_primary' => false]);
-            }
+            app(PartImagePrimaryService::class)
+                ->enforcePrimary($image);
         });
     }
 }

@@ -4,8 +4,8 @@ namespace App\Services\PartStockMovements;
 
 use App\Models\Part;
 use App\Models\PartStockMovement;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -47,32 +47,22 @@ class PartStockMovementQueryService
      * pagination params.
      * @param  Part|null $part    Optional part to scope movements to.
      *
-     * @return LengthAwarePaginator Paginated part stock movement results.
+     * @return array
      */
-    public function list(Request $request, ?Part $part = null): LengthAwarePaginator
+    public function list(Request $request, ?Part $part = null): array
     {
-        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
-
         $query = $part
             ? $part->stockMovements()->with('part')->getQuery()
             : PartStockMovement::query()->with('part');
 
         $this->sorting->applySorting($query, $request);
 
-        $paginator = $query->paginate($perPage)->appends($request->query());
+        $paginator = $this->paginate($query, $request);
 
-        $paginator->through(function (PartStockMovement $movement) {
-            return $this->formatPartStockMovement($movement);
-        });
-
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', PartStockMovement::class),
-                'viewAny' => Gate::allows('viewAny', PartStockMovement::class),
-            ],
-        ]);
-
-        return $paginator;
+        return array_merge(
+            $paginator,
+            ['permissions' => $this->getPermissions()]
+        );
     }
 
     /**
@@ -89,6 +79,39 @@ class PartStockMovementQueryService
         $partStockMovement->load('part', 'createdBy');
 
         return $this->formatPartStockMovement($partStockMovement);
+    }
+
+    /**
+     * Paginate and transform the stock movement query.
+     *
+     * @param  Builder $query
+     * @param  Request $request
+     *
+     * @return array
+     */
+    private function paginate(Builder $query, Request $request): array
+    {
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
+
+        return $query->paginate($perPage)
+            ->appends($request->query())
+            ->through(fn (
+                PartStockMovement $movement
+            ): array => $this->formatPartStockMovement($movement))
+            ->toArray();
+    }
+
+    /**
+     * Get permission flags for the current user.
+     *
+     * @return array
+     */
+    private function getPermissions(): array
+    {
+        return [
+            'create' => Gate::allows('create', PartStockMovement::class),
+            'viewAny' => Gate::allows('viewAny', PartStockMovement::class),
+        ];
     }
 
     /**

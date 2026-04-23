@@ -131,16 +131,16 @@ onMounted(() => loadStock())
             <div class="flex justify-between items-start">
                 <div>
                     <h1 class="text-2xl font-bold">Stock Overview</h1>
-                    <p class="text-sm mt-1 font-mono">{{ part.name }} · {{ part.sku }}</p>
+                    <p class="text-sm mt-1">{{ part.name }} · {{ part.sku }}</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <Link
+                    <!-- <Link
                         v-if="movements.permissions?.create"
                         :href="route('parts.stockMovements.create', { part: part.id })"
                         class="bg-blue-600 text-white px-4 py-2 rounded"
                     >
                         Add Movement
-                    </Link>
+                    </Link> -->
                     <Link
                         :href="route('parts.show', { part: part.id })"
                         class="bg-gray-200 text-gray-700 px-4 py-2 rounded"
