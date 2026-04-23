@@ -68,7 +68,7 @@ function formatNumber(value?: number) {
                 </div>
                 <div v-if="part.barcode" class="flex justify-between">
                     <dt class="font-medium">Barcode</dt>
-                    <dd class="font-mono">{{ part.barcode }}</dd>
+                    <dd>{{ part.barcode }}</dd>
                 </div>
                 <div v-if="part.category" class="flex justify-between">
                     <dt class="font-medium">Category</dt>
@@ -147,7 +147,7 @@ function formatNumber(value?: number) {
                 </div>
                 <div v-if="part.bin_location" class="flex justify-between">
                     <dt class="font-medium">Bin</dt>
-                    <dd class="font-mono">{{ part.bin_location }}</dd>
+                    <dd>{{ part.bin_location }}</dd>
                 </div>
             </dl>
         </div>

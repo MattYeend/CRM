@@ -111,7 +111,7 @@ onMounted(() => loadProduct())
                 <div class="flex items-start justify-between mb-6">
                     <div>
                         <h1 class="text-2xl font-bold">{{ product.name }}</h1>
-                        <p class="text-sm text-gray-500 font-mono mt-1">SKU: {{ product.sku }}</p>
+                        <p class="text-sm text-gray-500 mt-1">SKU: {{ product.sku }}</p>
                         <span
                             :class="getStatusBadgeClass(product.status)"
                             class="mt-2 inline-block px-2 py-0.5 rounded-full text-xs font-semibold"

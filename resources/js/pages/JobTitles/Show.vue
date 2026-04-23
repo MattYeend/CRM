@@ -91,7 +91,7 @@ onMounted(() => loadJobTitle())
                     <div>
                         <h1 class="text-2xl font-bold">{{ jobTitle.title }}</h1>
                         <div class="flex items-center gap-2 mt-1">
-                            <span v-if="jobTitle.short_code" class="text-sm text-gray-500 font-mono">
+                            <span v-if="jobTitle.short_code" class="text-sm text-gray-500">
                                 {{ jobTitle.short_code }}
                             </span>
                             <span

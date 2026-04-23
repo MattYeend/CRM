@@ -57,6 +57,24 @@ class BillOfMaterialPolicy
     }
 
     /**
+     * Determine whether the user can view the model.
+     *
+     * @param  User $user
+     * @param  BillOfMaterial $billOfMaterial
+     *
+     * @return bool
+     */
+    public function view(User $user, BillOfMaterial $billOfMaterial): bool
+    {
+        return $this->anyOrOwn(
+            $user,
+            $billOfMaterial,
+            'billOfMaterials.view.all',
+            'billOfMaterials.view.own'
+        );
+    }
+
+    /**
      * Determine whether the user can create models.
      *
      * @param  User $user

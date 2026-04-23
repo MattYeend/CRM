@@ -102,7 +102,7 @@ onMounted(() => loadPartCategory())
                         <dl class="space-y-2">
                             <div v-if="partCategory.slug" class="flex justify-between">
                                 <dt class="font-medium">Slug</dt>
-                                <dd class="font-mono text-xs">{{ partCategory.slug }}</dd>
+                                <dd class="text-xs">{{ partCategory.slug }}</dd>
                             </div>
                             <div v-if="partCategory.parent" class="flex justify-between">
                                 <dt class="font-medium">Parent</dt>
@@ -160,7 +160,7 @@ onMounted(() => loadPartCategory())
                                     :key="part.id"
                                     class="border-t"
                                 >
-                                    <td class="p-2 font-mono text-xs">
+                                    <td class="p-2 text-xs">
                                         {{ part.sku }}
                                     </td>
                                     <td class="p-2">{{ part.name }}</td>

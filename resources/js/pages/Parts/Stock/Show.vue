@@ -210,7 +210,7 @@ onMounted(() => loadStock())
                             </td>
                             <td class="p-2 text-right tabular-nums">{{ movement.quantity_before }}</td>
                             <td class="p-2 text-right tabular-nums">{{ movement.quantity_after }}</td>
-                            <td class="p-2 font-mono text-xs">{{ movement.reference ?? '—' }}</td>
+                            <td class="p-2 text-xs">{{ movement.reference ?? '—' }}</td>
                             <td class="p-2">{{ movement.created_by?.name ?? '—' }}</td>
                         </tr>
 

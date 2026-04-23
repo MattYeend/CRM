@@ -44,7 +44,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'attachments.access.own', 'label' => 'Access own attachments'],
 
             // Bill Of Materials
-            ['name' => 'billOfMaterials.view.all', 'label' => 'View bill of materials'],
+            ['name' => 'billOfMaterials.view.all', 'label' => 'View all bill of materials'],
+            ['name' => 'billOfMaterials.view.own', 'label' => 'View own bill of materials'],
             ['name' => 'billOfMaterials.create', 'label' => 'Create bill of materials'],
             ['name' => 'billOfMaterials.update.any', 'label' => 'Update any bill of materials'],
             ['name' => 'billOfMaterials.update.own', 'label' => 'Update own bill of materials'],

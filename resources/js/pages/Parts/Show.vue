@@ -108,7 +108,7 @@ onMounted(() => loadPart())
                                 class="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full"
                             >Low Stock</span>
                         </div>
-                        <p class="font-mono text-sm mt-1">{{ part.sku }}</p>
+                        <p class="text-sm mt-1">{{ part.sku }}</p>
                         <p v-if="part.description" class="mt-2">
                             {{ part.description }}
                         </p>

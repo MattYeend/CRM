@@ -32,7 +32,7 @@ defineProps<{ bom: BOM }>()
             <dl class="space-y-2">
                 <div v-if="bom.child_part?.sku" class="flex justify-between">
                     <dt class="font-medium">SKU</dt>
-                    <dd class="font-mono">{{ bom.child_part.sku }}</dd>
+                    <dd>{{ bom.child_part.sku }}</dd>
                 </div>
                 <div v-if="bom.child_part?.name" class="flex justify-between">
                     <dt class="font-medium">Name</dt>

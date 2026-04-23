@@ -128,15 +128,18 @@ function formatDate(dateStr: string | null): string {
         <Head :title="`${part.name} — Serial Numbers`" />
 
         <div class="p-6">
-            <div class="flex justify-between mb-6">
+            <div class="flex items-start justify-between mb-6">
                 <div>
                     <h1 class="text-2xl font-bold">Serial Numbers</h1>
-                    <p class="text-sm mt-1 font-mono">{{ part.name }} · {{ part.sku }}</p>
+                    <p class="text-sm mt-1">
+                        {{ part.name }} · {{ part.sku }}
+                    </p>
                 </div>
+
                 <Link
-                    v-if="serialNumbers.permissions?.create"
+                    v-if="serialNumbers?.permissions?.create === true"
                     :href="route('parts.serialNumbers.create', { part: part.id })"
-                    class="bg-blue-600 text-white px-4 py-2 rounded"
+                    class="bg-blue-600 text-white px-4 py-2 rounded self-start"
                 >
                     Create
                 </Link>
@@ -159,7 +162,7 @@ function formatDate(dateStr: string | null): string {
                         :key="sn.id"
                         class="border-t"
                     >
-                        <td class="p-2 font-mono">{{ sn.serial_number }}</td>
+                        <td class="p-2">{{ sn.serial_number }}</td>
                         <td class="p-2">{{ sn.batch_number ?? '—' }}</td>
                         <td class="p-2">
                             <span

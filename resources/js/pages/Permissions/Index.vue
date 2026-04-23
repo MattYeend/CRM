@@ -147,7 +147,7 @@ onMounted(() => loadPermissions())
 
                 <tbody>
                     <tr v-for="permission in items" :key="permission.id" class="border-t">
-                        <td class="p-2 font-mono">
+                        <td class="p-2">
                             <Link
                                 :href="route('permissions.show', permission.id)"
                             >

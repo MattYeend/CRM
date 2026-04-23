@@ -144,7 +144,7 @@ onMounted(() => loadProducts())
                 </thead>
                 <tbody>
                     <tr v-for="product in products" :key="product.id" class="border-t">
-                        <td class="p-2 font-mono text-sm">{{ product.sku }}</td>
+                        <td class="p-2 text-sm">{{ product.sku }}</td>
                         <td class="p-2">
                             <Link
                                 v-if="product.permissions.view"

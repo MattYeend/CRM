@@ -69,7 +69,7 @@ async function submit() {
     <form @submit.prevent="submit" class="space-y-6 max-w-lg">
         <div>
             <label class="block text-sm font-medium mb-1">Serial Number *</label>
-            <input v-model="form.serial_number" class="w-full border px-3 py-2 rounded font-mono" />
+            <input v-model="form.serial_number" class="w-full border px-3 py-2 rounded" />
             <p v-if="form.errors.serial_number" class="text-red-600 text-xs">{{ form.errors.serial_number }}</p>
         </div>
 
@@ -80,7 +80,7 @@ async function submit() {
 
         <div>
             <label class="block text-sm font-medium mb-1">Batch Number</label>
-            <input v-model="form.batch_number" class="w-full border px-3 py-2 rounded font-mono" />
+            <input v-model="form.batch_number" class="w-full border px-3 py-2 rounded" />
         </div>
 
         <div>

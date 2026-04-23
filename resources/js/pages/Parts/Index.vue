@@ -125,7 +125,7 @@ onMounted(() => loadParts())
                 </thead>
                 <tbody>
                     <tr v-for="part in parts" :key="part.id" class="border-t">
-                        <td class="p-2 font-mono text-xs">{{ part.sku }}</td>
+                        <td class="p-2 text-xs">{{ part.sku }}</td>
                         <td class="p-2">
                             {{ part.name }}
                             <span

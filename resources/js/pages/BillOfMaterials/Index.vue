@@ -76,9 +76,10 @@ onMounted(() => loadBOMs())
         <Head title="Bill of Materials" />
 
         <div class="p-6">
-            <div class="flex justify-between mb-6">
+            <div class="flex items-start justify-between mb-6">
                 <div>
                     <h1 class="text-2xl font-bold">Bill of Materials</h1>
+                    <p class="text-sm mt-1">{{ part.name }} · {{ part.sku }}</p>
                 </div>
                 <div class="flex gap-2">
                     <Link
@@ -135,7 +136,6 @@ onMounted(() => loadBOMs())
                             <Link
                                 v-if="bom.permissions.view"
                                 :href="route('parts.billOfMaterials.show', { part: part.id, billOfMaterial: bom.id })"
-                                class="text-blue-600"
                             >
                                 View
                             </Link>

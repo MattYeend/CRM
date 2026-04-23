@@ -64,7 +64,7 @@ onMounted(() => loadPartImage())
                         <h1 class="text-2xl font-bold">
                             {{ partImage.part?.name ?? `Image #${partImage.id}` }}
                         </h1>
-                        <p v-if="partImage.part?.sku" class="font-mono text-sm mt-1">
+                        <p v-if="partImage.part?.sku" class="text-sm mt-1">
                             {{ partImage.part.sku }}
                         </p>
                     </div>

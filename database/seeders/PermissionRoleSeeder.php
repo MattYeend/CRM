@@ -317,7 +317,7 @@ class PermissionRoleSeeder extends Seeder
             'attachments.restore.own',
             'attachments.access.own',
 
-            'billOfMaterials.view.all',
+            'billOfMaterials.view.own',
             'billOfMaterials.create',
             'billOfMaterials.update.own',
             'billOfMaterials.delete.own',
