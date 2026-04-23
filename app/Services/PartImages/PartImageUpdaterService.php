@@ -30,18 +30,19 @@ class PartImageUpdaterService
         PartImage $partImage
     ): PartImage {
         $user = $request->user();
-    $data = $request->validated();
+        $data = $request->validated();
 
-    // Handle image file if uploaded
-    if ($request->hasFile('image')) {
-        unset($data['image']);
-        $data['image'] = $request->file('image')->store('part-images', 'public');
-    }
+        // Handle image file if uploaded
+        if ($request->hasFile('image')) {
+            unset($data['image']);
+            $data['image'] = $request
+                ->file('image')->store('part-images', 'public');
+        }
 
-    $data['updated_by'] = $user->id;
+        $data['updated_by'] = $user->id;
 
-    $partImage->update($data);
+        $partImage->update($data);
 
-    return $partImage->fresh();
+        return $partImage->fresh();
     }
 }

@@ -75,7 +75,7 @@ class PartSerialNumberQueryService
      */
     public function list(Request $request, ?Part $part = null): array
     {
-       $perPage = max(1, min((int) $request->query('per_page', 10), 100));
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
 
         $query = $part
             ? $part->serialNumbers()->with('part')->getQuery()
@@ -87,7 +87,9 @@ class PartSerialNumberQueryService
 
         $paginator = $query->paginate($perPage)
             ->appends($request->query())
-            ->through(fn (PartSerialNumber $sn) => $this->formatPartSerialNumber($sn))
+            ->through(fn (
+                PartSerialNumber $sn
+            ): array => $this->formatPartSerialNumber($sn))
             ->toArray();
 
         return array_merge($paginator, [
@@ -124,8 +126,9 @@ class PartSerialNumberQueryService
      *
      * @return array
      */
-    private function formatPartSerialNumber(PartSerialNumber $serialNumber): array
-    {
+    private function formatPartSerialNumber(
+        PartSerialNumber $serialNumber
+    ): array {
         return [
             'id' => $serialNumber->id,
             'part_id' => $serialNumber->part_id,

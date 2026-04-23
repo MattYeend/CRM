@@ -112,7 +112,9 @@ class PartCategoryQueryService
 
         return $query->paginate($perPage)
             ->appends($request->query())
-            ->through(fn (PartCategory $category): array => $this->formatPartCategory($category))
+            ->through(fn (
+                PartCategory $category
+            ): array => $this->formatPartCategory($category))
             ->toArray();
     }
 

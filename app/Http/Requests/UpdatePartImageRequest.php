@@ -25,7 +25,7 @@ class UpdatePartImageRequest extends FormRequest
     public function authorize(): bool
     {
         $partImage = $this->route('partImage');
- 
+
         return $this->user()->can('update', $partImage);
     }
 
@@ -40,7 +40,7 @@ class UpdatePartImageRequest extends FormRequest
     public function rules(): array
     {
         $partImage = $this->route('partImage');
- 
+
         return [
             'image' => [
                 'sometimes',

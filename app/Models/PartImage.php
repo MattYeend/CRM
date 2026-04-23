@@ -84,7 +84,7 @@ class PartImage extends Model
         SoftDeletes;
 
     protected $table = 'part_images';
-    
+
     /**
      * The attributes that are mass assignable.
      *

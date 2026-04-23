@@ -122,11 +122,11 @@ class PartStockMovementQueryService
     private function baseData(PartStockMovement $movement): array
     {
         return [
-            'id'        => $movement->id,
-            'part_id'   => $movement->part_id,
-            'type'      => $movement->type,
+            'id' => $movement->id,
+            'part_id' => $movement->part_id,
+            'type' => $movement->type,
             'reference' => $movement->reference,
-            'notes'     => $movement->notes,
+            'notes' => $movement->notes,
         ];
     }
 
@@ -140,9 +140,9 @@ class PartStockMovementQueryService
     private function quantityData(PartStockMovement $movement): array
     {
         return [
-            'quantity'        => $movement->quantity,
+            'quantity' => $movement->quantity,
             'quantity_before' => $movement->quantity_before,
-            'quantity_after'  => $movement->quantity_after,
+            'quantity_after' => $movement->quantity_after,
         ];
     }
 
@@ -156,7 +156,7 @@ class PartStockMovementQueryService
     private function derivedData(PartStockMovement $movement): array
     {
         return [
-            'is_inbound'  => $movement->getIsInbound(),
+            'is_inbound' => $movement->getIsInbound(),
             'is_outbound' => $movement->getIsOutbound(),
         ];
     }
@@ -171,7 +171,7 @@ class PartStockMovementQueryService
     private function relationshipData(PartStockMovement $movement): array
     {
         return [
-            'part'       => $movement->part,
+            'part' => $movement->part,
             'created_by' => $movement->createdBy,
         ];
     }
@@ -187,7 +187,7 @@ class PartStockMovementQueryService
     {
         return [
             'permissions' => [
-                'view'   => Gate::allows('view', $movement),
+                'view' => Gate::allows('view', $movement),
                 'update' => Gate::allows('update', $movement),
                 'delete' => Gate::allows('delete', $movement),
             ],

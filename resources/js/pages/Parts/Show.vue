@@ -123,6 +123,12 @@ onMounted(() => loadPart())
                             Bill of Materials
                         </Link>
                         <Link
+                            :href="route('parts.stock.show', { part: part.id })"
+                            class="bg-gray-100 text-gray-700 px-4 py-2 rounded"
+                        >
+                            Stock
+                        </Link>
+                        <Link
                             v-if="part.is_serialised"
                             :href="route('parts.serialNumbers.index', { part: part.id })"
                             class="bg-gray-100 text-gray-700 px-4 py-2 rounded"

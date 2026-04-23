@@ -120,7 +120,7 @@ onMounted(() => loadBOMs())
                         :key="bom.id"
                         class="border-t"
                     >
-                        <td class="p-2 font-mono text-xs">
+                        <td class="p-2 text-xs">
                             {{ bom.child_part?.sku || '—' }}
                         </td>
                         <td class="p-2">{{ bom.child_part?.name || '—' }}</td>

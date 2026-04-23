@@ -101,7 +101,9 @@ class PartImageQueryService
 
         return $query->paginate($perPage)
             ->appends($request->query())
-            ->through(fn (PartImage $partImage): array => $this->formatPartImage($partImage))
+            ->through(fn (
+                PartImage $partImage
+            ): array => $this->formatPartImage($partImage))
             ->toArray();
     }
 

@@ -27,7 +27,7 @@ class PartImageDestructorService
     {
         $userId = auth()->id();
         $partImage->update([
-            'deleted_by' => $userId
+            'deleted_by' => $userId,
         ]);
 
         $partImage->delete();
@@ -78,7 +78,8 @@ class PartImageDestructorService
     /**
      * Delete the image and thumbnail files for a part image.
      *
-     * @param  PartImage $partImage The part image whose files should be deleted.
+     * @param  PartImage $partImage The part image whose files should
+     * be deleted.
      *
      * @return void
      */
