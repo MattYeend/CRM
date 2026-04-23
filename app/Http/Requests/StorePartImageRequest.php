@@ -39,8 +39,13 @@ class StorePartImageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'part_id' => 'required|integer|exists:parts,id',
-            'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'part_id' => 'required|exists:parts,id',
+            'image' => [
+                'required',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:5120',
+            ],
             'alt' => 'nullable|string|max:255',
             'is_primary' => 'boolean',
             'sort_order' => 'integer|min:0',

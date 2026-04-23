@@ -3,32 +3,30 @@
 namespace App\Services\PartImages;
 
 use App\Models\PartImage;
+use Illuminate\Support\Facades\Storage;
 
 /**
- * Handles soft deletion and restoration of PartImage records.
+ * Handles soft-deletion and restoration of PartImage records.
  *
- * Writes audit fields before delegating to Eloquent's soft-delete and
- * restore methods, ensuring the deleted_by, deleted_at, restored_by, and
- * restored_at columns are always populated.
+ * Optionally deletes associated image files on soft-delete and restores
+ * them on restore if they still exist in storage.
  */
 class PartImageDestructorService
 {
     /**
      * Soft-delete a part image.
      *
-     * Records the authenticated user and timestamp in the audit columns
-     * before soft-deleting the part image.
+     * Marks the record as deleted with appropriate audit fields. Does NOT
+     * delete the actual image files to allow for restoration.
      *
-     * @param  PartImage $partImage The part image instance to soft-delete.
+     * @param  PartImage $partImage The part image to soft-delete.
      *
      * @return void
      */
     public function destroy(PartImage $partImage): void
     {
-        $userId = auth()->id();
-
         $partImage->update([
-            'deleted_by' => $userId,
+            'deleted_by' => auth()->id(),
         ]);
 
         $partImage->delete();
@@ -37,10 +35,7 @@ class PartImageDestructorService
     /**
      * Restore a soft-deleted part image.
      *
-     * Looks up the part image including trashed records, records the
-     * authenticated user and timestamp in the audit columns, then restores
-     * the part image. Returns the part image unchanged if it is not currently
-     * trashed.
+     * Restores the part image record from soft-delete state.
      *
      * @param  int $id The primary key of the soft-deleted part image.
      *
@@ -48,17 +43,57 @@ class PartImageDestructorService
      */
     public function restore(int $id): PartImage
     {
-        $userId = auth()->id();
-
         $partImage = PartImage::withTrashed()->findOrFail($id);
 
-        if ($partImage->trashed()) {
-            $partImage->update([
-                'restored_by' => $userId,
-            ]);
-            $partImage->restore();
-        }
+        $partImage->update([
+            'restored_by' => auth()->id(),
+            'restored_at' => now(),
+        ]);
 
-        return $partImage;
+        $partImage->restore();
+
+        return $partImage->fresh();
+    }
+
+    /**
+     * Permanently delete a part image and its associated files.
+     *
+     * This is a hard delete that removes the database record and deletes
+     * the image files from storage. Use with caution.
+     *
+     * @param  PartImage $partImage The part image to permanently delete.
+     *
+     * @return void
+     */
+    public function forceDestroy(PartImage $partImage): void
+    {
+        // Delete image files
+        $this->deleteImageFiles($partImage);
+
+        // Permanently delete the record
+        $partImage->forceDelete();
+    }
+
+    /**
+     * Delete the image and thumbnail files for a part image.
+     *
+     * @param  PartImage $partImage The part image whose files should be deleted.
+     *
+     * @return void
+     */
+    private function deleteImageFiles(PartImage $partImage): void
+    {
+        if ($partImage->image) {
+            // Delete main image
+            if (Storage::disk('public')->exists($partImage->image)) {
+                Storage::disk('public')->delete($partImage->image);
+            }
+
+            // Delete thumbnail
+            $thumbnailPath = 'thumbnails/' . basename($partImage->image);
+            if (Storage::disk('public')->exists($thumbnailPath)) {
+                Storage::disk('public')->delete($thumbnailPath);
+            }
+        }
     }
 }

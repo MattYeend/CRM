@@ -29,13 +29,20 @@ class PartImageCreatorService
     public function create(StorePartImageRequest $request): PartImage
     {
         $user = $request->user();
-        $data = $request->validated();
-        $data['image'] = $request->file('image')->store(
-            'part-images',
-            'public'
-        );
-        $data['created_by'] = $user->id;
+    $data = $request->validated();
 
-        return PartImage::create($data);
+    unset($data['image']);
+
+    $storedPath = $request->file('image')->store('part-images', 'public');
+
+    if ($storedPath === false) {
+        throw new \RuntimeException('Failed to store image file.');
+    }
+
+    $data['image'] = $storedPath;
+    $data['created_by'] = $user->id;
+
+    return PartImage::create($data);
+
     }
 }

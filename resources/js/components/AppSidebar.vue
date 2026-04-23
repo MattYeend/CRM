@@ -23,9 +23,11 @@ import {
     Component,
     FileSignature,
     FileText,
+    FolderTree,
     GitBranch,
     Globe,
     Handshake,
+    Image,
     LayoutGrid,
     Package,
     Paperclip,
@@ -125,7 +127,19 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Parts',
         href: '/parts',
-        icon: Component
+        icon: Component,
+        children: [
+            {
+                title: 'Part Categories',
+                href: '/part-categories',
+                icon: FolderTree
+            },
+            {
+                title: 'Part Images',
+                href: '/part-images',
+                icon: Image
+            },
+        ]
     },
     {
         title: 'Permissions',

@@ -83,6 +83,8 @@ class PartImage extends Model
     use HasFactory,
         SoftDeletes;
 
+    protected $table = 'part_images';
+    
     /**
      * The attributes that are mass assignable.
      *
@@ -143,7 +145,7 @@ class PartImage extends Model
     public function getImageUrlAttribute(): ?string
     {
         if ($this->image) {
-            return Storage::url($this->image);
+            return asset('storage/' . $this->image);
         }
         return null;
     }
@@ -161,8 +163,12 @@ class PartImage extends Model
     {
         if ($this->image) {
             $thumbnailPath = 'thumbnails/' . basename($this->image);
-            return Storage::url($thumbnailPath);
+
+            if (Storage::disk('public')->exists($thumbnailPath)) {
+                return asset('storage/' . $thumbnailPath);
+            }
         }
+
         return null;
     }
 
