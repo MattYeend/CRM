@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
+import { fetchPartStockMovement } from '@/services/partService'
 
 interface Part {
     id: number
@@ -47,16 +48,24 @@ interface PaginatedMovements {
     permissions: GlobalPermissions
 }
 
+const permissions = ref<GlobalPermissions>({
+    create: false,
+    viewAny: false,
+})
+
 const props = defineProps<{
     part: Part
     movements: PaginatedMovements
 }>()
 
-const currentPage = ref(props.movements.current_page)
+const stock = ref<StockMovement[]>([])
+const loading = ref(true)
+const currentPage = ref(1)
+const perPage = 10
 const pagination = reactive({
-    current_page: props.movements.current_page,
-    last_page: props.movements.last_page,
-    total: props.movements.total,
+    current_page: 1,
+    last_page: 1,
+    total: 0,
 })
 
 const breadcrumbItems: BreadcrumbItem[] = [
@@ -68,6 +77,21 @@ const breadcrumbItems: BreadcrumbItem[] = [
 const isLowStock = computed(() =>
     props.part.reorder_point != null && props.part.quantity <= props.part.reorder_point
 )
+
+async function loadStock(page = 1){
+    loading.value = true
+    try {
+        const data = await fetchPartStockMovement(perPage, page)
+        stock.value = data.data
+        permissions.value = data.permissions
+        pagination.current_page = data.current_page
+        pagination.last_page = data.last_page
+        pagination.total = data.total
+        currentPage.value = data.current_page
+    } finally {
+        loading.value = false
+    }
+}
 
 const visiblePages = computed(() => {
     const total = pagination.last_page
@@ -95,6 +119,7 @@ function goToPage(page: number) {
         window.location.href = route('parts.stock.show', { part: props.part.id, page })
     }
 }
+onMounted(() => loadStock())
 </script>
 
 <template>
@@ -184,15 +209,14 @@ function goToPage(page: number) {
                                     {{ movement.is_inbound ? '+' : '-' }}{{ movement.quantity }}
                                 </span>
                             </td>
-                            <td class="p-2 text-right tabular-nums text-gray-500">{{ movement.quantity_before }}</td>
-                            <td class="p-2 text-right tabular-nums text-gray-500">{{ movement.quantity_after }}</td>
-                            <td class="p-2 text-gray-500 font-mono text-xs">{{ movement.reference ?? '—' }}</td>
-                            <td class="p-2 text-gray-500">{{ movement.created_by?.name ?? '—' }}</td>
+                            <td class="p-2 text-right tabular-nums">{{ movement.quantity_before }}</td>
+                            <td class="p-2 text-right tabular-nums">{{ movement.quantity_after }}</td>
+                            <td class="p-2 font-mono text-xs">{{ movement.reference ?? '—' }}</td>
+                            <td class="p-2">{{ movement.created_by?.name ?? '—' }}</td>
                             <td class="p-2 whitespace-nowrap">
                                 <Link
                                     v-if="movement.permissions.view"
                                     :href="route('parts.stockMovements.show', { part: part.id, stockMovement: movement.id })"
-                                    class="text-blue-600 hover:underline text-xs"
                                 >
                                     View
                                 </Link>
