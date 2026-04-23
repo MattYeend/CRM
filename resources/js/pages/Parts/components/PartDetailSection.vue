@@ -60,54 +60,54 @@ function formatNumber(value?: number) {
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <!-- Identity -->
         <div class="space-y-3">
-            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Details</h3>
+            <h3 class="text-sm font-semibold uppercase tracking-wider">Details</h3>
             <dl class="space-y-2 text-sm">
                 <div v-if="part.part_number" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Part Number</dt>
+                    <dt class="font-medium">Part Number</dt>
                     <dd>{{ part.part_number }}</dd>
                 </div>
                 <div v-if="part.barcode" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Barcode</dt>
+                    <dt class="font-medium">Barcode</dt>
                     <dd class="font-mono">{{ part.barcode }}</dd>
                 </div>
                 <div v-if="part.category" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Category</dt>
+                    <dt class="font-medium">Category</dt>
                     <dd>{{ part.category.name }}</dd>
                 </div>
                 <div v-if="part.product" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Product</dt>
+                    <dt class="font-medium">Product</dt>
                     <dd>{{ part.product.name }}</dd>
                 </div>
                 <div v-if="part.brand" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Brand</dt>
+                    <dt class="font-medium">Brand</dt>
                     <dd>{{ part.brand }}</dd>
                 </div>
                 <div v-if="part.manufacturer" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Manufacturer</dt>
+                    <dt class="font-medium">Manufacturer</dt>
                     <dd>{{ part.manufacturer }}</dd>
                 </div>
                 <div v-if="part.type" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Type</dt>
+                    <dt class="font-medium">Type</dt>
                     <dd>{{ part.type }}</dd>
                 </div>
                 <div v-if="part.unit_of_measure" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Unit of Measure</dt>
+                    <dt class="font-medium">Unit of Measure</dt>
                     <dd>{{ part.unit_of_measure }}</dd>
                 </div>
                 <div v-if="part.colour" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Colour</dt>
+                    <dt class="font-medium">Colour</dt>
                     <dd>{{ part.colour }}</dd>
                 </div>
                 <div v-if="part.material" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Material</dt>
+                    <dt class="font-medium">Material</dt>
                     <dd>{{ part.material }}</dd>
                 </div>
                 <div v-if="part.primary_supplier" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Primary Supplier</dt>
+                    <dt class="font-medium">Primary Supplier</dt>
                     <dd>{{ part.primary_supplier.name }}</dd>
                 </div>
                 <div v-if="part.creator" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Created By</dt>
+                    <dt class="font-medium">Created By</dt>
                     <dd>{{ part.creator.name }}</dd>
                 </div>
             </dl>
@@ -115,38 +115,38 @@ function formatNumber(value?: number) {
 
         <!-- Stock -->
         <div class="space-y-3">
-            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Stock</h3>
+            <h3 class="text-sm font-semibold uppercase tracking-wider">Stock</h3>
             <dl class="space-y-2 text-sm">
                 <div class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Quantity</dt>
+                    <dt class="font-medium">Quantity</dt>
                     <dd class="tabular-nums">{{ formatNumber(part.quantity) }}</dd>
                 </div>
                 <div v-if="part.min_stock_level != null" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Min Stock</dt>
+                    <dt class="font-medium">Min Stock</dt>
                     <dd class="tabular-nums">{{ formatNumber(part.min_stock_level) }}</dd>
                 </div>
                 <div v-if="part.max_stock_level != null" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Max Stock</dt>
+                    <dt class="font-medium">Max Stock</dt>
                     <dd class="tabular-nums">{{ formatNumber(part.max_stock_level) }}</dd>
                 </div>
                 <div v-if="part.reorder_point != null" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Reorder Point</dt>
+                    <dt class="font-medium">Reorder Point</dt>
                     <dd class="tabular-nums">{{ formatNumber(part.reorder_point) }}</dd>
                 </div>
                 <div v-if="part.reorder_quantity != null" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Reorder Qty</dt>
+                    <dt class="font-medium">Reorder Qty</dt>
                     <dd class="tabular-nums">{{ formatNumber(part.reorder_quantity) }}</dd>
                 </div>
                 <div v-if="part.lead_time_days != null" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Lead Time</dt>
+                    <dt class="font-medium">Lead Time</dt>
                     <dd>{{ part.lead_time_days }} days</dd>
                 </div>
                 <div v-if="part.warehouse_location" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Warehouse</dt>
+                    <dt class="font-medium">Warehouse</dt>
                     <dd>{{ part.warehouse_location }}</dd>
                 </div>
                 <div v-if="part.bin_location" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Bin</dt>
+                    <dt class="font-medium">Bin</dt>
                     <dd class="font-mono">{{ part.bin_location }}</dd>
                 </div>
             </dl>
@@ -154,30 +154,30 @@ function formatNumber(value?: number) {
 
         <!-- Pricing -->
         <div class="space-y-3">
-            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Pricing</h3>
+            <h3 class="text-sm font-semibold uppercase tracking-wider">Pricing</h3>
             <dl class="space-y-2 text-sm">
                 <div v-if="part.price != null" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Price</dt>
+                    <dt class="font-medium">Price</dt>
                     <dd>{{ formatCurrency(part.price, part.currency) }}</dd>
                 </div>
                 <div v-if="part.cost_price != null" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Cost Price</dt>
+                    <dt class="font-medium">Cost Price</dt>
                     <dd>{{ formatCurrency(part.cost_price, part.currency) }}</dd>
                 </div>
                 <div v-if="part.margin_percentage != null" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Margin</dt>
+                    <dt class="font-medium">Margin</dt>
                     <dd>{{ part.margin_percentage }}%</dd>
                 </div>
                 <div v-if="part.tax_rate != null" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Tax Rate</dt>
+                    <dt class="font-medium">Tax Rate</dt>
                     <dd>{{ part.tax_rate }}%</dd>
                 </div>
                 <div v-if="part.tax_code" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Tax Code</dt>
+                    <dt class="font-medium">Tax Code</dt>
                     <dd>{{ part.tax_code }}</dd>
                 </div>
                 <div v-if="part.discount_percentage != null" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Discount</dt>
+                    <dt class="font-medium">Discount</dt>
                     <dd>{{ part.discount_percentage }}%</dd>
                 </div>
             </dl>
@@ -185,26 +185,26 @@ function formatNumber(value?: number) {
 
         <!-- Dimensions -->
         <div class="space-y-3">
-            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Dimensions</h3>
+            <h3 class="text-sm font-semibold uppercase tracking-wider">Dimensions</h3>
             <dl class="space-y-2 text-sm">
                 <div v-if="part.height != null" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Height</dt>
+                    <dt class="font-medium">Height</dt>
                     <dd class="tabular-nums">{{ part.height }}</dd>
                 </div>
                 <div v-if="part.width != null" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Width</dt>
+                    <dt class="font-medium">Width</dt>
                     <dd class="tabular-nums">{{ part.width }}</dd>
                 </div>
                 <div v-if="part.length != null" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Length</dt>
+                    <dt class="font-medium">Length</dt>
                     <dd class="tabular-nums">{{ part.length }}</dd>
                 </div>
                 <div v-if="part.weight != null" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Weight</dt>
+                    <dt class="font-medium">Weight</dt>
                     <dd class="tabular-nums">{{ part.weight }}</dd>
                 </div>
                 <div v-if="part.volume != null" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Volume</dt>
+                    <dt class="font-medium">Volume</dt>
                     <dd class="tabular-nums">{{ part.volume }}</dd>
                 </div>
             </dl>
@@ -212,7 +212,7 @@ function formatNumber(value?: number) {
 
         <!-- Flags -->
         <div class="space-y-3 md:col-span-2">
-            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Flags</h3>
+            <h3 class="text-sm font-semibold uppercase tracking-wider">Flags</h3>
             <div class="flex flex-wrap gap-2 text-sm">
                 <span
                     v-if="part.is_active"

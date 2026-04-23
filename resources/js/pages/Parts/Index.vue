@@ -51,6 +51,14 @@ const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Parts', href: route('parts.index') },
 ]
 
+function formatStatus(status: string | undefined): string {
+    if (!status) return '—'
+    return status
+        .split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ')
+}
+
 async function loadParts(page = 1) {
     loading.value = true
     try {
@@ -116,7 +124,7 @@ onMounted(() => loadParts())
             </div>
 
             <table v-else class="w-full border text-sm">
-                <thead class="bg-gray-50">
+                <thead>
                     <tr>
                         <th class="p-2 text-left">SKU</th>
                         <th class="p-2 text-left">Name</th>
@@ -128,8 +136,8 @@ onMounted(() => loadParts())
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="part in parts" :key="part.id" class="border-t hover:bg-gray-50">
-                        <td class="p-2 font-mono text-xs text-gray-600">{{ part.sku }}</td>
+                    <tr v-for="part in parts" :key="part.id" class="border-t">
+                        <td class="p-2 font-mono text-xs">{{ part.sku }}</td>
                         <td class="p-2">
                             {{ part.name }}
                             <span
@@ -141,8 +149,8 @@ onMounted(() => loadParts())
                                 class="ml-1 text-xs bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded"
                             >Low</span>
                         </td>
-                        <td class="p-2 text-gray-600">{{ part.category?.name || '—' }}</td>
-                        <td class="p-2 text-gray-600">{{ part.type || '—' }}</td>
+                        <td class="p-2">{{ part.category?.name || '—' }}</td>
+                        <td class="p-2">{{ part.type || '—' }}</td>
                         <td class="p-2">
                             <span
                                 v-if="part.status"
@@ -151,7 +159,7 @@ onMounted(() => loadParts())
                                     ? 'bg-green-100 text-green-700'
                                     : 'bg-gray-100 text-gray-600'"
                             >
-                                {{ part.status }}
+                                {{ formatStatus(part.status) }}
                             </span>
                             <span v-else>—</span>
                         </td>
@@ -160,21 +168,19 @@ onMounted(() => loadParts())
                             <Link
                                 v-if="part.permissions.view"
                                 :href="route('parts.show', { part: part.id })"
-                                class="text-blue-600 hover:underline"
                             >
                                 View
                             </Link>
                             <Link
                                 v-if="part.permissions.update"
                                 :href="route('parts.edit', { part: part.id })"
-                                class="text-gray-600 hover:underline"
                             >
                                 Edit
                             </Link>
                             <button
                                 v-if="part.permissions.delete"
                                 @click="handleDelete(part.id)"
-                                class="text-red-600 hover:underline"
+                                class="text-red-600"
                             >
                                 Delete
                             </button>

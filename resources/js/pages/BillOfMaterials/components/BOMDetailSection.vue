@@ -26,24 +26,24 @@ defineProps<{ bom: BOM }>()
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm">
         <!-- Component details -->
         <div class="space-y-3">
-            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">
+            <h3 class="text-sm font-semibold uppercase tracking-wider">
                 Component
             </h3>
             <dl class="space-y-2">
                 <div v-if="bom.child_part?.sku" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">SKU</dt>
+                    <dt class="font-medium">SKU</dt>
                     <dd class="font-mono">{{ bom.child_part.sku }}</dd>
                 </div>
                 <div v-if="bom.child_part?.name" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Name</dt>
+                    <dt class="font-medium">Name</dt>
                     <dd>{{ bom.child_part.name }}</dd>
                 </div>
                 <div v-if="bom.child_part?.unit_of_measure" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Part UoM</dt>
+                    <dt class="font-medium">Part UoM</dt>
                     <dd>{{ bom.child_part.unit_of_measure }}</dd>
                 </div>
                 <div class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Stock on Hand</dt>
+                    <dt class="font-medium">Stock on Hand</dt>
                     <dd class="tabular-nums">{{ bom.child_part?.quantity ?? '—' }}</dd>
                 </div>
             </dl>
@@ -51,24 +51,24 @@ defineProps<{ bom: BOM }>()
 
         <!-- BOM details -->
         <div class="space-y-3">
-            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">
+            <h3 class="text-sm font-semibold uppercase tracking-wider">
                 BOM Entry
             </h3>
             <dl class="space-y-2">
                 <div class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Quantity Required</dt>
+                    <dt class="font-medium">Quantity Required</dt>
                     <dd class="tabular-nums">{{ bom.quantity }}</dd>
                 </div>
                 <div v-if="bom.unit_of_measure" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Unit of Measure</dt>
+                    <dt class="font-medium">Unit of Measure</dt>
                     <dd>{{ bom.unit_of_measure }}</dd>
                 </div>
                 <div v-if="bom.scrap_percentage != null" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Scrap %</dt>
+                    <dt class="font-medium">Scrap %</dt>
                     <dd class="tabular-nums">{{ bom.scrap_percentage }}%</dd>
                 </div>
                 <div v-if="bom.creator" class="flex justify-between">
-                    <dt class="font-medium text-gray-600">Created By</dt>
+                    <dt class="font-medium">Created By</dt>
                     <dd>{{ bom.creator.name }}</dd>
                 </div>
             </dl>

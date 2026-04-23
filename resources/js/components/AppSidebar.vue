@@ -20,6 +20,7 @@ import {
     Briefcase,
     Building2,
     CheckSquare,
+    Component,
     FileSignature,
     FileText,
     GitBranch,
@@ -120,6 +121,11 @@ const mainNavItems: NavItem[] = [
         title: 'Orders',
         href: '/orders',
         icon: ShoppingCart
+    },
+    {
+        title: 'Parts',
+        href: '/parts',
+        icon: Component
     },
     {
         title: 'Permissions',

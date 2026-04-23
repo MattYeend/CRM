@@ -79,7 +79,6 @@ onMounted(() => loadBOMs())
             <div class="flex justify-between mb-6">
                 <div>
                     <h1 class="text-2xl font-bold">Bill of Materials</h1>
-                    <p class="text-gray-500 text-sm mt-1">{{ part.name }}</p>
                 </div>
                 <div class="flex gap-2">
                     <Link
@@ -103,7 +102,7 @@ onMounted(() => loadBOMs())
             </div>
 
             <table v-else class="w-full border text-sm">
-                <thead class="bg-gray-50">
+                <thead>
                     <tr>
                         <th class="p-2 text-left">SKU</th>
                         <th class="p-2 text-left">Name</th>
@@ -118,14 +117,14 @@ onMounted(() => loadBOMs())
                     <tr
                         v-for="bom in billOfMaterials"
                         :key="bom.id"
-                        class="border-t hover:bg-gray-50"
+                        class="border-t"
                     >
-                        <td class="p-2 font-mono text-xs text-gray-600">
+                        <td class="p-2 font-mono text-xs">
                             {{ bom.child_part?.sku || '—' }}
                         </td>
                         <td class="p-2">{{ bom.child_part?.name || '—' }}</td>
                         <td class="p-2 text-right tabular-nums">{{ bom.quantity }}</td>
-                        <td class="p-2 text-gray-600">{{ bom.unit_of_measure || '—' }}</td>
+                        <td class="p-2">{{ bom.unit_of_measure || '—' }}</td>
                         <td class="p-2 text-right tabular-nums">
                             {{ bom.scrap_percentage != null ? `${bom.scrap_percentage}%` : '—' }}
                         </td>
@@ -136,21 +135,20 @@ onMounted(() => loadBOMs())
                             <Link
                                 v-if="bom.permissions.view"
                                 :href="route('parts.billOfMaterials.show', { part: part.id, billOfMaterial: bom.id })"
-                                class="text-blue-600 hover:underline"
+                                class="text-blue-600"
                             >
                                 View
                             </Link>
                             <Link
                                 v-if="bom.permissions.update"
                                 :href="route('parts.billOfMaterials.edit', { part: part.id, billOfMaterial: bom.id })"
-                                class="text-gray-600 hover:underline"
                             >
                                 Edit
                             </Link>
                             <button
                                 v-if="bom.permissions.delete"
                                 @click="handleDelete(bom.id)"
-                                class="text-red-600 hover:underline"
+                                class="text-red-600"
                             >
                                 Delete
                             </button>

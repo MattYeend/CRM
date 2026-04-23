@@ -75,14 +75,13 @@ async function handleDelete() {
                         <h1 class="text-2xl font-bold">
                             {{ bom.child_part?.name ?? `BOM #${bom.id}` }}
                         </h1>
-                        <p class="text-gray-500 font-mono text-sm mt-1">
+                        <p class="font-mono text-sm mt-1">
                             {{ bom.child_part?.sku }}
                         </p>
-                        <p class="text-gray-500 text-sm mt-1">
+                        <p class="text-sm mt-1">
                             Component of
                             <Link
                                 :href="route('parts.show', { part: part.id })"
-                                class="text-blue-600 hover:underline"
                             >{{ part.name }}</Link>
                         </p>
                     </div>
