@@ -16,8 +16,8 @@ class PartImageDestructorService
     /**
      * Soft-delete a part image.
      *
-     * Marks the record as deleted with appropriate audit fields. Does NOT
-     * delete the actual image files to allow for restoration.
+     * Records the authenticated user and timestamp in the audit columns
+     * before soft-deleting the image.
      *
      * @param  PartImage $partImage The part image to soft-delete.
      *
@@ -25,8 +25,9 @@ class PartImageDestructorService
      */
     public function destroy(PartImage $partImage): void
     {
+        $userId = auth()->id();
         $partImage->update([
-            'deleted_by' => auth()->id(),
+            'deleted_by' => $userId
         ]);
 
         $partImage->delete();
@@ -44,9 +45,9 @@ class PartImageDestructorService
     public function restore(int $id): PartImage
     {
         $partImage = PartImage::withTrashed()->findOrFail($id);
-
+        $userId = auth()->id();
         $partImage->update([
-            'restored_by' => auth()->id(),
+            'restored_by' => $userId,
             'restored_at' => now(),
         ]);
 
