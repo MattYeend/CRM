@@ -1,8 +1,10 @@
 # CRM System
+
 A Laravel 12 CRM system
 
 <!-- TOC -->
 ## Table of Contents
+
 1. [Tech Stack](#tech-stack)
 2. [How To Setup](#how-to-setup)
 3. [How To Contribute](#how-to-contribute)
@@ -20,32 +22,34 @@ A Laravel 12 CRM system
         3. [Deals](#deals)
         4. [Pipelines and Stages](#pipelines-and-stages)
             1. [Pipelines](#pipelines)
-            2. [PipelineStages](#pipelineStages)
+            2. [Pipeline Stages](#pipeline-stages)
         5. [Quotes](#quotes)
         6. [Orders](#orders)
         7. [Invoices](#invoices)
         8. [Products](#products)
-        9. [Parts](#parts)
-        10. [Part Images](#part-images)
-        11. [Part Categories](#part-categories)
-        12. [Suppliers](#suppliers)
-        13. [Part Suppliers (Pivot)](#part-suppliers-pivot)
-        14. [Bill Of Materials (BOM)](#bill-of-materials-bom)
-        15. [Activities](#activities)
-        16. [Tasks](#tasks)
-        17. [Attachments](#attachments)
-        18. [Notes](#notes)
-        19. [Users, Roles, and Permissions](#users-roles-and-permissions)
+        9. [Product Stock Movements](#product-stock-movements)
+        10. [Parts](#parts)
+        11. [Part Images](#part-images)
+        12. [Part Categories](#part-categories)
+        13. [Suppliers](#suppliers)
+        14. [Part Suppliers (Pivot)](#part-suppliers-pivot)
+        15. [Part Stock Movements](#part-stock-movements)
+        16. [Bill Of Materials (BOM)](#bill-of-materials-bom)
+        17. [Activities](#activities)
+        18. [Tasks](#tasks)
+        19. [Attachments](#attachments)
+        20. [Notes](#notes)
+        21. [Users, Roles, and Permissions](#users-roles-and-permissions)
             1. [Users](#users)
             2. [Roles](#roles)
             3. [Permissions](#permissions)
-        20. [Companies](#companies)
-        21. [Industries](#industries)
-        22. [Job Titles](#job-titles)
-        23. [Learnings](#learnings)
-        24. [Logs](#logs)
-        25. [Are Activities and Tasks the Same?](#are-activities-and-tasks-the-same)
-        26. [Relationship Overview Diagram](#relationship-overview-diagram)
+        22. [Companies](#companies)
+        23. [Industries](#industries)
+        24. [Job Titles](#job-titles)
+        25. [Learnings](#learnings)
+        26. [Logs](#logs)
+        27. [Are Activities and Tasks the Same?](#are-activities-and-tasks-the-same)
+        28. [Relationship Overview Diagram](#relationship-overview-diagram)
 5. [General CLI Commands](#general-cli-commands)
 6. [Specific CLI Commands](#specific-cli-commands)
 7. [Events And Listeners](#events-and-listeners)
@@ -70,14 +74,17 @@ A Laravel 12 CRM system
 ---
 
 ## General Information
+
 This project is an all-in-one CRM/ERP system designed to help businesses manage customers, leads, sales pipelines, projects, and internal workflows from a single, unified platform. It is built with Laravel 12, following established Laravel open-source conventions and best practices. The architecture emphasises clean separation of concerns, modular design, extensibility, and long-term maintainability.
 
 ### Key Highlights
+
 - **Built in Laravel 12** - Leveraging the latest framework features for performance, security, and scalability
 - **Modular & Extensible** - Easily add new modules or integrate with external APIs
 - **User-Friendly Interface** - Modern, responsive design for smooth navigation and usability
 
 ### Core Features
+
 - **Customer & Lead Management** - Organise contacts, track leads, and maintain detailed profiles
 - **Role-Based Access Control** - Secure user management with customizable permissions
 - **Analytics & Reporting** - Gain insights into business performance with dynamic dashboards
@@ -85,6 +92,7 @@ This project is an all-in-one CRM/ERP system designed to help businesses manage 
 ### Key Functional Areas
 
 #### CRM Features
+
 - **Lead management & qualification** - Capture leads from multiple sources, track status, score and qualify prospects, and convert them into deals or customers
 - **Deal pipelines & stage tracking** - Visual sales pipelines with configurable stages, probability tracking, forecasting, and performance insights
 - **Contact & company management** - Centralised database of individuals and organisations, including communication history, linked deals, and related projects
@@ -92,6 +100,7 @@ This project is an all-in-one CRM/ERP system designed to help businesses manage 
 - **Task assignment & follow-ups** - Assign tasks to team members, set deadlines, reminders, and ensure timely follow-ups
 
 #### ERP Features
+
 - **Project management** - Manage projects from initiation to completion, assign team members, track progress, and monitor milestones
 - **Invoicing & billing** - Generate invoices, manage payment statuses, track outstanding balances, and maintain financial records
 - **Role-based access control** - Fine-grained permission system to control access to modules, actions, and sensitive data
@@ -105,28 +114,33 @@ This project is an all-in-one CRM/ERP system designed to help businesses manage 
 Follow these steps to set up the project locally:
 
 1. Clone the repository
+
 ```bash
 git clone https://github.com/MattYeend/CRM.git
 cd CRM
 ```
 
 2. Install PHP dependencies
+
 ```bash
 composer install
 ```
 
 3. Install Node dependencies
+
 ```bash
 npm install && npm run build
 ```
 
 4. Set up environment
+
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
 5. Add the following lines to your `.env` file, and put in your own variables:
+
 ```bash
 STRIPE_KEY=your-stripe-key
 STRIPE_SECRET=your-stripe-secret
@@ -135,24 +149,29 @@ STRIPE_WEBHOOK_SECRET=your-stripe-webhook-secret
 CASHIER_CURRENCY=GBP
 CASHIER_CURRENCY_LOCALE=en_GB
 ```
+
 Note: Ensure your `User` model uses Laravel Cashier's `Billable` trait so Stripe customers and payments work correctly.
 
 6. Configure your database in `.env` and run migrations:
+
 ```bash
 php artisan migrate
 ```
 
 7. Seed all tables if needed:
+
 ```bash
 php artisan db:seed
 ```
 
 8. Set up storage
+
 ```bash
 php artisan storage:link
 ```
 
 9. Run the development servers
+
 ```bash
 php artisan serve
 npm run dev
@@ -161,6 +180,7 @@ npm run dev
 ---
 
 ## How To Contribute
+
 This project follows the standard Laravel OSS fork-and-pull-request workflow, used by most open-source Laravel packages and applications.
 
 1. Fork the repository.
@@ -178,12 +198,15 @@ Please follow the code style and commit message conventions.
 ---
 
 ### Commit Conventions
+
 To keep the commit history clean and consistent, please follow these conventions:
+
 ```graphql
 #issue-number Short, clear description in the imperative mood
 ```
 
 Examples
+
 ```graphql
 #42 Add customer export feature
 #87 Fix validation for lead creation
@@ -191,6 +214,7 @@ Examples
 ```
 
 Guidelines:
+
 - Reference an issue number where applicable
 - Use the imperative mood ("Add", not "Added")
 - Keep commits focused and descriptive
@@ -200,7 +224,9 @@ Maintainers may squash commits on merge.
 ---
 
 ### Maintainer Merge Strategy
+
 For clarity and transparency:
+
 - External contributors do not merge directly
 - All changes enter the project via Pull Requests
 - Pull Requests are reviewed before merging
@@ -215,7 +241,9 @@ The `main` and `develop` branches are protected and should never be pushed to di
 ## Information
 
 ### Core Sales Flow
+
 The typical lifecycle in the CRM looks like:
+
 ```bash
 Lead
    ↓
@@ -230,6 +258,7 @@ Invoice
 Products can be attached to deals, quotes, and orders via pivot tables.
 
 ### Leads
+
 `Lead`
 
 Represents a potential customer before becoming a deal.
@@ -249,6 +278,7 @@ These are attached using polymorphic relationships.
 A lead can be converted into a Deal via the `convertToDeal()` method.
 
 Built-in accessors:
+
 ```bash
 $lead->full_name          # Concatenated first and last name
 $lead->display_name       # Full name if available, otherwise email
@@ -262,6 +292,7 @@ $lead->is_low_priority    # bool — no contact in 60+ days
 ```
 
 Built-in scopes:
+
 ```bash
 Lead::stale()                    # updated_at older than 30 days
 Lead::hot()                      # updated_at within last 7 days
@@ -279,11 +310,13 @@ Lead::real()                     # exclude test records
 ```
 
 ### Deals
+
 `Deal`
 
 Deals represent active sales opportunities.
 
 Key relationships:
+
 - `company_id → Company`
 - `contact_id → Contact`
 - `owner_id → User`
@@ -291,6 +324,7 @@ Key relationships:
 - `stage_id → PipelineStage`
 
 A deal can have:
+
 - Products (many-to-many via `deal_products`)
 - Tasks (polymorphic)
 - Notes (polymorphic)
@@ -298,6 +332,7 @@ A deal can have:
 - Activities (polymorphic)
 
 Example:
+
 ```bash
 Deal
  ├─ belongsTo Company
@@ -315,6 +350,7 @@ Deal
 Status constants: `open`, `won`, `lost`, `archived`
 
 Built-in accessors:
+
 ```bash
 $deal->is_open           # bool
 $deal->is_won            # bool
@@ -325,6 +361,7 @@ $deal->formatted_value   # e.g. "5000.00"
 ```
 
 Built-in scopes:
+
 ```bash
 Deal::open()
 Deal::won()
@@ -350,6 +387,7 @@ Deals are organised inside pipelines.
 Represents a sales pipeline.
 
 Example:
+
 ```bash
 Sales Pipeline
  ├─ Prospect
@@ -360,6 +398,7 @@ Sales Pipeline
 ```
 
 Built-in accessors:
+
 ```bash
 $pipeline->is_default    # bool
 $pipeline->stage_count   # int
@@ -367,6 +406,7 @@ $pipeline->deal_count    # int
 ```
 
 Built-in scopes:
+
 ```bash
 Pipeline::default()
 Pipeline::withDeals()
@@ -374,9 +414,10 @@ Pipeline::withoutDeals()
 Pipeline::real()
 ```
 
-#### PipelineStages
+#### Pipeline Stages
 
 Each stage belongs to a pipeline.
+
 ```bash
 Pipeline
    └─ hasMany PipelineStages
@@ -386,6 +427,7 @@ Deal
 ```
 
 Built-in accessors:
+
 ```bash
 $stage->is_open      # bool — neither won nor lost
 $stage->is_won       # bool
@@ -394,6 +436,7 @@ $stage->deal_count   # int
 ```
 
 Built-in scopes:
+
 ```bash
 PipelineStage::won()
 PipelineStage::lost()
@@ -404,23 +447,27 @@ PipelineStage::real()
 ```
 
 ### Quotes
+
 `Quote`
 
 Quotes represent proposed pricing before an order is placed.
 
 Quotes can contain:
+
 - Products (many-to-many via `quote_products`)
 - Pricing data
 - Associated company/contact
 - Activities / tasks / notes / attachments
 
 Typical flow:
+
 ```bash
 Deal → Quote
 Quote → Products
 ```
 
 Built-in accessors:
+
 ```bash
 $quote->is_sent              # bool — sent_at is populated
 $quote->is_accepted          # bool — accepted_at is populated
@@ -430,6 +477,7 @@ $quote->formatted_total      # e.g. "1440.00"
 ```
 
 Built-in scopes:
+
 ```bash
 Quote::sent()
 Quote::unsent()
@@ -441,18 +489,21 @@ Quote::real()
 ```
 
 ### Orders
+
 `Order`
 
 Orders represent confirmed purchases.
 
 Relationships:
-- Products via `order_products`
+
+- Products via `order_products
 - Likely linked to:
     - Company
     - Contact
     - Quote
 
 Example structure:
+
 ```bash
 Order
  ├─ belongsTo Company
@@ -463,6 +514,7 @@ Order
 Status constants: `pending`, `paid`, `failed`
 
 Helper methods:
+
 ```bash
 $order->getMarkAsPaid()      # marks as paid, sets paid_at
 $order->getMarkAsFailed()    # marks as failed, sets paid_at
@@ -470,6 +522,7 @@ $order->getMarkAsPending()   # marks as pending, clears paid_at
 ```
 
 Built-in scopes:
+
 ```bash
 Order::pending()
 Order::failed()
@@ -480,17 +533,20 @@ Order::real()
 ```
 
 ### Invoices
+
 `Invoice`
 
 Invoices represent billing documents.
 
 Invoices contain `InvoiceItems`, which store line items.
+
 ```bash
 Invoice
    └─ hasMany InvoiceItems
 ```
 
 `InvoiceItem` includes
+
 ```bash
 invoice_id
 product_id
@@ -505,6 +561,7 @@ Typical flow:
 Status constants: `draft`, `sent`, `paid`, `overdue`, `cancelled`
 
 Built-in accessors:
+
 ```bash
 $invoice->is_overdue             # bool
 $invoice->is_paid                # bool
@@ -517,6 +574,7 @@ $invoice->formatted_total        # e.g. "1440.00"
 ```
 
 Built-in scopes:
+
 ```bash
 Invoice::draft()
 Invoice::sent()
@@ -532,19 +590,27 @@ Invoice::real()
 ```
 
 ### Products
+
 `Product`
 
 Products represent goods or services that can be sold.
 
 Products are attached to multiple entities:
+
 ```bash
 Product
  ├─ belongsToMany Deals (deal_products)
  ├─ belongsToMany Quotes (quote_products)
- └─ belongsToMany Orders (order_products)
+ ├─ belongsToMany Orders (order_products)
+ ├─ hasMany ProductStockMovements
+ ├─ morphMany Activities
+ ├─ morphMany Tasks
+ ├─ morphMany Notes
+ └─ morphMany Attachments
 ```
 
 These pivot tables store:
+
 ```bash
 quantity
 price
@@ -555,6 +621,7 @@ timestamps
 Status constants: `active`, `discontinued`, `pending`, `out_of_stock`
 
 Built-in accessors:
+
 ```bash
 $product->is_active          # bool
 $product->is_discontinued    # bool
@@ -564,6 +631,7 @@ $product->formatted_price    # e.g. "19.99"
 ```
 
 Built-in scopes:
+
 ```bash
 Product::active()
 Product::discontinued()
@@ -576,10 +644,58 @@ Product::real()
 Product::search($term)
 ```
 
+### Product Stock Movements
+
+`ProductStockMovement`
+
+Tracks individual stock movement events for a product.
+
+Key relationships:
+
+- `product_id → Product`
+- `created_by → User`
+
+Movement type constants: `in`, `out`, `adjustment`, `transfer`, `return`
+
+Notable fields:
+
+```bash
+type
+quantity
+quantity_before
+quantity_after
+reference
+notes
+```
+
+Built-in helpers:
+
+```bash
+$movement->getIsInbound()    # bool — type is 'in' or 'return'
+$movement->getIsOutbound()   # bool — type is 'out'
+```
+
+Built-in scopes:
+
+```bash
+ProductStockMovement::ofType($type)
+ProductStockMovement::inbound()
+ProductStockMovement::outbound()
+ProductStockMovement::forProduct($productId)
+ProductStockMovement::real()
+```
+Example:
+```bash
+Product
+ └─ hasMany ProductStockMovements
+ ```
+
 ### Parts
+
 `Part`
 Parts represent physical components, materials, or stock items. They sit on the ERP/inventory side of the system and are linked to a `Product`, a `PartCategory`, and one or more `Suppliers`.
 Key relationships:
+
 - `product_id` → `Product` (the parent product this part belongs to)
 - `category_id` → `PartCategory` (the part's classification)
 - `supplier_id` → `Supplier` (the primary/default supplier)
@@ -591,6 +707,7 @@ Images (via `PartImage`)
 A preferred supplier (filtered via the `part_suppliers` pivot where `is_preferred = true`)
 
 Example:
+
 ```bash
 Part
  ├─ belongsTo Product
@@ -607,6 +724,7 @@ Part
 ```
 
 Notable fields:
+
 ```bash
 sku         # Internal stock-keeping unit
 part_number # Manufacturer or supplier part number
@@ -633,6 +751,7 @@ Part type constants: `raw_material`, `finished_good`, `consumable`, `spare_part`
 Part status constants: `active`, `discontinued`, `pending`, `out_of_stock`
 
 Built-in scopes:
+
 ```bash
 Part::active()
 Part::lowStock()
@@ -649,6 +768,7 @@ Part::search($term)
 ```
 
 Built-in helpers:
+
 ```bash
 $part->getIsLowStock()        # bool
 $part->getIsOutOfStock()      # bool
@@ -658,10 +778,12 @@ $part->getHasBom()            # bool
 ```
 
 ### Part Images
+
 `PartImage`
 Part images store one or more images associated with a part.
 
 Key relationships:
+
 - `part_id → Part`
 
 ```bash
@@ -670,6 +792,7 @@ PartImage
 ```
 
 Notable fields:
+
 ```bash
 part_id
 image        # File path or storage URL of the image
@@ -681,6 +804,7 @@ sort_order   # Controls display order (parts are ordered by this)
 Enforced constraint: only one image per part may have `is_primary = true`. When a new primary image is saved, all other images for that part are automatically set to `is_primary = false` via a model `saving` event.
 
 Built-in accessors:
+
 ```bash
 $image->image_url                # Full storage URL of the image
 $image->thumbnail_url            # URL of the thumbnail version
@@ -688,12 +812,14 @@ $image->thumbnail_or_image_url   # Thumbnail URL with fallback to main image
 ```
 
 Built-in scopes:
+
 ```bash
 PartImage::primary()    # where is_primary = true
 PartImage::real()       # exclude test records
 ```
 
 From the Part model's perspective:
+
 ```bash
 Part
  ├─ hasMany PartImages (images — ordered by sort_order)
@@ -701,10 +827,12 @@ Part
 ```
 
 ### Part Categories
+
 `PartCategory`
 Part categories allow parts to be organised into a hierarchical taxonomy. Categories can be nested — a category can have a parent category and many child categories.
 
 Key relationships:
+
 - `parent_id → PartCategory` (self-referential — the parent category)
 - `children → PartCategory` (self-referential — subcategories)
 - `parts → Part`
@@ -717,6 +845,7 @@ PartCategory
 ```
 
 Notable fields:
+
 ```bash
 parent_id    # Nullable — null means a top-level category
 name
@@ -727,23 +856,27 @@ description
 The `slug` is automatically generated from name using `Str::slug()` via model boot events. If the name is updated, the slug regenerates automatically.
 
 Built-in accessors:
+
 ```bash
 $category->slug        # URL-friendly slug generated from name
 $category->full_path   # e.g. "Electronics > Connectors > PCB Connectors"
 ```
 
 Built-in utility methods:
+
 ```bash
 $category->ancestors()   # Collection of parent categories from top-most down
 ```
 
 Built-in scopes:
+
 ```bash
 PartCategory::withName($name)
 PartCategory::real()
 ```
 
 Example hierarchy:
+
 ```bash
 Electronics                  # parent_id = null (top-level)
  ├─ Resistors                # parent_id = Electronics.id
@@ -754,16 +887,19 @@ Electronics                  # parent_id = null (top-level)
 ```
 
 ### Part Serial Numbers
+
 `PartSerialNumber`
 
 Tracks uniquely identifiable serialised instances of a part.
 
 Key relationships:
+
 - `part_id → Part`
 
 Status constants: `in_stock`, `sold`, `returned`, `scrapped`
 
 Notable fields:
+
 ```bash
 serial_number
 status
@@ -773,12 +909,14 @@ expires_at
 ```
 
 Built-in helpers:
+
 ```bash
 $serial->getIsExpired()              # bool — expiry date has passed
 $serial->getIsExpiringSoon($days)    # bool — expiry within $days (default 30)
 ```
 
 Built-in scopes:
+
 ```bash
 PartSerialNumber::inStock()
 PartSerialNumber::expiringSoon($days)
@@ -787,17 +925,20 @@ PartSerialNumber::real()
 ```
 
 ### Part Stock Movements
+
 `PartStockMovement`
 
 Tracks individual stock movement events for a part.
 
 Key relationships:
+
 - `part_id → Part`
 - `created_by → User`
 
 Movement type constants: `in`, `out`, `adjustment`, `transfer`, `return`
 
 Notable fields:
+
 ```bash
 type
 quantity
@@ -808,12 +949,14 @@ notes
 ```
 
 Built-in helpers:
+
 ```bash
 $movement->getIsInbound()    # bool — type is 'in' or 'return'
 $movement->getIsOutbound()   # bool — type is 'out'
 ```
 
 Built-in scopes:
+
 ```bash
 PartStockMovement::ofType($type)
 PartStockMovement::inbound()
@@ -823,11 +966,13 @@ PartStockMovement::real()
 ```
 
 ### Suppliers
+
 `Supplier`
 
 Suppliers represent external companies or individuals that provide parts. They hold full contact, address, and commercial details.
 
 Key relationships:
+
 - `parts` (many-to-many via `part_suppliers`)
 - `partSuppliers` (direct access to pivot records via `PartSupplier`)
 
@@ -839,6 +984,7 @@ Supplier
 ```
 
 Notable fields:
+
 ```bash
 name / code
 email / phone / website
@@ -852,12 +998,14 @@ notes
 ```
 
 Built-in accessors:
+
 ```bash
 $supplier->full_address    # Combined address as a single formatted string
 $supplier->website_host    # Bare domain without scheme or www
 ```
 
 Built-in scopes:
+
 ```bash
 Supplier::active()
 Supplier::inactive()
@@ -870,6 +1018,7 @@ Supplier::search($term)
 The name attribute is filtered through the `HasTestPrefix` trait — test suppliers are automatically prefixed when `is_test = true`.
 
 ### Part Suppliers (Pivot)
+
 `PartSupplier`
 The `part_suppliers` pivot table links parts to suppliers and stores supplier-specific pricing and ordering information for each part-supplier combination. It extends Laravel's `Pivot` class rather than a standard `Model`.
 
@@ -884,12 +1033,14 @@ part_suppliers
 ```
 
 Built-in accessors:
+
 ```bash
 $pivot->formatted_unit_cost          # e.g. "12.50"
 $pivot->getTotalCostFor($quantity)   # float — quantity * unit_cost
 ```
 
 Built-in scopes:
+
 ```bash
 PartSupplier::preferred()
 PartSupplier::forPart($partId)
@@ -898,6 +1049,7 @@ PartSupplier::real()
 ```
 
 The `PartSupplier` pivot is used explicitly when marking preferred suppliers:
+
 ```bash
 Part::preferredSupplier()
    └─ belongsToMany Suppliers via part_suppliers
@@ -905,6 +1057,7 @@ Part::preferredSupplier()
 ```
 
 Relationships on the pivot:
+
 ```bash
 PartSupplier
  ├─ belongsTo Part
@@ -913,6 +1066,7 @@ PartSupplier
 
 A part may have one primary supplier (set directly via `supplier_id` on the `parts` table) and many additional suppliers via the pivot, of which one can be flagged as `is_preferred`.
 Full supplier relationship summary for a part:
+
 ```bash
 Part
  ├─ primarySupplier()    → belongsTo Supplier (via supplier_id — quick default)
@@ -921,17 +1075,20 @@ Part
 ```
 
 ### Bill Of Materials (BOM)
+
 `BillOfMaterials`
 
 Defines how parts are assembled - i.e. which components (child parts) are required to build a parent part.
 
 Core Concepts
+
 - Parent Part → the assembly (finished or intermediate)
 - Child Part → the component used in that assembly
 - Quantity → how much of the child is required
 
 Relationships
 From `Part` model
+
 ```php
 // Components required to build this part
 public function billOfMaterials(): HasMany
@@ -947,6 +1104,7 @@ public function usedInAssemblies(): HasMany
 ```
 
 From `BillOfMaterial` model
+
 ```bash
 BillOfMaterial
  ├─ belongsTo Part (parentPart)
@@ -958,6 +1116,7 @@ BillOfMaterial
 ```
 
 Structure
+
 ```bash
 Part (Parent)
  └─ hasMany BillOfMaterial
@@ -970,6 +1129,7 @@ Part (Child)
 ```
 
 Fields
+
 ```bash
 parent_part_id      # Assembly
 child_part_id       # Component
@@ -989,6 +1149,7 @@ soft deletes...
 ```
 
 Built-in helpers:
+
 ```bash
 $bom->effectiveQuantity()   # quantity adjusted for scrap percentage
 $bom->lineCost()            # direct cost for this BOM line
@@ -996,6 +1157,7 @@ $bom->totalCost()           # recursive cost including sub-assemblies
 ```
 
 Built-in scopes:
+
 ```bash
 BillOfMaterial::forParentPart($partId)
 BillOfMaterial::forChildPart($partId)
@@ -1004,13 +1166,16 @@ BillOfMaterial::real()
 ```
 
 Example
+
 ```bash
 Bike (Parent Part)
  ├─ Wheel (x2)
  ├─ Frame (x1)
  └─ Chain (x1)
 ```
+
 Stored as
+
 ```bash
 parent_part_id = Bike
 child_part_id  = Wheel
@@ -1022,16 +1187,20 @@ quantity       = 1
 ```
 
 ### Activities
+
 `Activity`
 
 Activities are event logs or interactions related to a record.
 
 They are polymorphic using:
+
 ```bash
 subject_type
 subject_id
 ```
+
 Meaning activities can belong to:
+
 - Leads
 - Deals
 - Quotes
@@ -1040,12 +1209,14 @@ Meaning activities can belong to:
 - Contacts
 
 Example:
+
 ```bash
 Activity
    └─ morphTo subject
 ```
 
 Examples of activities:
+
 - call made
 - email sent
 - meeting held
@@ -1053,6 +1224,7 @@ Examples of activities:
 - note added
 
 Subject type constants:
+
 ```bash
 Activity::ACTIVITY_COMPANY   # Company::class
 Activity::ACTIVITY_DEAL      # Deal::class
@@ -1061,6 +1233,7 @@ Activity::ACTIVITY_USER      # User::class
 ```
 
 Built-in scopes:
+
 ```bash
 Activity::assignedTo($userId)
 Activity::forSubjectType($type)
@@ -1069,23 +1242,27 @@ Activity::real()
 ```
 
 ### Tasks
+
 `Task`
 
 Tasks are actionable to-dos assigned to users.
 
 Tasks are also polymorphic:
+
 ```bash
 taskable_type
 taskable_id
 ```
 
 Meaning tasks can belong to:
+
 - Deals
 - Leads
 - Contacts
 - Companies
 
 Example:
+
 ```bash
 Task
    └─ morphTo taskable
@@ -1096,6 +1273,7 @@ Status constants: `pending`, `completed`, `cancelled`
 Priority constants: `low`, `medium`, `high`
 
 Built-in accessors:
+
 ```bash
 $task->is_overdue      # bool — past due date and not completed/cancelled
 $task->is_pending      # bool
@@ -1104,6 +1282,7 @@ $task->is_cancelled    # bool
 ```
 
 Built-in scopes:
+
 ```bash
 Task::status($status)
 Task::priority($priority)
@@ -1119,17 +1298,20 @@ Task::searchTitle($term)
 ```
 
 ### Attachments
+
 `Attachment`
 
 Attachments allow files to be uploaded to many entities.
 
 They use a polymorphic relationship:
+
 ```bash
 attachable_type
 attachable_id
 ```
 
 So attachments can belong to:
+
 - Deals
 - Leads
 - Contacts
@@ -1138,12 +1320,14 @@ So attachments can belong to:
 - Orders
 
 Example:
+
 ```bash
 Attachment
    └─ morphTo attachable
 ```
 
 Attachable type constants:
+
 ```bash
 Attachment::ATTACHABLE_COMPANY
 Attachment::ATTACHABLE_DEAL
@@ -1152,6 +1336,7 @@ Attachment::ATTACHABLE_USER
 ```
 
 Built-in accessors:
+
 ```bash
 $attachment->size_formatted              # e.g. "1.25 MB"
 $attachment->mime_type                   # e.g. "application/pdf"
@@ -1161,6 +1346,7 @@ $attachment->download_url                # authenticated download URL
 ```
 
 Built-in scopes:
+
 ```bash
 Attachment::real()
 Attachment::attachableType($type)
@@ -1170,23 +1356,27 @@ Attachment::attachableId($id)
 When an attachment is deleted, the underlying file is automatically removed from storage via the `deleting` model event.
 
 ### Notes
+
 `Note`
 
 Notes are internal comments.
 
 They use a polymorphic relationship:
+
 ```bash
 notable_type
 notable_id
 ```
 
 So notes can be attached to:
+
 - Deals
 - Leads
 - Contacts
 - Companies
 
 Notable type constants:
+
 ```bash
 Note::NOTABLE_COMPANY
 Note::NOTABLE_DEAL
@@ -1195,6 +1385,7 @@ Note::NOTABLE_USER
 ```
 
 Built-in scopes:
+
 ```bash
 Note::ofNotableType($type)    # filter by class basename e.g. "Company"
 Note::forNotable($model)      # filter by a specific model instance
@@ -1202,7 +1393,9 @@ Note::real()
 ```
 
 ### Users, Roles, and Permissions
+
 #### Users
+
 `User`
 
 Users represent system accounts.
@@ -1210,6 +1403,7 @@ Users represent system accounts.
 Many records reference users for ownership and auditing.
 
 Examples:
+
 ```bash
 owner_id
 created_by
@@ -1219,6 +1413,7 @@ restored_by
 ```
 
 Example from the `Deal` model:
+
 ```bash
 Deal
  ├─ owner() → User
@@ -1229,6 +1424,7 @@ Deal
 ```
 
 Built-in helper methods:
+
 ```bash
 $user->isSuperAdmin()               # bool
 $user->isAdmin()                    # bool
@@ -1241,6 +1437,7 @@ $user->clearPermissionCache()       # clears cached permissions
 ```
 
 Built-in scopes:
+
 ```bash
 User::admins()
 User::superAdmins()
@@ -1249,21 +1446,26 @@ User::real()
 ```
 
 #### Roles
+
 `Role`
 
 Roles group permissions.
 
 Example roles:
+
 - User
 - Admin
 - Super Admin
 
 Each User belongs to a single Role.
+
 ```bash
 User
    └─ belongsTo Role
 ```
+
 This means:
+
 - One role can be assigned to many users
 - Each user can have only one role
 
@@ -1273,6 +1475,7 @@ Role
 ```
 
 Role ID constants:
+
 ```bash
 Role::ROLE_USER         # 1
 Role::ROLE_ADMIN        # 2
@@ -1280,6 +1483,7 @@ Role::ROLE_SUPER_ADMIN  # 3
 ```
 
 Built-in accessors:
+
 ```bash
 $role->is_admin        # bool
 $role->is_super_admin  # bool
@@ -1287,6 +1491,7 @@ $role->user_count      # int
 ```
 
 Built-in scopes:
+
 ```bash
 Role::admins()
 Role::forUser($userId)
@@ -1294,11 +1499,13 @@ Role::withPermission($permissionName)
 ```
 
 #### Permissions
+
 `Permission`
 
 Permissions define system capabilities.
 
 Examples:
+
 - create_deal
 - edit_invoice
 - delete_product
@@ -1307,6 +1514,7 @@ Permissions are assigned to roles.
 `Role → belongsToMany Permissions`
 
 This creates a structure like:
+
 ```bash
 User
    ↓
@@ -1316,6 +1524,7 @@ Permissions
 ```
 
 Built-in helper methods:
+
 ```bash
 $permission->hasRole($roleName)          # bool
 $permission->hasAnyRole($roleNames)      # bool
@@ -1323,12 +1532,14 @@ $permission->hasAllRoles($roleNames)     # bool
 ```
 
 Built-in accessors:
+
 ```bash
 $permission->is_assigned    # bool — assigned to at least one role
 $permission->role_count     # int
 ```
 
 Built-in scopes:
+
 ```bash
 Permission::assigned()
 Permission::unassigned()
@@ -1337,14 +1548,17 @@ Permission::search($term)
 ```
 
 ### Companies
+
 `Company`
 
 Companies represent organisations within the CRM.
 
 Key relationships:
+
 - `industry_id → Industry`
 
 A company can have:
+
 - Deals (one-to-many)
 - Invoices (one-to-many)
 - Activities (polymorphic)
@@ -1353,6 +1567,7 @@ A company can have:
 - Attachments (polymorphic)
 
 Example:
+
 ```bash
 Company
  ├─ belongsTo Industry
@@ -1365,6 +1580,7 @@ Company
 ```
 
 Built-in accessors:
+
 ```bash
 $company->contact_full_name          # Combined first and last name of the primary contact
 $company->full_address               # Full postal address as a single formatted string
@@ -1374,6 +1590,7 @@ $company->website_host               # Host portion of the website URL without s
 ```
 
 Built-in scopes:
+
 ```bash
 Company::real()
 Company::inIndustry($industryId)
@@ -1384,11 +1601,13 @@ Company::withOutstandingInvoices()
 ```
 
 ### Industries
+
 `Industry`
 
 Industries are used to classify and group companies within the CRM.
 
 Key relationships:
+
 - `companies → Company` (one-to-many)
 
 ```bash
@@ -1397,6 +1616,7 @@ Industry
 ```
 
 Notable fields:
+
 ```bash
 name
 slug    # Auto-generated from name on create; regenerated on name change
@@ -1405,6 +1625,7 @@ slug    # Auto-generated from name on create; regenerated on name change
 The `slug` is automatically generated from the name using `Str::slug()` via model boot events. If the name is updated, the slug regenerates automatically.
 
 Example:
+
 ```bash
 Industry
  ├─ Technology
@@ -1416,6 +1637,7 @@ Industry
 ```
 
 Audit relationships:
+
 ```bash
 Industry
  ├─ belongsTo User (creator)
@@ -1425,11 +1647,13 @@ Industry
 ```
 
 ### Job Titles
+
 `JobTitle`
 
 Job titles represent the position or role of a user within their organisation.
 
 Key relationships:
+
 - `users → User` (one-to-many)
 
 ```bash
@@ -1438,6 +1662,7 @@ JobTitle
 ```
 
 Notable fields:
+
 ```bash
 title
 short_code
@@ -1445,6 +1670,7 @@ group
 ```
 
 Title group constants:
+
 ```bash
 JobTitle::GROUP_C_SUITE      # CEO, CTO, CFO, COO, etc.
 JobTitle::GROUP_EXECUTIVE    # President, VP, EVP, SVP, MD, Director, etc.
@@ -1452,6 +1678,7 @@ JobTitle::GROUP_DIRS         # MD, Director, Technical Director, Sales Director,
 ```
 
 Built-in accessors:
+
 ```bash
 $jobTitle->is_csuite      # bool — title is in GROUP_C_SUITE
 $jobTitle->is_executive   # bool — title is in GROUP_EXECUTIVE
@@ -1460,6 +1687,7 @@ $jobTitle->user_count     # int
 ```
 
 Built-in scopes:
+
 ```bash
 JobTitle::csuite()
 JobTitle::executive()
@@ -1470,11 +1698,13 @@ JobTitle::search($term)
 ```
 
 ### Learnings
+
 `Learning`
 
 Learnings represent training or educational resources that can be assigned to users.
 
 Key relationships:
+
 - `questions → LearningQuestion` (one-to-many)
 - `users → User` (many-to-many via `LearningUser` pivot)
 
@@ -1511,15 +1741,18 @@ LearningUser::realForUser($userId)
 ```
 
 ### Logs
+
 `Log`
 
 The `Log` model provides a centralised audit trail for user actions and system events throughout the application.
 
 Key relationships:
+
 - `loggedInUser → User` (the user who performed the action)
 - `relatedToUser → User` (the user related to the action, if applicable)
 
 Notable fields:
+
 ```bash
 action_id           # Integer constant identifying the action type
 data                # JSON array of additional context
@@ -1528,6 +1761,7 @@ related_to_user_id  # The affected user (optional)
 ```
 
 Logging a new entry:
+
 ```php
 Log::log(Log::ACTION_CREATE_USER, ['new_user_id' => $user->id], Auth::id(), $user->id);
 ```
@@ -1535,6 +1769,7 @@ Log::log(Log::ACTION_CREATE_USER, ['new_user_id' => $user->id], Auth::id(), $use
 Action constant groups include: Login/Logout, User Management, MFA/Settings, Role/Permission Management, Errors/Cache, Activities, Attachments, Companies, Deals, Invoices, Invoice Items, Job Titles, Leads, Learnings, Notes, Orders, Permissions, Pipelines, Pipeline Stages, Products, Quotes, Roles, Tasks, Parts, Suppliers, Part Categories, Part Images, Part Stock Movements, Part Serial Numbers, Bill Of Materials, and Company Industries.
 
 Built-in scopes:
+
 ```bash
 Log::ofAction($action)   # filter by action_id constant
 ```
@@ -1548,6 +1783,7 @@ No - they serve different purposes.
 Activities represent things that happened.
 
 Examples:
+
 - Call logged
 - Meeting recorded
 - Email sent
@@ -1559,11 +1795,13 @@ Examples:
 Tasks represent things that need to be done.
 
 Examples:
+
 - Call customer tomorrow
 - Send proposal
 - Follow up next week
 
 ### Relationship Overview Diagram
+
 ```bash
 User
  ├─ belongsTo Role
@@ -1624,6 +1862,91 @@ Part
  ├─ hasMany PartSerialNumbers
  ├─ hasMany BillOfMaterial (as parent)
  └─ hasMany BillOfMaterial (as child/component)
+
+ ProductStockMovement
+ ├─ belongsTo Product
+ └─ belongsTo User (createdBy)
+
+ PartStockMovement
+ ├─ belongsTo Part
+ └─ belongsTo User (createdBy)
+
+ Product
+ ├─ belongsToMany Deals (via deal_products pivot)
+ ├─ belongsToMany Quotes (via quote_products pivot)
+ ├─ belongsToMany Orders (via order_products pivot)
+ ├─ hasMany InvoiceItems
+ ├─ hasMany ProductStockMovements
+ ├─ morphMany Activities
+ ├─ morphMany Tasks
+ ├─ morphMany Notes
+ ├─ morphMany Attachments
+ ├─ belongsTo User (creator)
+ ├─ belongsTo User (updater)
+ ├─ belongsTo User (deleter)
+ └─ belongsTo User (restorer)
+
+ Product
+ └─ hasMany ProductStockMovements
+      ├─ type (in, out, adjustment, transfer, return)
+      ├─ quantity_before / quantity_after
+      └─ created_by → User
+
+ Product
+ ├─ Deal → deal_products (quantity, price, total)
+ ├─ Quote → quote_products (quantity, price, total, meta)
+ ├─ Order → order_products (quantity, price, total, meta)
+ └─ Invoice → InvoiceItem (quantity, unit_price, line_total)
+
+Note
+ ├─ morphTo Notable (Company, Deal, Task, User)
+ ├─ belongsTo User (user_id optional)
+ ├─ belongsTo User (created_by)
+ ├─ belongsTo User (updated_by)
+ ├─ belongsTo User (deleted_by)
+ ├─ belongsTo User (restored_by)
+ ├─ morphMany Attachments
+ ├─ morphMany Activities
+ ├─ morphMany Tasks
+ └─ belongsToMany Users (via NoteUser pivot)
+
+ NoteUser (pivot)
+ ├─ belongsTo Note
+ ├─ belongsTo User
+ ├─ belongsTo User (created_by)
+ ├─ belongsTo User (updated_by)
+ ├─ belongsTo User (deleted_by)
+ └─ belongsTo User (restored_by)
+
+Task
+ ├─ morphTo Taskable (Company, Deal, Task, User)
+ ├─ belongsTo User (assigned_to)
+ ├─ belongsTo User (created_by)
+ ├─ belongsTo User (updated_by)
+ ├─ belongsTo User (deleted_by)
+ ├─ belongsTo User (restored_by)
+ ├─ morphMany Activities
+ ├─ morphMany Attachments
+ └─ morphMany Notes
+
+  Learning
+  ├─ hasMany Questions
+  ├─ belongsToMany Users (via LearningUser)
+  ├─ morphMany Activities
+  ├─ morphMany Tasks
+  ├─ morphMany Notes
+  └─ morphMany Attachments
+
+ LearningQuestion
+  ├─ belongsTo Learning
+  └─ hasMany Answers
+
+ LearningAnswer
+  └─ belongsTo Question
+
+ LearningUser (pivot)
+  ├─ belongsTo Learning
+  └─ belongsTo User
 ```
 
 ---
@@ -1677,6 +2000,7 @@ Event listeners are registered in `AppServiceProvider::boot()` using `Event::lis
 ---
 
 ## Sponsor The Project
+
 If you find this project useful, consider sponsoring it to support future development and maintenance.<br>
 <a href="https://www.buymeacoffee.com/mattyeend">☕ Buy Me a Coffee</a><br>
 <a href="https://github.com/sponsors/MattYeend">💸 Personal GitHub Sponsor</a><br>
