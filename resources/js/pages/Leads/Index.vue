@@ -115,10 +115,10 @@ onMounted(() => loadLeads())
                 <tbody>
                     <tr v-for="lead in leads" :key="lead.id" class="border-t">
                         <td class="p-2 font-medium">{{ lead.display_name }}</td>
-                        <td class="p-2 text-gray-500">{{ lead.email ?? '—' }}</td>
-                        <td class="p-2 text-gray-500">{{ lead.phone ?? '—' }}</td>
-                        <td class="p-2 text-gray-500">{{ lead.source ?? '—' }}</td>
-                        <td class="p-2 text-gray-500">{{ lead.owner?.name ?? '—' }}</td>
+                        <td class="p-2">{{ lead.email ?? '—' }}</td>
+                        <td class="p-2">{{ lead.phone ?? '—' }}</td>
+                        <td class="p-2">{{ lead.source ?? '—' }}</td>
+                        <td class="p-2">{{ lead.owner?.name ?? '—' }}</td>
                         <td class="p-2">
                             <span
                                 v-if="lead.is_hot"

@@ -183,6 +183,7 @@ onMounted(() => loadLead())
                             <a
                                 v-if="lead.email"
                                 :href="`mailto:${lead.email}`"
+                                class="text-blue-600"
                             >
                                 {{ lead.email }}
                             </a>

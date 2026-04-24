@@ -61,10 +61,10 @@ onMounted(() => loadPartCategory())
                 <div class="flex items-start justify-between mb-6">
                     <div>
                         <h1 class="text-2xl font-bold">{{ partCategory.name }}</h1>
-                        <p v-if="partCategory.full_path" class="text-sm mt-1">
+                        <p v-if="partCategory.full_path" class="text-sm text-gray-600 mt-1">
                             {{ partCategory.full_path }}
                         </p>
-                        <p v-if="partCategory.description" class="mt-2">
+                        <p v-if="partCategory.description" class="text-gray-600 mt-2">
                             {{ partCategory.description }}
                         </p>
                     </div>
@@ -101,11 +101,11 @@ onMounted(() => loadPartCategory())
                         </h3>
                         <dl class="space-y-2">
                             <div v-if="partCategory.slug" class="flex justify-between">
-                                <dt class="font-medium">Slug</dt>
-                                <dd class="text-xs">{{ partCategory.slug }}</dd>
+                                <dt>Slug</dt>
+                                <dd>{{ partCategory.slug }}</dd>
                             </div>
                             <div v-if="partCategory.parent" class="flex justify-between">
-                                <dt class="font-medium">Parent</dt>
+                                <dt>Parent</dt>
                                 <dd>
                                     <Link
                                         :href="route('part-categories.show', { partCategory: partCategory.parent.id })"
@@ -115,7 +115,7 @@ onMounted(() => loadPartCategory())
                                 </dd>
                             </div>
                             <div v-if="partCategory.creator" class="flex justify-between">
-                                <dt class="font-medium">Created By</dt>
+                                <dt>Created By</dt>
                                 <dd>{{ partCategory.creator.name }}</dd>
                             </div>
                         </dl>

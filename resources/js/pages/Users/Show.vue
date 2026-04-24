@@ -149,7 +149,9 @@ onMounted(() => {
                         <img v-if="user.avatar_url" :src="user.avatar_url" class="w-16 h-16 rounded-full" />
                         <div>
                             <h1 class="text-2xl font-bold">{{ user.name }}</h1>
-                            <p class="text-gray-600">{{ user.email }}</p>
+                            <a :href="`mailto:${user.email}`" class="text-blue-600">
+                                {{  user.email }}
+                            </a>
                         </div>
                     </div>
 

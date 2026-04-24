@@ -115,8 +115,8 @@ onMounted(() => loadPartCategories())
                         :key="category.id"
                         class="border-t"
                     >
-                        <td class="p-2 font-medium">{{ category.name }}</td>
-                        <td class="p-2 text-xs">{{ category.full_path || '—' }}</td>
+                        <td class="p-2">{{ category.name }}</td>
+                        <td class="p-2">{{ category.full_path || '—' }}</td>
                         <td class="p-2">{{ category.parent?.name || '—' }}</td>
                         <td class="p-2 text-right tabular-nums">
                             {{ category.parts?.length ?? 0 }}

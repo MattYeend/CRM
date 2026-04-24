@@ -134,11 +134,11 @@ onMounted(() => loadLearnings())
                 <tbody>
                     <tr v-for="learning in learnings" :key="learning.id" class="border-t">
                         <td class="p-2 font-medium">{{ learning.title }}</td>
-                        <td class="p-2 text-gray-500 max-w-xs truncate">
+                        <td class="p-2 max-w-xs truncate">
                             {{ learning.description ?? '—' }}
                         </td>
-                        <td class="p-2 text-gray-500">{{ learning.creator?.name ?? '—' }}</td>
-                        <td class="p-2 text-center text-gray-500">
+                        <td class="p-2">{{ learning.creator?.name ?? '—' }}</td>
+                        <td class="p-2 text-center">
                             {{ learning.questions?.length ?? 0 }}
                         </td>
                         <td class="p-2">

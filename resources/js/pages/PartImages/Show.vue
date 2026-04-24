@@ -64,7 +64,7 @@ onMounted(() => loadPartImage())
                         <h1 class="text-2xl font-bold">
                             {{ partImage.part?.name ?? `Image #${partImage.id}` }}
                         </h1>
-                        <p v-if="partImage.part?.sku" class="text-sm mt-1">
+                        <p v-if="partImage.part?.sku" class="text-gray-600 text-sm mt-1">
                             {{ partImage.part.sku }}
                         </p>
                     </div>
@@ -105,7 +105,7 @@ onMounted(() => loadPartImage())
                             :alt="partImage.alt ?? partImage.part?.name"
                             class="w-full max-w-sm rounded border object-contain"
                         />
-                        <p v-else class="text-sm">No image available.</p>
+                        <p v-else class="text-sm text-gray-400">No image available.</p>
 
                         <div v-if="partImage.thumbnail_url" class="mt-2">
                             <p class="text-xs mb-1">Thumbnail</p>
@@ -124,7 +124,7 @@ onMounted(() => loadPartImage())
                         </h3>
                         <dl class="space-y-2 text-sm">
                             <div v-if="partImage.part" class="flex justify-between">
-                                <dt class="font-medium">Part</dt>
+                                <dt>Part</dt>
                                 <dd>
                                     <Link
                                         :href="route('parts.show', { part: partImage.part.id })"
@@ -134,11 +134,11 @@ onMounted(() => loadPartImage())
                                 </dd>
                             </div>
                             <div v-if="partImage.alt" class="flex justify-between">
-                                <dt class="font-medium">Alt Text</dt>
+                                <dt>Alt Text</dt>
                                 <dd>{{ partImage.alt }}</dd>
                             </div>
                             <div class="flex justify-between">
-                                <dt class="font-medium">Primary</dt>
+                                <dt>Primary</dt>
                                 <dd>
                                     <span
                                         class="text-xs px-2 py-0.5 rounded-full"
@@ -151,11 +151,11 @@ onMounted(() => loadPartImage())
                                 </dd>
                             </div>
                             <div v-if="partImage.sort_order != null" class="flex justify-between">
-                                <dt class="font-medium">Sort Order</dt>
+                                <dt>Sort Order</dt>
                                 <dd class="tabular-nums">{{ partImage.sort_order }}</dd>
                             </div>
-                            <div v-if="partImage.creator" class="flex justify-between">
-                                <dt class="font-medium">Created By</dt>
+                            <div v-if="partImage.creator" class="text-gray-600 flex justify-between">
+                                <dt>Created By</dt>
                                 <dd>{{ partImage.creator.name }}</dd>
                             </div>
                         </dl>

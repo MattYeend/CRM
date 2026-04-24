@@ -61,11 +61,10 @@ async function handleDelete() {
     <AppLayout :breadcrumbs="breadcrumbItems">
         <Head :title="pipeline.name" />
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                
+        <div class="p-6">
+            <div class="mx-auto border p-6 rounded shadow">
                 <div class="flex items-start justify-between mb-6">
-                    <div class="flex items-center space-x-4">
+                    <div>
                         <h1 class="text-2xl font-bold">
                             {{ pipeline.name }}
                         </h1>
@@ -202,7 +201,7 @@ async function handleDelete() {
                             </div>
                         </div>
 
-                        <div v-else class="text-sm">
+                        <div v-else class="text-sm text-gray-400">
                             This pipeline has no stages yet.
                         </div>
                     </div>

@@ -137,7 +137,7 @@ onMounted(() => loadSupplier())
                         </div>
                         <div v-if="supplier.website_host">
                             <span class="font-semibold">Website: </span>
-                            <a :href="supplier.website" target="_blank" class="text-blue-600">
+                            <a :href="supplier.website" target="_blank">
                                 {{ supplier.website_host }}
                             </a>
                         </div>

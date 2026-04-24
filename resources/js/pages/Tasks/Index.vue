@@ -128,7 +128,6 @@ onMounted(() => loadTasks())
             <table v-else class="w-full border">
                 <thead>
                     <tr>
-                        <th class="p-2 text-left">ID</th>
                         <th class="p-2 text-left">Title</th>
                         <th class="p-2 text-left">Assignee</th>
                         <th class="p-2 text-left">Priority</th>
@@ -140,7 +139,6 @@ onMounted(() => loadTasks())
                 </thead>
                 <tbody>
                     <tr v-for="task in tasks" :key="task.id" class="border-t">
-                        <td class="p-2 font-medium">{{ task.id }}</td>
                         <td class="p-2">
                             <div>{{ task.title }}</div>
                             <div v-if="task.is_overdue" class="text-xs text-red-600">
@@ -166,7 +164,7 @@ onMounted(() => loadTasks())
                         </td>
                         <td class="p-2">{{ formatDate(task.due_at) }}</td>
                         <td class="p-2">
-                            <span v-if="task.taskable_name" class="text-sm">
+                            <span v-if="task.taskable_name">
                                 {{ task.taskable_name }}
                             </span>
                             <span v-else>—</span>
