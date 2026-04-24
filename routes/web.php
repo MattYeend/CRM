@@ -748,7 +748,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'quantity',
                 'reorder_point'
             )->orderBy('quantity')
-                ->paginate(25)
+                ->paginate(10)
                 ->withQueryString(),
         ]);
     })->name('parts.stock.index');
@@ -763,7 +763,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'reorder_point'
             )->lowStock()
                 ->orderBy('quantity')
-                ->paginate(25)
+                ->paginate(10)
                 ->withQueryString(),
         ]);
     })->name('parts.stock.low');
@@ -1145,6 +1145,41 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/products/create', function () {
         return Inertia::render('Products/Create');
     })->name('products.create');
+
+    Route::get('/products/stock', function (
+        Request $request,
+        PartQueryService $service
+    ) {
+        return Inertia::render('Products/Stock/Index', [
+            'products' => Product::select(
+                'id',
+                'name',
+                'sku',
+                'quantity',
+                'reorder_point'
+            )->orderBy('quantity')
+                ->paginate(10)
+                ->withQueryString(),
+        ]);
+    })->name('products.stock.index');
+
+    Route::get('/products/{product}/stock', function (
+        Request $request,
+        Product $product
+    ) {
+        return Inertia::render('Products/Stock/Show', [
+            'product' => $product->only([
+                'id',
+                'name',
+                'sku',
+                'quantity',
+                'reorder_point',
+                'status',
+                'min_stock_level',
+                'max_stock_level'
+            ]),
+        ]);
+    })->name('products.stock.show');
 
     Route::get('/products/{product}', function (
         Product $product,

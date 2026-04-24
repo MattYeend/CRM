@@ -88,3 +88,19 @@ export async function restoreProductDeal(productId, dealId) {
     const response = await api.post(`/products/${productId}/deals/${dealId}/restore`);
     return response.data;
 }
+
+// Product Stock Movements
+export async function fetchProductStockMovements(productId) {
+    const response = await api.get(`/products/${productId}/stock-movements`);
+    return response.data;
+}
+
+export async function createProductStockMovement(productId, payload) {
+    const response = await api.post(`/products/${productId}/stock-movements`, payload);
+    return response.data;
+}
+
+export async function fetchProductStockMovement(productId, stockMovementId) {
+    const response = await api.get(`/products/${productId}/stock-movements/${stockMovementId}`);
+    return response.data;
+}

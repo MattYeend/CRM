@@ -530,4 +530,57 @@ class ProductController extends Controller
 
         return response()->json(['message' => 'Quote restored for product']);
     }
+
+    /**
+     * Display a paginated stock-level listing of all products.
+     *
+     * Returns only the fields needed for stock management views:
+     * id, name, sku, quantity, and reorder_point. Results are ordered
+     * by quantity ascending so the lowest-stock products appear first.
+     *
+     * Authorises via the 'viewAny' policy before returning data.
+     *
+     * @param  Request $request Incoming HTTP request; may carry
+     * pagination params.
+     *
+     * @return JsonResponse Paginated product stock data.
+     */
+    public function stock(Request $request): JsonResponse
+    {
+        $this->authorize('viewAny', Product::class);
+
+        $products = Product::select('id', 'name', 'sku', 'quantity', 'reorder_point')
+            ->orderBy('quantity')
+            ->paginate(10)
+            ->withQueryString();
+
+        return response()->json($products);
+    }
+
+    /**
+     * Display a paginated listing of products that are low on stock.
+     *
+     * Applies the lowStock() scope from the Product model, which filters
+     * to products where quantity is at or below the reorder point.
+     * Results are ordered by quantity ascending.
+     *
+     * Authorises via the 'viewAny' policy before returning data.
+     *
+     * @param  Request $request Incoming HTTP request; may carry
+     * pagination params.
+     *
+     * @return JsonResponse Paginated low-stock product data.
+     */
+    public function lowStock(Request $request): JsonResponse
+    {
+        $this->authorize('viewAny', Product::class);
+
+        $products = Product::select('id', 'name', 'sku', 'quantity', 'reorder_point')
+            ->lowStock()
+            ->orderBy('quantity')
+            ->paginate(10)
+            ->withQueryString();
+
+        return response()->json($products);
+    }
 }

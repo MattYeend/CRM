@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { createPartStockMovement } from '@/services/partService'
+import { createProductStockMovement } from '@/services/productService'
 
-const props = defineProps<{ partId: number }>()
+const props = defineProps<{ productId: number }>()
 const emit = defineEmits(['created'])
 
 const type = ref<'in' | 'out'>('in')
@@ -14,7 +14,7 @@ const loading = ref(false)
 async function submit() {
     loading.value = true
 
-    await createPartStockMovement(props.partId, {
+    await createProductStockMovement(props.productId, {
         type: type.value,
         quantity: quantity.value,
         reference: reference.value,

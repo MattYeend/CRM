@@ -41,6 +41,7 @@ import {
     Building2,
     CheckSquare,
     Component,
+    Eye,
     FileSignature,
     FileText,
     FolderTree,
@@ -51,6 +52,7 @@ import {
     LayoutGrid,
     Menu,
     Package,
+    Package2,
     Paperclip,
     ReceiptIcon,
     Search,
@@ -175,6 +177,16 @@ const mainNavItems: NavItem[] = [
         icon: Image
     },
     {
+        title: 'Part Low Stock',
+        href: '/parts/stock/low',
+        icon: Eye
+    },
+    {
+        title: 'Part Stock',
+        href: '/parts/stock',
+        icon: Package2
+    },
+    {
         title: 'Permissions',
         href: '/permissions',
         icon: Shield
@@ -193,6 +205,11 @@ const mainNavItems: NavItem[] = [
         title: 'Products',
         href: '/products',
         icon: Package
+    },
+    {
+        title: 'Product Stock',
+        href: '/products/stock',
+        icon: Eye
     },
     {
         title: 'Quotes',

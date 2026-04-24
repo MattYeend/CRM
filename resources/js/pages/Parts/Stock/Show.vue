@@ -34,10 +34,13 @@ async function reload() {
 
         <div class="p-6">
             <div class="mx-auto border p-6 rounded shadow">
+                <!-- Header -->
                 <div class="flex items-start justify-between mb-6">
                     <div>
                         <h1 class="text-2xl font-bold">Stock</h1>
-                        <p class="text-gray-600 text-sm">{{ part.name }} · {{ part.sku }}</p>
+                        <p class="text-gray-600 text-sm">
+                            {{ part.name }} · {{ part.sku }}
+                        </p>
                     </div>
 
                     <Link
@@ -47,22 +50,21 @@ async function reload() {
                         Back
                     </Link>
                 </div>
+
+                <StockSummaryCards
+                    :quantity="part.quantity"
+                    :reorderPoint="part.reorder_point"
+                    :totalMovements="total"
+                />
+
+                <CreateMovementModal
+                    v-if="permissions.create"
+                    :partId="part.id"
+                    @created="reload"
+                />
+
+                <StockTable :movements="movements" />
             </div>
-
-            <StockSummaryCards
-                :quantity="part.quantity"
-                :reorderPoint="part.reorder_point"
-                :totalMovements="total"
-            />
-
-            <CreateMovementModal
-                v-if="permissions.create"
-                :partId="part.id"
-                @created="reload"
-            />
-
-            <StockTable :movements="movements" />
-
         </div>
     </AppLayout>
 </template>
