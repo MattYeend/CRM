@@ -48,7 +48,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *      (types 'in' and 'return').
  * - scopeOutbound($query): Filter the query to only include outbound movements
  *      (type 'out').
- * - scopeForPart($query, $productId): Filter the query to only include
+ * - scopeForProduct($query, $productId): Filter the query to only include
  *      movements for a specific product ID.
  * - scopeReal($query): Filter the query to only include non-test movements.
  * Example usage of query scopes:
@@ -57,7 +57,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * inbound movements
  * $outboundMovements = ProductStockMovement::outbound()->get(); // Get all
  * outbound movements
- * $productMovements = ProductStockMovement::forPart($productId)->get(); // Get all
+ * $productMovements = ProductStockMovement::forProduct($productId)->get(); // Get all
  * movements for a specific product
  * $inMovements = ProductStockMovement::ofType(ProductStockMovement::TYPE_IN)->get();
  * // Get all 'in' movements
@@ -231,7 +231,7 @@ class ProductStockMovement extends Model
      *
      * @return Builder The modified query builder instance.
      */
-    public function scopeForPart(Builder $query, int $productId): Builder
+    public function scopeForProduct(Builder $query, int $productId): Builder
     {
         return $query->where('product_id', $productId);
     }

@@ -69,16 +69,16 @@ class ProductStockMovementQueryService
      * Return a single product stock movement with all relevant relationships
      * loaded.
      *
-     * @param  ProductStockMovement $partStockMovement The route-model-bound
+     * @param  ProductStockMovement $productStockMovement The route-model-bound
      * product instance.
      *
      * @return array
      */
-    public function show(ProductStockMovement $partStockMovement): array
+    public function show(ProductStockMovement $productStockMovement): array
     {
-        $partStockMovement->load('product', 'createdBy');
+        $productStockMovement->load('product', 'createdBy');
 
-        return $this->formatPartStockMovement($partStockMovement);
+        return $this->formatProductStockMovement($productStockMovement);
     }
 
     /**
@@ -97,7 +97,7 @@ class ProductStockMovementQueryService
             ->appends($request->query())
             ->through(fn (
                 ProductStockMovement $movement
-            ): array => $this->formatPartStockMovement($movement))
+            ): array => $this->formatProductStockMovement($movement))
             ->toArray();
     }
 
@@ -124,7 +124,7 @@ class ProductStockMovementQueryService
      *
      * @return array
      */
-    private function formatPartStockMovement(ProductStockMovement $movement): array
+    private function formatProductStockMovement(ProductStockMovement $movement): array
     {
         return array_merge(
             $this->baseData($movement),
@@ -146,7 +146,7 @@ class ProductStockMovementQueryService
     {
         return [
             'id' => $movement->id,
-            'part_id' => $movement->part_id,
+            'product_id' => $movement->product_id,
             'type' => $movement->type,
             'reference' => $movement->reference,
             'notes' => $movement->notes,

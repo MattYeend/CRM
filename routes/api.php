@@ -23,6 +23,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PipelineController;
 use App\Http\Controllers\PipelineStageController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductStockMovementController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SupplierController;
@@ -333,9 +334,29 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
     )->name('api.products.deals.restore');
 
     /**
-     * --------------------------------------------------------
-     * ----------------------- Invoices -----------------------
-     * --------------------------------------------------------
+     * ----------------------------------------------------------------
+     * -------------------- Product Stock Movement --------------------
+     * ----------------------------------------------------------------
+     */
+    Route::get(
+        'products/{product}/stock-movements',
+        [ProductStockMovementController::class, 'index']
+    )->name('api.productStockMovements.index');
+
+    Route::post(
+        'products/{product}/stock-movements',
+        [ProductStockMovementController::class, 'store']
+    )->name('api.productStockMovements.store');
+
+    Route::get(
+        'products/{product}/stock-movements/{productStockMovement}',
+        [ProductStockMovementController::class, 'show']
+    )->name('api.productStockMovements.show');
+
+    /**
+     * ------------------------------------------------------------
+     * ------------------------- Invoices -------------------------
+     * ------------------------------------------------------------
      */
     Route::apiResource('invoices', InvoiceController::class)
         ->names([
@@ -364,9 +385,9 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
     )->name('api.invoiceItems.restore');
 
     /**
-     * --------------------------------------------------------
-     * ------------------------ Quotes ------------------------
-     * --------------------------------------------------------
+     * ----------------------------------------------------------
+     * ------------------------- Quotes -------------------------
+     * ----------------------------------------------------------
      */
     Route::apiResource('quotes', QuoteController::class)
         ->names([

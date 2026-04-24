@@ -143,7 +143,7 @@ class ProductStockMovementController extends Controller
         $this->authorize('access', $productStockMovement);
 
         // Ensure the movement belongs to the part
-        if ($productStockMovement->part_id !== $product->id) {
+        if ($productStockMovement->product_id !== $product->id) {
             abort(404);
         }
         $productStockMovement = $this->query->show($productStockMovement);

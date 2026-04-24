@@ -34,6 +34,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      quote_products pivot, including quantity and price.
  * - orders(): Many-to-many relationship to Order records via the
  *      order_products pivot, including quantity, price, and metadata.
+ * - stockMovements(): All stock movement records for this product.
  * - attachments(): Polymorphic one-to-many relationship to Attachment
  *      records associated with the product.
  * - activities(): Polymorphic one-to-many relationship to Activity records
@@ -56,6 +57,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * $quotes = $product->quotes; // Get all quotes that include this product
  * $invoiceItems = $product->invoiceItems; // Get all invoice line items
  * for this product
+ * $stockMovements = $product->stockMovements; // Get all stock movements
+ * for the product
  * $creator = $product->creator; // Get the user that created the product
  * $updater = $product->updater; // Get the user that last updated the product
  * $deleter = $product->deleter; // Get the user that deleted the product
@@ -276,6 +279,16 @@ class Product extends Model
     }
 
     /**
+     * Get all stock movements for the part.
+     *
+     * @return HasMany<ProductStockMovement>
+     */
+    public function stockMovements(): HasMany
+    {
+        return $this->hasMany(ProductStockMovement::class);
+    }
+
+    /**
      * Get the user that created the product.
      *
      * @return BelongsTo<User,Product>
@@ -353,6 +366,29 @@ class Product extends Model
     public function notes(): MorphMany
     {
         return $this->morphMany(Note::class, 'notable');
+    }
+
+    /**
+     * Determine if the part is low on stock.
+     *
+     * Returns true when a reorder point is set and the current quantity
+     * is at or below it.
+     *
+     * @return bool
+     */
+    public function getIsLowStock(): bool
+    {
+        return $this->reorder_point && $this->quantity <= $this->reorder_point;
+    }
+
+    /**
+     * Determine if the part is out of stock.
+     *
+     * @return bool
+     */
+    public function getIsOutOfStock(): bool
+    {
+        return $this->quantity === 0;
     }
 
     /**
