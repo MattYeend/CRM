@@ -35,6 +35,7 @@ import {
     Shield,
     ShoppingCart,
     StickyNote,
+    Truck,
     UserCog,
     UserPlus,
     Users,
@@ -167,6 +168,11 @@ const mainNavItems: NavItem[] = [
         title: 'Quotes',
         href: '/quotes',
         icon: FileSignature
+    },
+    {
+        title: 'Suppliers',
+        href: '/suppliers',
+        icon: Truck
     },
     {
         title: 'Tasks',

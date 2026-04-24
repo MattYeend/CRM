@@ -40,14 +40,6 @@ interface Supplier {
     permissions: UserPermissions
 }
 
-// function capitalize(str: string | null | undefined) {
-//     if (!str) return '—'
-//     return str
-//         .split(' ')
-//         .map(s => s.charAt(0).toUpperCase() + s.slice(1))
-//         .join(' ')
-// }
-
 const props = defineProps<{ supplier: any }>()
 
 const supplier = ref<Supplier>({
