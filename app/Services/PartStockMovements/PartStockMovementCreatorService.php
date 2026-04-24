@@ -49,9 +49,8 @@ class PartStockMovementCreatorService
         $quantityAfter = $quantityBefore + $quantity;
 
         if ($quantityAfter < 0) {
-            throw new InsufficientStock($quantityBefore, $data['quantity']);
+            throw new InsufficientStock($quantityBefore, $quantity);
         }
-
         return $this->persistMovement(
             $part,
             $data,

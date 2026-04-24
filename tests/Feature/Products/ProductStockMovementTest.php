@@ -144,7 +144,7 @@ test('store updates the product quantity after movement', function () {
 
     $payload = [
         'type' => 'out',
-        'quantity' => -8,
+        'quantity' => 8,
     ];
 
     $this->postJson(route('api.productStockMovements.store', $product), $payload);
@@ -160,7 +160,7 @@ test('store returns 422 when stock would go below zero', function () {
 
     $payload = [
         'type' => 'out',
-        'quantity' => -10,
+        'quantity' => 10,
     ];
 
     $response = $this->postJson(route('api.productStockMovements.store', $product), $payload);
@@ -174,7 +174,7 @@ test('store does not update product quantity when stock is insufficient', functi
 
     $payload = [
         'type' => 'out',
-        'quantity' => -10,
+        'quantity' => 10,
     ];
 
     $this->postJson(route('api.productStockMovements.store', $product), $payload);
