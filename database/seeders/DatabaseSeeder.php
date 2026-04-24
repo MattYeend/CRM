@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             IndustrySeeder::class,
             CompanySeeder::class,
             ProductSeeder::class,
+            ProductStockMovementSeeder::class,
             DealSeeder::class,
             DealProductSeeder::class,
             PipelineSeeder::class,
