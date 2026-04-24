@@ -1,59 +1,59 @@
 <?php
 
-namespace App\Services\PartStockMovements;
+namespace App\Services\ProductStockMovement;
 
-use App\Models\Part;
-use App\Models\PartStockMovement;
+use App\Models\Product;
+use App\Models\ProductStockMovement;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 /**
- * Handles read queries for PartStockMovement records.
+ * Handles read queries for ProductStockMovement records.
  *
  * Delegates sorting to dedicated sub-services and returns paginated stock
- * movement results, optionally scoped to a given part.
+ * movement results, optionally scoped to a given product.
  */
-class PartStockMovementQueryService
+class ProductStockMovementQueryService
 {
     /**
-     * Service responsible for applying sort order to part stock movement
+     * Service responsible for applying sort order to product stock movement
      * queries.
      *
-     * @var PartStockMovementSortingService
+     * @var ProductStockMovementSortingService
      */
-    private PartStockMovementSortingService $sorting;
+    private ProductStockMovementSortingService $sorting;
 
     /**
      * Inject the required services into the query service.
      *
-     * @param  PartStockMovementSortingService $sorting Handles sort order
+     * @param  ProductStockMovementSortingService $sorting Handles sort order
      * application.
      */
     public function __construct(
-        PartStockMovementSortingService $sorting
+        ProductStockMovementSortingService $sorting
     ) {
         $this->sorting = $sorting;
     }
 
     /**
      * Return a paginated list of stock movements, optionally scoped to a
-     * given part, with sorting applied.
+     * given product, with sorting applied.
      *
      * The per_page value is clamped between 1 and 100. All active query
      * string parameters are appended to the paginator links.
      *
      * @param  Request $request Incoming HTTP request; may carry sort and
      * pagination params.
-     * @param  Part|null $part Optional part to scope movements to.
+     * @param  Product|null $product Optional product to scope movements to.
      *
      * @return array
      */
-    public function list(Request $request, ?Part $part = null): array
+    public function list(Request $request, ?Product $product = null): array
     {
-        $query = $part
-            ? $part->stockMovements()->with('part')->getQuery()
-            : PartStockMovement::query()->with('part');
+        $query = $product
+            ? $product->stockMovements()->with('product')->getQuery()
+            : ProductStockMovement::query()->with('product');
 
         $this->sorting->applySorting($query, $request);
 
@@ -66,17 +66,17 @@ class PartStockMovementQueryService
     }
 
     /**
-     * Return a single part stock movement with all relevant relationships
+     * Return a single product stock movement with all relevant relationships
      * loaded.
      *
-     * @param  PartStockMovement $partStockMovement The route-model-bound
-     * part instance.
+     * @param  ProductStockMovement $partStockMovement The route-model-bound
+     * product instance.
      *
      * @return array
      */
-    public function show(PartStockMovement $partStockMovement): array
+    public function show(ProductStockMovement $partStockMovement): array
     {
-        $partStockMovement->load('part', 'createdBy');
+        $partStockMovement->load('product', 'createdBy');
 
         return $this->formatPartStockMovement($partStockMovement);
     }
@@ -96,7 +96,7 @@ class PartStockMovementQueryService
         return $query->paginate($perPage)
             ->appends($request->query())
             ->through(fn (
-                PartStockMovement $movement
+                ProductStockMovement $movement
             ): array => $this->formatPartStockMovement($movement))
             ->toArray();
     }
@@ -109,22 +109,22 @@ class PartStockMovementQueryService
     private function getPermissions(): array
     {
         return [
-            'create' => Gate::allows('create', PartStockMovement::class),
-            'viewAny' => Gate::allows('viewAny', PartStockMovement::class),
+            'create' => Gate::allows('create', ProductStockMovement::class),
+            'viewAny' => Gate::allows('viewAny', ProductStockMovement::class),
         ];
     }
 
     /**
-     * Format a part stock movement into a structured array.
+     * Format a product stock movement into a structured array.
      *
      * Combines core attributes, relationships, derived values,
      * metadata, and permissions into a single array.
      *
-     * @param  PartStockMovement $movement
+     * @param  ProductStockMovement $movement
      *
      * @return array
      */
-    private function formatPartStockMovement(PartStockMovement $movement): array
+    private function formatPartStockMovement(ProductStockMovement $movement): array
     {
         return array_merge(
             $this->baseData($movement),
@@ -138,11 +138,11 @@ class PartStockMovementQueryService
     /**
      * Extract core movement attributes.
      *
-     * @param  PartStockMovement $movement
+     * @param  ProductStockMovement $movement
      *
      * @return array
      */
-    private function baseData(PartStockMovement $movement): array
+    private function baseData(ProductStockMovement $movement): array
     {
         return [
             'id' => $movement->id,
@@ -156,11 +156,11 @@ class PartStockMovementQueryService
     /**
      * Extract quantity-related fields.
      *
-     * @param  PartStockMovement $movement
+     * @param  ProductStockMovement $movement
      *
      * @return array
      */
-    private function quantityData(PartStockMovement $movement): array
+    private function quantityData(ProductStockMovement $movement): array
     {
         return [
             'quantity' => $movement->quantity,
@@ -172,11 +172,11 @@ class PartStockMovementQueryService
     /**
      * Extract derived movement direction flags.
      *
-     * @param  PartStockMovement $movement
+     * @param  ProductStockMovement $movement
      *
      * @return array
      */
-    private function derivedData(PartStockMovement $movement): array
+    private function derivedData(ProductStockMovement $movement): array
     {
         return [
             'is_inbound' => $movement->getIsInbound(),
@@ -187,14 +187,14 @@ class PartStockMovementQueryService
     /**
      * Extract related model data for the movement.
      *
-     * @param  PartStockMovement $movement
+     * @param  ProductStockMovement $movement
      *
      * @return array
      */
-    private function relationshipData(PartStockMovement $movement): array
+    private function relationshipData(ProductStockMovement $movement): array
     {
         return [
-            'part' => $movement->part,
+            'product' => $movement->product,
             'created_by' => $movement->createdBy,
         ];
     }
@@ -202,11 +202,11 @@ class PartStockMovementQueryService
     /**
      * Determine authorisation permissions for the movement.
      *
-     * @param  PartStockMovement $movement
+     * @param  ProductStockMovement $movement
      *
      * @return array
      */
-    private function permissionData(PartStockMovement $movement): array
+    private function permissionData(ProductStockMovement $movement): array
     {
         return [
             'permissions' => [
