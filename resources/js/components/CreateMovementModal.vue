@@ -1,20 +1,34 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { createProductStockMovement } from '@/services/productService'
 
-const props = defineProps<{ productId: number }>()
+type MovementType = 'in' | 'out'
+
+type MovementPayload = {
+    type: MovementType
+    quantity: number
+    reference: string
+    notes: string
+}
+
+const props = defineProps<{
+    entityId: number
+    createMovement: (id: number, payload: MovementPayload) => Promise<any>
+}>()
+
 const emit = defineEmits(['created'])
 
-const type = ref<'in' | 'out'>('in')
+const type = ref<MovementType>('in')
 const quantity = ref(0)
 const reference = ref('')
 const notes = ref('')
 const loading = ref(false)
 
 async function submit() {
+    if (!quantity.value) return
+
     loading.value = true
 
-    await createProductStockMovement(props.productId, {
+    await props.createMovement(props.entityId, {
         type: type.value,
         quantity: quantity.value,
         reference: reference.value,
@@ -47,13 +61,13 @@ async function submit() {
                 placeholder="Quantity"
                 class="border rounded px-3 py-2 w-32" 
             />
-            
+
             <input 
                 v-model="reference" 
                 placeholder="Reference" 
                 class="border rounded px-3 py-2 flex-1" 
             />
-            
+
             <input 
                 v-model="notes" 
                 placeholder="Notes (optional)" 

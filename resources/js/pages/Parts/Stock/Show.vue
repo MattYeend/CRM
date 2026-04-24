@@ -5,12 +5,13 @@ import { ref } from 'vue'
 import { route } from 'ziggy-js'
 
 import {
+    createPartStockMovement,
     fetchPartStockMovements
 } from '@/services/partService'
 
-import StockTable from './components/StockTable.vue'
-import StockSummaryCards from './components/StockSummaryCards.vue'
-import CreateMovementModal from './components/CreateMovementModal.vue'
+import StockTable from '@/components/StockTable.vue'
+import StockSummaryCards from '@/components/StockSummaryCards.vue'
+import CreateMovementModal from '@/components/CreateMovementModal.vue'
 
 const props = defineProps<{
     part: any
@@ -22,9 +23,19 @@ const total = ref(props.movements.total)
 const permissions = ref(props.movements.permissions)
 
 async function reload() {
-    const data = await fetchPartStockMovements(props.part.id)
-    movements.value = data.data
-    total.value = data.total
+    try{
+        const data = await fetchPartStockMovements(props.part.id)
+
+        movements.value = data?.data ?? []
+        total.value = data?.total ?? 0
+        permissions.value = data?.permissions ?? { create: false }
+    } catch (error) {
+        console.error('Failed to load stock movements:', error)
+
+        movements.value = []
+        total.value = 0
+        permissions.value = { create: false }
+    }
 }
 </script>
 
@@ -58,8 +69,8 @@ async function reload() {
                 />
 
                 <CreateMovementModal
-                    v-if="permissions.create"
-                    :partId="part.id"
+                    :entityId="part.id"
+                    :createMovement="createPartStockMovement"
                     @created="reload"
                 />
 

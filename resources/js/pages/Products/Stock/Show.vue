@@ -5,11 +5,14 @@ import { ref, onMounted } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
 
-import { fetchProductStockMovements } from '@/services/productService'
+import { 
+    createProductStockMovement,
+    fetchProductStockMovements
+ } from '@/services/productService'
 
-import StockTable from './components/StockTable.vue'
-import StockSummaryCards from './components/StockSummaryCards.vue'
-import CreateMovementModal from './components/CreateMovementModal.vue'
+import StockTable from '@/components/StockTable.vue'
+import StockSummaryCards from '@/components/StockSummaryCards.vue'
+import CreateMovementModal from '@/components/CreateMovementModal.vue'
 
 const props = defineProps<{
     product: any
@@ -78,8 +81,8 @@ onMounted(() => {
                 />
 
                 <CreateMovementModal
-                    v-if="permissions.create"
-                    :productId="product.id"
+                    :entityId="product.id"
+                    :createMovement="createProductStockMovement"
                     @created="reload"
                 />
 
