@@ -124,8 +124,9 @@ class ProductStockMovementQueryService
      *
      * @return array
      */
-    private function formatProductStockMovement(ProductStockMovement $movement): array
-    {
+    private function formatProductStockMovement(
+        ProductStockMovement $movement
+    ): array {
         return array_merge(
             $this->baseData($movement),
             $this->quantityData($movement),

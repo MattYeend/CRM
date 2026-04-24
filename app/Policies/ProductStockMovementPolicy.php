@@ -64,8 +64,10 @@ class ProductStockMovementPolicy
      *
      * @return bool
      */
-    public function view(User $user, ProductStockMovement $productStockMovement): bool
-    {
+    public function view(
+        User $user,
+        ProductStockMovement $productStockMovement
+    ): bool {
         return $this->anyOrOwn(
             $user,
             $productStockMovement,

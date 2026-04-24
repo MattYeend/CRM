@@ -19,7 +19,8 @@ class ProductStockMovementLogService
      *
      * @param  User $user The user performing the action.
      * @param  int $userId The ID of the user performing the action.
-     * @param  ProductStockMovement $productStockMovement The movement being logged.
+     * @param  ProductStockMovement $productStockMovement The movement
+     * being logged.
      *
      * @return array The structured log data.
      */

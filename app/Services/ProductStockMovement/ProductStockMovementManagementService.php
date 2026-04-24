@@ -24,8 +24,8 @@ class ProductStockMovementManagementService
     /**
      * Inject dependencies.
      *
-     * @param  ProductStockMovementCreatorService $creator Handles stock movement
-     * creation.
+     * @param  ProductStockMovementCreatorService $creator Handles
+     * stock movement creation.
      */
     public function __construct(
         ProductStockMovementCreatorService $creator

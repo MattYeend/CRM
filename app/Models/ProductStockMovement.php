@@ -16,7 +16,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * by direction.
  *
  * Relationships defined in this model include:
- * - product(): Belongs-to relationship to the Product this stock movement belongs to.
+ * - product(): Belongs-to relationship to the Product this stock movement
+ * belongs to.
  * - createdBy(): Belongs-to relationship to the User that created the stock
  *     movement record.
  * Example usage of relationships:
@@ -57,10 +58,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * inbound movements
  * $outboundMovements = ProductStockMovement::outbound()->get(); // Get all
  * outbound movements
- * $productMovements = ProductStockMovement::forProduct($productId)->get(); // Get all
- * movements for a specific product
- * $inMovements = ProductStockMovement::ofType(ProductStockMovement::TYPE_IN)->get();
- * // Get all 'in' movements
+ * $productMovements = ProductStockMovement::forProduct($productId)->get();
+ * // Get all movements for a specific product
+ * $inMovements = ProductStockMovement::ofType(ProductStockMovement::TYPE_IN)
+ * ->get(); // Get all 'in' movements
  * $realMovements = ProductStockMovement::real()->get(); // Get all non-test
  * movements
  * ```

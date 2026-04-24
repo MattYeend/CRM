@@ -17,7 +17,8 @@ use Illuminate\Http\Request;
  *
  * Delegates business logic to three dedicated services:
  *   - ProductStockMovementLogService — records audit log entries
- *   - ProductStockMovementManagementService — handles creation of stock movements
+ *   - ProductStockMovementManagementService — handles creation of stock
+ *      movements
  *   - ProductStockMovementQueryService — handles retrieval and listing
  *
  * All responses are returned as JSON, making this controller suitable
@@ -52,8 +53,8 @@ class ProductStockMovementController extends Controller
      *
      * @param  ProductStockMovementLogService $logger Handles audit logging for
      * stock movements.
-     * @param  ProductStockMovementManagementService $management Handles creation
-     * and management of stock movements.
+     * @param  ProductStockMovementManagementService $management Handles
+     * creation and management of stock movements.
      * @param  ProductStockMovementQueryService $query Handles retrieval and
      * listing of stock movements.
      */
@@ -132,13 +133,15 @@ class ProductStockMovementController extends Controller
      * Authorises via the 'view' policy before returning data.
      *
      * @param  Product $product Route-model-bound product instance.
-     * @param  ProductStockMovement $productStockMovement Route-model-bound stock
-     * movement instance.
+     * @param  ProductStockMovement $productStockMovement Route-model-bound
+     * stock movement instance.
      *
      * @return JsonResponse The resolved stock movement resource.
      */
-    public function show(Product $product, ProductStockMovement $productStockMovement)
-    {
+    public function show(
+        Product $product,
+        ProductStockMovement $productStockMovement
+    ) {
         $this->authorize('view', $productStockMovement);
         $this->authorize('access', $productStockMovement);
 
