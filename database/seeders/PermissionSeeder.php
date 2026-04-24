@@ -323,6 +323,13 @@ class PermissionSeeder extends Seeder
             ['name' => 'products.access.any', 'label' => 'Access any products'],
             ['name' => 'products.access.own', 'label' => 'Access own products'],
 
+            // Product Stock Movements
+            ['name' => 'productStockMovements.view.all', 'label' => 'View product stock movements'],
+            ['name' => 'productStockMovements.view.own', 'label' => 'View own product stock movements'],
+            ['name' => 'productStockMovements.create', 'label' => 'Create product stock movements'],
+            ['name' => 'productStockMovements.access.any', 'label' => 'Access any product stock movements'],
+            ['name' => 'productStockMovements.access.own', 'label' => 'Access own product stock movements'],
+
             // Quotes
             ['name' => 'quotes.view.all', 'label' => 'View quotes'],
             ['name' => 'quotes.view.own', 'label' => 'View own quotes'],

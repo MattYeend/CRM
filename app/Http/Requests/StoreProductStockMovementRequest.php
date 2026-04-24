@@ -2,28 +2,48 @@
 
 namespace App\Http\Requests;
 
+use App\Models\ProductStockMovement;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Handles authorisation and validation for storing a new ProductStockMovement.
+ *
+ * Validates the movement type against a fixed set of allowed values,
+ * enforces a non-zero quantity, and accepts optional reference, notes,
+ * and meta fields.
+ */
 class StoreProductStockMovementRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Delegates to the 'create' policy for the ProductStockMovement model.
+     *
+     * @return bool True if the authenticated user may create product stock
+     * movements.
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()->can('create', ProductStockMovement::class);
     }
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * Enforces a valid movement type, a non-zero integer quantity, and
+     * appropriate types for all optional fields when provided.
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            //
+            'type' => 'required|in:in,out,adjustment,transfer,return',
+            'quantity' => 'required|integer|not_in:0',
+            'reference' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
+            'meta' => 'nullable|array',
         ];
     }
 }

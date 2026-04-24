@@ -232,6 +232,11 @@ class PermissionRoleSeeder extends Seeder
             'products.restore.any',
             'products.access.any',
 
+            'productStockMovements.view.all',
+            'productStockMovements.view.own',
+            'productStockMovements.create',
+            'productStockMovements.access.any',
+
             'quotes.view.all',
             'quotes.view.own',
             'quotes.create',
@@ -473,6 +478,11 @@ class PermissionRoleSeeder extends Seeder
             'products.delete.own',
             'products.restore.own',
             'products.access.own',
+
+            'productStockMovements.view.all',
+            'productStockMovements.view.own',
+            'productStockMovements.create',
+            'productStockMovements.access.own',
 
             'quotes.view.all',
             'quotes.view.own',
