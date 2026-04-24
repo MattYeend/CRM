@@ -143,7 +143,7 @@ const mainNavItems: NavItem[] = [
                 icon: Image
             },
             {
-                title: 'Part Stock',
+                title: 'Stock',
                 href: '/parts/stock',
                 icon: Package2
             },
@@ -177,11 +177,16 @@ const mainNavItems: NavItem[] = [
         icon: Package,
         children: [
             {
-                title: 'Product Stock',
+                title: 'Stock',
                 href: '/products/stock',
                 icon: Package2
             
-            }
+            },
+            {
+                title: 'Low Stock',
+                href: '/parts/stock/low',
+                icon: Eye
+            },
         ]
     },
     {

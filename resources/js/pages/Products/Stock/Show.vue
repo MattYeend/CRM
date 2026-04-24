@@ -15,7 +15,6 @@ const props = defineProps<{
     product: any
 }>()
 
-// ✅ Safe defaults (no Inertia dependency on movements)
 const movements = ref<any[]>([])
 const total = ref(0)
 const permissions = ref<{ create: boolean }>({ create: false })
@@ -28,7 +27,6 @@ const breadcrumbItems: BreadcrumbItem[] = [
     },
 ]
 
-// ✅ API-driven reload (single source of truth)
 async function reload() {
     try {
         const data = await fetchProductStockMovements(props.product.id)
@@ -45,7 +43,6 @@ async function reload() {
     }
 }
 
-// ✅ Load on mount
 onMounted(() => {
     reload()
 })

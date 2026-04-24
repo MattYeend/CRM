@@ -3,7 +3,7 @@ import { Head, Link } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
 import { ref, reactive, computed, onMounted } from 'vue'
 import { route } from 'ziggy-js'
-import { fetchProducts } from '@/services/productService' // 👈 you’ll need this
+import { fetchProducts } from '@/services/productService'
 
 const products = ref<any[]>([])
 const loading = ref(true)

@@ -207,6 +207,11 @@ const mainNavItems: NavItem[] = [
         icon: Package
     },
     {
+        title: 'Product Low Stock',
+        href: '/products/stock/low',
+        icon: Eye
+    },
+    {
         title: 'Product Stock',
         href: '/products/stock',
         icon: Eye
