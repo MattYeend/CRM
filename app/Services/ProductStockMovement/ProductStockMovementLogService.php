@@ -35,7 +35,7 @@ class ProductStockMovementLogService
         ];
 
         Log::log(
-            Log::ACTION_PART_STOCK_MOVEMENT_CREATED,
+            Log::ACTION_PRODUCT_STOCK_MOVEMENT_CREATED,
             $data,
             $userId,
         );
