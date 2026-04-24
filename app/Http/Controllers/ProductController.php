@@ -549,7 +549,13 @@ class ProductController extends Controller
     {
         $this->authorize('viewAny', Product::class);
 
-        $products = Product::select('id', 'name', 'sku', 'quantity', 'reorder_point')
+        $products = Product::select(
+            'id',
+            'name',
+            'sku',
+            'quantity',
+            'reorder_point',
+        )
             ->orderBy('quantity')
             ->paginate(10)
             ->withQueryString();
@@ -575,7 +581,13 @@ class ProductController extends Controller
     {
         $this->authorize('viewAny', Product::class);
 
-        $products = Product::select('id', 'name', 'sku', 'quantity', 'reorder_point')
+        $products = Product::select(
+            'id',
+            'name',
+            'sku',
+            'quantity',
+            'reorder_point',
+        )
             ->lowStock()
             ->orderBy('quantity')
             ->paginate(10)

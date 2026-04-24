@@ -1176,7 +1176,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'reorder_point',
                 'status',
                 'min_stock_level',
-                'max_stock_level'
+                'max_stock_level',
             ]),
         ]);
     })->name('products.stock.show');
