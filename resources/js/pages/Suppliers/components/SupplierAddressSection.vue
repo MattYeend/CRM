@@ -90,7 +90,9 @@ const form = props.form
             </div>
 
             <div>
-                <label class="block text-sm font-medium mb-1">Country</label>
+                <label class="block text-sm font-medium mb-1">
+                    Country <span class="text-red-500">*</span>
+                </label>
                 <input
                     v-model="form.country"
                     type="text"

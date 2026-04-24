@@ -20,7 +20,9 @@ const form = props.form
         <h2 class="text-lg font-semibold border-b pb-2">Business Terms</h2>
 
         <div>
-            <label class="block text-sm font-medium mb-1">Currency</label>
+            <label class="block text-sm font-medium mb-1">
+                Currency <span class="text-red-500">*</span>
+            </label>
             <input
                 v-model="form.currency"
                 type="text"
