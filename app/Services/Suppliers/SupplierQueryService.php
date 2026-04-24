@@ -3,8 +3,8 @@
 namespace App\Services\Suppliers;
 
 use App\Models\Supplier;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -60,20 +60,15 @@ class SupplierQueryService
      * and trash filters applied.
      *
      * The per_page value is clamped between 1 and 100. All active query
-     * string pameters are appended to the paginator links.
+     * string parameters are appended to the paginator links.
      *
-     * @param Request $request Incoming HTTP request; may carry search,
-     * sorting, and trash filter param.
+     * @param  Request $request Incoming HTTP request; may carry search,
+     * sort, filter, and pagination params.
      *
-     * @return LengthAwarePaginator Paginated suppliers item results.
+     * @return array
      */
-    public function list(Request $request): LengthAwarePaginator
+    public function list(Request $request): array
     {
-        $perPage = max(
-            1,
-            min((int) $request->query('per_page', 10), 100)
-        );
-
         $query = Supplier::with(
             'parts',
             'partSuppliers',
@@ -83,13 +78,16 @@ class SupplierQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        $paginator = $query->paginate($perPage)->appends($request->query());
+        $paginator = $this->paginate($query, $request);
 
-        return $this->transformPaginator($paginator);
+        return array_merge(
+            $paginator,
+            ['permissions' => $this->getPermissions()]
+        );
     }
 
     /**
-     * Return a single supplier with related date loaded.
+     * Return a single supplier with related data loaded.
      *
      * @param Supplier $supplier The route-model bound supplier
      * instance.
@@ -107,31 +105,36 @@ class SupplierQueryService
     }
 
     /**
-     * Apply transformation and append permissions to the paginator.
+     * Paginate and transform the supplier query.
      *
-     * Each supplier item is formatted into a structured array and
-     * top-level permissions are appended to the paginator response.
+     * @param Builder $query
+     * @param Request $request
      *
-     * @param  LengthAwarePaginator $paginator The paginator instance
-     * containing Supplier models.
-     *
-     * @return LengthAwarePaginator The transformed paginator instance.
+     * @return array
      */
-    private function transformPaginator(
-        LengthAwarePaginator $paginator
-    ): LengthAwarePaginator {
-        $paginator->through(
-            fn (Supplier $supplier) => $this->formatSupplier($supplier)
-        );
+    private function paginate($query, Request $request): array
+    {
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
 
-        $paginator->appends([
-            'permissions' => [
-                'create' => Gate::allows('create', Supplier::class),
-                'viewAny' => Gate::allows('viewAny', Supplier::class),
-            ],
-        ]);
+        return $query->paginate($perPage)
+            ->appends($request->query())
+            ->through(fn (
+                Supplier $supplier
+            ): array => $this->formatSupplier($supplier))
+            ->toArray();
+    }
 
-        return $paginator;
+    /**
+     * Get permission flags for the current user.
+     *
+     * @return array
+     */
+    private function getPermissions(): array
+    {
+        return [
+            'create' => Gate::allows('create', Supplier::class),
+            'viewAny' => Gate::allows('viewAny', Supplier::class),
+        ];
     }
 
     /**
