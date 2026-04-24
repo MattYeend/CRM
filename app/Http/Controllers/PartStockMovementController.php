@@ -142,6 +142,10 @@ class PartStockMovementController extends Controller
         $this->authorize('view', $partStockMovement);
         $this->authorize('access', $partStockMovement);
 
+        // Ensure the movement belongs to the part
+        if ($partStockMovement->part_id !== $part->id) {
+            abort(404);
+        }
         $partStockMovement = $this->query->show($partStockMovement);
 
         return response()->json($partStockMovement);
