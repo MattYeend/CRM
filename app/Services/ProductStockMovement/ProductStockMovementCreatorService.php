@@ -39,7 +39,14 @@ class ProductStockMovementCreatorService
         $createdBy = $request->user()->id;
 
         $quantityBefore = $product->quantity;
-        $quantityAfter = $quantityBefore + $data['quantity'];
+
+        $quantity = $data['quantity'];
+
+        if ($data['type'] === 'out') {
+            $quantity = -$quantity;
+        }
+
+        $quantityAfter = $quantityBefore + $quantity;
 
         if ($quantityAfter < 0) {
             throw new InsufficientStock($quantityBefore, $data['quantity']);
