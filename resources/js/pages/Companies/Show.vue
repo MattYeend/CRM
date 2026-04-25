@@ -5,6 +5,7 @@ import { route } from 'ziggy-js'
 import { ref, onMounted } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { deleteCompanies, fetchCompany } from '@/services/companyService'
+import CompanyDetailSection from './components/CompanyDetailSection.vue'
 
 interface UserPermissions {
     view: boolean
@@ -38,7 +39,7 @@ interface Company {
 }
 
 function capitalize(str: string | null | undefined) {
-    if (!str) return '-'
+    if (!str) return '—'
     return str
         .split(' ')
         .map(s => s.charAt(0).toUpperCase() + s.slice(1))
@@ -53,11 +54,17 @@ const company = ref<Company>({
     industry: props.company.industry,
     industry_id: props.company.industry_id,
     website: props.company.website,
+    website_host: props.company.website_host,
     phone: props.company.phone,
+    full_address: props.company.full_address,
+    contact_full_name: props.company.contact_full_name,
+    contact_email: props.company.contact_email,
+    contact_phone: props.company.contact_phone,
     city: props.company.city,
     country: props.company.country,
     has_deals: props.company.has_deals ?? false,
     has_outstanding_invoices: props.company.has_outstanding_invoices ?? false,
+    creator: props.company.creator,
     permissions: props.company.permissions ?? { view: false, update: false, delete: false },
 })
 
@@ -101,14 +108,12 @@ onMounted(() => loadCompany())
                         >
                             Edit
                         </Link>
-
                         <Link
                             :href="route('companies.index')"
                             class="bg-gray-200 text-gray-700 px-4 py-2 rounded"
                         >
                             Back
                         </Link>
-
                         <button
                             v-if="company.permissions?.delete"
                             @click="handleDelete"
@@ -119,46 +124,7 @@ onMounted(() => loadCompany())
                     </div>
                 </div>
 
-                <div class="space-y-3">
-                    <div v-if="company.full_address">
-                        <span class="font-semibold">Address: </span>
-                        <span>{{ company.full_address }}</span>
-                    </div>
-                    <div v-if="company.phone">
-                        <span class="font-semibold">Phone: </span>
-                        <span>{{ company.phone }}</span>
-                    </div>
-                    <div v-if="company.website_host">
-                        <span class="font-semibold">Website: </span>
-                        <a :href="company.website" target="_blank">
-                            {{ company.website_host }}
-                        </a>
-                    </div>
-                    <div v-if="company.contact_full_name">
-                        <span class="font-semibold">Contact: </span>
-                        <span>{{ company.contact_full_name }}</span>
-                    </div>
-                    <div v-if="company.contact_email">
-                        <span class="font-semibold">Contact Email: </span>
-                        <span>{{ company.contact_email }}</span>
-                    </div>
-                    <div v-if="company.contact_phone">
-                        <span class="font-semibold">Contact Phone: </span>
-                        <span>{{ company.contact_phone }}</span>
-                    </div>
-                    <div>
-                        <span class="font-semibold">Has Deals: </span>
-                        <span>{{ company.has_deals ? 'Yes' : 'No' }}</span>
-                    </div>
-                    <div>
-                        <span class="font-semibold">Outstanding Invoices: </span>
-                        <span>{{ company.has_outstanding_invoices ? 'Yes' : 'No' }}</span>
-                    </div>
-                    <div v-if="company.creator">
-                        <span class="font-semibold">Created By: </span>
-                        <span>{{ company.creator.name }}</span>
-                    </div>
-                </div>
+                <CompanyDetailSection :company="company" />
             </div>
         </div>
     </AppLayout>
