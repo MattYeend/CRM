@@ -5,6 +5,7 @@ import { ref, computed, onMounted } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
 import { fetchLead, deleteLeads } from '@/services/leadService'
+import LeadDetailSection from './components/LeadDetailSection.vue'
 
 interface UserPermissions {
     view: boolean
@@ -97,15 +98,6 @@ async function handleDelete() {
     window.location.href = route('leads.index')
 }
 
-function formatDate(dateStr: string | null): string {
-    if (!dateStr) return '—'
-    return new Date(dateStr).toLocaleDateString('en-GB', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-    })
-}
-
 onMounted(() => loadLead()) 
 </script>
 
@@ -123,7 +115,7 @@ onMounted(() => loadLead())
                         <div class="flex items-center gap-2 mt-1 flex-wrap">
                             <span
                                 v-if="lead.title"
-                                class="text-sm text-gray-500 italic"
+                                class="text-sm text-gray-500"
                             >
                                 {{ lead.title }}
                             </span>
@@ -166,93 +158,7 @@ onMounted(() => loadLead())
                     </div>
                 </div>
 
-                <!-- Contact Details -->
-                <div class="mb-6">
-                    <h2 class="text-lg font-semibold border-b pb-2 mb-3">Contact Details</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
-                        <div>
-                            <span class="font-semibold">First Name: </span>
-                            <span>{{ lead.first_name ?? '—' }}</span>
-                        </div>
-                        <div>
-                            <span class="font-semibold">Last Name: </span>
-                            <span>{{ lead.last_name ?? '—' }}</span>
-                        </div>
-                        <div>
-                            <span class="font-semibold">Email: </span>
-                            <a
-                                v-if="lead.email"
-                                :href="`mailto:${lead.email}`"
-                                class="text-blue-600"
-                            >
-                                {{ lead.email }}
-                            </a>
-                            <span v-else>—</span>
-                        </div>
-                        <div>
-                            <span class="font-semibold">Phone: </span>
-                            <a
-                                v-if="lead.phone"
-                                :href="`tel:${lead.phone}`"
-                            >
-                                {{ lead.phone }}
-                            </a>
-                            <span v-else>—</span>
-                        </div>
-                        <div>
-                            <span class="font-semibold">Source: </span>
-                            <span>{{ lead.source ?? '—' }}</span>
-                        </div>
-                        <div>
-                            <span class="font-semibold">Age: </span>
-                            <span>{{ lead.age_in_days }} days</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Assignment -->
-                <div class="mb-6">
-                    <h2 class="text-lg font-semibold border-b pb-2 mb-3">Assignment</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
-                        <div>
-                            <span class="font-semibold">Owner: </span>
-                            <span>{{ lead.owner?.name ?? '—' }}</span>
-                        </div>
-                        <div>
-                            <span class="font-semibold">Assigned To: </span>
-                            <span>{{ lead.assigned_to?.name ?? '—' }}</span>
-                        </div>
-                        <div v-if="lead.assigned_at">
-                            <span class="font-semibold">Assigned At: </span>
-                            <span>{{ formatDate(lead.assigned_at) }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Audit -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-sm text-gray-600">
-                    <div v-if="lead.creator">
-                        <span class="font-semibold">Created By: </span>
-                        <span>{{ lead.creator.name }}</span>
-                    </div>
-                    <div v-if="lead.created_at">
-                        <span class="font-semibold">Created: </span>
-                        <span>{{ formatDate(lead.created_at) }}</span>
-                    </div>
-                    <div v-if="lead.updater">
-                        <span class="font-semibold">Last Updated By: </span>
-                        <span>{{ lead.updater.name }}</span>
-                    </div>
-                    <div v-if="lead.updated_at">
-                        <span class="font-semibold">Last Updated: </span>
-                        <span>{{ formatDate(lead.updated_at) }}</span>
-                    </div>
-                    <div v-if="lead.deleter">
-                        <span class="font-semibold">Deleted By: </span>
-                        <span class="text-red-600">{{ lead.deleter.name }}</span>
-                    </div>
-                </div>
-
+                <LeadDetailSection :lead="lead" />
             </div>
         </div>
     </AppLayout>
