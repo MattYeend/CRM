@@ -5,6 +5,7 @@ import AppLayout from '@/layouts/app/AppSidebarLayout.vue';
 import { route } from 'ziggy-js';
 import { type BreadcrumbItem } from '@/types';
 import { deleteNotes } from '@/services/noteService';
+import NoteDetailSection from './components/NoteDetailSection.vue';
 
 interface User {
     id: number;
@@ -48,10 +49,6 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 const deleting = ref(false);
 
-function notableTypeLabel(type: string): string {
-    return type.split('\\').pop() ?? type;
-}
-
 async function handleDelete() {
     if (!confirm('Are you sure?')) return;
     deleting.value = true;
@@ -71,9 +68,16 @@ async function handleDelete() {
         <div class="p-6">
             <div class="mx-auto border p-6 rounded shadow">
                 <div class="flex items-start justify-between mb-6">
-                    <div class="flex items-center space-x-4">
+                    <div>
                         <h1 class="text-2xl font-bold">Note #{{ note.id }}</h1>
-                        <p v-if="note.user" class="text-gray-600">{{ note.user.name }}</p>
+                        <div class="flex items-center gap-2 mt-1 flex-wrap">
+                            <span
+                                v-if="note.user"
+                                class="text-sm text-gray-500"
+                            >
+                                {{ note.user.name }}
+                            </span>
+                        </div>
                     </div>
 
                     <div class="flex items-center space-x-2">
@@ -103,32 +107,7 @@ async function handleDelete() {
                     </div>
                 </div>
 
-                <div class="space-y-2">
-                    <div>
-                        <span class="font-semibold">Body: </span>
-                        <span class="whitespace-pre-wrap">{{ note.body }}</span>
-                    </div>
-                </div>
-
-                <div class="space-y-2 mt-2">
-                    <div>
-                        <span class="font-semibold">Related To: </span>
-                        <span v-if="note.notable_name">
-                            <span class="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600">
-                                {{ notableTypeLabel(note.notable_type) }}
-                            </span>
-                            {{ note.notable_name }}
-                        </span>
-                        <span v-else>—</span>
-                    </div>
-                </div>
-
-                <div class="space-y-2 mt-2">
-                    <div>
-                        <span class="font-semibold">Created By: </span>
-                        <span>{{ note.creator?.name ?? '—' }}</span>
-                    </div>
-                </div>
+                <NoteDetailSection :note="note" />
             </div>
         </div>
     </AppLayout>
