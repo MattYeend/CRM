@@ -55,7 +55,7 @@ function formatDate(dateString: string | null): string {
     <div class="space-y-6">
         <!-- File Preview -->
         <div class="border rounded p-6">
-            <h2 class="text-sm font-medium text-gray-500 mb-4">Preview</h2>
+            <h2 class="text-sm font-medium mb-4">Preview</h2>
 
             <img
                 v-if="isImage"
@@ -92,35 +92,35 @@ function formatDate(dateString: string | null): string {
 
         <!-- Details -->
         <div class="border rounded p-6">
-            <h2 class="text-sm font-medium text-gray-500 mb-4">Details</h2>
+            <h2 class="text-sm font-medium mb-4">Details</h2>
 
             <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                    <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Filename</dt>
+                    <dt class="text-xs font-medium uppercase tracking-wide">Filename</dt>
                     <dd class="mt-1 text-sm">{{ attachment.filename }}</dd>
                 </div>
                 <div>
-                    <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">File Size</dt>
+                    <dt class="text-xs font-medium uppercase tracking-wide">File Size</dt>
                     <dd class="mt-1 text-sm">{{ formatSize(attachment.size) }}</dd>
                 </div>
                 <div>
-                    <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">File Type</dt>
+                    <dt class="text-xs font-medium uppercase tracking-wide">File Type</dt>
                     <dd class="mt-1 text-sm">{{ attachment.mime || '—' }}</dd>
                 </div>
                 <div>
-                    <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Attached To</dt>
+                    <dt class="text-xs font-medium uppercase tracking-wide">Attached To</dt>
                     <dd class="mt-1 text-sm">{{ capitalize(attachment.attachable_type) }}</dd>
                 </div>
                 <div>
-                    <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Uploaded By</dt>
+                    <dt class="text-xs font-medium uppercase tracking-wide">Uploaded By</dt>
                     <dd class="mt-1 text-sm">{{ attachment.uploader?.name || '—' }}</dd>
                 </div>
                 <div>
-                    <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Uploaded At</dt>
+                    <dt class="text-xs font-medium uppercase tracking-wide">Uploaded At</dt>
                     <dd class="mt-1 text-sm">{{ formatDate(attachment.created_at) }}</dd>
                 </div>
                 <div v-if="attachment.updated_at !== attachment.created_at">
-                    <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Last Updated</dt>
+                    <dt class="text-xs font-medium uppercase tracking-wide">Last Updated</dt>
                     <dd class="mt-1 text-sm">{{ formatDate(attachment.updated_at) }}</dd>
                 </div>
             </dl>

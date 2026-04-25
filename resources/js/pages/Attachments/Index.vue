@@ -158,7 +158,7 @@ onMounted(() => loadAttachments())
                         <td class="p-2 text-sm">{{ capitalize(attachment.attachable_type) }}</td>
                         <td class="p-2 text-sm">{{ attachment.uploaded_by ?? '—' }}</td>
                         <td class="p-2 text-sm">{{ formatDate(attachment.created_at) }}</td>
-                        <td class="p-2 text-sm text-gray-500">{{ formatSize(attachment.size) }}</td>
+                        <td class="p-2 text-sm">{{ formatSize(attachment.size) }}</td>
                         <td class="p-2 space-x-2 text-sm whitespace-nowrap">
                             <Link
                                 v-if="attachment.permissions.view"
