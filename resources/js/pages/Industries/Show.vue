@@ -5,13 +5,20 @@ import { ref, onMounted } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
 import { fetchIndustry, deleteIndustries } from '@/services/industryService'
+import IndustryDetailSection from './components/IndustryDetailSection.vue'
+
+interface UserPermissions {
+    view: boolean
+    update: boolean
+    delete: boolean
+}
 
 interface Industry {
     id: number
     name: string
     slug: string
     has_companies: boolean
-    permissions: { view: boolean; update: boolean; delete: boolean }
+    permissions: UserPermissions
 }
 
 const props = defineProps<{ industry: any }>()
@@ -20,8 +27,8 @@ const industry = ref<Industry>({
     id: props.industry.id,
     name: props.industry.name,
     slug: props.industry.slug,
-    has_companies: props.industry.has_companies,
-    permissions: { view: false, update: false, delete: false },
+    has_companies: props.industry.has_companies ?? false,
+    permissions: props.industry.permissions ?? { view: false, update: false, delete: false },
 })
 
 const breadcrumbItems: BreadcrumbItem[] = [
@@ -55,24 +62,26 @@ onMounted(() => loadIndustry())
                             v-if="industry.permissions.update && !industry.has_companies"
                             :href="route('industries.edit', { industry: industry.id })"
                             class="bg-blue-600 text-white px-4 py-2 rounded"
-                        >Edit</Link>
+                        >
+                            Edit
+                        </Link>
                         <Link
                             :href="route('industries.index')"
                             class="bg-gray-200 text-gray-700 px-4 py-2 rounded"
-                        >Back</Link>
+                        >
+                            Back
+                        </Link>
                         <button
                             v-if="industry.permissions.delete && !industry.has_companies"
                             @click="handleDelete"
                             class="bg-red-600 text-white px-4 py-2 rounded"
-                        >Delete</button>
+                        >
+                            Delete
+                        </button>
                     </div>
                 </div>
-                <div class="space-y-3">
-                    <div>
-                        <span class="font-semibold">Slug: </span>
-                        <span>{{ industry.slug }}</span>
-                    </div>
-                </div>
+
+                <IndustryDetailSection :industry="industry" />
             </div>
         </div>
     </AppLayout>
