@@ -5,6 +5,7 @@ import { ref, onMounted } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
 import { fetchQuote, deleteQuotes } from '@/services/quoteService'
+import QuoteDetailSection from './components/QuoteDetailSection.vue'
 
 interface UserPermissions {
     view: boolean
@@ -58,11 +59,6 @@ function formatCurrency(value: number, currency: string) {
     return new Intl.NumberFormat('en-GB', { style: 'currency', currency }).format(value)
 }
 
-function formatDate(date?: string | null) {
-    if (!date) return '—'
-    return new Date(date).toLocaleDateString('en-GB')
-}
-
 const props = defineProps<{ quote: any }>()
 
 const quote = ref<Quote>({
@@ -107,6 +103,7 @@ onMounted(() => loadQuote())
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
         <Head :title="`Quote #${quote.id}`" />
+
         <div class="p-6">
             <div class="mx-auto border p-6 rounded shadow">
 
@@ -114,6 +111,7 @@ onMounted(() => loadQuote())
                 <div class="flex items-start justify-between mb-6">
                     <div>
                         <h1 class="text-2xl font-bold">Quote #{{ quote.id }}</h1>
+
                         <span
                             class="mt-1 inline-block px-2 py-0.5 rounded-full text-xs font-semibold"
                             :class="getStatusClass(quote)"
@@ -122,7 +120,7 @@ onMounted(() => loadQuote())
                         </span>
                     </div>
 
-                    <div class="flex items-center space-x-2">
+                    <div class="flex items-center gap-2">
                         <Link
                             v-if="quote.permissions?.update"
                             :href="route('quotes.edit', { quote: quote.id })"
@@ -130,18 +128,21 @@ onMounted(() => loadQuote())
                         >
                             Edit
                         </Link>
+
                         <Link
                             :href="route('quotes.products.index', { quote: quote.id })"
                             class="bg-gray-200 text-gray-700 px-4 py-2 rounded"
                         >
                             Products
                         </Link>
+
                         <Link
                             :href="route('quotes.index')"
                             class="bg-gray-200 text-gray-700 px-4 py-2 rounded"
                         >
                             Back
                         </Link>
+
                         <button
                             v-if="quote.permissions?.delete"
                             @click="handleDelete"
@@ -152,49 +153,11 @@ onMounted(() => loadQuote())
                     </div>
                 </div>
 
-                <!-- Details -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 mb-6">
-                    <div v-if="quote.deal">
-                        <span class="font-semibold">Deal: </span>
-                        <Link
-                            :href="route('deals.show', { deal: quote.deal.id })"
-                        >
-                            {{ quote.deal.title }}
-                        </Link>
-                    </div>
-                    <div>
-                        <span class="font-semibold">Currency: </span>
-                        <span>{{ quote.currency }}</span>
-                    </div>
-                    <div>
-                        <span class="font-semibold">Subtotal: </span>
-                        <span>{{ quote.formatted_subtotal }}</span>
-                    </div>
-                    <div>
-                        <span class="font-semibold">Tax: </span>
-                        <span>{{ quote.formatted_tax }}</span>
-                    </div>
-                    <div>
-                        <span class="font-semibold">Total: </span>
-                        <span class="font-bold">{{ quote.formatted_total }}</span>
-                    </div>
-                    <div v-if="quote.sent_at">
-                        <span class="font-semibold">Sent At: </span>
-                        <span>{{ formatDate(quote.sent_at) }}</span>
-                    </div>
-                    <div v-if="quote.accepted_at">
-                        <span class="font-semibold">Accepted At: </span>
-                        <span>{{ formatDate(quote.accepted_at) }}</span>
-                    </div>
-                    <div v-if="quote.creator">
-                        <span class="font-semibold">Created By: </span>
-                        <span>{{ quote.creator.name }}</span>
-                    </div>
-                </div>
+                <QuoteDetailSection :quote="quote" />
 
-                <!-- Products -->
-                <div v-if="quote.products && quote.products.length > 0">
+                <div v-if="quote.products && quote.products.length > 0" class="mt-6">
                     <h2 class="text-lg font-semibold border-b pb-2 mb-3">Products</h2>
+
                     <table class="w-full border text-sm">
                         <thead>
                             <tr>
@@ -205,11 +168,21 @@ onMounted(() => loadQuote())
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="product in quote.products" :key="product.id" class="border-t">
+                            <tr
+                                v-for="product in quote.products"
+                                :key="product.id"
+                                class="border-t"
+                            >
                                 <td class="p-2">{{ product.name }}</td>
-                                <td class="p-2 text-right">{{ product.pivot?.quantity ?? 1 }}</td>
-                                <td class="p-2 text-right">{{ formatCurrency(product.pivot?.price ?? 0, quote.currency) }}</td>
-                                <td class="p-2 text-right">{{ formatCurrency(product.pivot?.total ?? 0, quote.currency) }}</td>
+                                <td class="p-2 text-right">
+                                    {{ product.pivot?.quantity ?? 1 }}
+                                </td>
+                                <td class="p-2 text-right">
+                                    {{ formatCurrency(product.pivot?.price ?? 0, quote.currency) }}
+                                </td>
+                                <td class="p-2 text-right">
+                                    {{ formatCurrency(product.pivot?.total ?? 0, quote.currency) }}
+                                </td>
                             </tr>
                         </tbody>
                     </table>

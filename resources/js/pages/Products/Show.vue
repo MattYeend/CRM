@@ -5,6 +5,7 @@ import { ref, onMounted } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
 import { fetchProduct, deleteProduct } from '@/services/productService'
+import ProductDetailSection from './components/ProductDetailSection.vue'
 
 interface UserPermissions {
     view: boolean
@@ -111,7 +112,10 @@ onMounted(() => loadProduct())
                 <div class="flex items-start justify-between mb-6">
                     <div>
                         <h1 class="text-2xl font-bold">{{ product.name }}</h1>
-                        <p class="text-sm text-gray-500 mt-1">SKU: {{ product.sku }}</p>
+                        <p class="text-sm text-gray-500 mt-1">
+                            SKU: {{ product.sku }}
+                        </p>
+
                         <span
                             :class="getStatusBadgeClass(product.status)"
                             class="mt-2 inline-block px-2 py-0.5 rounded-full text-xs font-semibold"
@@ -120,7 +124,7 @@ onMounted(() => loadProduct())
                         </span>
                     </div>
 
-                    <div class="flex items-center space-x-2">
+                    <div class="flex items-center gap-2">
                         <Link
                             v-if="product.permissions?.update"
                             :href="route('products.edit', { product: product.id })"
@@ -128,12 +132,14 @@ onMounted(() => loadProduct())
                         >
                             Edit
                         </Link>
+
                         <Link
                             :href="route('products.index')"
                             class="bg-gray-200 text-gray-700 px-4 py-2 rounded"
                         >
                             Back
                         </Link>
+
                         <button
                             v-if="product.permissions?.delete"
                             @click="handleDelete"
@@ -144,105 +150,38 @@ onMounted(() => loadProduct())
                     </div>
                 </div>
 
-                <!-- Product Info -->
-                <div class="space-y-6">
-                    <div>
-                        <h3 class="text-lg font-semibold border-b pb-2 mb-4">Product Information</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
-                            <div>
-                                <span class="font-semibold">Price: </span>
-                                <span class="text-lg">{{ product.formatted_price }} {{ product.currency }}</span>
-                            </div>
+                <ProductDetailSection :product="product" />
 
-                            <div v-if="product.description">
-                                <span class="font-semibold">Description: </span>
-                                <span>{{ product.description }}</span>
-                            </div>
+                <!-- Related Resources -->
+                <div class="mt-6">
+                    <h3 class="text-lg font-semibold border-b pb-2 mb-4">
+                        Related Resources
+                    </h3>
 
-                            <div v-if="product.creator">
-                                <span class="font-semibold">Created By: </span>
-                                <span>{{ product.creator.name }}</span>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="flex gap-2">
+                        <Link
+                            :href="route('products.deals.index', { product: product.id })"
+                            class="bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200"
+                        >
+                            Deals
+                        </Link>
 
-                    <!-- Stock Information -->
-                    <div>
-                        <h3 class="text-lg font-semibold border-b pb-2 mb-4">Stock Information</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
-                            <div>
-                                <span class="font-semibold">Current Stock: </span>
-                                <span
-                                    :class="{
-                                        'text-red-600 font-bold': product.is_out_of_stock,
-                                        'text-yellow-600 font-semibold': product.is_low_stock && !product.is_out_of_stock
-                                    }"
-                                >
-                                    {{ product.quantity }}
-                                </span>
-                                <span v-if="product.is_out_of_stock" class="ml-2 text-xs text-red-600">
-                                    (Out of Stock)
-                                </span>
-                                <span v-else-if="product.is_low_stock" class="ml-2 text-xs text-yellow-600">
-                                    (Low Stock)
-                                </span>
-                            </div>
+                        <Link
+                            :href="route('products.orders.index', { product: product.id })"
+                            class="bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200"
+                        >
+                            Orders
+                        </Link>
 
-                            <div v-if="product.min_stock_level !== null">
-                                <span class="font-semibold">Min Stock Level: </span>
-                                <span>{{ product.min_stock_level }}</span>
-                            </div>
-
-                            <div v-if="product.max_stock_level !== null">
-                                <span class="font-semibold">Max Stock Level: </span>
-                                <span>{{ product.max_stock_level }}</span>
-                            </div>
-
-                            <div v-if="product.reorder_point !== null">
-                                <span class="font-semibold">Reorder Point: </span>
-                                <span>{{ product.reorder_point }}</span>
-                            </div>
-
-                            <div v-if="product.reorder_quantity !== null">
-                                <span class="font-semibold">Reorder Quantity: </span>
-                                <span>{{ product.reorder_quantity }}</span>
-                            </div>
-
-                            <div v-if="product.lead_time_days !== null">
-                                <span class="font-semibold">Lead Time: </span>
-                                <span>{{ product.lead_time_days }} days</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Related Resources -->
-                    <div>
-                        <h3 class="text-lg font-semibold border-b pb-2 mb-4">Related Resources</h3>
-                        
-                        <div class="flex gap-2">
-                            <Link
-                                :href="route('products.deals.index', { product: product.id })"
-                                class="bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200"
-                            >
-                                Deals
-                            </Link>
-                            <Link
-                                :href="route('products.orders.index', { product: product.id })"
-                                class="bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200"
-                            >
-                                Orders
-                            </Link>
-                            <Link
-                                :href="route('products.quotes.index', { product: product.id })"
-                                class="bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200"
-                            >
-                                Quotes
-                            </Link>
-                        </div>
+                        <Link
+                            :href="route('products.quotes.index', { product: product.id })"
+                            class="bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200"
+                        >
+                            Quotes
+                        </Link>
                     </div>
                 </div>
+
             </div>
         </div>
     </AppLayout>
