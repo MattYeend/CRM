@@ -5,6 +5,7 @@ import { ref, onMounted } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
 import { fetchInvoiceItem, deleteInvoiceItems } from '@/services/invoiceItemService'
+import InvoiceItemDetailSection from './components/InvoiceItemDetailSection.vue'
 
 interface UserPermissions {
     view: boolean
@@ -114,46 +115,7 @@ onMounted(() => loadInvoiceItem())
                     </div>
                 </div>
 
-                <!-- Details -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 mb-6">
-                    <div v-if="invoiceItem.invoice">
-                        <span class="font-semibold">Invoice: </span>
-                        <Link
-                            :href="route('invoices.show', { invoice: invoiceItem.invoice.id })"
-                        >
-                            #{{ invoiceItem.invoice.id }}
-                        </Link>
-                    </div>
-
-                    <div v-if="invoiceItem.product">
-                        <span class="font-semibold">Product: </span>
-                        <Link
-                            :href="route('products.show', { product: invoiceItem.product.id })"
-                        >
-                            {{ invoiceItem.product.name }}
-                        </Link>
-                    </div>
-
-                    <div>
-                        <span class="font-semibold">Quantity: </span>
-                        <span>{{ invoiceItem.quantity }}</span>
-                    </div>
-
-                    <div>
-                        <span class="font-semibold">Unit Price: </span>
-                        <span>{{ invoiceItem.formatted_unit_price }}</span>
-                    </div>
-
-                    <div>
-                        <span class="font-semibold">Line Total: </span>
-                        <span class="font-semibold">{{ invoiceItem.formatted_line_total }}</span>
-                    </div>
-
-                    <div v-if="invoiceItem.creator">
-                        <span class="font-semibold">Created By: </span>
-                        <span>{{ invoiceItem.creator.name }}</span>
-                    </div>
-                </div>
+                <InvoiceItemDetailSection :invoice-item="invoiceItem" />
 
             </div>
         </div>
