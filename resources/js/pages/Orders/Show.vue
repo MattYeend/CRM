@@ -5,6 +5,7 @@ import { ref, onMounted } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
 import { fetchOrder, deleteOrders } from '@/services/orderService'
+import OrderDetailSection from './components/OrderDetailSection.vue'
 
 interface UserPermissions {
     view: boolean
@@ -41,21 +42,6 @@ const statusClasses: Record<string, string> = {
     failed: 'bg-red-100 text-red-700',
     refunded: 'bg-purple-100 text-purple-700',
     cancelled: 'bg-gray-100 text-gray-600',
-}
-
-function formatCurrency(value: number, currency: string) {
-    return new Intl.NumberFormat('en-GB', { style: 'currency', currency }).format(value)
-}
-
-function formatDate(date?: string | null) {
-    if (!date) return '—'
-    return new Date(date).toLocaleDateString('en-GB', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    })
 }
 
 const props = defineProps<{ order: any }>()
@@ -100,6 +86,7 @@ onMounted(() => loadOrder())
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
         <Head :title="`Order #${order.id}`" />
+
         <div class="p-6">
             <div class="mx-auto border p-6 rounded shadow">
 
@@ -115,7 +102,7 @@ onMounted(() => loadOrder())
                         </span>
                     </div>
 
-                    <div class="flex items-center space-x-2">
+                    <div class="flex items-center gap-2">
                         <Link
                             v-if="order.permissions?.update"
                             :href="route('orders.edit', { order: order.id })"
@@ -123,18 +110,21 @@ onMounted(() => loadOrder())
                         >
                             Edit
                         </Link>
+
                         <Link
                             :href="route('orders.products.index', { order: order.id })"
-                            class="bg-gray-200 text-gray-700 px-4 py-2 rounded"
+                            class="bg-gray-100 text-gray-700 px-4 py-2 rounded"
                         >
                             Products
                         </Link>
+
                         <Link
                             :href="route('orders.index')"
                             class="bg-gray-200 text-gray-700 px-4 py-2 rounded"
                         >
                             Back
                         </Link>
+
                         <button
                             v-if="order.permissions?.delete"
                             @click="handleDelete"
@@ -145,83 +135,8 @@ onMounted(() => loadOrder())
                     </div>
                 </div>
 
-                <!-- Details -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 mb-6">
-                    <div>
-                        <span class="font-semibold">Amount: </span>
-                        <span>{{ formatCurrency(order.amount, order.currency) }}</span>
-                    </div>
-                    <div>
-                        <span class="font-semibold">Paid At: </span>
-                        <span>{{ formatDate(order.paid_at) }}</span>
-                    </div>
-                    <div>
-                        <span class="font-semibold">Payment Method: </span>
-                        <span class="capitalize">{{ order.payment_method ?? '—' }}</span>
-                    </div>
-                    <div v-if="order.user">
-                        <span class="font-semibold">User: </span>
-                        <span>{{ order.user.name }}</span>
-                    </div>
-                    <div v-if="order.deal">
-                        <span class="font-semibold">Deal: </span>
-                        <Link
-                            :href="route('deals.show', { deal: order.deal.id })"
-                        >
-                            {{ order.deal.title }}
-                        </Link>
-                    </div>
-                    <div v-if="order.creator">
-                        <span class="font-semibold">Created By: </span>
-                        <span>{{ order.creator.name }}</span>
-                    </div>
-                </div>
-
-                <!-- Payment References -->
-                <div v-if="order.payment_intent_id || order.charge_id || order.stripe_payment_intent || order.stripe_invoice_id" class="mb-6">
-                    <h2 class="text-lg font-semibold border-b pb-2 mb-3">Payment References</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm">
-                        <div v-if="order.payment_intent_id">
-                            <span class="font-semibold">Payment Intent ID: </span>
-                            <code class="px-1 rounded">{{ order.payment_intent_id }}</code>
-                        </div>
-                        <div v-if="order.charge_id">
-                            <span class="font-semibold">Charge ID: </span>
-                            <code class="px-1 rounded">{{ order.charge_id }}</code>
-                        </div>
-                        <div v-if="order.stripe_payment_intent">
-                            <span class="font-semibold">Stripe Payment Intent: </span>
-                            <code class="px-1 rounded">{{ order.stripe_payment_intent }}</code>
-                        </div>
-                        <div v-if="order.stripe_invoice_id">
-                            <span class="font-semibold">Stripe Invoice ID: </span>
-                            <code class="px-1 rounded">{{ order.stripe_invoice_id }}</code>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Products -->
-                <div v-if="order.products && order.products.length > 0">
-                    <h2 class="text-lg font-semibold border-b pb-2 mb-3">Products</h2>
-                    <table class="w-full border text-sm">
-                        <thead>
-                            <tr>
-                                <th class="p-2 text-left">Product</th>
-                                <th class="p-2 text-right">Qty</th>
-                                <th class="p-2 text-right">Price</th>
-                                <th class="p-2 text-right">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="product in order.products" :key="product.id" class="border-t">
-                                <td class="p-2">{{ product.name }}</td>
-                                <td class="p-2 text-right">{{ product.pivot?.quantity ?? 1 }}</td>
-                                <td class="p-2 text-right">{{ formatCurrency(product.pivot?.price ?? 0, order.currency) }}</td>
-                                <td class="p-2 text-right">{{ formatCurrency(product.pivot?.total ?? 0, order.currency) }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <!-- Extracted Detail Section -->
+                <OrderDetailSection :order="order" />
 
             </div>
         </div>
