@@ -15,7 +15,7 @@ defineProps<{ invoiceItem: InvoiceItem }>()
 </script>
 
 <template>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-sm">
         <div v-if="invoiceItem.invoice">
             <span class="font-semibold">Invoice: </span>
             <Link

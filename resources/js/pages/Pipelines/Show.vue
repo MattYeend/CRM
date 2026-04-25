@@ -5,6 +5,7 @@ import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
 import { route } from 'ziggy-js'
 import { type BreadcrumbItem } from '@/types'
 import { deletePipelines } from '@/services/pipelineService'
+import PipelineDetailSection from './components/PipelineDetailSection.vue'
 
 interface Stage {
     id: number
@@ -63,17 +64,20 @@ async function handleDelete() {
 
         <div class="p-6">
             <div class="mx-auto border p-6 rounded shadow">
+
+                <!-- Header -->
                 <div class="flex items-start justify-between mb-6">
                     <div>
                         <h1 class="text-2xl font-bold">
                             {{ pipeline.name }}
                         </h1>
-                        <p v-if="pipeline.creator" class="text-gray-600">
+
+                        <p v-if="pipeline.creator" class="text-gray-600 text-sm mt-1">
                             {{ pipeline.creator.name }}
                         </p>
                     </div>
 
-                    <div class="flex items-center space-x-2">
+                    <div class="flex items-center gap-2">
                         <Link
                             v-if="pipeline.permissions.update"
                             :href="route('pipelines.edit', { pipeline: pipeline.id })"
@@ -81,6 +85,7 @@ async function handleDelete() {
                         >
                             Edit
                         </Link>
+
                         <Link
                             v-if="pipeline.permissions.update"
                             :href="route('pipeline-stages.create', { pipeline: pipeline.id })"
@@ -88,6 +93,7 @@ async function handleDelete() {
                         >
                             Add Stage
                         </Link>
+
                         <Link
                             :href="route('pipelines.index')"
                             class="bg-gray-200 text-gray-700 px-4 py-2 rounded"
@@ -105,108 +111,8 @@ async function handleDelete() {
                         </button>
                     </div>
                 </div>
-                <!-- Pipeline Details -->
-                <div class="overflow-hidden shadow-xl sm:rounded-lg">
-                    <div class="p-6 space-y-6">
-                        <div>
-                            <h3 class="text-lg font-semibold border-b pb-2 mb-4">
-                                Pipeline Information
-                            </h3>
-                            
-                            <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <dt class="text-sm font-medium">Name</dt>
-                                    <dd class="mt-1 text-sm font-medium">
-                                        {{ pipeline.name }}
-                                    </dd>
-                                </div>
 
-                                <div>
-                                    <dt class="text-sm font-medium">Status</dt>
-                                    <dd class="mt-1">
-                                        <span
-                                            v-if="pipeline.is_default"
-                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800"
-                                        >
-                                            Default
-                                        </span>
-                                        <span
-                                            v-else
-                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800"
-                                        >
-                                            Active
-                                        </span>
-                                    </dd>
-                                </div>
-
-                                <div class="md:col-span-2">
-                                    <dt class="text-sm font-medium">Description</dt>
-                                    <dd class="mt-1 text-sm">
-                                        {{ pipeline.description || 'No description provided' }}
-                                    </dd>
-                                </div>
-
-                                <div>
-                                    <dt class="text-sm font-medium">Stage Count</dt>
-                                    <dd class="mt-1 text-sm">
-                                        {{ pipeline.stage_count }} stage{{ pipeline.stage_count !== 1 ? 's' : '' }}
-                                    </dd>
-                                </div>
-
-                                <div>
-                                    <dt class="text-sm font-medium">Deal Count</dt>
-                                    <dd class="mt-1 text-sm">
-                                        {{ pipeline.deal_count }} deal{{ pipeline.deal_count !== 1 ? 's' : '' }}
-                                    </dd>
-                                </div>
-
-                                <div v-if="pipeline.creator">
-                                    <dt class="text-sm font-medium">Created By</dt>
-                                    <dd class="mt-1 text-sm">
-                                        {{ pipeline.creator.name }}
-                                    </dd>
-                                </div>
-                            </dl>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pipeline Stages -->
-                <div class="overflow-hidden shadow-xl sm:rounded-lg">
-                    <div class="p-6">
-                        <h3 class="text-lg font-semibold border-b pb-2 mb-4">
-                            Pipeline Stages ({{ pipeline.stages.length }})
-                        </h3>
-
-                        <div v-if="pipeline.stages.length > 0" class="space-y-2">
-                            <div
-                                v-for="stage in pipeline.stages"
-                                :key="stage.id"
-                                class="flex items-center justify-between p-3 rounded"
-                            >
-                                <div class="flex items-center space-x-3">
-                                    <span class="text-sm font-medium">
-                                        #{{ stage.id }}
-                                    </span>
-                                    <span class="text-sm font-medium">
-                                        {{ stage.name }}
-                                    </span>
-                                </div>
-                                <Link
-                                    :href="route('pipeline-stages.show', { pipeline: pipeline.id, stage: stage.id })"
-                                    class="text-blue-600 hover:text-blue-900 text-sm"
-                                >
-                                    View Stage
-                                </Link>
-                            </div>
-                        </div>
-
-                        <div v-else class="text-sm text-gray-400">
-                            This pipeline has no stages yet.
-                        </div>
-                    </div>
-                </div>
-
+                <PipelineDetailSection :pipeline="pipeline" />
             </div>
         </div>
     </AppLayout>

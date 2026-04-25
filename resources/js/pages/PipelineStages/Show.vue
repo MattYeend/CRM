@@ -5,6 +5,7 @@ import { ref, onMounted } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
 import { fetchPipelineStage, deletePipelineStages } from '@/services/pipelineStageService'
+import PipelineStageDetailSection from './components/PipelineStageDetailSection.vue'
 
 interface UserPermissions {
     view: boolean
@@ -72,18 +73,21 @@ onMounted(() => loadPipelineStage())
                 <div class="flex items-start justify-between mb-6">
                     <div>
                         <h1 class="text-2xl font-bold">{{ pipelineStage.name }}</h1>
+
                         <span
                             v-if="pipelineStage.is_won_stage"
                             class="mt-1 inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700"
                         >
                             Won Stage
                         </span>
+
                         <span
                             v-else-if="pipelineStage.is_lost_stage"
                             class="mt-1 inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700"
                         >
                             Lost Stage
                         </span>
+
                         <span
                             v-else
                             class="mt-1 inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600"
@@ -92,7 +96,7 @@ onMounted(() => loadPipelineStage())
                         </span>
                     </div>
 
-                    <div class="flex items-center space-x-2">
+                    <div class="flex items-center gap-2">
                         <Link
                             v-if="pipelineStage.permissions?.update"
                             :href="route('pipeline-stages.edit', { pipelineStage: pipelineStage.id })"
@@ -100,12 +104,14 @@ onMounted(() => loadPipelineStage())
                         >
                             Edit
                         </Link>
+
                         <Link
                             :href="route('pipeline-stages.index')"
                             class="bg-gray-200 text-gray-700 px-4 py-2 rounded"
                         >
                             Back
                         </Link>
+
                         <button
                             v-if="pipelineStage.permissions?.delete && pipelineStage.deal_count === 0"
                             @click="handleDelete"
@@ -116,45 +122,7 @@ onMounted(() => loadPipelineStage())
                     </div>
                 </div>
 
-                <!-- Details -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 mb-6">
-                    <div v-if="pipelineStage.pipeline">
-                        <span class="font-semibold">Pipeline: </span>
-                        <Link
-                            :href="route('pipelines.show', { pipeline: pipelineStage.pipeline.id })"
-                        >
-                            {{ pipelineStage.pipeline.name }}
-                        </Link>
-                    </div>
-
-                    <div>
-                        <span class="font-semibold">Position: </span>
-                        <span>#{{ pipelineStage.position }}</span>
-                    </div>
-
-                    <div>
-                        <span class="font-semibold">Status: </span>
-                        <span
-                            :class="pipelineStage.is_open
-                                ? 'bg-blue-100 text-blue-800'
-                                : 'bg-gray-100 text-gray-800'"
-                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
-                        >
-                            {{ pipelineStage.is_open ? 'Open' : 'Closed' }}
-                        </span>
-                    </div>
-
-                    <div>
-                        <span class="font-semibold">Deal Count: </span>
-                        <span>{{ pipelineStage.deal_count }} deal{{ pipelineStage.deal_count !== 1 ? 's' : '' }}</span>
-                    </div>
-
-                    <div v-if="pipelineStage.creator">
-                        <span class="font-semibold">Created By: </span>
-                        <span>{{ pipelineStage.creator.name }}</span>
-                    </div>
-                </div>
-
+                <PipelineStageDetailSection :pipelineStage="pipelineStage" />
             </div>
         </div>
     </AppLayout>

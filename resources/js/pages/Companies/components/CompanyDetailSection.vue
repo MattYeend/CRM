@@ -25,7 +25,7 @@ function capitalize(str: string | null | undefined) {
 </script>
 
 <template>
-    <div class="space-y-3">
+    <div class="space-y-3 text-sm">
         <div v-if="company.industry">
             <span class="font-semibold">Industry: </span>
             <span>{{ capitalize(company.industry) }}</span>

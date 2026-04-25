@@ -31,7 +31,7 @@ function notableTypeLabel(type: string): string {
 </script>
 
 <template>
-    <div>
+    <div class="text-sm">
         <div class="space-y-2">
             <div>
                 <span class="font-semibold">Body: </span>

@@ -135,9 +135,7 @@ onMounted(() => loadOrder())
                     </div>
                 </div>
 
-                <!-- Extracted Detail Section -->
                 <OrderDetailSection :order="order" />
-
             </div>
         </div>
     </AppLayout>

@@ -34,7 +34,7 @@ function formatDate(dateStr: string | null): string {
 </script>
 
 <template>
-    <div>
+    <div class="text-sm">
         <!-- Contact Details -->
         <div class="mb-6">
             <h2 class="text-lg font-semibold border-b pb-2 mb-3">Contact Details</h2>

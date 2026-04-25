@@ -30,7 +30,7 @@ const hasUsers = computed(() => props.jobTitle.user_count > 0)
         </div>
 
         <!-- Details -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 mb-6 text-sm">
             <div>
                 <span class="font-semibold">Users with this title: </span>
                 <span>{{ jobTitle.user_count }}</span>

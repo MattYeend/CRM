@@ -5,6 +5,7 @@ import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
 import { route } from 'ziggy-js'
 import { type BreadcrumbItem } from '@/types'
 import { deletePermissions } from '@/services/permissionService'
+import PermissionDetailSection from './components/PermissionDetailSection.vue'
 
 interface Role {
     id: number
@@ -64,16 +65,17 @@ async function handleDelete() {
 
                 <!-- Header -->
                 <div class="flex items-start justify-between mb-6">
-                    <div class="flex items-center space-x-4">
+                    <div class="flex items-center gap-4">
                         <h1 class="text-2xl font-bold">
                             {{ permission.name }}
                         </h1>
-                        <p v-if="permission.creator" class="text-gray-600">
+
+                        <p v-if="permission.creator" class="text-gray-600 text-sm">
                             {{ permission.creator.name }}
                         </p>
                     </div>
 
-                    <div class="flex items-center space-x-2">
+                    <div class="flex items-center gap-2">
                         <Link
                             v-if="permission.permissions.update"
                             :href="route('permissions.edit', { permission: permission.id })"
@@ -100,54 +102,7 @@ async function handleDelete() {
                     </div>
                 </div>
 
-                <!-- Details -->
-                <div class="space-y-2">
-                    <div>
-                        <span class="font-semibold">Label: </span>
-                        <span>{{ permission.label }}</span>
-                    </div>
-
-                    <div>
-                        <span class="font-semibold">Status: </span>
-                        <span>
-                            {{ permission.is_assigned ? 'Assigned' : 'Unassigned' }}
-                        </span>
-                    </div>
-
-                    <div>
-                        <span class="font-semibold">Roles: </span>
-                        <span>{{ permission.role_count }}</span>
-                    </div>
-                </div>
-
-                <!-- Roles -->
-                <div class="space-y-2 mt-4">
-                    <div>
-                        <span class="font-semibold">
-                            Assigned Roles ({{ permission.roles.length }}):
-                        </span>
-                    </div>
-
-                    <div v-if="permission.roles.length">
-                        <div
-                            v-for="role in permission.roles"
-                            :key="role.id"
-                            class="flex justify-between p-2 rounded"
-                        >
-                            <span>{{ role.name }}</span>
-                            <Link
-                                :href="route('roles.show', { role: role.id })"
-                            >
-                                View
-                            </Link>
-                        </div>
-                    </div>
-
-                    <div v-else class="text-gray-500">
-                        No roles assigned.
-                    </div>
-                </div>
-
+                <PermissionDetailSection :permission="permission" />
             </div>
         </div>
     </AppLayout>

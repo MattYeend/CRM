@@ -99,9 +99,7 @@ onMounted(() => loadPartImage())
                     </div>
                 </div>
 
-                <!-- Extracted Detail Section -->
                 <PartImageDetailSection :partImage="partImage" />
-
             </div>
         </div>
     </AppLayout>

@@ -100,9 +100,7 @@ onMounted(() => loadPartCategory())
                     </div>
                 </div>
 
-                <!-- Extracted Detail Section -->
                 <PartCategoryDetailSection :partCategory="partCategory" />
-
             </div>
         </div>
     </AppLayout>
