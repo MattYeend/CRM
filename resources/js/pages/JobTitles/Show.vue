@@ -5,6 +5,7 @@ import { ref, computed, onMounted } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
 import { fetchJobTitle, deleteJobTitles } from '@/services/jobTitleService'
+import JobTitleDetailSection from './components/JobTitleDetailSection.vue'
 
 interface UserPermissions {
     view: boolean
@@ -101,9 +102,6 @@ onMounted(() => loadJobTitle())
                             >
                                 {{ groupLabels[jobTitle.group] ?? jobTitle.group }}
                             </span>
-                            <span v-if="jobTitle.is_csuite" class="px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-700">C-Suite</span>
-                            <span v-else-if="jobTitle.is_director" class="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">Director</span>
-                            <span v-else-if="jobTitle.is_executive" class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">Executive</span>
                         </div>
                     </div>
 
@@ -145,55 +143,7 @@ onMounted(() => loadJobTitle())
                     </div>
                 </div>
 
-                <!-- Locked notice -->
-                <div v-if="hasUsers" class="mb-6 px-4 py-3 rounded border border-amber-200 bg-amber-50 text-amber-800 text-sm">
-                    This job title has {{ jobTitle.user_count }} assigned {{ jobTitle.user_count === 1 ? 'user' : 'users' }} and cannot be edited or deleted.
-                </div>
-
-                <!-- Details -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 mb-6">
-                    <div>
-                        <span class="font-semibold">Users with this title: </span>
-                        <span>{{ jobTitle.user_count }}</span>
-                    </div>
-
-                    <div v-if="jobTitle.creator">
-                        <span class="font-semibold">Created By: </span>
-                        <span>{{ jobTitle.creator.name }}</span>
-                    </div>
-
-                    <div v-if="jobTitle.updater">
-                        <span class="font-semibold">Last Updated By: </span>
-                        <span>{{ jobTitle.updater.name }}</span>
-                    </div>
-                </div>
-
-                <!-- Users -->
-                <div v-if="jobTitle.users && jobTitle.users.length > 0">
-                    <h2 class="text-lg font-semibold border-b pb-2 mb-3">Users</h2>
-                    <table class="w-full border text-sm">
-                        <thead>
-                            <tr class="bg-gray-50">
-                                <th class="p-2 text-left">Name</th>
-                                <th class="p-2"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="user in jobTitle.users" :key="user.id" class="border-t">
-                                <td class="p-2">{{ user.name }}</td>
-                                <td class="p-2 text-right">
-                                    <Link
-                                        :href="route('users.show', { user: user.id })"
-                                        class="text-xs"
-                                    >
-                                        View
-                                    </Link>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
+                <JobTitleDetailSection :job-title="jobTitle" />
             </div>
         </div>
     </AppLayout>
