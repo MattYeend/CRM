@@ -5,6 +5,7 @@ import { ref, onMounted } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
 import { fetchTask, deleteTasks } from '@/services/taskService'
+import TaskDetailSection from './components/TaskDetailSection.vue'
 
 interface UserPermissions {
     view: boolean
@@ -13,11 +14,10 @@ interface UserPermissions {
 }
 
 interface Taskable {
-    id: number;
-    name?: string;
-    title?: string;
+    id: number
+    name?: string
+    title?: string
 }
-
 
 interface Task {
     id: number
@@ -54,18 +54,9 @@ const priorityClasses: Record<string, string> = {
     urgent: 'bg-red-100 text-red-700',
 }
 
-function formatDate(date?: string | null) {
-    if (!date) return '—'
-    return new Date(date).toLocaleDateString('en-GB', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    })
-}
-
 const props = defineProps<{ task: Task }>()
 
-const deleting = ref(false);
+const deleting = ref(false)
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Tasks', href: route('tasks.index') },
@@ -77,18 +68,14 @@ async function loadTask() {
     Object.assign(props.task, data)
 }
 
-function taskableTypeLabel(type: string): string {
-    return type.split('\\').pop() ?? type;
-}
-
 async function handleDelete() {
-    if (!confirm('Are you sure?')) return;
-    deleting.value = true;
+    if (!confirm('Are you sure?')) return
+    deleting.value = true
     try {
-        await deleteTasks(props.task.id);
-        window.location.href = route('tasks.index');
+        await deleteTasks(props.task.id)
+        window.location.href = route('tasks.index')
     } catch {
-        deleting.value = false;
+        deleting.value = false
     }
 }
 
@@ -151,40 +138,7 @@ onMounted(() => loadTask())
                     </div>
                 </div>
 
-                <!-- Description -->
-                <div v-if="task.description" class="mb-6">
-                    <h2 class="text-lg font-semibold border-b pb-2 mb-3">Description</h2>
-                    <p class="whitespace-pre-wrap">{{ task.description }}</p>
-                </div>
-
-                <!-- Details -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 mb-6">
-                    <div v-if="task.assignee">
-                        <span class="font-semibold">Assigned To: </span>
-                        <span>{{ task.assignee.name }}</span>
-                    </div>
-                    <div v-if="task.due_at">
-                        <span class="font-semibold">Due Date: </span>
-                        <span>{{ formatDate(task.due_at) }}</span>
-                    </div>
-                    <div class="space-y-2 mt-2">
-                        <div>
-                            <span class="font-semibold">Related To: </span>
-                            <span v-if="task.taskable_name">
-                                <span class="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600">
-                                    {{ taskableTypeLabel(task.taskable_type) }}
-                                </span>
-                                {{ task.taskable_name }}
-                            </span>
-                            <span v-else>—</span>
-                        </div>
-                    </div>
-                    <div v-if="task.creator">
-                        <span class="font-semibold">Created By: </span>
-                        <span>{{ task.creator.name }}</span>
-                    </div>
-                </div>
-
+                <TaskDetailSection :task="task" />
             </div>
         </div>
     </AppLayout>

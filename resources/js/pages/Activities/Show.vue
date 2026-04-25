@@ -21,7 +21,11 @@ interface Activity {
     subject_type: string
     subject_id?: number
     subject_name?: string  
-    creator?: { name: string }
+    creator: { name: string } | null
+    updater: { name: string } | null
+    deleter: { name: string } | null
+    created_at: string | null
+    updated_at: string | null
     permissions: UserPermissions
 }
 
@@ -34,6 +38,11 @@ const activity = ref<Activity>({
     subject_type: props.activity.subject_type,
     subject_name: props.activity.subject_name,
     description: props.activity.description,
+    creator: props.activity.creator ?? null,
+    updater: props.activity.updater ?? null,
+    deleter: props.activity.deleter ?? null,
+    created_at: props.activity.created_at ?? null,
+    updated_at: props.activity.updated_at ?? null,
     permissions: props.activity.permissions ?? { view: false, update: false, delete: false },
 })
 

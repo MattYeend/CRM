@@ -34,92 +34,109 @@ function formatDate(dateStr: string | null): string {
 </script>
 
 <template>
-    <div class="text-sm">
+    <div class="space-y-6 text-sm">
         <!-- Contact Details -->
-        <div class="mb-6">
+        <div>
             <h2 class="text-lg font-semibold border-b pb-2 mb-3">Contact Details</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+            <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
                 <div>
-                    <span class="font-semibold">First Name: </span>
-                    <span>{{ lead.first_name ?? '—' }}</span>
+                    <dt class="font-semibold inline">First Name: </dt>
+                    <dd class="inline">{{ lead.first_name ?? '—' }}</dd>
                 </div>
                 <div>
-                    <span class="font-semibold">Last Name: </span>
-                    <span>{{ lead.last_name ?? '—' }}</span>
+                    <dt class="font-semibold inline">Last Name: </dt>
+                    <dd class="inline">{{ lead.last_name ?? '—' }}</dd>
                 </div>
                 <div>
-                    <span class="font-semibold">Email: </span>
-                    <a
-                        v-if="lead.email"
-                        :href="`mailto:${lead.email}`"
-                        class="text-blue-600"
-                    >
-                        {{ lead.email }}
-                    </a>
-                    <span v-else>—</span>
+                    <dt class="font-semibold inline">Email: </dt>
+                    <dd class="inline">
+                        <a 
+                            v-if="lead.email"
+                            :href="`mailto:${lead.email}`"
+                            class="text-blue-600 hover:underline"
+                        >
+                            {{ lead.email }}
+                        </a>
+                        <span v-else>—</span>
+                    </dd>
                 </div>
                 <div>
-                    <span class="font-semibold">Phone: </span>
-                    <a
-                        v-if="lead.phone"
-                        :href="`tel:${lead.phone}`"
-                    >
-                        {{ lead.phone }}
-                    </a>
-                    <span v-else>—</span>
+                    <dt class="font-semibold inline">Phone: </dt>
+                    <dd class="inline">
+                        <a
+                            v-if="lead.phone"
+                            :href="`tel:${lead.phone}`"
+                            class="text-blue-600 hover:underline"
+                        >
+                            {{ lead.phone }}
+                        </a>
+                        <span v-else>—</span>
+                    </dd>
                 </div>
                 <div>
-                    <span class="font-semibold">Source: </span>
-                    <span>{{ lead.source ?? '—' }}</span>
+                    <dt class="font-semibold inline">Source: </dt>
+                    <dd class="inline">{{ lead.source ?? '—' }}</dd>
                 </div>
                 <div>
-                    <span class="font-semibold">Age: </span>
-                    <span>{{ lead.age_in_days }} days</span>
+                    <dt class="font-semibold inline">Age: </dt>
+                    <dd class="inline">{{ lead.age_in_days }} days</dd>
                 </div>
-            </div>
+            </dl>
         </div>
 
         <!-- Assignment -->
-        <div class="mb-6">
+        <div>
             <h2 class="text-lg font-semibold border-b pb-2 mb-3">Assignment</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+            <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
                 <div>
-                    <span class="font-semibold">Owner: </span>
-                    <span>{{ lead.owner?.name ?? '—' }}</span>
+                    <dt class="font-semibold inline">Owner: </dt>
+                    <dd class="inline">{{ lead.owner?.name ?? '—' }}</dd>
                 </div>
                 <div>
-                    <span class="font-semibold">Assigned To: </span>
-                    <span>{{ lead.assigned_to?.name ?? '—' }}</span>
+                    <dt class="font-semibold inline">Assigned To: </dt>
+                    <dd class="inline">{{ lead.assigned_to?.name ?? '—' }}</dd>
                 </div>
                 <div v-if="lead.assigned_at">
-                    <span class="font-semibold">Assigned At: </span>
-                    <span>{{ formatDate(lead.assigned_at) }}</span>
+                    <dt class="font-semibold inline">Assigned At: </dt>
+                    <dd class="inline">
+                        <time :datetime="lead.assigned_at">
+                            {{ formatDate(lead.assigned_at) }}
+                        </time>
+                    </dd>
                 </div>
-            </div>
+            </dl>
         </div>
 
-        <!-- Audit -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-sm text-gray-600">
+        <!-- Audit Information -->
+        <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-gray-600 pt-2 border-t border-gray-200">
             <div v-if="lead.creator">
-                <span class="font-semibold">Created By: </span>
-                <span>{{ lead.creator.name }}</span>
+                <dt class="font-semibold inline">Created By: </dt>
+                <dd class="inline">{{ lead.creator.name }}</dd>
             </div>
             <div v-if="lead.created_at">
-                <span class="font-semibold">Created: </span>
-                <span>{{ formatDate(lead.created_at) }}</span>
+                <dt class="font-semibold inline">Created: </dt>
+                <dd class="inline">
+                    <time :datetime="lead.created_at">
+                        {{ formatDate(lead.created_at) }}
+                    </time>
+                </dd>
             </div>
             <div v-if="lead.updater">
-                <span class="font-semibold">Last Updated By: </span>
-                <span>{{ lead.updater.name }}</span>
+                <dt class="font-semibold inline">Last Updated By: </dt>
+                <dd class="inline">{{ lead.updater.name }}</dd>
             </div>
             <div v-if="lead.updated_at">
-                <span class="font-semibold">Last Updated: </span>
-                <span>{{ formatDate(lead.updated_at) }}</span>
+                <dt class="font-semibold inline">Last Updated: </dt>
+                <dd class="inline">
+                    <time :datetime="lead.updated_at">
+                        {{ formatDate(lead.updated_at) }}
+                    </time>
+                </dd>
             </div>
-            <div v-if="lead.deleter">
-                <span class="font-semibold">Deleted By: </span>
-                <span class="text-red-600">{{ lead.deleter.name }}</span>
+            <div v-if="lead.deleter" class="md:col-span-2">
+                <dt class="font-semibold inline">Deleted By: </dt>
+                <dd class="inline text-red-600">{{ lead.deleter.name }}</dd>
             </div>
-        </div>
+        </dl>
     </div>
 </template>

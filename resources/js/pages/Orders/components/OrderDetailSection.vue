@@ -16,16 +16,20 @@ interface Order {
         name: string
         pivot?: { quantity: number; price: number; total: number }
     }>
-    creator?: { name: string }
+    creator: { name: string } | null
+    updater: { name: string } | null
+    deleter: { name: string } | null
+    created_at: string | null
+    updated_at: string | null
 }
 
 defineProps<{ order: Order }>()
 
-function formatCurrency(value: number, currency: string) {
+function formatCurrency(value: number, currency: string): string {
     return new Intl.NumberFormat('en-GB', { style: 'currency', currency }).format(value)
 }
 
-function formatDate(date?: string | null) {
+function formatDate(date?: string | null): string {
     if (!date) return '—'
     return new Date(date).toLocaleDateString('en-GB', {
         year: 'numeric',
@@ -39,84 +43,137 @@ function formatDate(date?: string | null) {
 
 <template>
     <div class="space-y-6 text-sm">
-
         <!-- Overview -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+        <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
             <div>
-                <span class="font-semibold">Amount: </span>
-                <span>{{ formatCurrency(order.amount, order.currency) }}</span>
+                <dt class="font-semibold inline">Amount: </dt>
+                <dd class="inline">{{ formatCurrency(order.amount, order.currency) }}</dd>
             </div>
             <div>
-                <span class="font-semibold">Paid At: </span>
-                <span>{{ formatDate(order.paid_at) }}</span>
+                <dt class="font-semibold inline">Paid At: </dt>
+                <dd class="inline">
+                    <time v-if="order.paid_at" :datetime="order.paid_at">
+                        {{ formatDate(order.paid_at) }}
+                    </time>
+                    <span v-else>—</span>
+                </dd>
             </div>
             <div>
-                <span class="font-semibold">Payment Method: </span>
-                <span class="capitalize">{{ order.payment_method ?? '—' }}</span>
+                <dt class="font-semibold inline">Payment Method: </dt>
+                <dd class="inline capitalize">{{ order.payment_method ?? '—' }}</dd>
             </div>
             <div v-if="order.user">
-                <span class="font-semibold">User: </span>
-                <span>{{ order.user.name }}</span>
+                <dt class="font-semibold inline">User: </dt>
+                <dd class="inline">{{ order.user.name }}</dd>
             </div>
             <div v-if="order.deal">
-                <span class="font-semibold">Deal: </span>
-                <span>{{ order.deal.title }}</span>
+                <dt class="font-semibold inline">Deal: </dt>
+                <dd class="inline">{{ order.deal.title }}</dd>
             </div>
-            <div v-if="order.creator">
-                <span class="font-semibold">Created By: </span>
-                <span>{{ order.creator.name }}</span>
-            </div>
-        </div>
+        </dl>
 
         <!-- Payment References -->
         <div v-if="order.payment_intent_id || order.charge_id || order.stripe_payment_intent || order.stripe_invoice_id">
-            <h3 class="text-sm font-semibold uppercase tracking-wider mb-2">Payment References</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm">
+            <h3 class="text-sm font-semibold uppercase tracking-wider mb-3 border-b pb-2">
+                Payment References
+            </h3>
+            <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
                 <div v-if="order.payment_intent_id">
-                    <span class="font-medium">Payment Intent ID</span>
-                    <code class="block">{{ order.payment_intent_id }}</code>
+                    <dt class="font-medium">Payment Intent ID</dt>
+                    <dd>
+                        <code class="text-xs bg-gray-100 px-2 py-1 rounded">
+                            {{ order.payment_intent_id }}
+                        </code>
+                    </dd>
                 </div>
                 <div v-if="order.charge_id">
-                    <span class="font-medium">Charge ID</span>
-                    <code class="block">{{ order.charge_id }}</code>
+                    <dt class="font-medium">Charge ID</dt>
+                    <dd>
+                        <code class="text-xs bg-gray-100 px-2 py-1 rounded">
+                            {{ order.charge_id }}
+                        </code>
+                    </dd>
                 </div>
                 <div v-if="order.stripe_payment_intent">
-                    <span class="font-medium">Stripe Payment Intent</span>
-                    <code class="block">{{ order.stripe_payment_intent }}</code>
+                    <dt class="font-medium">Stripe Payment Intent</dt>
+                    <dd>
+                        <code class="text-xs bg-gray-100 px-2 py-1 rounded">
+                            {{ order.stripe_payment_intent }}
+                        </code>
+                    </dd>
                 </div>
                 <div v-if="order.stripe_invoice_id">
-                    <span class="font-medium">Stripe Invoice ID</span>
-                    <code class="block">{{ order.stripe_invoice_id }}</code>
+                    <dt class="font-medium">Stripe Invoice ID</dt>
+                    <dd>
+                        <code class="text-xs bg-gray-100 px-2 py-1 rounded">
+                            {{ order.stripe_invoice_id }}
+                        </code>
+                    </dd>
                 </div>
-            </div>
+            </dl>
         </div>
 
         <!-- Products -->
         <div v-if="order.products && order.products.length">
-            <h3 class="text-sm font-semibold uppercase tracking-wider mb-2">Products</h3>
-            <table class="w-full border text-sm">
-                <thead>
-                    <tr>
-                        <th class="p-2 text-left">Product</th>
-                        <th class="p-2 text-right">Qty</th>
-                        <th class="p-2 text-right">Price</th>
-                        <th class="p-2 text-right">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="product in order.products" :key="product.id" class="border-t">
-                        <td class="p-2">{{ product.name }}</td>
-                        <td class="p-2 text-right">{{ product.pivot?.quantity ?? 1 }}</td>
-                        <td class="p-2 text-right">
-                            {{ formatCurrency(product.pivot?.price ?? 0, order.currency) }}
-                        </td>
-                        <td class="p-2 text-right">
-                            {{ formatCurrency(product.pivot?.total ?? 0, order.currency) }}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <h3 class="text-sm font-semibold uppercase tracking-wider mb-3 border-b pb-2">
+                Products
+            </h3>
+            <div class="overflow-x-auto">
+                <table class="w-full border text-sm">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th scope="col" class="p-2 text-left border-b font-semibold">Product</th>
+                            <th scope="col" class="p-2 text-right border-b font-semibold">Qty</th>
+                            <th scope="col" class="p-2 text-right border-b font-semibold">Price</th>
+                            <th scope="col" class="p-2 text-right border-b font-semibold">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="product in order.products" :key="product.id" class="border-t">
+                            <td class="p-2">{{ product.name }}</td>
+                            <td class="p-2 text-right">{{ product.pivot?.quantity ?? 1 }}</td>
+                            <td class="p-2 text-right">
+                                {{ formatCurrency(product.pivot?.price ?? 0, order.currency) }}
+                            </td>
+                            <td class="p-2 text-right">
+                                {{ formatCurrency(product.pivot?.total ?? 0, order.currency) }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
+        <!-- Audit Information -->
+        <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-gray-600 pt-2 border-t border-gray-200">
+            <div v-if="order.creator">
+                <dt class="font-semibold inline">Created By: </dt>
+                <dd class="inline">{{ order.creator.name }}</dd>
+            </div>
+            <div v-if="order.created_at">
+                <dt class="font-semibold inline">Created: </dt>
+                <dd class="inline">
+                    <time :datetime="order.created_at">
+                        {{ formatDate(order.created_at) }}
+                    </time>
+                </dd>
+            </div>
+            <div v-if="order.updater">
+                <dt class="font-semibold inline">Last Updated By: </dt>
+                <dd class="inline">{{ order.updater.name }}</dd>
+            </div>
+            <div v-if="order.updated_at">
+                <dt class="font-semibold inline">Last Updated: </dt>
+                <dd class="inline">
+                    <time :datetime="order.updated_at">
+                        {{ formatDate(order.updated_at) }}
+                    </time>
+                </dd>
+            </div>
+            <div v-if="order.deleter" class="md:col-span-2">
+                <dt class="font-semibold inline">Deleted By: </dt>
+                <dd class="inline text-red-600">{{ order.deleter.name }}</dd>
+            </div>
+        </dl>
     </div>
 </template>

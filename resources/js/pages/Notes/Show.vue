@@ -33,7 +33,11 @@ interface Note {
     notable_name: string | null;
     notable: Notable | null;
     user: User | null;
-    creator: User | null;
+    creator: { name: string } | null
+    updater: { name: string } | null
+    deleter: { name: string } | null
+    created_at: string | null
+    updated_at: string | null
     meta: Record<string, unknown> | null;
     permissions: NotePermissions;
 }

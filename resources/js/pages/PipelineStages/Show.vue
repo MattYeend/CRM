@@ -22,8 +22,12 @@ interface PipelineStage {
     is_lost_stage: boolean
     is_open: boolean
     deal_count: number
-    pipeline?: { id: number; name: string } | null
-    creator?: { name: string } | null
+    pipeline: { id: number; name: string } | null
+    creator: { name: string } | null
+    updater: { name: string } | null
+    deleter: { name: string } | null
+    created_at: string | null
+    updated_at: string | null
     permissions: UserPermissions
 }
 
@@ -40,6 +44,10 @@ const pipelineStage = ref<PipelineStage>({
     deal_count: props.pipelineStage.deal_count ?? 0,
     pipeline: props.pipelineStage.pipeline ?? null,
     creator: props.pipelineStage.creator ?? null,
+    updater: props.pipelineStage.updater ?? null,
+    deleter: props.pipelineStage.deleter ?? null,
+    created_at: props.pipelineStage.created_at ?? null,
+    updated_at: props.pipelineStage.updated_at ?? null,
     permissions: props.pipelineStage.permissions ?? { view: false, update: false, delete: false },
 })
 

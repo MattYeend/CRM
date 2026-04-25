@@ -31,7 +31,11 @@ interface Order {
         name: string
         pivot?: { quantity: number; price: number; total: number }
     }>
-    creator?: { name: string }
+    creator: { name: string } | null
+    updater: { name: string } | null
+    deleter: { name: string } | null
+    created_at: string | null
+    updated_at: string | null
     permissions: UserPermissions
 }
 
@@ -60,7 +64,11 @@ const order = ref<Order>({
     user: props.order.user,
     deal: props.order.deal,
     products: props.order.products ?? [],
-    creator: props.order.creator,
+    creator: props.order.creator ?? null,
+    updater: props.order.updater ?? null,
+    deleter: props.order.deleter ?? null,
+    created_at: props.order.created_at ?? null,
+    updated_at: props.order.updated_at ?? null,
     permissions: props.order.permissions ?? { view: false, update: false, delete: false },
 })
 

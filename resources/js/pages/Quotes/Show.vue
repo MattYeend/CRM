@@ -33,7 +33,11 @@ interface Quote {
         name: string
         pivot?: { quantity: number; price: number; total: number }
     }>
-    creator?: { name: string }
+    creator: { name: string } | null
+    updater: { name: string } | null
+    deleter: { name: string } | null
+    created_at: string | null
+    updated_at: string | null
     permissions: UserPermissions
 }
 
@@ -55,10 +59,6 @@ function getStatusClass(quote: Quote): string {
     return statusClasses.draft
 }
 
-function formatCurrency(value: number, currency: string) {
-    return new Intl.NumberFormat('en-GB', { style: 'currency', currency }).format(value)
-}
-
 const props = defineProps<{ quote: any }>()
 
 const quote = ref<Quote>({
@@ -77,7 +77,11 @@ const quote = ref<Quote>({
     is_sent: props.quote.is_sent ?? false,
     is_accepted: props.quote.is_accepted ?? false,
     products: props.quote.products ?? [],
-    creator: props.quote.creator,
+    creator: props.quote.creator ?? null,
+    updater: props.quote.updater ?? null,
+    deleter: props.quote.deleter ?? null,
+    created_at: props.quote.created_at ?? null,
+    updated_at: props.quote.updated_at ?? null,
     permissions: props.quote.permissions ?? { view: false, update: false, delete: false },
 })
 
@@ -154,40 +158,6 @@ onMounted(() => loadQuote())
                 </div>
 
                 <QuoteDetailSection :quote="quote" />
-
-                <div v-if="quote.products && quote.products.length > 0" class="mt-6">
-                    <h2 class="text-lg font-semibold border-b pb-2 mb-3">Products</h2>
-
-                    <table class="w-full border text-sm">
-                        <thead>
-                            <tr>
-                                <th class="p-2 text-left">Product</th>
-                                <th class="p-2 text-right">Qty</th>
-                                <th class="p-2 text-right">Price</th>
-                                <th class="p-2 text-right">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="product in quote.products"
-                                :key="product.id"
-                                class="border-t"
-                            >
-                                <td class="p-2">{{ product.name }}</td>
-                                <td class="p-2 text-right">
-                                    {{ product.pivot?.quantity ?? 1 }}
-                                </td>
-                                <td class="p-2 text-right">
-                                    {{ formatCurrency(product.pivot?.price ?? 0, quote.currency) }}
-                                </td>
-                                <td class="p-2 text-right">
-                                    {{ formatCurrency(product.pivot?.total ?? 0, quote.currency) }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
             </div>
         </div>
     </AppLayout>

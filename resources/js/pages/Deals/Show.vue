@@ -19,17 +19,21 @@ interface Deal {
     status: 'open' | 'won' | 'lost' | 'archived'
     value: number
     currency: string
-    close_date?: string | null
-    company?: { id: number; name: string } | null
-    owner?: { id: number; name: string } | null
-    pipeline?: { id: number; name: string } | null
-    stage?: { id: number; name: string } | null
+    close_date: string | null
+    company: { id: number; name: string } | null
+    owner: { id: number; name: string } | null
+    pipeline: { id: number; name: string } | null
+    stage: { id: number; name: string } | null
     products?: Array<{
         id: number
         name: string
         pivot?: { quantity: number; price: number; total: number }
     }>
-    creator?: { name: string }
+    creator: { name: string } | null
+    updater: { name: string } | null
+    deleter: { name: string } | null
+    created_at: string | null
+    updated_at: string | null
     permissions: UserPermissions
 }
 
@@ -54,7 +58,11 @@ const deal = ref<Deal>({
     pipeline: props.deal.pipeline,
     stage: props.deal.stage,
     products: props.deal.products ?? [],
-    creator: props.deal.creator,
+    creator: props.deal.creator ?? null,
+    updater: props.deal.updater ?? null,
+    deleter: props.deal.deleter ?? null,
+    created_at: props.deal.created_at ?? null,
+    updated_at: props.deal.updated_at ?? null,
     permissions: props.deal.permissions ?? { view: false, update: false, delete: false },
 })
 
