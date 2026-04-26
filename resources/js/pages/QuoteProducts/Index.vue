@@ -30,15 +30,15 @@ const quote = ref<Quote>({
     products: props.quote.products ?? [],
 })
 
-function formatCurrency(value: number, currency: string) {
-    return new Intl.NumberFormat('en-GB', { style: 'currency', currency }).format(value)
-}
-
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Quotes', href: route('quotes.index') },
     { title: `Quote #${quote.value.id}`, href: route('quotes.show', { quote: quote.value.id }) },
     { title: 'Products', href: route('quotes.products.index', { quote: quote.value.id }) },
 ]
+
+function formatCurrency(value: number, currency: string) {
+    return new Intl.NumberFormat('en-GB', { style: 'currency', currency }).format(value)
+}
 
 async function loadQuote() {
     const data = await fetchQuote(quote.value.id)

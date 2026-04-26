@@ -30,15 +30,15 @@ const order = ref<Order>({
     products: props.order.products ?? [],
 })
 
-function formatCurrency(value: number, currency: string) {
-    return new Intl.NumberFormat('en-GB', { style: 'currency', currency }).format(value)
-}
-
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Orders', href: route('orders.index') },
     { title: `Order #${order.value.id}`, href: route('orders.show', { order: order.value.id }) },
     { title: 'Products', href: route('orders.products.index', { order: order.value.id }) },
 ]
+
+function formatCurrency(value: number, currency: string) {
+    return new Intl.NumberFormat('en-GB', { style: 'currency', currency }).format(value)
+}
 
 async function loadOrder() {
     const data = await fetchOrder(order.value.id)

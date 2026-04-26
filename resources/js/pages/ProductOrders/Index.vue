@@ -35,17 +35,18 @@ const product = ref<Product>({
     orders: props.product.orders ?? []
 })
 
+const breadcrumbItems: BreadcrumbItem[] = [
+    { title: 'Products', href: route('products.index') },
+    { title: props.product.name, href: route('products.show', { product: props.product.id }) },
+    { title: 'Orders', href: route('products.orders.index', { product: props.product.id }) },
+]
+
 function formatCurrency(value: number, currency: string) {
     return new Intl.NumberFormat('en-GB', {
         style: 'currency',
         currency,
     }).format(value)
 }
-const breadcrumbItems: BreadcrumbItem[] = [
-    { title: 'Products', href: route('products.index') },
-    { title: props.product.name, href: route('products.show', { product: props.product.id }) },
-    { title: 'Orders', href: route('products.orders.index', { product: props.product.id }) },
-]
 
 async function loadProduct() {
     const data = await fetchProduct(product.value.id)
