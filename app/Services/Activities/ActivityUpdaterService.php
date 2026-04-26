@@ -19,8 +19,8 @@ class ActivityUpdaterService
      *
      * Populates audit fields before persisting changes to the model.
      *
-     * @param  UpdateActivityRequest  $request   The validated request instance
-     * @param  Activity               $activity  The activity model to update
+     * @param  UpdateActivityRequest $request The validated request instance
+     * @param  Activity $activity The activity model to update
      *
      * @return Activity
      */

@@ -34,8 +34,8 @@ class ActivitySortingService
      * validates them against allowed values, and applies them
      * to the query builder.
      *
-     * @param  Builder  $query    The query builder instance
-     * @param  Request  $request  The incoming request containing sort
+     * @param  Builder $query The query builder instance
+     * @param  Request $request The incoming request containing sort
      * parameters
      *
      * @return void

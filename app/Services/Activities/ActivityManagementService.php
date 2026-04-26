@@ -23,8 +23,8 @@ class ActivityManagementService
     /**
      * Create a new service instance.
      *
-     * @param  ActivityCreatorService    $creator
-     * @param  ActivityUpdaterService    $updater
+     * @param  ActivityCreatorService $creator
+     * @param  ActivityUpdaterService $updater
      * @param  ActivityDestructorService $destructor
      *
      * @return void
@@ -42,7 +42,7 @@ class ActivityManagementService
     /**
      * Create a new activity.
      *
-     * @param  StoreActivityRequest  $request  The validated request instance
+     * @param  StoreActivityRequest $request The validated request instance
      *
      * @return Activity
      */
@@ -54,8 +54,8 @@ class ActivityManagementService
     /**
      * Update an existing activity.
      *
-     * @param  UpdateActivityRequest  $request   The validated request instance
-     * @param  Activity               $activity  The activity model to update
+     * @param  UpdateActivityRequest $request The validated request instance
+     * @param  Activity $activity The activity model to update
      *
      * @return Activity
      */
@@ -72,7 +72,7 @@ class ActivityManagementService
      * Delegates to the destructor service to handle audit fields
      * and soft deletion.
      *
-     * @param  Activity  $activity  The activity model to delete
+     * @param  Activity $activity The activity model to delete
      *
      * @return void
      */
@@ -84,7 +84,7 @@ class ActivityManagementService
     /**
      * Restore a soft-deleted activity.
      *
-     * @param  int  $id  The ID of the activity to restore
+     * @param  int $id The ID of the activity to restore
      *
      * @return Activity
      */

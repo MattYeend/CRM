@@ -21,8 +21,8 @@ class ActivityTrashFilterService
      * results to only trashed models or include trashed models alongside
      * active ones.
      *
-     * @param  Builder  $query    The query builder instance
-     * @param  Request  $request  The incoming request containing filter
+     * @param  Builder $query The query builder instance
+     * @param  Request $request The incoming request containing filter
      * parameters
      *
      * @return void

@@ -20,7 +20,7 @@ class ActivityCreatorService
      * Populates ownership and timestamp fields before persisting
      * the Activity model.
      *
-     * @param  StoreActivityRequest  $request  The validated request instance
+     * @param  StoreActivityRequest $request The validated request instance
      *
      * @return Activity
      */

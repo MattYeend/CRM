@@ -18,7 +18,7 @@ class ActivityDestructorService
      *
      * Records deletion metadata before performing the soft delete.
      *
-     * @param  Activity  $activity  The activity model to delete
+     * @param  Activity $activity The activity model to delete
      *
      * @return void
      */
@@ -39,7 +39,7 @@ class ActivityDestructorService
      * Restores the activity if it is currently soft-deleted and records
      * restoration metadata.
      *
-     * @param  int  $id  The ID of the activity to restore
+     * @param  int $id The ID of the activity to restore
      *
      * @return Activity
      */

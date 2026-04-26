@@ -22,9 +22,9 @@ class ActivityLogService
     /**
      * Log activity when a new activity is created.
      *
-     * @param  User      $user      The user being logged
-     * @param  int       $userId    The ID of the user who performed the action
-     * @param  Activity  $activity  The activity that was created
+     * @param  User $user The user being logged
+     * @param  int $userId The ID of the user who performed the action
+     * @param  Activity $activity The activity that was created
      *
      * @return array
      */
