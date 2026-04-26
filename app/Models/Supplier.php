@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Traits\HasTestPrefix;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -90,11 +89,9 @@ class Supplier extends Model
     /**
      * @use HasFactory<\Database\Factories\SupplierFactory>
      * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
-     * @use HasTestPrefix<\App\Traits\HasTestPrefix>
      */
     use HasFactory,
-        SoftDeletes,
-        HasTestPrefix;
+        SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
