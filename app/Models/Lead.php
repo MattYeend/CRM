@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Traits\HasTestPrefix;
 use App\Traits\Lead\HasLeadStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -174,12 +173,10 @@ class Lead extends Model
     /**
      * @use HasFactory<\Database\Factories\LeadFactory>
      * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
-     * @use HasTestPrefix<\App\Traits\HasTestPrefix>
      * @use HasLeadStatus<\App\Traits\Lead\HasLeadStatus>
      */
     use HasFactory,
         SoftDeletes,
-        HasTestPrefix,
         HasLeadStatus;
 
     /**
