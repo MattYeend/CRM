@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Traits\HasTestPrefix;
 use App\Traits\Learning\HasValidationStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -122,11 +121,9 @@ class LearningQuestion extends Model
 {
     /**
      * @use HasFactory<\Database\Factories\LearningQuestionFactory>
-     * @use HasTestPrefix<\App\Traits\HasTestPrefix>
      * @use HasValidationStatus<\App\Traits\Learning\HasValidationStatus>
      */
     use HasFactory,
-        HasTestPrefix,
         HasValidationStatus;
 
     /**
