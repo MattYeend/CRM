@@ -62,16 +62,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * ```
  *
  * Accessor methods include:
- * - getTitleAttribute(): Returns the lead title, applying a test
- *      prefix if marked as a test.
  * - getFullNameAttribute(): Returns the full name by concatenating
  *      first and last name.
  * - getDisplayNameAttribute(): Returns the display name, which is
  *      the full name if available, otherwise the email.
  * - getContactInfoAttribute(): Returns a formatted string combining
  *      email and phone number.
- * - getSourceAttribute(): Returns the lead source, applying a
- *      test prefix if marked as a test.
  * - getAgeInDaysAttribute(): Returns the age of the lead in days
  *      since creation.
  * - getIsStaleAttribute(): Returns a boolean indicating whether
@@ -90,15 +86,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Example usage of accessors:
  * ```php
  * $lead = Lead::find(1);
- * $title = $lead->title; // Get the lead title with test prefix
- *  if applicable
  * $fullName = $lead->full_name; // Get the full name of the lead
  * $displayName = $lead->display_name; // Get the display name of
  *  the lead
  * $contactInfo = $lead->contact_info; // Get the formatted contact
  *  info
- * $source = $lead->source; // Get the lead source with test prefix
- *  if applicable
  * $ageInDays = $lead->age_in_days; // Get the age of the lead in
  *  days
  * $isStale = $lead->is_stale; // Check if the lead is considered
@@ -349,18 +341,6 @@ class Lead extends Model
     }
 
     /**
-     * Get the lead title, applying the test prefix when marked as a test.
-     *
-     * @param  string|null  $value  The raw lead title from the database.
-     *
-     * @return string
-     */
-    public function getTitleAttribute($value): string
-    {
-        return $this->prefixTest($value);
-    }
-
-    /**
      * Get the lead's full name by concatenating first and last name.
      *
      * @return string
@@ -401,18 +381,6 @@ class Lead extends Model
         }
 
         return implode(' | ', $contactInfo);
-    }
-
-    /**
-     * Get the lead source, applying the test prefix when marked as a test.
-     *
-     * @param  string|null  $value  The raw lead source from the database.
-     *
-     * @return string
-     */
-    public function getSourceAttribute($value): string
-    {
-        return $this->prefixTest($value);
     }
 
     /**

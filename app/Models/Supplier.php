@@ -49,8 +49,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * ```
  *
  * Accessor methods include:
- * - getNameAttribute(): Returns the supplier name, applying a test prefix
- *      if the supplier is marked as a test record.
  * - getFullAddressAttribute(): Returns the supplier's full postal address
  *      as a single formatted string.
  * - getWebsiteHostAttribute(): Returns the host portion of the supplier's
@@ -58,7 +56,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Example usage of accessors:
  * ```php
  * $supplier = Supplier::find(1);
- * $name = $supplier->name; // Get the name with test prefix if applicable
  * $address = $supplier->full_address; // Get the formatted postal address
  * $websiteHost = $supplier->website_host; // Get the bare domain, e.g.
  * "example.com"
@@ -213,20 +210,6 @@ class Supplier extends Model
     public function restorer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'restored_by');
-    }
-
-    /**
-     * Get the formatted supplier name.
-     *
-     * Applies a test prefix when the supplier is marked as a test record.
-     *
-     * @param  string|null  $value  The raw supplier name from the database.
-     *
-     * @return string The formatted supplier name.
-     */
-    public function getNameAttribute($value): string
-    {
-        return $this->prefixTest($value);
     }
 
     /**

@@ -67,8 +67,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * ```
  *
  * Accessor methods include:
- * - getNameAttribute(): Returns the product name, applying a test prefix
- *      if the product is marked as a test record.
  * - getIsActiveAttribute(): Returns a boolean indicating whether the product
  *      has an active status.
  * - getIsDiscontinuedAttribute(): Returns a boolean indicating whether the
@@ -82,7 +80,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Example usage of accessors:
  * ```php
  * $product = Product::find(1);
- * $name = $product->name; // Get the name with test prefix if applicable
  * $isActive = $product->is_active; // Check if the product is active
  * $isLowStock = $product->is_low_stock; // Check if stock is at or below
  * reorder point
@@ -386,20 +383,6 @@ class Product extends Model
     public function getIsOutOfStock(): bool
     {
         return $this->quantity === 0;
-    }
-
-    /**
-     * Get the formatted product name.
-     *
-     * Applies a test prefix when the product is marked as a test record.
-     *
-     * @param  string|null $value The raw product name from the database.
-     *
-     * @return string The formatted product name.
-     */
-    public function getNameAttribute($value): string
-    {
-        return $this->prefixTest($value);
     }
 
     /**

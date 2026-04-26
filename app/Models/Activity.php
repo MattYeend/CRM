@@ -60,8 +60,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * ```
  *
  * Methods defined in this model include:
- * - getTypeAttribute($value): Accessor for the activity
- *      type that applies test prefixing.
  * - getUserNameAttribute(): Accessor for the name of
  *      the assigned user, returning null if no user is associated.
  * - hasSubjectType($type): Utility method to check if the
@@ -69,8 +67,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Example usage of these methods in code might look like:
  * ```php
  * $activity = Activity::find(1);
- * $type = $activity->type; // Get the activity type with
- * test prefixing applied
  * $userName = $activity->user_name; // Get the name of the
  * assigned user, or null if no user is associated
  * $isCompanyActivity = $activity->hasSubjectType(Company::class);
@@ -298,18 +294,6 @@ class Activity extends Model
     public function notes(): MorphMany
     {
         return $this->morphMany(Note::class, 'notable');
-    }
-
-    /**
-     * Get the activity type, applying the test prefix when marked as a test.
-     *
-     * @param  string|null $value The raw type value from the database.
-     *
-     * @return string
-     */
-    public function getTypeAttribute($value): string
-    {
-        return $this->prefixTest($value);
     }
 
     /**

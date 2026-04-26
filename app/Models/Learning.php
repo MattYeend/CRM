@@ -44,8 +44,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * ```
  *
  * Accessor methods include:
- * - getTitleAttribute(): Returns the learning title, applying a test prefix
- *      if the learning is marked as a test.
  * - getDescriptionAttribute(): Returns the learning description, defaulting to
  *      an empty string if null.
  * - getMetaTitleAttribute(): Returns the meta title from the meta JSON,
@@ -59,8 +57,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Example usage of accessors:
  * ```php
  * $learning = Learning::find(1);
- * $title = $learning->title; // Get the learning title with test prefix if
- *  applicable
  * $description = $learning->description; // Get the learning description
  * $metaTitle = $learning->meta_title; // Get the meta title from the meta JSON
  * $metaDescription = $learning->meta_description; // Get the meta description
@@ -264,18 +260,6 @@ class Learning extends Model
     public function notes(): MorphMany
     {
         return $this->morphMany(Note::class, 'notable');
-    }
-
-    /**
-     * Get the learning title, applying the test prefix when marked as a test.
-     *
-     * @param  string|null $value The raw learning title from the database.
-     *
-     * @return string
-     */
-    public function getTitleAttribute($value): string
-    {
-        return $this->prefixTest($value);
     }
 
     /**

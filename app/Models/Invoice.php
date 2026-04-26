@@ -65,8 +65,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * ```
  *
  * Accessor methods include:
- * - getNumberAttribute(): Returns the invoice number, applying a test prefix
- *      if the invoice is marked as a test record.
  * - getIsOverdueAttribute(): Returns a boolean indicating whether the invoice
  *      is past its due date and has not been paid.
  * - getIsPaidAttribute(): Returns a boolean indicating whether the invoice
@@ -86,7 +84,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Example usage of accessors:
  * ```php
  * $invoice = Invoice::find(1);
- * $number = $invoice->number; // Get the number with test prefix
  * $isOverdue = $invoice->is_overdue; // Check if past due date and unpaid
  * $isPaid = $invoice->is_paid; // Check if fully paid
  * $isDraft = $invoice->is_draft; // Check if still a draft
@@ -317,18 +314,6 @@ class Invoice extends Model
         $this->total = $subtotal + $this->tax;
 
         $this->saveQuietly();
-    }
-
-    /**
-     * Get the invoice number, applying the test prefix when marked as a test.
-     *
-     * @param  string|null  $value  The raw invoice number from the database.
-     *
-     * @return string
-     */
-    public function getNumberAttribute($value): string
-    {
-        return $this->prefixTest($value);
     }
 
     /**

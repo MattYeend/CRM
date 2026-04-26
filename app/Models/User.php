@@ -701,27 +701,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the formatted user name.
-     *
-     * Applies a test prefix when the user is marked as a test record.
-     *
-     * This accessor method formats the user's name by applying a test prefix
-     * if the user is marked as a test record. The prefixTest() method is
-     * assumed to be defined elsewhere in the User model or a related trait,
-     * and it adds a specific prefix to the name when the user is a test
-     * record. This allows for easy identification of test users in the
-     * system while maintaining the original name format for real users.
-     *
-     * @param  string|null $value The raw user name from the database.
-     *
-     * @return string The formatted user name.
-     */
-    public function getNameAttribute($value): string
-    {
-        return $this->prefixTest($value);
-    }
-
-    /**
      * Scope a query to only include admin users.
      *
      * This scope filters the query to include only users whose role_id

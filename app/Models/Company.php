@@ -279,18 +279,6 @@ class Company extends Model
     }
 
     /**
-     * Get the company name, applying the test prefix when marked as a test.
-     *
-     * @param  string|null  $value  The raw name value from the database.
-     *
-     * @return string
-     */
-    public function getNameAttribute($value): string
-    {
-        return $this->prefixTest($value);
-    }
-
-    /**
      * Get the primary contact's full name.
      *
      * Combines the contact's first and last name into a single string.

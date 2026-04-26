@@ -54,8 +54,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * ```
  *
  * Accessor methods include:
- * - getNameAttribute(): Returns the pipeline name, applying a test prefix
- *      if the pipeline is marked as a test record.
  * - getIsDefaultAttribute(): Returns a boolean indicating whether this is
  *      the default pipeline.
  * - getStageCountAttribute(): Returns the total number of stages in this
@@ -65,7 +63,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Example usage of accessors:
  * ```php
  * $pipeline = Pipeline::find(1);
- * $name = $pipeline->name; // Get the name with test prefix if applicable
  * $isDefault = $pipeline->is_default; // Check if this is the default pipeline
  * $stageCount = $pipeline->stage_count; // Get the number of stages
  * $dealCount = $pipeline->deal_count; // Get the number of active deals
@@ -232,20 +229,6 @@ class Pipeline extends Model
     public function notes(): MorphMany
     {
         return $this->morphMany(Note::class, 'notable');
-    }
-
-    /**
-     * Get the formatted pipeline name.
-     *
-     * Applies a test prefix when the pipeline is marked as a test record.
-     *
-     * @param  string|null  $value  The raw pipeline name from the database.
-     *
-     * @return string The formatted pipeline name.
-     */
-    public function getNameAttribute($value): string
-    {
-        return $this->prefixTest($value);
     }
 
     /**

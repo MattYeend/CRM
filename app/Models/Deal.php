@@ -52,8 +52,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * ```
  *
  * Accessor methods include:
- * - getTitleAttribute(): Returns the deal title, applying a test prefix
- *      if the deal is marked as a test record.
  * - getIsOpenAttribute(): Returns a boolean indicating whether the deal
  *      has an open status.
  * - getIsWonAttribute(): Returns a boolean indicating whether the deal
@@ -69,7 +67,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Example usage of accessors:
  * ```php
  * $deal = Deal::find(1);
- * $title = $deal->title; // Get title with test prefix if applicable
  * $isWon = $deal->is_won; // Check if the deal has been won
  * $isClosed = $deal->is_closed; // Check if won or lost
  * $isOverdue = $deal->is_overdue; // Check if past close date and unresolved
@@ -319,18 +316,6 @@ class Deal extends Model
     public function restorer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'restored_by');
-    }
-
-    /**
-     * Get the deal title, applying the test prefix when marked as a test.
-     *
-     * @param  string|null  $value  The raw title from the database.
-     *
-     * @return string
-     */
-    public function getTitleAttribute($value): string
-    {
-        return $this->prefixTest($value);
     }
 
     /**

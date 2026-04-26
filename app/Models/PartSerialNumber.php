@@ -33,8 +33,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      is past the expiry date.
  * - getIsExpiringSoon($days = 30): Returns true if the
  *      expiry date is within the next $days.
- * - getSerialNumberAttribute($value): Accessor that
- *      applies a test prefix to the serial number
  *      when appropriate.
  * Example usage of helper methods:
  * ```php
@@ -186,20 +184,6 @@ class PartSerialNumber extends Model
         return $this->expires_at
             && $this->expires_at->isFuture()
             && $this->expires_at->lessThanOrEqualTo(now()->addDays($days));
-    }
-
-    /**
-     * Get the formatted serial number.
-     *
-     * Applies a test prefix when the serial number is marked as a test record.
-     *
-     * @param  string|null $value The raw serial number from the database.
-     *
-     * @return string The formatted serial number.
-     */
-    public function getSerialNumberAttribute($value): string
-    {
-        return $this->prefixTest($value);
     }
 
     /**

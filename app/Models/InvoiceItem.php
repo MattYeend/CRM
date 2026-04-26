@@ -49,8 +49,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      sum query on the parent invoice.
  *
  * Accessor methods include:
- * - getDescriptionAttribute(): Returns the description, applying a test
- *      prefix if the record is marked as a test.
  * - getLineTotalAttribute(): Returns the computed line total as quantity
  *      multiplied by unit price.
  * - getFormattedUnitPriceAttribute(): Returns the unit price formatted to
@@ -62,7 +60,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Example usage of accessors:
  * ```php
  * $item = InvoiceItem::find(1);
- * $description = $item->description; // Get description with test prefix
  * $lineTotal = $item->line_total; // Computed float total
  * $formatted = $item->formatted_line_total; // e.g. "149.99"
  * $hasProduct = $item->has_product; // Check if linked to a product
@@ -233,19 +230,6 @@ class InvoiceItem extends Model
     public function notes(): MorphMany
     {
         return $this->morphMany(Note::class, 'notable');
-    }
-
-    /**
-     * Get the invoice item description, applying the test prefix when marked
-     * as a test.
-     *
-     * @param  string|null $value The raw description value from the database.
-     *
-     * @return string
-     */
-    public function getDescriptionAttribute($value): string
-    {
-        return $this->prefixTest($value);
     }
 
     /**

@@ -425,28 +425,6 @@ class Attachment extends Model
     }
 
     /**
-     * Get the attachment name, applying the test prefix when marked as a test.
-     *
-     * This accessor returns the name of the attachment, applying a test prefix
-     * if the attachment is marked as a test record (i.e., if 'is_test' is
-     * true). The `prefixTest` method is defined in the HasTestPrefix trait
-     * and is responsible for adding a prefix  to the name when the record
-     * is a test, which can help differentiate test records from real records
-     * in the system.
-     * The raw name value is passed to the `prefixTest` method, which checks
-     * the 'is_test' attribute and returns the appropriately prefixed name
-     * based on whether the record is a test or not.
-     *
-     * @param  string|null  $value  The raw name value from the database.
-     *
-     * @return string
-     */
-    public function getNameAttribute($value): string
-    {
-        return $this->prefixTest($value);
-    }
-
-    /**
      * Scope a query to exclude test records.
      *
      * This scope filters the query to include only users where the

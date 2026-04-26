@@ -49,8 +49,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * ```
  *
  * Accessor methods include:
- * - getTitleAttribute(): Returns the task title, applying a test prefix
- *      if the task is marked as a test record.
  * - getIsOverdueAttribute(): Returns a boolean indicating whether the
  *      task is past its due date and not yet completed or cancelled.
  * - getIsPendingAttribute(): Returns a boolean indicating whether the
@@ -62,7 +60,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Example usage of accessors:
  * ```php
  * $task = Task::find(1);
- * $title = $task->title; // Get the title with test prefix if applicable
  * $isOverdue = $task->is_overdue; // Check if the task is past its due date
  * $isPending = $task->is_pending; // Check if the task is pending
  * $isCompleted = $task->is_completed; // Check if the task is completed
@@ -297,20 +294,6 @@ class Task extends Model
     public function notes(): MorphMany
     {
         return $this->morphMany(Note::class, 'notable');
-    }
-
-    /**
-     * Get the formatted task title.
-     *
-     * Applies a test prefix when the task is marked as a test record.
-     *
-     * @param  string|null  $value  The raw task title from the database.
-     *
-     * @return string The formatted task title.
-     */
-    public function getTitleAttribute($value): string
-    {
-        return $this->prefixTest($value);
     }
 
     /**

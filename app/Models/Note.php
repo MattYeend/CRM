@@ -51,15 +51,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *  with this note
  * $tasks = $note->tasks; // Get the tasks associated with this note
  * ```
- *
- * Accessor methods include:
- * - getTypeAttribute(): Get the note body with the test prefix applied
- *      if marked as a test.
- * Example usage of accessors:
- * ```php
- * $note = Note::find(1);
- * $type = $note->type; // Get the note body with test prefix if applicable
- * ```
+ 
  *
  * Query scopes include:
  * - scopeOfNotableType($query, $notableType): Filter notes by notable
@@ -243,18 +235,6 @@ class Note extends Model
     public function tasks(): MorphMany
     {
         return $this->morphMany(Task::class, 'taskable');
-    }
-
-    /**
-     * Get the note body, applying the test prefix when marked as a test.
-     *
-     * @param  string|null  $value  The raw note body from the database.
-     *
-     * @return string
-     */
-    public function getTypeAttribute($value): string
-    {
-        return $this->prefixTest($value);
     }
 
     /**

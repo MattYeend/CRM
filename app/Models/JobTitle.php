@@ -42,8 +42,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * ```
  *
  * Accessor methods include:
- * - getTitleAttribute(): Returns the job title, applying a test prefix
- *      if the record is marked as a test.
  * - getIsCsuiteAttribute(): Returns a boolean indicating whether this
  *      title belongs to the C-Suite group.
  * - getIsExecutiveAttribute(): Returns a boolean indicating whether this
@@ -55,8 +53,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Example usage of accessors:
  * ```php
  * $jobTitle = JobTitle::find(1);
- * $title = $jobTitle->title; // Get the title with test prefix if
- *  applicable
  * $isCsuite = $jobTitle->is_csuite; // Check if this is a C-Suite
  *  title
  * $isDirector = $jobTitle->is_director; // Check if this is a
@@ -257,18 +253,6 @@ class JobTitle extends Model
     public function restorer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'restored_by');
-    }
-
-    /**
-     * Get the job title, applying the test prefix when marked as a test.
-     *
-     * @param  string|null  $value  The raw title value from the database.
-     *
-     * @return string
-     */
-    public function getTitleAttribute($value): string
-    {
-        return $this->prefixTest($value);
     }
 
     /**

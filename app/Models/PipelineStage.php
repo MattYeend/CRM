@@ -53,8 +53,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * ```
  *
  * Accessor methods include:
- * - getNameAttribute(): Returns the stage name, applying a test prefix
- *      if the stage is marked as a test record.
  * - getIsOpenAttribute(): Returns a boolean indicating whether the stage
  *      is an open (in-progress) stage, i.e. neither won nor lost.
  * - getIsWonAttribute(): Returns a boolean indicating whether the stage
@@ -66,7 +64,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Example usage of accessors:
  * ```php
  * $stage = PipelineStage::find(1);
- * $name = $stage->name; // Get the name with test prefix if applicable
  * $isOpen = $stage->is_open; // Check if the stage is still in progress
  * $isWon = $stage->is_won; // Check if this is a won stage
  * $dealCount = $stage->deal_count; // Get the number of deals in this stage
@@ -272,20 +269,6 @@ class PipelineStage extends Model
     public function notes(): MorphMany
     {
         return $this->morphMany(Note::class, 'notable');
-    }
-
-    /**
-     * Get the formatted stage name.
-     *
-     * Applies a test prefix when the stage is marked as a test record.
-     *
-     * @param  string|null  $value  The raw stage name from the database.
-     *
-     * @return string The formatted stage name.
-     */
-    public function getNameAttribute($value): string
-    {
-        return $this->prefixTest($value);
     }
 
     /**

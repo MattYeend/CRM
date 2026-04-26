@@ -44,8 +44,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * ```
  *
  * Accessor methods include:
- * - getQuestionAttribute(): Applies the test prefix to the question
- *      text when marked as a test.
  * - hasCorrectAnswer(): Returns a boolean indicating whether this
  *      question has at least one correct answer.
  * - hasIncorrectAnswer(): Returns a boolean indicating whether this
@@ -71,8 +69,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * Example usage of accessors:
  * ```php
  * $question = LearningQuestion::find(1);
- * $questionText = $question->question; // Get the question text
- *  with test prefix if applicable
  * $hasCorrect = $question->has_correct_answer; // Check if the
  *  question has a correct answer
  * $hasIncorrect = $question->has_incorrect_answer; // Check if
@@ -174,18 +170,6 @@ class LearningQuestion extends Model
     public function incorrectAnswers(): HasMany
     {
         return $this->answers()->where('is_correct', false);
-    }
-
-    /**
-     * Get the question text, applying the test prefix when marked as a test.
-     *
-     * @param  string|null  $value  The raw question value from the database.
-     *
-     * @return string
-     */
-    public function getQuestionAttribute($value): string
-    {
-        return $this->prefixTest($value);
     }
 
     /**
