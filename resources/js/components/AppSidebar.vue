@@ -184,7 +184,7 @@ const mainNavItems: NavItem[] = [
             },
             {
                 title: 'Low Stock',
-                href: '/parts/stock/low',
+                href: '/products/stock/low',
                 icon: Eye
             },
         ]

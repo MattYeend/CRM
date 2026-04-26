@@ -1163,6 +1163,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ]);
     })->name('products.stock.index');
 
+    Route::get('/products/stock/low', function (Request $request) {
+        return Inertia::render('Products/Stock/LowStock', [
+            'products' => Product::select(
+                'id',
+                'name',
+                'sku',
+                'quantity',
+                'reorder_point'
+            )->lowStock()
+                ->orderBy('quantity')
+                ->paginate(10)
+                ->withQueryString(),
+        ]);
+    })->name('products.stock.low');
+
     Route::get('/products/{product}/stock', function (
         Request $request,
         Product $product
