@@ -461,6 +461,11 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
      * -------------------- Deal Products ----------------------
      * ----------------------------------------------------------
      */
+    Route::get(
+        'deals/{deal}/products',
+        [DealController::class, 'products']
+    )->name('api.deals.products.index');
+
     Route::post(
         'deals/{deal}/products',
         [DealController::class, 'addProducts']
@@ -486,6 +491,11 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
      * -------------------- Order Products ----------------------
      * ----------------------------------------------------------
      */
+    Route::get(
+        'orders/{order}/products',
+        [OrderController::class, 'products']
+    )->name('api.orders.products.index');
+
     Route::post(
         'orders/{order}/products',
         [OrderController::class, 'addProducts']
@@ -511,6 +521,11 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
      * -------------------- Quote Products ----------------------
      * ----------------------------------------------------------
      */
+    Route::get(
+        'quotes/{quote}/products',
+        [QuoteController::class, 'products']
+    )->name('api.quotes.products.index');
+
     Route::post(
         'quotes/{quote}/products',
         [QuoteController::class, 'addProducts']

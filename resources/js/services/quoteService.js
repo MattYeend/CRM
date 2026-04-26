@@ -29,6 +29,12 @@ export async function restoreQuote(id) {
     return response.data;
 }
 
+// Quote Products
+export async function fetchQuoteProducts(id, perPage = 10, page = 1) {
+    const response = await api.get(`/quotes/${id}/products`, { params: { per_page: perPage, page } });
+    return response.data;
+}
+
 export async function addQuoteProducts(id, payload) {
     const response = await api.post(`/quotes/${id}/products`, payload);
     return response.data;

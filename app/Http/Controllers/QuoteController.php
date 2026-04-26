@@ -250,6 +250,39 @@ class QuoteController extends Controller
     }
 
     /**
+     * Display a list of products attached to the specified quote.
+     *
+     * Returns the quote's products via the many-to-many relationship,
+     * including pivot data such as quantity, price, and total.
+     *
+     * This endpoint currently returns all products without pagination.
+     * If pagination is required, consider using paginate() and supporting
+     * 'per_page' and 'page' query parameters.
+     *
+     * Authorises via the 'view' and 'access' policies before returning data.
+     *
+     * @param  Request $request Incoming HTTP request; may contain query
+     * parameters.
+     * @param  Quote $quote Route-model-bound quote instance whose products are
+     * being retrieved.
+     *
+     * @return JsonResponse List of products with pivot data.
+     */
+    public function products(Request $request, Quote $quote): JsonResponse
+    {
+        $this->authorize('view', $quote);
+        $this->authorize('access', $quote);
+
+        $perPage = $request->input('per_page', 10);
+
+        $products = $quote->products()
+            ->withPivot(['quantity', 'price', 'total'])
+            ->paginate($perPage);
+
+        return response()->json($products);
+    }
+
+    /**
      * Attach products to the specified quote.
      *
      * Accepts a list of products from the request payload and delegates to

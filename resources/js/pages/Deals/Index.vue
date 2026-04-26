@@ -53,15 +53,6 @@ const statusClasses: Record<string, string> = {
     archived: 'bg-gray-100 text-gray-600',
 }
 
-function formatCurrency(value: number, currency: string) {
-    return new Intl.NumberFormat('en-GB', { style: 'currency', currency }).format(value)
-}
-
-function formatDate(date?: string | null) {
-    if (!date) return '—'
-    return new Date(date).toLocaleDateString('en-GB')
-}
-
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Deals', href: route('deals.index') },
 ]
@@ -110,6 +101,15 @@ async function handleDelete(id: number) {
     if (!confirm('Are you sure you want to delete this deal?')) return
     await deleteDeals(id)
     loadDeals(currentPage.value)
+}
+
+function formatCurrency(value: number, currency: string) {
+    return new Intl.NumberFormat('en-GB', { style: 'currency', currency }).format(value)
+}
+
+function formatDate(date?: string | null) {
+    if (!date) return '—'
+    return new Date(date).toLocaleDateString('en-GB')
 }
 
 function goToPage(page: number) {

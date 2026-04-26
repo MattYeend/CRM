@@ -81,7 +81,7 @@ function formatDate(date?: string | null): string {
                 <div v-if="order.payment_intent_id">
                     <dt class="font-medium">Payment Intent ID</dt>
                     <dd>
-                        <code class="text-xs bg-gray-100 px-2 py-1 rounded">
+                        <code class="text-xs px-2 py-1 rounded">
                             {{ order.payment_intent_id }}
                         </code>
                     </dd>
@@ -89,7 +89,7 @@ function formatDate(date?: string | null): string {
                 <div v-if="order.charge_id">
                     <dt class="font-medium">Charge ID</dt>
                     <dd>
-                        <code class="text-xs bg-gray-100 px-2 py-1 rounded">
+                        <code class="text-xs px-2 py-1 rounded">
                             {{ order.charge_id }}
                         </code>
                     </dd>
@@ -97,7 +97,7 @@ function formatDate(date?: string | null): string {
                 <div v-if="order.stripe_payment_intent">
                     <dt class="font-medium">Stripe Payment Intent</dt>
                     <dd>
-                        <code class="text-xs bg-gray-100 px-2 py-1 rounded">
+                        <code class="text-xs px-2 py-1 rounded">
                             {{ order.stripe_payment_intent }}
                         </code>
                     </dd>
@@ -105,7 +105,7 @@ function formatDate(date?: string | null): string {
                 <div v-if="order.stripe_invoice_id">
                     <dt class="font-medium">Stripe Invoice ID</dt>
                     <dd>
-                        <code class="text-xs bg-gray-100 px-2 py-1 rounded">
+                        <code class="text-xs px-2 py-1 rounded">
                             {{ order.stripe_invoice_id }}
                         </code>
                     </dd>
@@ -121,7 +121,7 @@ function formatDate(date?: string | null): string {
             <div class="overflow-x-auto">
                 <table class="w-full border text-sm">
                     <thead>
-                        <tr class="bg-gray-50">
+                        <tr>
                             <th scope="col" class="p-2 text-left border-b font-semibold">Product</th>
                             <th scope="col" class="p-2 text-right border-b font-semibold">Qty</th>
                             <th scope="col" class="p-2 text-right border-b font-semibold">Price</th>

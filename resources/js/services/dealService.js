@@ -29,6 +29,12 @@ export async function restoreDeal(id) {
     return response.data;
 }
 
+// Deal Products
+export async function fetchDealProducts(id, perPage = 10, page = 1) {
+    const response = await api.get(`/deals/${id}/products`, { params: { per_page: perPage, page } });
+    return response.data;
+}
+
 export async function addDealProducts(id, payload) {
     const response = await api.post(`/deals/${id}/products`, payload);
     return response.data;

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
-import { ref, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
-import { fetchQuote, removeQuoteProduct } from '@/services/quoteService'
+import { fetchQuoteProducts, removeQuoteProduct } from '@/services/quoteService'
 
 interface Product {
     id: number
@@ -27,7 +27,42 @@ const props = defineProps<{ quote: any }>()
 const quote = ref<Quote>({
     id: props.quote.id,
     currency: props.quote.currency ?? 'USD',
-    products: props.quote.products ?? [],
+    products: [],
+})
+
+const loading = ref(true)
+const currentPage = ref(1)
+const perPage = 10
+
+const pagination = reactive({
+    current_page: 1,
+    last_page: 1,
+    total: 0,
+})
+
+const visiblePages = computed(() => {
+    const total = pagination.last_page
+    const current = currentPage.value
+    const delta = 2
+
+    const pages: (number | string)[] = []
+
+    const start = Math.max(1, current - delta)
+    const end = Math.min(total, current + delta)
+
+    if (start > 1) {
+        pages.push(1)
+        if (start > 2) pages.push('...')
+    }
+
+    for (let i = start; i <= end; i++) pages.push(i)
+
+    if (end < total) {
+        if (end < total - 1) pages.push('...')
+        pages.push(total)
+    }
+
+    return pages
 })
 
 const breadcrumbItems: BreadcrumbItem[] = [
@@ -40,16 +75,31 @@ function formatCurrency(value: number, currency: string) {
     return new Intl.NumberFormat('en-GB', { style: 'currency', currency }).format(value)
 }
 
-async function loadQuote() {
-    const data = await fetchQuote(quote.value.id)
-    quote.value.currency = data.currency ?? 'USD'
-    quote.value.products = data.products ?? []
+async function loadQuote(page = 1) {
+    loading.value = true
+    try {
+        const data = await fetchQuoteProducts(quote.value.id, perPage, page)
+
+        quote.value.products = data.data
+        pagination.current_page = data.current_page
+        pagination.last_page = data.last_page
+        pagination.total = data.total
+        currentPage.value = data.current_page
+    } finally {
+        loading.value = false
+    }
 }
 
 async function handleRemove(productId: number) {
     if (!confirm('Remove this product from the quote?')) return
     await removeQuoteProduct(quote.value.id, productId)
-    loadQuote()
+    loadQuote(currentPage.value)
+}
+
+function goToPage(page: number) {
+    if (page >= 1 && page <= pagination.last_page) {
+        loadQuote(page)
+    }
 }
 
 onMounted(() => loadQuote())
@@ -58,12 +108,14 @@ onMounted(() => loadQuote())
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
         <Head :title="`Quote #${quote.id} — Products`" />
+
         <div class="p-6">
             <div class="flex justify-between mb-6">
                 <div>
                     <h1 class="text-2xl font-bold">Quote #{{ quote.id }}</h1>
                     <p class="text-gray-500 text-sm mt-0.5">Quote Products</p>
                 </div>
+
                 <div class="flex items-center space-x-2">
                     <Link
                         :href="route('quotes.products.add', { quote: quote.id })"
@@ -71,6 +123,7 @@ onMounted(() => loadQuote())
                     >
                         Add Products
                     </Link>
+
                     <Link
                         :href="route('quotes.show', { quote: quote.id })"
                         class="bg-gray-200 text-gray-700 px-4 py-2 rounded"
@@ -80,7 +133,13 @@ onMounted(() => loadQuote())
                 </div>
             </div>
 
-            <table class="w-full border">
+            <!-- Loading -->
+            <div v-if="loading" class="text-center py-6">
+                Loading...
+            </div>
+
+            <!-- Table -->
+            <table v-else class="w-full border">
                 <thead>
                     <tr>
                         <th class="p-2 text-left">Product</th>
@@ -90,18 +149,24 @@ onMounted(() => loadQuote())
                         <th class="p-2"></th>
                     </tr>
                 </thead>
+
                 <tbody>
                     <tr v-for="product in quote.products" :key="product.id" class="border-t">
                         <td class="p-2">{{ product.name }}</td>
                         <td class="p-2 text-right">{{ product.pivot?.quantity ?? 1 }}</td>
-                        <td class="p-2 text-right">{{ formatCurrency(product.pivot?.price ?? 0, quote.currency) }}</td>
-                        <td class="p-2 text-right">{{ formatCurrency(product.pivot?.total ?? 0, quote.currency) }}</td>
+                        <td class="p-2 text-right">
+                            {{ formatCurrency(product.pivot?.price ?? 0, quote.currency) }}
+                        </td>
+                        <td class="p-2 text-right">
+                            {{ formatCurrency(product.pivot?.total ?? 0, quote.currency) }}
+                        </td>
                         <td class="p-2 space-x-2 whitespace-nowrap text-right">
                             <Link
                                 :href="route('quotes.products.edit', { quote: quote.id, product: product.id })"
                             >
                                 Edit
                             </Link>
+
                             <button
                                 @click="handleRemove(product.id)"
                                 class="text-red-600"
@@ -118,6 +183,36 @@ onMounted(() => loadQuote())
                     </tr>
                 </tbody>
             </table>
+
+            <!-- Pagination -->
+            <div v-if="pagination.last_page > 1" class="flex justify-center mt-4 space-x-2">
+                <button
+                    class="px-3 py-1 border rounded disabled:opacity-50"
+                    :disabled="currentPage === 1"
+                    @click="goToPage(currentPage - 1)"
+                >
+                    Previous
+                </button>
+
+                <button
+                    v-for="page in visiblePages"
+                    :key="page"
+                    class="px-3 py-1 border rounded"
+                    :class="{ 'bg-blue-600 text-white': page === currentPage }"
+                    :disabled="page === '...'"
+                    @click="typeof page === 'number' && goToPage(page)"
+                >
+                    {{ page }}
+                </button>
+
+                <button
+                    class="px-3 py-1 border rounded disabled:opacity-50"
+                    :disabled="currentPage === pagination.last_page"
+                    @click="goToPage(currentPage + 1)"
+                >
+                    Next
+                </button>
+            </div>
         </div>
     </AppLayout>
 </template>

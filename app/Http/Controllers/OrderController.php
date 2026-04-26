@@ -254,6 +254,39 @@ class OrderController extends Controller
     }
 
     /**
+     * Display a list of products attached to the specified order.
+     *
+     * Returns the order's products via the many-to-many relationship,
+     * including pivot data such as quantity, price, and total.
+     *
+     * This endpoint currently returns all products without pagination.
+     * If pagination is required, consider using paginate() and supporting
+     * 'per_page' and 'page' query parameters.
+     *
+     * Authorises via the 'view' and 'access' policies before returning data.
+     *
+     * @param  Request $request Incoming HTTP request; may contain query
+     * parameters.
+     * @param  Order $order Route-model-bound order instance whose products are
+     * being retrieved.
+     *
+     * @return JsonResponse List of products with pivot data.
+     */
+    public function products(Request $request, Order $order): JsonResponse
+    {
+        $this->authorize('view', $order);
+        $this->authorize('access', $order);
+
+        $perPage = $request->input('per_page', 10);
+
+        $products = $order->products()
+            ->withPivot(['quantity', 'price', 'total'])
+            ->paginate($perPage);
+
+        return response()->json($products);
+    }
+
+    /**
      * Add products to the specified order.
      *
      * Accepts a list of products from the request payload and delegates

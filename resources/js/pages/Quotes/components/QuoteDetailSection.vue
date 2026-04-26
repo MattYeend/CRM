@@ -99,7 +99,7 @@ function formatCurrency(value: number, currency: string): string {
             <div class="overflow-x-auto">
                 <table class="w-full border text-sm">
                     <thead>
-                        <tr class="bg-gray-50">
+                        <tr>
                             <th scope="col" class="p-2 text-left border-b font-semibold">Product</th>
                             <th scope="col" class="p-2 text-right border-b font-semibold">Qty</th>
                             <th scope="col" class="p-2 text-right border-b font-semibold">Price</th>

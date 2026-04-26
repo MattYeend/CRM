@@ -29,6 +29,12 @@ export async function restoreOrder(id) {
     return response.data;
 }
 
+// Order Products
+export async function fetchOrderProducts(id, perPage = 10, page = 1) {
+    const response = await api.get(`/orders/${id}/products`, { params: { per_page: perPage, page } });
+    return response.data;
+}
+
 export async function addOrderProducts(id, payload) {
     const response = await api.post(`/orders/${id}/products`, payload);
     return response.data;

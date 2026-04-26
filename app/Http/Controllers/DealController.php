@@ -256,6 +256,39 @@ class DealController extends Controller
     }
 
     /**
+     * Display a paginated list of products attached to a deal.
+     *
+     * Returns the deal's products via the many-to-many relationship,
+     * including pivot data such as quantity, price, and total.
+     *
+     * Supports pagination via the 'per_page' query parameter.
+     * Defaults to 10 items per page if not provided.
+     *
+     * Authorises via the 'view' and 'access' policies before returning data.
+     *
+     * @param  Request $request Incoming HTTP request; may contain pagination
+     * parameters.
+     * @param  Deal $deal Route-model-bound deal instance whose products are
+     * being retrieved.
+     *
+     * @return JsonResponse Paginated list of products with pivot data and
+     * pagination metadata.
+     */
+    public function products(Request $request, Deal $deal): JsonResponse
+    {
+        $this->authorize('view', $deal);
+        $this->authorize('access', $deal);
+
+        $perPage = $request->input('per_page', 10);
+
+        $products = $deal->products()
+            ->withPivot(['quantity', 'price', 'total'])
+            ->paginate($perPage);
+
+        return response()->json($products);
+    }
+
+    /**
      * Attach one or more products to a deal.
      *
      * Expects a 'products' array in the request body. Each item in the array

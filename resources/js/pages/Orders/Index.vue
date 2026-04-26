@@ -143,7 +143,7 @@ onMounted(() => loadOrders())
                 Loading...
             </div>
 
-            <table v-else class="w-full border">
+            <table v-else>
                 <thead>
                     <tr>
                         <th class="p-2 text-left">Order ID</th>
