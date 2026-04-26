@@ -4,7 +4,7 @@ import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
 import { ref, reactive, computed, onMounted } from 'vue'
 import { route } from 'ziggy-js'
 import { fetchParts } from '@/services/partService'
-
+console.log('🔥 COMPONENT LOADED')
 const parts = ref<any[]>([])
 const loading = ref(true)
 
@@ -30,6 +30,8 @@ async function loadParts(page = 1) {
         pagination.total = data.total
 
         currentPage.value = data.current_page
+        console.log(pagination)
+
     } finally {
         loading.value = false
     }

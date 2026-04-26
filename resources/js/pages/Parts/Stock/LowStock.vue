@@ -36,9 +36,7 @@ const visiblePages = computed(() => {
         if (start > 2) pages.push('...')
     }
 
-    for (let i = start; i <= end; i++) {
-        pages.push(i)
-    }
+    for (let i = start; i <= end; i++) pages.push(i)
 
     if (end < total) {
         if (end < total - 1) pages.push('...')

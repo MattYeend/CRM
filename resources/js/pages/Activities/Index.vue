@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
 import { deleteActivities } from '@/services/activityService'
 import { fetchActivities } from '@/services/activityService'
 
-// Activity interface
 interface Activity {
     id: number
     username: string
@@ -17,7 +16,6 @@ interface Activity {
     permissions: UserPermissions
 }
 
-// Global and user permissions
 interface GlobalPermissions {
     create: boolean
     viewAny: boolean
@@ -29,7 +27,6 @@ interface UserPermissions {
     delete: boolean
 }
 
-// Global permissions for logged-in user
 const permissions = ref<GlobalPermissions>({
     create: false,
     viewAny: false,
@@ -57,7 +54,6 @@ const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Activities', href: route('activities.index') },
 ]
 
-// Fetch activities from API
 async function loadActivities(page = 1) {
     loading.value = true
     try {
@@ -78,6 +74,31 @@ async function handleDelete(id: number) {
     await deleteActivities(id)
     loadActivities(currentPage.value)
 }
+
+const visiblePages = computed(() => {
+    const total = pagination.last_page
+    const current = currentPage.value
+    const delta = 2
+
+    const pages: (number | string)[] = []
+
+    const start = Math.max(1, current - delta)
+    const end = Math.min(total, current + delta)
+
+    if (start > 1) {
+        pages.push(1)
+        if (start > 2) pages.push('...')
+    }
+
+    for (let i = start; i <= end; i++) pages.push(i)
+
+    if (end < total) {
+        if (end < total - 1) pages.push('...')
+        pages.push(total)
+    }
+
+    return pages
+})
 
 function goToPage(page: number) {
     if (page >= 1 && page <= pagination.last_page) {
@@ -168,11 +189,12 @@ onMounted(() => loadActivities())
                 </button>
 
                 <button
-                    v-for="page in pagination.last_page"
+                    v-for="page in visiblePages"
                     :key="page"
                     class="px-3 py-1 border rounded"
                     :class="{ 'bg-blue-600 text-white': page === currentPage }"
-                    @click="goToPage(page)"
+                    :disabled="page === '...'"
+                    @click="typeof page === 'number' && goToPage(page)"
                 >
                     {{ page }}
                 </button>

@@ -66,7 +66,9 @@ const visiblePages = computed(() => {
     const total = pagination.last_page
     const current = currentPage.value
     const delta = 2
+
     const pages: (number | string)[] = []
+
     const start = Math.max(1, current - delta)
     const end = Math.min(total, current + delta)
 
@@ -74,7 +76,9 @@ const visiblePages = computed(() => {
         pages.push(1)
         if (start > 2) pages.push('...')
     }
+
     for (let i = start; i <= end; i++) pages.push(i)
+    
     if (end < total) {
         if (end < total - 1) pages.push('...')
         pages.push(total)
