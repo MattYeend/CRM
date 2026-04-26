@@ -51,7 +51,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *  with this note
  * $tasks = $note->tasks; // Get the tasks associated with this note
  * ```
- 
  *
  * Query scopes include:
  * - scopeOfNotableType($query, $notableType): Filter notes by notable
