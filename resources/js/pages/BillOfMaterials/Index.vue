@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive, computed } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
 import { fetchBillOfMaterials, deleteBillOfMaterial } from '@/services/partService'
@@ -44,6 +44,13 @@ const permissions = ref<GlobalPermissions>({
 
 const billOfMaterials = ref<BillOfMaterial[]>([])
 const loading = ref(true)
+const currentPage = ref(1)
+const perPage = 10
+const pagination = reactive({
+    current_page: 1,
+    last_page: 1,
+    total: 0,
+})
 
 const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Parts', href: route('parts.index') },
@@ -51,21 +58,58 @@ const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Bill of Materials', href: route('parts.billOfMaterials.index', { part: props.part.id }) },
 ]
 
-async function loadBOMs() {
+const visiblePages = computed(() => {
+    const total = pagination.last_page
+    const current = currentPage.value
+    const delta = 2
+
+    const pages: (number | string)[] = []
+
+    const start = Math.max(1, current - delta)
+    const end = Math.min(total, current + delta)
+
+    if (start > 1) {
+        pages.push(1)
+        if (start > 2) pages.push('...')
+    }
+
+    for (let i = start; i <= end; i++) {
+        pages.push(i)
+    }
+
+    if (end < total) {
+        if (end < total - 1) pages.push('...')
+        pages.push(total)
+    }
+
+    return pages
+})
+
+async function loadBOMs(page = 1) {
     loading.value = true
     try {
-        const data = await fetchBillOfMaterials(props.part.id)
+        const data = await fetchBillOfMaterials(props.part.id, perPage, page)
         billOfMaterials.value = data.data
         permissions.value = data.permissions
+        pagination.current_page = data.current_page
+        pagination.last_page = data.last_page
+        pagination.total = data.total
+        currentPage.value = data.current_page
     } finally {
         loading.value = false
+    }
+}
+
+function goToPage(page: number) {
+    if (page >= 1 && page <= pagination.last_page) {
+        loadBOMs(page)
     }
 }
 
 async function handleDelete(id: number) {
     if (!confirm('Are you sure you want to remove this BOM entry?')) return
     await deleteBillOfMaterial(props.part.id, id)
-    loadBOMs()
+    loadBOMs(currentPage.value)
 }
 
 onMounted(() => loadBOMs())
@@ -162,6 +206,35 @@ onMounted(() => loadBOMs())
                     </tr>
                 </tbody>
             </table>
+
+            <div v-if="pagination.last_page > 1" class="flex justify-center mt-4 space-x-2">
+                <button
+                    class="px-3 py-1 border rounded disabled:opacity-50"
+                    :disabled="currentPage === 1"
+                    @click="goToPage(currentPage - 1)"
+                >
+                    Previous
+                </button>
+
+                <button
+                    v-for="page in visiblePages"
+                    :key="page"
+                    class="px-3 py-1 border rounded"
+                    :class="{ 'bg-blue-600 text-white': page === currentPage }"
+                    :disabled="page === '...'"
+                    @click="typeof page === 'number' && goToPage(page)"
+                >
+                    {{ page }}
+                </button>
+
+                <button
+                    class="px-3 py-1 border rounded disabled:opacity-50"
+                    :disabled="currentPage === pagination.last_page"
+                    @click="goToPage(currentPage + 1)"
+                >
+                    Next
+                </button>
+            </div>
         </div>
     </AppLayout>
 </template>

@@ -132,25 +132,25 @@ export async function restorePartSerialNumber(partId, serialNumberId) {
 }
 
 // Bill of Materials
-export async function fetchBillOfMaterials(partId) {
-    const response = await api.get(`/parts/${partId}/bom`);
+export async function fetchBillOfMaterials(partId, perPage = 10, page = 1) {
+    const response = await api.get(`/parts/${partId}/bom`, { params: { per_page: perPage, page } });
     return response.data;
 }
-
+ 
 export async function createBillOfMaterial(partId, payload) {
     const response = await api.post(`/parts/${partId}/bom`, payload);
     return response.data;
 }
-
+ 
 export async function updateBillOfMaterial(partId, billOfMaterialId, payload) {
     const response = await api.put(`/parts/${partId}/bom/${billOfMaterialId}`, payload);
     return response.data;
 }
-
+ 
 export async function deleteBillOfMaterial(partId, billOfMaterialId) {
     await api.delete(`/parts/${partId}/bom/${billOfMaterialId}`);
 }
-
+ 
 export async function restoreBillOfMaterial(partId, billOfMaterialId) {
     const response = await api.post(`/parts/${partId}/bom/${billOfMaterialId}/restore`);
     return response.data;

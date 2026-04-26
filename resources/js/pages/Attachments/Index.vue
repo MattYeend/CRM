@@ -101,6 +101,7 @@ function goToPage(page: number) {
         loadAttachments(page)
     }
 }
+
 async function handleDelete(id: number) {
     if (!confirm('Are you sure you want to delete this attachment? This cannot be undone.')) return
     await deleteAttachments(id)
