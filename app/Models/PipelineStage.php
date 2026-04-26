@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Traits\HasTestPrefix;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -96,11 +95,9 @@ class PipelineStage extends Model
     /**
      * @use HasFactory<\Database\Factories\PipelineStageFactory>
      * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
-     * @use HasTestPrefix<\App\Traits\HasTestPrefix>
      */
     use HasFactory,
-        SoftDeletes,
-        HasTestPrefix;
+        SoftDeletes;
 
     /**
      * Represents an open stage still in progress.
