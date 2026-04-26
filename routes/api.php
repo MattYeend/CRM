@@ -31,6 +31,8 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use App\Models\Company;
 use App\Models\Deal;
+use App\Models\Part;
+use App\Models\Product;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -41,6 +43,12 @@ Route::get('/companies/all', function () {
 });
 Route::get('/deals/all', function () {
     return Deal::orderBy('title')->get(['id', 'title']);
+});
+Route::get('/parts/all', function () {
+    return Part::orderBy('name')->get(['id', 'name']);
+});
+Route::get('/products/all', function () {
+    return Product::orderBy('name')->get(['id', 'name']);
 });
 Route::get('/tasks/all', function () {
     return Task::orderBy('title')->get(['id', 'title']);
