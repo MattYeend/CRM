@@ -25,31 +25,6 @@ const currentPage = ref(1)
 const perPage = 10
 const pagination = reactive({ current_page: 1, last_page: 1, total: 0 })
 
-const breadcrumbItems: BreadcrumbItem[] = [
-    { title: 'Industries', href: route('industries.index') },
-]
-
-async function loadIndustries(page = 1) {
-    loading.value = true
-    try {
-        const data = await fetchIndustries(perPage, page)
-        industries.value = data.data
-        permissions.value = data.permissions
-        pagination.current_page = data.current_page
-        pagination.last_page = data.last_page
-        pagination.total = data.total
-        currentPage.value = data.current_page
-    } finally {
-        loading.value = false
-    }
-}
-
-async function handleDelete(id: number) {
-    if (!confirm('Are you sure?')) return
-    await deleteIndustries(id)
-    loadIndustries(currentPage.value)
-}
-
 const visiblePages = computed(() => {
     const total = pagination.last_page
     const current = currentPage.value
@@ -74,6 +49,31 @@ const visiblePages = computed(() => {
 
     return pages
 })
+
+const breadcrumbItems: BreadcrumbItem[] = [
+    { title: 'Industries', href: route('industries.index') },
+]
+
+async function loadIndustries(page = 1) {
+    loading.value = true
+    try {
+        const data = await fetchIndustries(perPage, page)
+        industries.value = data.data
+        permissions.value = data.permissions
+        pagination.current_page = data.current_page
+        pagination.last_page = data.last_page
+        pagination.total = data.total
+        currentPage.value = data.current_page
+    } finally {
+        loading.value = false
+    }
+}
+
+async function handleDelete(id: number) {
+    if (!confirm('Are you sure?')) return
+    await deleteIndustries(id)
+    loadIndustries(currentPage.value)
+}
 
 function goToPage(page: number) {
     if (page >= 1 && page <= pagination.last_page) {
@@ -141,7 +141,7 @@ onMounted(() => loadIndustries())
                 >
                     Previous
                 </button>
-                
+
                 <button
                     v-for="page in visiblePages"
                     :key="page"

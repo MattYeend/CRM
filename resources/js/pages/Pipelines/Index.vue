@@ -41,27 +41,6 @@ const pagination = reactive({
     total: 0,
 })
 
-const deletingId = ref<number | null>(null)
-
-async function loadPipelines(page = 1) {
-    loading.value = true
-
-    try {
-        const data = await fetchPipelines(perPage, page)
-
-        items.value = data.data
-        permissions.value = data.permissions
-
-        pagination.current_page = data.current_page
-        pagination.last_page = data.last_page
-        pagination.total = data.total
-
-        currentPage.value = data.current_page
-    } finally {
-        loading.value = false
-    }
-}
-
 const visiblePages = computed(() => {
     const total = pagination.last_page
     const current = currentPage.value
@@ -86,6 +65,27 @@ const visiblePages = computed(() => {
 
     return pages
 })
+
+const deletingId = ref<number | null>(null)
+
+async function loadPipelines(page = 1) {
+    loading.value = true
+
+    try {
+        const data = await fetchPipelines(perPage, page)
+
+        items.value = data.data
+        permissions.value = data.permissions
+
+        pagination.current_page = data.current_page
+        pagination.last_page = data.last_page
+        pagination.total = data.total
+
+        currentPage.value = data.current_page
+    } finally {
+        loading.value = false
+    }
+}
 
 function goToPage(page: number) {
     if (page >= 1 && page <= pagination.last_page) {

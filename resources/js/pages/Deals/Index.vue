@@ -66,27 +66,6 @@ const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Deals', href: route('deals.index') },
 ]
 
-async function loadDeals(page = 1) {
-    loading.value = true
-    try {
-        const data = await fetchDeals(perPage, page)
-        deals.value = data.data
-        permissions.value = data.permissions
-        pagination.current_page = data.current_page
-        pagination.last_page = data.last_page
-        pagination.total = data.total
-        currentPage.value = data.current_page
-    } finally {
-        loading.value = false
-    }
-}
-
-async function handleDelete(id: number) {
-    if (!confirm('Are you sure you want to delete this deal?')) return
-    await deleteDeals(id)
-    loadDeals(currentPage.value)
-}
-
 const visiblePages = computed(() => {
     const total = pagination.last_page
     const current = currentPage.value
@@ -111,6 +90,27 @@ const visiblePages = computed(() => {
 
     return pages
 })
+
+async function loadDeals(page = 1) {
+    loading.value = true
+    try {
+        const data = await fetchDeals(perPage, page)
+        deals.value = data.data
+        permissions.value = data.permissions
+        pagination.current_page = data.current_page
+        pagination.last_page = data.last_page
+        pagination.total = data.total
+        currentPage.value = data.current_page
+    } finally {
+        loading.value = false
+    }
+}
+
+async function handleDelete(id: number) {
+    if (!confirm('Are you sure you want to delete this deal?')) return
+    await deleteDeals(id)
+    loadDeals(currentPage.value)
+}
 
 function goToPage(page: number) {
     if (page >= 1 && page <= pagination.last_page) {

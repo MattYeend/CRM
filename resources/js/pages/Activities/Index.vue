@@ -4,8 +4,7 @@ import AppLayout from '@/layouts/app/AppSidebarLayout.vue'
 import { ref, reactive, onMounted, computed } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 import { route } from 'ziggy-js'
-import { deleteActivities } from '@/services/activityService'
-import { fetchActivities } from '@/services/activityService'
+import { fetchActivities, deleteActivities } from '@/services/activityService'
 
 interface Activity {
     id: number
@@ -54,27 +53,6 @@ const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Activities', href: route('activities.index') },
 ]
 
-async function loadActivities(page = 1) {
-    loading.value = true
-    try {
-        const data = await fetchActivities(perPage, page)
-        activities.value = data.data
-        permissions.value = data.permissions
-        pagination.current_page = data.current_page
-        pagination.last_page = data.last_page
-        pagination.total = data.total
-        currentPage.value = data.current_page
-    } finally {
-        loading.value = false
-    }
-}
-
-async function handleDelete(id: number) {
-    if (!confirm('Are you sure?')) return
-    await deleteActivities(id)
-    loadActivities(currentPage.value)
-}
-
 const visiblePages = computed(() => {
     const total = pagination.last_page
     const current = currentPage.value
@@ -99,6 +77,28 @@ const visiblePages = computed(() => {
 
     return pages
 })
+
+
+async function loadActivities(page = 1) {
+    loading.value = true
+    try {
+        const data = await fetchActivities(perPage, page)
+        activities.value = data.data
+        permissions.value = data.permissions
+        pagination.current_page = data.current_page
+        pagination.last_page = data.last_page
+        pagination.total = data.total
+        currentPage.value = data.current_page
+    } finally {
+        loading.value = false
+    }
+}
+
+async function handleDelete(id: number) {
+    if (!confirm('Are you sure?')) return
+    await deleteActivities(id)
+    loadActivities(currentPage.value)
+}
 
 function goToPage(page: number) {
     if (page >= 1 && page <= pagination.last_page) {

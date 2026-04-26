@@ -55,27 +55,6 @@ const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Companies', href: route('companies.index') },
 ]
 
-async function loadCompanies(page = 1) {
-    loading.value = true
-    try {
-        const data = await fetchCompanies(perPage, page)
-        companies.value = data.data
-        permissions.value = data.permissions
-        pagination.current_page = data.current_page
-        pagination.last_page = data.last_page
-        pagination.total = data.total
-        currentPage.value = data.current_page
-    } finally {
-        loading.value = false
-    }
-}
-
-async function handleDelete(id: number) {
-    if (!confirm('Are you sure?')) return
-    await deleteCompanies(id)
-    loadCompanies(currentPage.value)
-}
-
 const visiblePages = computed(() => {
     const total = pagination.last_page
     const current = currentPage.value
@@ -100,6 +79,27 @@ const visiblePages = computed(() => {
 
     return pages
 })
+
+async function loadCompanies(page = 1) {
+    loading.value = true
+    try {
+        const data = await fetchCompanies(perPage, page)
+        companies.value = data.data
+        permissions.value = data.permissions
+        pagination.current_page = data.current_page
+        pagination.last_page = data.last_page
+        pagination.total = data.total
+        currentPage.value = data.current_page
+    } finally {
+        loading.value = false
+    }
+}
+
+async function handleDelete(id: number) {
+    if (!confirm('Are you sure?')) return
+    await deleteCompanies(id)
+    loadCompanies(currentPage.value)
+}
 
 function goToPage(page: number) {
     if (page >= 1 && page <= pagination.last_page) {

@@ -51,27 +51,6 @@ const breadcrumbItems: BreadcrumbItem[] = [
     { title: 'Invoice Items', href: route('invoice-items.index') },
 ]
 
-async function loadInvoiceItems(page = 1) {
-    loading.value = true
-    try {
-        const data = await fetchInvoiceItems(perPage, page)
-        invoiceItems.value = data.data
-        permissions.value = data.permissions
-        pagination.current_page = data.current_page
-        pagination.last_page = data.last_page
-        pagination.total = data.total
-        currentPage.value = data.current_page
-    } finally {
-        loading.value = false
-    }
-}
-
-async function handleDelete(id: number) {
-    if (!confirm('Are you sure you want to delete this line item?')) return
-    await deleteInvoiceItems(id)
-    loadInvoiceItems(currentPage.value)
-}
-
 const visiblePages = computed(() => {
     const total = pagination.last_page
     const current = currentPage.value
@@ -96,6 +75,27 @@ const visiblePages = computed(() => {
 
     return pages
 })
+
+async function loadInvoiceItems(page = 1) {
+    loading.value = true
+    try {
+        const data = await fetchInvoiceItems(perPage, page)
+        invoiceItems.value = data.data
+        permissions.value = data.permissions
+        pagination.current_page = data.current_page
+        pagination.last_page = data.last_page
+        pagination.total = data.total
+        currentPage.value = data.current_page
+    } finally {
+        loading.value = false
+    }
+}
+
+async function handleDelete(id: number) {
+    if (!confirm('Are you sure you want to delete this line item?')) return
+    await deleteInvoiceItems(id)
+    loadInvoiceItems(currentPage.value)
+}
 
 function goToPage(page: number) {
     if (page >= 1 && page <= pagination.last_page) {
