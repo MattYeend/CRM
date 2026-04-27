@@ -38,7 +38,9 @@ beforeEach(function () {
 
     $this->withoutMiddleware(ThrottleRequests::class);
 
+    /** @var \App\Models\Part $this->part */
     $this->part = Part::factory()->create(['is_manufactured' => true]);
+    /** @var \App\Models\Product $this->product */
     $this->product = Product::factory()->create();
 });
 
@@ -50,8 +52,8 @@ beforeEach(function () {
 test('index returns paginated bill of materials for a part', function () {
     BillOfMaterial::factory()->count(12)->forPart($this->part)->create();
 
-    $response = $this->getJson(route('api.billOfMaterials.parts.index', [
-        'part' => $this->part,
+    $response = $this->getJson(route('api.billOfMaterials.index', [
+        'type' => 'parts',
         'per_page' => 5,
     ]));
 
@@ -63,8 +65,8 @@ test('index returns paginated bill of materials for a part', function () {
 test('index returns paginated bill of materials for a product', function () {
     BillOfMaterial::factory()->count(8)->forProduct($this->product)->create();
 
-    $response = $this->getJson(route('api.billOfMaterials.products.index', [
-        'product' => $this->product,
+    $response = $this->getJson(route('api.billOfMaterials.index', [
+        'type' => 'products',
         'per_page' => 5,
     ]));
 
@@ -79,8 +81,8 @@ test('index only returns bill of materials scoped to the given part', function (
     BillOfMaterial::factory()->count(2)->forPart($this->part)->create();
     BillOfMaterial::factory()->count(3)->forPart($otherPart)->create();
 
-    $response = $this->getJson(route('api.billOfMaterials.parts.index', [
-        'part' => $this->part,
+    $response = $this->getJson(route('api.billOfMaterials.index', [
+        'type' => 'parts'
     ]));
 
     $response->assertStatus(200);
@@ -93,8 +95,8 @@ test('index only returns bill of materials scoped to the given product', functio
     BillOfMaterial::factory()->count(2)->forProduct($this->product)->create();
     BillOfMaterial::factory()->count(3)->forProduct($otherProduct)->create();
 
-    $response = $this->getJson(route('api.billOfMaterials.products.index', [
-        'product' => $this->product,
+    $response = $this->getJson(route('api.billOfMaterials.index', [
+        'type' => 'products'
     ]));
 
     $response->assertStatus(200);
@@ -109,15 +111,15 @@ test('index returns 403 when user lacks permission', function () {
 
     $this->actingAs($user, 'sanctum');
 
-    $response = $this->getJson(route('api.billOfMaterials.parts.index', [
-        'part' => $this->part,
+    $response = $this->getJson(route('api.billOfMaterials.index', [
+        'type' => 'parts'
     ]));
 
     $response->assertStatus(403);
 });
 
 test('index returns 404 for non-existent part', function () {
-    $response = $this->getJson(route('api.billOfMaterials.parts.index', [
+    $response = $this->getJson(route('api.billOfMaterials.index', [
         'part' => 999999,
     ]));
 
@@ -139,8 +141,8 @@ test('store creates a new bill of material for a part and returns 201', function
         'notes' => 'Test BOM entry',
     ];
 
-    $response = $this->postJson(route('api.billOfMaterials.parts.store', [
-        'part' => $this->part,
+    $response = $this->postJson(route('api.billOfMaterials.store', [
+        'type' => 'parts'
     ]), $payload);
 
     $response->assertStatus(201);
@@ -487,6 +489,6 @@ test('bom cost calculation works for both parts and products', function () {
     $this->part->refresh();
     $this->product->refresh();
 
-    expect($this->part->bomCost())->toBe(40.0); // (2 * 10) + (4 * 5)
-    expect($this->product->bomCost())->toBe(30.0); // (3 * 10)
+    expect($this->part->bomCost())->toBe(40.0);
+    expect($this->product->bomCost())->toBe(30.0);
 });

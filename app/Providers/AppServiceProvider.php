@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Cashier\Cashier;
+use Illuminate\Support\Facades\Route;
 
 /**
  * Bootstraps core application services and framework integrations.
@@ -53,6 +54,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Route::bind('manufacturable', function ($value, $route) {
+            $type = $route->parameter('type');
+
+            return match ($type) {
+                'parts' => Part::findOrFail($value),
+                'products' => Product::findOrFail($value),
+                default => abort(404),
+            };
+        });
         Relation::morphMap([
             'company' => Company::class,
             'deal' => Deal::class,

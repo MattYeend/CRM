@@ -43,6 +43,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      associated with the product.
  * - notes(): Polymorphic one-to-many relationship to Note records
  *      associated with the product.
+ * - billOfMaterials(): All BOM entries where this product is
+ *      the parent (assembled) part.
  * - creator(): Belongs-to relationship to the User who created the product.
  * - updater(): Belongs-to relationship to the User who last updated the
  *      product.
@@ -59,6 +61,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * for this product
  * $stockMovements = $product->stockMovements; // Get all stock movements
  * for the product
+ * $billOfMaterials = $part->billOfMaterials; // Get all BOM entries
+ * where this product is the parent
  * $creator = $product->creator; // Get the user that created the product
  * $updater = $product->updater; // Get the user that last updated the product
  * $deleter = $product->deleter; // Get the user that deleted the product
@@ -78,6 +82,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      product's quantity is zero.
  * - getFormattedPriceAttribute(): Returns the product price formatted to
  *      two decimal places as a string.
+ * - getHasBom(): Returns true if the product has any associated bill
+ *      of materials entries.
  * Example usage of accessors:
  * ```php
  * $product = Product::find(1);
@@ -86,6 +92,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * reorder point
  * $isOutOfStock = $product->is_out_of_stock; // Check if stock is zero
  * $formattedPrice = $product->formatted_price; // e.g. "19.99"
+ * $hasBom = $product->has_bom; // Check if this product has an associated
+ *  bill of materials
  * ```
  *
  * Query scopes include:
@@ -366,6 +374,17 @@ class Product extends Model
     }
 
     /**
+     * Get the bill of materials entries where this product is the parent
+     * (assembled) part.
+     *
+     * @return HasMany<BillOfMaterial>
+     */
+    public function billOfMaterials(): MorphMany
+{
+    return $this->morphMany(BillOfMaterial::class, 'manufacturable');
+}
+
+    /**
      * Determine if the part is low on stock.
      *
      * Returns true when a reorder point is set and the current quantity
@@ -453,13 +472,38 @@ class Product extends Model
      *
      * @return float|null
      */
-    public function getTotalCostAttribute(): ?float
+    public function getTotalCostAttribute(): float
     {
         if ($this->hasBom()) {
             return $this->bomCost();
         }
 
         return $this->price;
+    }
+
+    /**
+     * Determine whether this product has an associated bill of materials.
+     *
+     * @return bool
+     */
+    public function getHasBom(): bool
+    {
+        return $this->billOfMaterials()->exists();
+    }
+
+    /**
+     * Sum the total costs of all BOM line entries for this product.
+     *
+     * @param  array $visited Product IDs already visited in the current
+     * traversal, passed through to prevent circular references.
+     *
+     * @return float The summed cost of all BOM lines.
+     */
+    public function getSumBomLineCosts(array $visited): float
+    {
+        return $this->billOfMaterials->sum(
+            fn ($bom) => $bom->totalCost($visited) ?? 0
+        );
     }
 
     /**

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -87,8 +87,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * - getIsOutOfStock(): Returns true if the part's quantity is zero.
  * - getMarginPercentage(): Calculates the profit margin percentage
  *      based on price and cost price.
- * - getBomCost(): Recursively calculates the total cost of the part
- *      based on its bill of materials, including sub-assemblies.
  * - getHasBom(): Returns true if the part has any associated bill
  *      of materials entries.
  * Example usage of helper methods:
@@ -101,7 +99,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *  // This part is out of stock
  * }
  * $margin = $part->margin_percentage; // Get the profit margin percentage
- * $bomCost = $part->bom_cost; // Get the total BOM cost for this part
  * $hasBom = $part->has_bom; // Check if this part has an associated
  *  bill of materials
  * ```
@@ -432,9 +429,9 @@ class Part extends Model
      *
      * @return HasMany<BillOfMaterial>
      */
-    public function billOfMaterials(): MorphTo
+    public function billOfMaterials(): MorphMany
     {
-        return $this->morphTo();
+        return $this->morphMany(BillOfMaterial::class, 'manufacturable');
     }
 
     /**
@@ -530,31 +527,6 @@ class Part extends Model
     }
 
     /**
-     * Calculate the total BOM cost for this part, including sub-assemblies.
-     *
-     * Recursively traverses the bill of materials tree. Returns the part's
-     * own cost price if it has no BOM entries. Circular references are
-     * prevented via the visited array.
-     *
-     * @param  array $visited Part IDs already visited in the current
-     * traversal, used to prevent infinite recursion.
-     *
-     * @return float|null The total BOM cost, or null if unresolvable.
-     */
-    public function getBomCost(array $visited = []): ?float
-    {
-        if (in_array($this->id, $visited)) {
-            return 0;
-        }
-
-        $visited[] = $this->id;
-
-        return $this->billOfMaterials->isEmpty()
-            ? (float) $this->cost_price
-            : $this->sumBomLineCosts($visited);
-    }
-
-    /**
      * Determine whether this part has an associated bill of materials.
      *
      * @return bool
@@ -577,6 +549,20 @@ class Part extends Model
         return $this->billOfMaterials->sum(
             fn ($bom) => $bom->totalCost($visited) ?? 0
         );
+    }
+
+    /**
+     * Get the part price including BOM costs if applicable.
+     *
+     * @return float|null
+     */
+    public function getTotalCostAttribute(): ?float
+    {
+        if ($this->hasBom()) {
+            return $this->bomCost();
+        }
+
+        return $this->price;
     }
 
     /**
