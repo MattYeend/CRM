@@ -26,6 +26,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * notes, and attachments. Products may also be marked as test records,
  * in which case certain attributes (e.g. name) are automatically prefixed.
  *
+ * Bill of Materials Support:
+ * Products serve as the manufacturable (parent) in a polymorphic BOM
+ * relationship. All products can have bill of materials entries, as the
+ * hasBom() method always returns true. This allows products to be assembled
+ * from parts, supporting cost calculation and manufacturing workflows.
+ *
  * Relationships defined in this model include:
  * - invoiceItems(): One-to-many relationship to InvoiceItem records
  *      referencing this product.
@@ -44,8 +50,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      associated with the product.
  * - notes(): Polymorphic one-to-many relationship to Note records
  *      associated with the product.
- * - billOfMaterials(): All BOM entries where this product is
- *      the parent (assembled) part.
+ * - billOfMaterials(): Polymorphic relationship to BOM entries where
+ *      this product is the manufacturable (parent assembly).
  * - creator(): Belongs-to relationship to the User who created the product.
  * - updater(): Belongs-to relationship to the User who last updated the
  *      product.
@@ -53,23 +59,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      (if soft-deleted).
  * - restorer(): Belongs-to relationship to the User who restored the product
  *      (if soft-deleted).
+ *
  * Example usage of relationships:
  * ```php
  * $product = Product::find(1);
  * $deals = $product->deals; // Get all deals that include this product
  * $quotes = $product->quotes; // Get all quotes that include this product
  * $invoiceItems = $product->invoiceItems; // Get all invoice line items
- * for this product
  * $stockMovements = $product->stockMovements; // Get all stock movements
- * for the product
- * $billOfMaterials = $part->billOfMaterials; // Get all BOM entries
- * where this product is the parent
+ * $billOfMaterials = $product->billOfMaterials; // Get all BOM entries
  * $creator = $product->creator; // Get the user that created the product
- * $updater = $product->updater; // Get the user that last updated the product
- * $deleter = $product->deleter; // Get the user that deleted the product
- * (if applicable)
- * $restorer = $product->restorer; // Get the user that restored the product
- * (if applicable)
  * ```
  *
  * Accessor methods include:
@@ -83,18 +82,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      product's quantity is zero.
  * - getFormattedPriceAttribute(): Returns the product price formatted to
  *      two decimal places as a string.
- * - getHasBom(): Returns true if the product has any associated bill
- *      of materials entries.
+ * - hasBom(): Returns true (all products can have a BOM).
+ * - getSumBomLineCosts(): Calculates the total cost of all BOM components.
+ * - getTotalCostAttribute(): Returns BOM cost or price based on BOM presence.
+ *
  * Example usage of accessors:
  * ```php
  * $product = Product::find(1);
  * $isActive = $product->is_active; // Check if the product is active
- * $isLowStock = $product->is_low_stock; // Check if stock is at or below
- * reorder point
+ * $isLowStock = $product->is_low_stock; // Check if stock is low
  * $isOutOfStock = $product->is_out_of_stock; // Check if stock is zero
  * $formattedPrice = $product->formatted_price; // e.g. "19.99"
- * $hasBom = $product->has_bom; // Check if this product has an associated
- *  bill of materials
+ * $hasBom = $product->hasBom(); // Always true for products
+ * $bomCost = $product->bomCost(); // Calculate total BOM cost
  * ```
  *
  * Query scopes include:
@@ -113,6 +113,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * - scopeReal($query): Filter the query to only include non-test products.
  * - scopeSearch($query, $term): Filter the query by name, SKU, or
  *      description using a single search term.
+ *
  * Example usage of query scopes:
  * ```php
  * $active = Product::active()->get(); // Get all active products
@@ -287,7 +288,7 @@ class Product extends Model
     }
 
     /**
-     * Get all stock movements for the part.
+     * Get all stock movements for the product.
      *
      * @return HasMany<ProductStockMovement>
      */
@@ -377,10 +378,14 @@ class Product extends Model
     }
 
     /**
-     * Get the bill of materials entries where this product is the parent
-     * (assembled) part.
+     * Get the bill of materials entries where this product is the manufacturable
+     * (parent assembly).
      *
-     * @return HasMany<BillOfMaterial>
+     * This polymorphic relationship allows products to be assembled from parts.
+     * Each BOM entry represents a component (child part) required to manufacture
+     * this product.
+     *
+     * @return MorphMany<BillOfMaterial>
      */
     public function billOfMaterials(): MorphMany
     {
@@ -388,7 +393,7 @@ class Product extends Model
     }
 
     /**
-     * Determine if the part is low on stock.
+     * Determine if the product is low on stock.
      *
      * Returns true when a reorder point is set and the current quantity
      * is at or below it.
@@ -401,7 +406,7 @@ class Product extends Model
     }
 
     /**
-     * Determine if the part is out of stock.
+     * Determine if the product is out of stock.
      *
      * @return bool
      */
@@ -444,9 +449,12 @@ class Product extends Model
     }
 
     /**
-     * Get the product price including BOM costs if applicable.
+     * Get the total cost of the product including BOM costs if applicable.
      *
-     * @return float|null
+     * Returns the calculated BOM cost if the product has bill of materials
+     * entries, otherwise returns the product price.
+     *
+     * @return float
      */
     public function getTotalCostAttribute(): float
     {
@@ -458,7 +466,10 @@ class Product extends Model
     }
 
     /**
-     * Determine whether this product has an associated bill of materials.
+     * Determine whether this product can have an associated bill of materials.
+     *
+     * Always returns true for products, as all products support BOM entries.
+     * Products can be assembled from parts regardless of other attributes.
      *
      * @return bool
      */
@@ -470,8 +481,11 @@ class Product extends Model
     /**
      * Sum the total costs of all BOM line entries for this product.
      *
-     * @param  array $visited Product IDs already visited in the current
-     * traversal, passed through to prevent circular references.
+     * Traverses the BOM tree to calculate the sum of all component costs.
+     * The $visited array prevents infinite loops in circular BOM structures.
+     *
+     * @param  array<int> $visited Product/Part IDs already visited in the current
+     *                             traversal, passed through to prevent circular references.
      *
      * @return float The summed cost of all BOM lines.
      */
@@ -534,7 +548,7 @@ class Product extends Model
      *
      * @param  Builder<Product> $query The query builder instance.
      * @param  string|array<int,string> $status The status or statuses
-     * to filter by.
+     *                                          to filter by.
      *
      * @return Builder<Product> The modified query builder instance.
      */
@@ -573,7 +587,7 @@ class Product extends Model
      *
      * @param  Builder<Product> $query The query builder instance.
      * @param  string|array<int,string> $currency  The currency code or
-     * codes to filter by.
+     *                                              codes to filter by.
      *
      * @return Builder<Product> The modified query builder instance.
      */
@@ -601,6 +615,7 @@ class Product extends Model
     {
         return $query->where('is_test', false);
     }
+
     /**
      * Scope a query to search products by name, SKU, or description
      * using a single search term.
