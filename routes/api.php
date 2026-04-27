@@ -719,37 +719,60 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
      * -------------------- Bill Of Materials ---------------------
      * ------------------------------------------------------------
      */
-    Route::prefix('parts/{part}')->group(function () {
+    // Route::prefix('parts/{part}')->group(function () {
+    //     Route::get('bom', [BillOfMaterialController::class, 'index'])
+    //         ->name('api.billOfMaterials.parts.index');
+
+    //     Route::post('bom', [BillOfMaterialController::class, 'store'])
+    //         ->name('api.billOfMaterials.parts.store');
+
+    //     Route::put('bom/{billOfMaterial}', [BillOfMaterialController::class, 'update'])
+    //         ->name('api.billOfMaterials.parts.update');
+
+    //     Route::delete('bom/{billOfMaterial}', [BillOfMaterialController::class, 'destroy'])
+    //         ->name('api.billOfMaterials.parts.destroy');
+
+    //     Route::post('bom/{id}/restore', [BillOfMaterialController::class, 'restore'])
+    //         ->name('api.billOfMaterials.parts.restore');
+    // });
+
+    // Route::prefix('products/{product}')->group(function () {
+    //     Route::get('bom', [BillOfMaterialController::class, 'index'])
+    //         ->name('api.billOfMaterials.products.index');
+
+    //     Route::post('bom', [BillOfMaterialController::class, 'store'])
+    //         ->name('api.billOfMaterials.products.store');
+
+    //     Route::put('bom/{billOfMaterial}', [BillOfMaterialController::class, 'update'])
+    //         ->name('api.billOfMaterials.products.update');
+
+    //     Route::delete('bom/{billOfMaterial}', [BillOfMaterialController::class, 'destroy'])
+    //         ->name('api.billOfMaterials.products.destroy');
+
+    //     Route::post('bom/{id}/restore', [BillOfMaterialController::class, 'restore'])
+    //         ->name('api.billOfMaterials.products.restore');
+    // });
+    
+Route::prefix('{type}/{manufacturable}')
+    ->whereIn('type', ['parts', 'products'])
+    ->group(function () {
+
         Route::get('bom', [BillOfMaterialController::class, 'index'])
-            ->name('api.billOfMaterials.parts.index');
+            ->name('api.billOfMaterials.index');
 
         Route::post('bom', [BillOfMaterialController::class, 'store'])
-            ->name('api.billOfMaterials.parts.store');
+            ->name('api.billOfMaterials.store');
 
         Route::put('bom/{billOfMaterial}', [BillOfMaterialController::class, 'update'])
-            ->name('api.billOfMaterials.parts.update');
+            ->whereNumber('billOfMaterial')
+            ->name('api.billOfMaterials.update');
 
         Route::delete('bom/{billOfMaterial}', [BillOfMaterialController::class, 'destroy'])
-            ->name('api.billOfMaterials.parts.destroy');
+            ->whereNumber('billOfMaterial')
+            ->name('api.billOfMaterials.destroy');
 
-        Route::post('bom/{id}/restore', [BillOfMaterialController::class, 'restore'])
-            ->name('api.billOfMaterials.parts.restore');
-    });
-
-    Route::prefix('products/{product}')->group(function () {
-        Route::get('bom', [BillOfMaterialController::class, 'index'])
-            ->name('api.billOfMaterials.products.index');
-
-        Route::post('bom', [BillOfMaterialController::class, 'store'])
-            ->name('api.billOfMaterials.products.store');
-
-        Route::put('bom/{billOfMaterial}', [BillOfMaterialController::class, 'update'])
-            ->name('api.billOfMaterials.products.update');
-
-        Route::delete('bom/{billOfMaterial}', [BillOfMaterialController::class, 'destroy'])
-            ->name('api.billOfMaterials.products.destroy');
-
-        Route::post('bom/{id}/restore', [BillOfMaterialController::class, 'restore'])
-            ->name('api.billOfMaterials.products.restore');
+        Route::post('bom/{billOfMaterial}/restore', [BillOfMaterialController::class, 'restore'])
+            ->whereNumber('billOfMaterial')
+            ->name('api.billOfMaterials.restore');
     });
 });

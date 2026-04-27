@@ -54,6 +54,7 @@ test('index returns paginated bill of materials for a part', function () {
 
     $response = $this->getJson(route('api.billOfMaterials.index', [
         'type' => 'parts',
+        'manufacturable' => $this->part,
         'per_page' => 5,
     ]));
 
@@ -67,6 +68,7 @@ test('index returns paginated bill of materials for a product', function () {
 
     $response = $this->getJson(route('api.billOfMaterials.index', [
         'type' => 'products',
+        'manufacturable' => $this->product,
         'per_page' => 5,
     ]));
 
@@ -82,7 +84,8 @@ test('index only returns bill of materials scoped to the given part', function (
     BillOfMaterial::factory()->count(3)->forPart($otherPart)->create();
 
     $response = $this->getJson(route('api.billOfMaterials.index', [
-        'type' => 'parts'
+        'type' => 'parts',
+        'manufacturable' => $this->part,
     ]));
 
     $response->assertStatus(200);
@@ -96,7 +99,8 @@ test('index only returns bill of materials scoped to the given product', functio
     BillOfMaterial::factory()->count(3)->forProduct($otherProduct)->create();
 
     $response = $this->getJson(route('api.billOfMaterials.index', [
-        'type' => 'products'
+        'type' => 'products',
+        'manufacturable' => $this->product,
     ]));
 
     $response->assertStatus(200);
@@ -112,7 +116,8 @@ test('index returns 403 when user lacks permission', function () {
     $this->actingAs($user, 'sanctum');
 
     $response = $this->getJson(route('api.billOfMaterials.index', [
-        'type' => 'parts'
+        'type' => 'parts',
+        'manufacturable' => $this->part,
     ]));
 
     $response->assertStatus(403);
@@ -120,7 +125,8 @@ test('index returns 403 when user lacks permission', function () {
 
 test('index returns 404 for non-existent part', function () {
     $response = $this->getJson(route('api.billOfMaterials.index', [
-        'part' => 999999,
+        'type' => 999999,
+        'manufacturable' => $this->part,
     ]));
 
     $response->assertStatus(404);
@@ -142,7 +148,8 @@ test('store creates a new bill of material for a part and returns 201', function
     ];
 
     $response = $this->postJson(route('api.billOfMaterials.store', [
-        'type' => 'parts'
+        'type' => 'parts',
+        'manufacturable' => $this->part,
     ]), $payload);
 
     $response->assertStatus(201);
@@ -167,8 +174,9 @@ test('store creates a new bill of material for a product and returns 201', funct
         'notes' => 'Product BOM entry',
     ];
 
-    $response = $this->postJson(route('api.billOfMaterials.products.store', [
-        'product' => $this->product,
+    $response = $this->postJson(route('api.billOfMaterials.store', [
+        'type' => 'products',
+        'manufacturable' => $this->product,
     ]), $payload);
 
     $response->assertStatus(201);
@@ -184,8 +192,9 @@ test('store creates a new bill of material for a product and returns 201', funct
 });
 
 test('store returns 422 when required fields are missing', function () {
-    $response = $this->postJson(route('api.billOfMaterials.parts.store', [
-        'part' => $this->part,
+    $response = $this->postJson(route('api.billOfMaterials.store', [
+        'type' => 'parts',
+        'manufacturable' => $this->part,
     ]), []);
 
     $response->assertStatus(422);
@@ -202,8 +211,9 @@ test('store returns 403 when user lacks permission', function () {
 
     $childPart = Part::factory()->create();
 
-    $response = $this->postJson(route('api.billOfMaterials.parts.store', [
-        'part' => $this->part,
+    $response = $this->postJson(route('api.billOfMaterials.store', [
+        'type' => 'parts',
+        'manufacturable' => $this->part,
     ]), [
         'child_part_id' => $childPart->id,
         'quantity' => 1,
@@ -231,8 +241,9 @@ test('update modifies an existing part bill of material', function () {
         'notes' => 'Updated notes',
     ];
 
-    $response = $this->putJson(route('api.billOfMaterials.parts.update', [
-        'part' => $this->part,
+    $response = $this->putJson(route('api.billOfMaterials.update', [
+        'type' => 'parts',
+        'manufacturable' => $this->part,
         'billOfMaterial' => $billOfMaterial,
     ]), $payload);
 
@@ -258,7 +269,8 @@ test('update modifies an existing product bill of material', function () {
     ];
 
     $response = $this->putJson(route('api.billOfMaterials.products.update', [
-        'product' => $this->product,
+        'type' => 'products',
+        'manufacturable' => $this->product,
         'billOfMaterial' => $billOfMaterial,
     ]), $payload);
 
@@ -281,8 +293,9 @@ test('update returns 403 when user lacks permission', function () {
 
     $this->actingAs($user, 'sanctum');
 
-    $response = $this->putJson(route('api.billOfMaterials.parts.update', [
-        'part' => $this->part,
+    $response = $this->putJson(route('api.billOfMaterials.update', [
+        'type' => 'parts',
+        'manufacturable' => $this->part,
         'billOfMaterial' => $billOfMaterial,
     ]), ['quantity' => 5]);
 
@@ -290,8 +303,9 @@ test('update returns 403 when user lacks permission', function () {
 });
 
 test('update returns 404 for non-existent bill of material', function () {
-    $response = $this->putJson(route('api.billOfMaterials.parts.update', [
-        'part' => $this->part,
+    $response = $this->putJson(route('api.billOfMaterials.update', [
+        'type' => 'parts',
+        'manufacturable' => $this->part,
         'billOfMaterial' => 999999,
     ]), ['quantity' => 5]);
 
@@ -306,8 +320,9 @@ test('update returns 404 for non-existent bill of material', function () {
 test('destroy soft deletes a part bill of material and returns 204', function () {
     $billOfMaterial = BillOfMaterial::factory()->forPart($this->part)->create();
 
-    $response = $this->deleteJson(route('api.billOfMaterials.parts.destroy', [
-        'part' => $this->part,
+    $response = $this->deleteJson(route('api.billOfMaterials.destroy', [
+        'type' => 'parts',
+        'manufacturable' => $this->part,
         'billOfMaterial' => $billOfMaterial,
     ]));
 
@@ -318,8 +333,9 @@ test('destroy soft deletes a part bill of material and returns 204', function ()
 test('destroy soft deletes a product bill of material and returns 204', function () {
     $billOfMaterial = BillOfMaterial::factory()->forProduct($this->product)->create();
 
-    $response = $this->deleteJson(route('api.billOfMaterials.products.destroy', [
-        'product' => $this->product,
+    $response = $this->deleteJson(route('api.billOfMaterials.destroy', [
+        'type' => 'products',
+        'manufacturable' => $this->product,
         'billOfMaterial' => $billOfMaterial,
     ]));
 
@@ -337,8 +353,9 @@ test('destroy returns 403 when user lacks permission', function () {
 
     $this->actingAs($user, 'sanctum');
 
-    $response = $this->deleteJson(route('api.billOfMaterials.parts.destroy', [
-        'part' => $this->part,
+    $response = $this->deleteJson(route('api.billOfMaterials.destroy', [
+        'type' => 'parts',
+        'manufacturable' => $this->part,
         'billOfMaterial' => $billOfMaterial,
     ]));
 
@@ -346,8 +363,9 @@ test('destroy returns 403 when user lacks permission', function () {
 });
 
 test('destroy returns 404 for non-existent bill of material', function () {
-    $response = $this->deleteJson(route('api.billOfMaterials.parts.destroy', [
-        'part' => $this->part,
+    $response = $this->deleteJson(route('api.billOfMaterials.destroy', [
+        'type' => 'parts',
+        'manufacturable' => $this->part,
         'billOfMaterial' => 999999,
     ]));
 
@@ -365,9 +383,10 @@ test('restore recovers a soft deleted part bill of material', function () {
 
     $this->assertSoftDeleted('bill_of_materials', ['id' => $billOfMaterial->id]);
 
-    $response = $this->postJson(route('api.billOfMaterials.parts.restore', [
-        'part' => $this->part,
-        'id' => $billOfMaterial->id,
+    $response = $this->postJson(route('api.billOfMaterials.restore', [
+        'type' => 'parts',
+        'manufacturable' => $this->part,
+        'billOfMaterial' => $billOfMaterial->id,
     ]));
 
     $response->assertStatus(200);
@@ -385,7 +404,8 @@ test('restore recovers a soft deleted product bill of material', function () {
     $this->assertSoftDeleted('bill_of_materials', ['id' => $billOfMaterial->id]);
 
     $response = $this->postJson(route('api.billOfMaterials.products.restore', [
-        'product' => $this->product,
+        'type' => 'products',
+        'manufacturable' => $this->product,
         'id' => $billOfMaterial->id,
     ]));
 
@@ -408,18 +428,20 @@ test('restore returns 403 when user lacks permission', function () {
 
     $this->actingAs($user, 'sanctum');
 
-    $response = $this->postJson(route('api.billOfMaterials.parts.restore', [
-        'part' => $this->part,
-        'id' => $billOfMaterial->id,
+    $response = $this->postJson(route('api.billOfMaterials.restore', [
+        'type' => 'parts',
+        'manufacturable' => $this->part,
+        'billOfMaterial' => $billOfMaterial->id,
     ]));
 
     $response->assertStatus(403);
 });
 
 test('restore returns 404 for non-existent bill of material', function () {
-    $response = $this->postJson(route('api.billOfMaterials.parts.restore', [
-        'part' => $this->part,
-        'id' => 999999,
+    $response = $this->postJson(route('api.billOfMaterials.restore', [
+        'type' => 'parts',
+        'manufacturable' => $this->part,
+        'billOfMaterial' => 999999,
     ]));
 
     $response->assertStatus(404);
@@ -428,9 +450,10 @@ test('restore returns 404 for non-existent bill of material', function () {
 test('restore returns 404 when bill of material is not deleted', function () {
     $billOfMaterial = BillOfMaterial::factory()->forPart($this->part)->create();
 
-    $response = $this->postJson(route('api.billOfMaterials.parts.restore', [
-        'part' => $this->part,
-        'id' => $billOfMaterial->id,
+    $response = $this->postJson(route('api.billOfMaterials.restore', [
+        'type' => 'parts',
+        'manufacturable' => $this->part,
+        'billOfMaterial' => $billOfMaterial->id,
     ]));
 
     $response->assertStatus(404);

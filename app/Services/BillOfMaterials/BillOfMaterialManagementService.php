@@ -5,7 +5,7 @@ namespace App\Services\BillOfMaterials;
 use App\Http\Requests\StoreBillOfMaterialRequest;
 use App\Http\Requests\UpdateBillOfMaterialRequest;
 use App\Models\BillOfMaterial;
-use App\Models\Part;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Central service for managing Bill of Materials (BOM) entries.
@@ -37,15 +37,15 @@ class BillOfMaterialManagementService
      *
      * @param  StoreBillOfMaterialRequest $request The request containing
      * BOM data.
-     * @param  Part $part The parent part to which the BOM will be attached.
+     * @param  Model $manufacturable The parent part to which the BOM will be attached.
      *
      * @return BillOfMaterial The newly created BOM entry.
      */
     public function store(
         StoreBillOfMaterialRequest $request,
-        Part $part
+        Model $manufacturable
     ): BillOfMaterial {
-        return $this->creator->create($request, $part);
+        return $this->creator->create($request, $manufacturable);
     }
 
     /**

@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 /**
  * Trait for models that can have a Bill of Materials.
  *
- * Provides relationships and cost calculation helpers for any manufacturable
- * entity (e.g. Part, Product) that participates in a BOM structure.
+ * Any model using this trait can act as a manufacturable entity
+ * with components defined through BOM entries.
  */
 trait HasBillOfMaterials
 {
@@ -34,67 +34,46 @@ trait HasBillOfMaterials
     }
 
     /**
-     * Calculate the UNIT BOM cost of this entity.
+     * Calculate the total BOM cost for this entity, including sub-assemblies.
      *
-     * This traverses the BOM tree recursively but does NOT apply quantities.
-     * It represents the cost of producing one unit of this entity.
+     * Recursively traverses the bill of materials tree. Returns the entity's
+     * own cost price if it has no BOM entries. Circular references are
+     * prevented via the visited array.
      *
-     * Scrap percentages are applied at each level.
+     * @param  array $visited Entity IDs already visited in the current
+     * traversal, used to prevent infinite recursion.
      *
-     * @param  array $visited Prevents circular references in recursive BOMs.
-     * @return float
+     * @return float|null The total BOM cost, or null if unresolvable.
      */
-    public function bomUnitCost(array $visited = []): float
-{
-    $key = $this->id;
+    public function bomCost(array &$visited = []): float
+    {
+        $key = static::class . '-' . $this->id;
 
-    if (isset($visited[$key])) {
-        return 0;
-    }
-
-    $visited[$key] = true;
-
-    $lines = $this->billOfMaterials()->with('childPart')->get();
-
-    if ($lines->isEmpty()) {
-        return (float) ($this->cost_price ?? 0);
-    }
-
-    return $lines->sum(function ($bom) use ($visited) {
-        $child = $bom->childPart;
-
-        if (!$child) {
+        if (in_array($key, $visited, true)) {
             return 0;
         }
 
-        $scrapMultiplier = 1 + (($bom->scrap_percentage ?? 0) / 100);
+        $visited[] = $key;
 
-        return $scrapMultiplier * $child->bomUnitCost($visited);
-    });
-}
+        $billOfMaterials = $this->billOfMaterials()->get();
 
-    /**
-     * Calculate the TOTAL BOM cost of this entity.
-     *
-     * Applies BOM quantities ONCE at the top level only.
-     * This prevents recursive multiplication inflation.
-     *
-     * @param  array $visited Prevents circular references in recursive BOMs.
-     * @return float
-     */
-    public function bomCost(array $visited = []): float
-{
-    return $this->billOfMaterials()
-        ->with('childPart')
-        ->get()
-        ->sum(function ($bom) {
+        // Base case: no BOM children, return own cost
+        if ($billOfMaterials->isEmpty()) {
+            return (float) ($this->cost_price ?? 0);
+        }
+
+        return $billOfMaterials->sum(function ($bom) use (&$visited) {
             $child = $bom->childPart;
 
             if (!$child) {
                 return 0;
             }
 
-            return $bom->quantity * $child->bomUnitCost([]);
+            $scrapMultiplier = 1 + (($bom->scrap_percentage ?? 0) / 100);
+
+            return $bom->quantity
+                * $scrapMultiplier
+                * $child->bomCost($visited);
         });
-}
+    }
 }

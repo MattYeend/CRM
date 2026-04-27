@@ -54,15 +54,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Route::bind('manufacturable', function ($value, $route) {
-            $type = $route->parameter('type');
-
-            return match ($type) {
-                'parts' => Part::findOrFail($value),
-                'products' => Product::findOrFail($value),
-                default => abort(404),
-            };
+        Route::bind('part', function ($value) {
+            return Part::findOrFail($value);
         });
+
+        Route::bind('product', function ($value) {
+            return Product::findOrFail($value);
+        });
+
         Relation::morphMap([
             'company' => Company::class,
             'deal' => Deal::class,

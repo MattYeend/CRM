@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreBillOfMaterialRequest;
 use App\Http\Requests\UpdateBillOfMaterialRequest;
 use App\Models\BillOfMaterial;
+use App\Models\Part;
+use App\Models\Product;
 use App\Services\BillOfMaterials\BillOfMaterialLogService;
 use App\Services\BillOfMaterials\BillOfMaterialManagementService;
 use App\Services\BillOfMaterials\BillOfMaterialQueryService;
@@ -73,42 +75,64 @@ class BillOfMaterialController extends Controller
         $this->query = $query;
     }
 
+    private function resolveManufacturable(Request $request): Model
+    {
+        $type = $request->route('type');
+
+        $manufacturable = $request->route('manufacturable');
+
+        if (! $manufacturable) {
+            abort(404, 'Manufacturable not found.');
+        }
+
+        if ($type === 'parts' && $manufacturable instanceof Part) {
+            return $manufacturable;
+        }
+
+        if ($type === 'products' && $manufacturable instanceof Product) {
+            return $manufacturable;
+        }
+
+        abort(404, 'Invalid manufacturable type.');
+    }
+
+
     /**
      * Display a listing of the resource.
      *
-     * @param  Model $manufacturable Route-model-bound manufacturable instance.
      * @param  Request $request
      *
      * @return JsonResponse
      */
-    public function index(Model $manufacturable, Request $request): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $this->authorize('viewAny', BillOfMaterial::class);
 
-        $billOfMaterials = $this->query->list($manufacturable, $request);
+        $request->merge([
+            'manufacturable' => $this->resolveManufacturable($request),
+        ]);
 
-        return response()->json($billOfMaterials);
+        return response()->json(
+            $this->query->list($request)
+        );
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  StoreBillOfMaterialRequest $request
-     * @param  Model $manufacturable
      *
      * @return JsonResponse
      */
-    public function store(
-        StoreBillOfMaterialRequest $request,
-        Model $manufacturable
-    ): JsonResponse {
+    public function store(StoreBillOfMaterialRequest $request): JsonResponse
+    {
+        $manufacturable = $this->resolveManufacturable($request);
+
         $billOfMaterial = $this->management->store($request, $manufacturable);
 
-        $user = $request->user();
-
         $this->logger->billOfMaterialCreated(
-            $user,
-            $user->id,
+            $request->user(),
+            $request->user()->id,
             $billOfMaterial,
         );
 
@@ -124,23 +148,19 @@ class BillOfMaterialController extends Controller
      *
      * @return JsonResponse
      */
-    public function update(
-        UpdateBillOfMaterialRequest $request,
-        Model $manufacturable,
-        BillOfMaterial $billOfMaterial,
-    ): JsonResponse {
+    public function update(UpdateBillOfMaterialRequest $request, BillOfMaterial $billOfMaterial): JsonResponse
+    {
         $billOfMaterial = $this->management->update($request, $billOfMaterial);
 
-        $user = $request->user();
-
         $this->logger->billOfMaterialUpdated(
-            $user,
-            $user->id,
+            $request->user(),
+            $request->user()->id,
             $billOfMaterial,
         );
 
         return response()->json($billOfMaterial);
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -150,17 +170,13 @@ class BillOfMaterialController extends Controller
      *
      * @return JsonResponse
      */
-    public function destroy(
-        Model $manufacturable,
-        BillOfMaterial $billOfMaterial
-    ): JsonResponse {
+    public function destroy(Request $request, BillOfMaterial $billOfMaterial): JsonResponse
+    {
         $this->authorize('delete', $billOfMaterial);
 
-        $user = auth()->user();
-
         $this->logger->billOfMaterialDeleted(
-            $user,
-            $user->id,
+            $request->user(),
+            $request->user()->id,
             $billOfMaterial,
         );
 
@@ -173,29 +189,28 @@ class BillOfMaterialController extends Controller
      * Restore the specified resource from soft deletion.
      *
      * @param  Model $manufacturable
-     * @param  int  $id
+     * @param  int $id
      *
      * @return JsonResponse
      */
-    public function restore(Model $manufacturable, int $id): JsonResponse
+    public function restore(Request $request, int $id): JsonResponse
     {
         $billOfMaterial = BillOfMaterial::withTrashed()->findOrFail($id);
+
         $this->authorize('restore', $billOfMaterial);
 
         if (! $billOfMaterial->trashed()) {
             abort(404);
         }
 
-        $this->management->restore($id);
-
-        $user = auth()->user();
+        $restored = $this->management->restore($id);
 
         $this->logger->billOfMaterialRestored(
-            $user,
-            $user->id,
-            $billOfMaterial,
+            $request->user(),
+            $request->user()->id,
+            $restored,
         );
 
-        return response()->json($billOfMaterial);
+        return response()->json($restored);
     }
 }

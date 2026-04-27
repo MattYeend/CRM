@@ -4,7 +4,7 @@ namespace App\Services\BillOfMaterials;
 
 use App\Http\Requests\StoreBillOfMaterialRequest;
 use App\Models\BillOfMaterial;
-use App\Models\Part;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 /**
@@ -24,30 +24,34 @@ class BillOfMaterialCreatorService
      *
      * @param  StoreBillOfMaterialRequest $request The validated request
      * data for creating the BOM.
-     * @param  Part $part The parent part to which the child part will be added.
+     * @param  Model $manufacturable The parent part to which the child part will be added.
      *
      * @return BillOfMaterial The newly created BOM entry with loaded relations.
      *
      * @throws HttpResponseException If the parent part is not manufactured
      *         or if the part attempts to contain itself.
      */
-    public function create(
+     public function create(
         StoreBillOfMaterialRequest $request,
-        Part $part
+        Model $manufacturable
     ): BillOfMaterial {
-        if (! $part->is_manufactured) {
-            abort(422, 'This part is not manufactured.');
+        if (
+            property_exists($manufacturable, 'is_manufactured') &&
+            ! $manufacturable->is_manufactured
+        ) {
+            abort(422, 'This item is not manufactured.');
         }
 
-        if ($request->child_part_id === $part->id) {
-            abort(422, 'A part cannot contain itself.');
+        if ($request->child_part_id === $manufacturable->id) {
+            abort(422, 'An item cannot contain itself.');
         }
 
         $billOfMaterial = BillOfMaterial::create([
             ...$request->validated(),
-            'parent_part_id' => $part->id,
+            'manufacturable_type' => $manufacturable->getMorphClass(),
+            'manufacturable_id'   => $manufacturable->id,
         ]);
 
-        return $billOfMaterial->load('childPart', 'parentPart');
+        return $billOfMaterial->load('childPart', 'manufacturable');
     }
 }
