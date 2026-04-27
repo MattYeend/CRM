@@ -104,3 +104,28 @@ export async function fetchProductStockMovement(productId, stockMovementId) {
     const response = await api.get(`/products/${productId}/stock-movements/${stockMovementId}`);
     return response.data;
 }
+
+// Product Bill of Materials
+export async function fetchProductBillOfMaterials(productId, perPage = 10, page = 1) {
+    const response = await api.get(`/products/${productId}/bom`, { params: { per_page: perPage, page } });
+    return response.data;
+}
+ 
+export async function createProductBillOfMaterial(productId, payload) {
+    const response = await api.post(`/products/${productId}/bom`, payload);
+    return response.data;
+}
+ 
+export async function updateProductBillOfMaterial(productId, billOfMaterialId, payload) {
+    const response = await api.put(`/products/${productId}/bom/${billOfMaterialId}`, payload);
+    return response.data;
+}
+ 
+export async function deleteProductBillOfMaterial(productId, billOfMaterialId) {
+    await api.delete(`/products/${productId}/bom/${billOfMaterialId}`);
+}
+ 
+export async function restoreProductBillOfMaterial(productId, billOfMaterialId) {
+    const response = await api.post(`/products/${productId}/bom/${billOfMaterialId}/restore`);
+    return response.data;
+}

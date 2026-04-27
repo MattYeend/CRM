@@ -6,72 +6,46 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Represents a single line in a Bill of Materials, defining the relationship
- * between a parent (manufactured) part and a child (component) part.
+ * between a parent (manufactured) entity and a child (component) part.
+ *
+ * The parent can be any manufacturable entity (Part, Product, etc.) that
+ * implements the HasBillOfMaterials trait.
  *
  * Tracks the required quantity, scrap allowance, and unit of measure for each
  * component, and provides methods for calculating both direct and recursive
  * assembly costs.
  *
  * Relationships defined in this model include:
- * - parentPart(): The manufactured part that requires the component.
+ * - manufacturable(): The polymorphic parent entity that requires the component.
  * - childPart(): The component part that is consumed by the parent.
  * - creator(): The user that created the BOM entry.
  * - updater(): The user that last updated the BOM entry.
  * - deleter(): The user that deleted the BOM entry (if soft-deleted).
  * - restorer(): The user that restored the BOM entry (if soft-deleted).
+ * 
  * Example usage of relationships:
  * ```php
  * $bomEntry = BillOfMaterial::find(1);
- * $parent = $bomEntry->parentPart; // Get the parent part
+ * $parent = $bomEntry->manufacturable; // Get the parent (Part, Product, etc.)
  * $child = $bomEntry->childPart; // Get the child part
- * $creator = $bomEntry->creator; // Get the user that created this
- *      BOM entry
- * $updater = $bomEntry->updater; // Get the user that last updated
- *      this BOM entry
- * $deleter = $bomEntry->deleter; // Get the user that deleted this
- *      BOM entry (if applicable)
- * $restorer = $bomEntry->restorer; // Get the user that restored this
- *      BOM entry (if applicable)
+ * $creator = $bomEntry->creator; // Get the user that created this BOM entry
  * ```
  *
  * Accessor methods include:
- * - effectiveQuantity(): Calculates the quantity required including
- *      scrap allowance.
- * - lineCost(): Calculates the direct cost for this BOM entry based
- *      on the child part's cost price.
- * - totalCost(): Recursively calculates the total cost for this BOM
- *      entry, including all sub-assemblies.
- * Example usage of accessors:
- * ```php
- * $bomEntry = BillOfMaterial::find(1);
- * $effectiveQty = $bomEntry->effectiveQuantity(); // Get the quantity
- *  including scrap
- * $lineCost = $bomEntry->lineCost(); // Get the direct line cost for
- *  this BOM entry
- * $totalCost = $bomEntry->totalCost(); // Get the total cost including
- *  sub-assemblies
- * ```
- *
+ * - effectiveQuantity(): Calculates the quantity required including scrap allowance.
+ * - lineCost(): Calculates the direct cost for this BOM entry based on the child part's cost price.
+ * - totalCost(): Recursively calculates the total cost for this BOM entry, including all sub-assemblies.
+ * 
  * Query scopes include:
- * - scopeForParentPart($query, $partId): Filter BOM entries by parent part ID.
+ * - scopeForManufacturable($query, $model): Filter BOM entries by manufacturable entity.
  * - scopeForChildPart($query, $partId): Filter BOM entries by child part ID.
  * - scopeTestEntries($query): Filter BOM entries that are marked as test data.
  * - scopeReal($query): Filter BOM entries that are not marked as test data.
- * Example usage of query scopes:
- * ```php
- * $parentBOMs = BillOfMaterial::forParentPart($parentId)->get(); // Get BOM
- *  entries for a specific parent part
- * $childBOMs = BillOfMaterial::forChildPart($childId)->get(); // Get BOM
- *  entries for a specific child part
- * $testBOMs = BillOfMaterial::testEntries()->get(); // Get BOM entries that
- *  are marked as test data
- * $realBOMs = BillOfMaterial::real()->get(); // Get BOM entries that are not
- *  marked as test data
- * ```
  */
 class BillOfMaterial extends Model
 {
@@ -88,7 +62,8 @@ class BillOfMaterial extends Model
      * @var array<int,string>
      */
     protected $fillable = [
-        'parent_part_id',
+        'manufacturable_type',
+        'manufacturable_id',
         'child_part_id',
         'quantity',
         'scrap_percentage',
@@ -119,19 +94,17 @@ class BillOfMaterial extends Model
     ];
 
     /**
-     * Get the parent part that this BOM entry belongs to.
+     * Get the parent manufacturable entity (Part, Product, etc.).
      *
-     * The parent is the manufactured part that requires child components.
-     *
-     * @return BelongsTo<Part,BillOfMaterial>
+     * @return MorphTo
      */
-    public function parentPart(): BelongsTo
+    public function manufacturable(): MorphTo
     {
-        return $this->belongsTo(Part::class, 'parent_part_id');
+        return $this->morphTo();
     }
 
     /**
-     * Get the child part (component) consumed by the parent part.
+     * Get the child part (component) consumed by the parent entity.
      *
      * @return BelongsTo<Part,BillOfMaterial>
      */
@@ -248,16 +221,17 @@ class BillOfMaterial extends Model
     }
 
     /**
-     * Scope a query to only include BOM entries for a specific parent part.
+     * Scope a query to only include BOM entries for a specific manufacturable entity.
      *
      * @param  Builder<BillOfMaterial> $query The query builder instance.
-     * @param  int $partId The ID of the parent part to filter by.
+     * @param  Model $model The manufacturable model instance to filter by.
      *
      * @return Builder<BillOfMaterial> The modified query builder instance.
      */
-    public function scopeForParentPart($query, int $partId): Builder
+    public function scopeForManufacturable($query, Model $model): Builder
     {
-        return $query->where('parent_part_id', $partId);
+        return $query->where('manufacturable_type', get_class($model))
+            ->where('manufacturable_id', $model->id);
     }
 
     /**
@@ -286,12 +260,12 @@ class BillOfMaterial extends Model
     }
 
     /**
-     * Scope a query to exlude test records.
+     * Scope a query to exclude test records.
      *
-     * This scope filters the query to include only users where the
-     * 'is_test' attribute is false, effectively excluding any users
+     * This scope filters the query to include only records where the
+     * 'is_test' attribute is false, effectively excluding any records
      * that are marked as test records. This is useful for ensuring
-     * that queries return only real user records in the system.
+     * that queries return only real records in the system.
      *
      * @param  Builder<BillOfMaterial> $query The query builder instance.
      *

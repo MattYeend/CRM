@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\BillOfMaterials\HasBillOfMaterials;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -156,9 +157,11 @@ class Part extends Model
     /**
      * @use HasFactory<\Database\Factories\PartFactory>
      * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
+     * @use HasBillOfMaterials<App\Traits\BillOfMaterials\HasBillOfMaterials>
      */
     use HasFactory,
-        SoftDeletes;
+        SoftDeletes,
+        HasBillOfMaterials;
 
     /**
      * Raw material part type.

@@ -3,8 +3,8 @@
 namespace App\Services\BillOfMaterials;
 
 use App\Models\BillOfMaterial;
-use App\Models\Part;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
@@ -47,21 +47,16 @@ class BillOfMaterialQueryService
     }
 
     /**
-     * Return a paginated list of BOM entries for a given parent part with
-     * sorting and trash filters applied.
+     * Return a paginated list of BOM entries for a given manufacturable entity.
      *
-     * The per_page value is clamped between 1 and 100. All active query
-     * string parameters are appended to the paginator links.
-     *
-     * @param  Part $part The parent part whose BOM entries are being queried.
-     * @param  Request $request Incoming HTTP request; may carry sort, filter,
-     * and pagination params.
+     * @param  Model $manufacturable
+     * @param  Request $request
      *
      * @return array
      */
-    public function list(Part $part, Request $request): array
+    public function list(Model $manufacturable, Request $request): array
     {
-        $query = $part->billOfMaterials()
+        $query = $manufacturable->billOfMaterials()
             ->with('childPart:id,sku,name,quantity,unit_of_measure')
             ->getQuery();
 
@@ -75,6 +70,7 @@ class BillOfMaterialQueryService
             ['permissions' => $this->getPermissions()]
         );
     }
+
 
     /**
      * Paginate and transform the BOM query.
@@ -139,7 +135,8 @@ class BillOfMaterialQueryService
     {
         return [
             'id' => $billOfMaterial->id,
-            'parent_part_id' => $billOfMaterial->parent_part_id,
+            'manufacturable_type' => $billOfMaterial->manufacturable_type,
+            'manufacturable_id' => $billOfMaterial->manufacturable_id,
             'child_part_id' => $billOfMaterial->child_part_id,
             'quantity' => $billOfMaterial->quantity,
             'unit_of_measure' => $billOfMaterial->unit_of_measure,
@@ -158,6 +155,7 @@ class BillOfMaterialQueryService
     private function relationshipData(BillOfMaterial $billOfMaterial): array
     {
         return [
+            'manufacturable' => $billOfMaterial->manufacturable,
             'child_part' => $billOfMaterial->childPart,
             'creator' => $billOfMaterial->creator,
         ];

@@ -802,14 +802,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         BillOfMaterialQueryService $service
     ) {
         return Inertia::render('BillOfMaterials/Index', [
-            'part' => $part,
+            'manufacturable' => $part,
+            'manufacturableType' => 'part',
             'billOfMaterials' => $service->list($part, $request),
         ]);
     })->name('parts.billOfMaterials.index');
 
     Route::get('/parts/{part}/bill-of-materials/create', function (Part $part) {
         return Inertia::render('BillOfMaterials/Create', [
-            'part' => $part,
+            'manufacturable' => $part,
+            'manufacturableType' => 'part',
             'parts' => Part::orderBy('name')->get(['id', 'sku', 'name']),
         ]);
     })->name('parts.billOfMaterials.create');
@@ -818,8 +820,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         '/parts/{part}/bill-of-materials/{billOfMaterial}',
         function (Part $part, BillOfMaterial $billOfMaterial) {
             return Inertia::render('BillOfMaterials/Show', [
-                'part' => $part,
+                'manufacturable' => $part,
+                'manufacturableType' => 'part',
                 'billOfMaterial' => $billOfMaterial->load([
+                    'manufacturable',
                     'childPart',
                     'creator',
                 ]),
@@ -831,8 +835,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         '/parts/{part}/bill-of-materials/{billOfMaterial}/edit',
         function (Part $part, BillOfMaterial $billOfMaterial) {
             return Inertia::render('BillOfMaterials/Update', [
-                'part' => $part,
+                'manufacturable' => $part,
+                'manufacturableType' => 'part',
                 'billOfMaterial' => $billOfMaterial->load([
+                    'manufacturable',
                     'childPart',
                     'creator',
                 ]),
@@ -1311,6 +1317,62 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]);
         }
     )->name('products.quotes.edit');
+
+    /**
+     * -------------------------------------------------------
+     * ------ Bill Of Materials (nested: products) -----------
+     * -------------------------------------------------------
+     */
+    Route::get('/products/{product}/bill-of-materials', function (
+        Product $product,
+        Request $request,
+        BillOfMaterialQueryService $service
+    ) {
+        return Inertia::render('BillOfMaterials/Index', [
+            'manufacturable' => $product,
+            'manufacturableType' => 'product',
+            'billOfMaterials' => $service->list($product, $request),
+        ]);
+    })->name('products.billOfMaterials.index');
+
+    Route::get('/products/{product}/bill-of-materials/create', function (Product $product) {
+        return Inertia::render('BillOfMaterials/Create', [
+            'manufacturable' => $product,
+            'manufacturableType' => 'product',
+            'parts' => Part::orderBy('name')->get(['id', 'sku', 'name']),
+        ]);
+    })->name('products.billOfMaterials.create');
+
+    Route::get(
+        '/products/{product}/bill-of-materials/{billOfMaterial}',
+        function (Product $product, BillOfMaterial $billOfMaterial) {
+            return Inertia::render('BillOfMaterials/Show', [
+                'manufacturable' => $product,
+                'manufacturableType' => 'product',
+                'billOfMaterial' => $billOfMaterial->load([
+                    'manufacturable',
+                    'childPart',
+                    'creator',
+                ]),
+            ]);
+        }
+    )->name('products.billOfMaterials.show');
+
+    Route::get(
+        '/products/{product}/bill-of-materials/{billOfMaterial}/edit',
+        function (Product $product, BillOfMaterial $billOfMaterial) {
+            return Inertia::render('BillOfMaterials/Update', [
+                'manufacturable' => $product,
+                'manufacturableType' => 'product',
+                'billOfMaterial' => $billOfMaterial->load([
+                    'manufacturable',
+                    'childPart',
+                    'creator',
+                ]),
+                'parts' => Part::orderBy('name')->get(['id', 'sku', 'name']),
+            ]);
+        }
+    )->name('products.billOfMaterials.edit');
 
     /**
      * -----------------------------------------

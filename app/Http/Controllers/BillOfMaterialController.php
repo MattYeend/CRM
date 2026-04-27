@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreBillOfMaterialRequest;
 use App\Http\Requests\UpdateBillOfMaterialRequest;
 use App\Models\BillOfMaterial;
-use App\Models\Part;
 use App\Services\BillOfMaterials\BillOfMaterialLogService;
 use App\Services\BillOfMaterials\BillOfMaterialManagementService;
 use App\Services\BillOfMaterials\BillOfMaterialQueryService;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -76,25 +76,16 @@ class BillOfMaterialController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * Also includes the authenticated user's permissions for the BOM
-     * resource, so the frontend can conditionally render create/view controls.
+     * @param  Model $manufacturable Route-model-bound manufacturable instance.
+     * @param  Request $request
      *
-     * Returns all bill of materials scoped to the given part.
-     *
-     * Authorises via the 'viewAny' policy before returning data.
-     *
-     * @param  Part $part Route-model-bound part instance to scope the listing.
-     * @param  Request $request Incoming HTTP request; may carry
-     * filter/pagination params.
-     *
-     * @return JsonResponse Paginated list of bill of materials for the
-     * given part.
+     * @return JsonResponse
      */
-    public function index(Part $part, Request $request): JsonResponse
+    public function index(Model $manufacturable, Request $request): JsonResponse
     {
         $this->authorize('viewAny', BillOfMaterial::class);
 
-        $billOfMaterials = $this->query->list($part, $request);
+        $billOfMaterials = $this->query->list($manufacturable, $request);
 
         return response()->json($billOfMaterials);
     }
@@ -102,24 +93,16 @@ class BillOfMaterialController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * Validation is handled upstream by StoreBillOfMaterialRequest.
+     * @param  StoreBillOfMaterialRequest $request
+     * @param  Model $manufacturable
      *
-     * After storing, an audit log entry is written against the authenticated
-     * user.
-     *
-     * @param  StoreBillOfMaterialRequest $request Validated request containing
-     * bill of material data.
-     * @param  Part $part Route-model-bound part instance
-     * the bill of material belongs to.
-     *
-     * @return JsonResponse The newly created bill of material,
-     * with HTTP 201 Created.
+     * @return JsonResponse
      */
     public function store(
         StoreBillOfMaterialRequest $request,
-        Part $part
+        Model $manufacturable
     ): JsonResponse {
-        $billOfMaterial = $this->management->store($request, $part);
+        $billOfMaterial = $this->management->store($request, $manufacturable);
 
         $user = $request->user();
 
@@ -135,24 +118,15 @@ class BillOfMaterialController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * Validation is handled upstream by UpdateBillOfMaterialRequest, which also
-     * implicitly authorises the operation via its authorize() method.
+     * @param  UpdateBillOfMaterialRequest $request
+     * @param  Model $manufacturable
+     * @param  BillOfMaterial $billOfMaterial
      *
-     * After updating, an audit log entry is written against the authenticated
-     * user.
-     *
-     * @param  UpdateBillOfMaterialRequest $request Validated request containing
-     * updated bill of material data.
-     * @param  Part $part Route-model-bound part instance
-     * the bill of material belongs to.
-     * @param  BillOfMaterial $billOfMaterial Route-model-bound bill of material
-     * instance to update.
-     *
-     * @return JsonResponse The updated bill of material resource.
+     * @return JsonResponse
      */
     public function update(
         UpdateBillOfMaterialRequest $request,
-        Part $part,
+        Model $manufacturable,
         BillOfMaterial $billOfMaterial,
     ): JsonResponse {
         $billOfMaterial = $this->management->update($request, $billOfMaterial);
@@ -171,20 +145,13 @@ class BillOfMaterialController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * Authorises via the 'delete' policy before proceeding.
+     * @param  Model $manufacturable
+     * @param  BillOfMaterial $billOfMaterial
      *
-     * The audit log entry is written before the deletion so that the
-     * bill of material instance is still fully accessible during logging.
-     *
-     * @param  Part $part Route-model-bound part instance
-     * the bill of material belongs to.
-     * @param  BillOfMaterial $billOfMaterial Route-model-bound bill of material
-     * instance to delete.
-     *
-     * @return JsonResponse Empty response with HTTP 204 No Content.
+     * @return JsonResponse
      */
     public function destroy(
-        Part $part,
+        Model $manufacturable,
         BillOfMaterial $billOfMaterial
     ): JsonResponse {
         $this->authorize('delete', $billOfMaterial);
@@ -205,21 +172,12 @@ class BillOfMaterialController extends Controller
     /**
      * Restore the specified resource from soft deletion.
      *
-     * Looks up the bill of material including trashed records, then authorises
-     * via the 'restore' policy. Returns 404 if the bill of material is not
-     * currently soft-deleted, preventing accidental double-restores.
+     * @param  Model $manufacturable
+     * @param  int  $id
      *
-     * @param  Part $part Route-model-bound part instance the bill of material
-     * belongs to.
-     * @param  int  $id The primary key of the soft-deleted bill of material.
-     *
-     * @return JsonResponse The restored bill of material resource.
-     *
-     * @throws ModelNotFoundException If no matching record exists.
-     *
-     * @throws HttpException If the bill of material is not trashed (404).
+     * @return JsonResponse
      */
-    public function restore(Part $part, int $id): JsonResponse
+    public function restore(Model $manufacturable, int $id): JsonResponse
     {
         $billOfMaterial = BillOfMaterial::withTrashed()->findOrFail($id);
         $this->authorize('restore', $billOfMaterial);

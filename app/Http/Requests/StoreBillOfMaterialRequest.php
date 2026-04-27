@@ -43,7 +43,6 @@ class StoreBillOfMaterialRequest extends FormRequest
             'child_part_id' => [
                 'required',
                 'exists:parts,id',
-                'different:parent_part_id',
             ],
             'quantity' => 'required|numeric|min:0.0001',
             'scrap_percentage' => 'nullable|numeric|min:0|max:100',

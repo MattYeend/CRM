@@ -13,8 +13,13 @@ return new class extends Migration
     {
         Schema::create('bill_of_materials', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('parent_part_id')->constrained('parts')->cascadeOnDelete();
+            
+            // Polymorphic parent (manufacturable)
+            $table->morphs('manufacturable');
+            
+            // Child part relationship
             $table->foreignId('child_part_id')->constrained('parts')->cascadeOnDelete();
+            
             $table->decimal('quantity', 10, 4)->default(1);
             $table->string('unit_of_measure')->default('each');
             $table->decimal('scrap_percentage', 5, 2)->default(0);
@@ -30,7 +35,9 @@ return new class extends Migration
             $table->timestamp('restored_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unique(['parent_part_id', 'child_part_id']);
+            
+            // Composite unique constraint
+            $table->unique(['manufacturable_type', 'manufacturable_id', 'child_part_id'], 'bom_manufacturable_child_unique');
         });
     }
 

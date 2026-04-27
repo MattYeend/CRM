@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\BillOfMaterials\HasBillOfMaterials;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -118,9 +119,11 @@ class Product extends Model
     /**
      * @use HasFactory<\Database\Factories\ProductFactory>
      * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
+     * @use HasBillOfMaterials<App\Traits\BillOfMaterials\HasBillOfMaterials>
      */
     use HasFactory,
-        SoftDeletes;
+        SoftDeletes,
+        HasBillOfMaterials;
 
     /**
      * Active product status.
@@ -443,6 +446,20 @@ class Product extends Model
     public function getFormattedPriceAttribute(): string
     {
         return number_format((float) $this->price, 2, '.', '');
+    }
+
+    /**
+     * Get the product price including BOM costs if applicable.
+     *
+     * @return float|null
+     */
+    public function getTotalCostAttribute(): ?float
+    {
+        if ($this->hasBom()) {
+            return $this->bomCost();
+        }
+
+        return $this->price;
     }
 
     /**
