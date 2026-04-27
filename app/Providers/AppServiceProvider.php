@@ -54,22 +54,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Route::bind('part', function ($value) {
-            return Part::findOrFail($value);
-        });
-
-        Route::bind('product', function ($value) {
-            return Product::findOrFail($value);
-        });
-
-        Relation::morphMap([
-            'company' => Company::class,
-            'deal' => Deal::class,
-            'task' => Task::class,
-            'part' => Part::class,
-            'product' => Product::class,
-            'user' => User::class,
-        ]);
+        $this->relations();
 
         InvoiceItem::observe(InvoiceItemObserver::class);
 
@@ -116,5 +101,25 @@ class AppServiceProvider extends ServiceProvider
                 );
             });
         }
+    }
+
+    private function relations()
+    {
+        Route::bind('part', function ($value) {
+            return Part::findOrFail($value);
+        });
+
+        Route::bind('product', function ($value) {
+            return Product::findOrFail($value);
+        });
+
+        Relation::morphMap([
+            'company' => Company::class,
+            'deal' => Deal::class,
+            'task' => Task::class,
+            'part' => Part::class,
+            'product' => Product::class,
+            'user' => User::class,
+        ]);
     }
 }

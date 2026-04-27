@@ -256,7 +256,8 @@ class BillOfMaterial extends Model
      */
     public function scopeForManufacturable($query, Model $model): Builder
     {
-        return $query->where('manufacturable_type', get_class($model))
+        return $query
+            ->where('manufacturable_type', $model->getMorphClass())
             ->where('manufacturable_id', $model->id);
     }
 

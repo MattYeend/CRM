@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\BillOfMaterials\HasBillOfMaterials;
+use App\Traits\Products\HasStockLevels;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -128,10 +129,12 @@ class Product extends Model
      * @use HasFactory<\Database\Factories\ProductFactory>
      * @use SoftDeletes<\Illuminate\Database\Eloquent\SoftDeletes>
      * @use HasBillOfMaterials<App\Traits\BillOfMaterials\HasBillOfMaterials>
+     * @use HasStockLevels<App\Traits\Products\HasStockLevels>
      */
     use HasFactory,
         SoftDeletes,
-        HasBillOfMaterials;
+        HasBillOfMaterials,
+        HasStockLevels;
 
     /**
      * Active product status.
@@ -428,33 +431,6 @@ class Product extends Model
     }
 
     /**
-     * Determine whether the product is low on stock.
-     *
-     * Returns true when a reorder point is set and the current quantity
-     * is at or below it. Products without a reorder point configured are
-     * never considered low stock.
-     *
-     * @return bool
-     */
-    public function getIsLowStockAttribute(): bool
-    {
-        return $this->reorder_point !== null
-            && $this->quantity <= $this->reorder_point;
-    }
-
-    /**
-     * Determine whether the product is out of stock.
-     *
-     * Returns true when the current quantity is exactly zero.
-     *
-     * @return bool
-     */
-    public function getIsOutOfStockAttribute(): bool
-    {
-        return $this->quantity === 0;
-    }
-
-    /**
      * Get the product price formatted to two decimal places.
      *
      * Returns the price as a string without currency symbols. Pair with
@@ -586,21 +562,6 @@ class Product extends Model
     {
         return $query->whereNotNull('reorder_point')
             ->whereColumn('quantity', '<=', 'reorder_point');
-    }
-
-    /**
-     * Scope a query to products that are out of stock.
-     *
-     * Filters to products with a quantity of zero regardless of status,
-     * allowing identification of stock gaps across all product states.
-     *
-     * @param  Builder<Product> $query The query builder instance.
-     *
-     * @return Builder<Product> The modified query builder instance.
-     */
-    public function scopeOutOfStock(Builder $query): Builder
-    {
-        return $query->where('quantity', 0);
     }
 
     /**
