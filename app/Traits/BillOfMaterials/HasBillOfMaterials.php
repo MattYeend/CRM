@@ -61,23 +61,42 @@ trait HasBillOfMaterials
             return null;
         }
 
-        return $billOfMaterials->sum(function ($bom) use (&$visited) {
-            $child = $bom->childPart;
+        return $billOfMaterials->sum(
+            fn ($bom) => $this->calculateBomLineCost($bom, $visited)
+        );
+    }
 
-            if (! $child) {
-                return 0;
-            }
+    /**
+     * Calculate the total cost for a single Bill of Materials line.
+     *
+     * This includes applying quantity, scrap percentage, and recursively
+     * resolving child BOMs where applicable. If the child entity itself
+     * has a BOM, its total cost is calculated recursively; otherwise,
+     * its base cost price is used.
+     *
+     * @param  mixed $bom The Bill of Materials line item instance.
+     * @param  array $visited Entity IDs already visited in the current
+     * traversal, used to prevent infinite recursion.
+     *
+     * @return float The calculated cost for this BOM line.
+     */
+    protected function calculateBomLineCost($bom, array &$visited): float
+    {
+        $child = $bom->childPart;
 
-            $scrapMultiplier = 1 + (($bom->scrap_percentage ?? 0) / 100);
+        if (! $child) {
+            return 0;
+        }
 
-            if ($child->hasBom()) {
-                $childCost = $child->bomCost($visited);
-                $childCost = $childCost ?? (float) ($child->cost_price ?? 0);
-            } else {
-                $childCost = (float) ($child->cost_price ?? 0);
-            }
+        $scrapMultiplier = 1 + (($bom->scrap_percentage ?? 0) / 100);
 
-            return $bom->quantity * $scrapMultiplier * $childCost;
-        });
+        if ($child->hasBom()) {
+            $childCost = $child->bomCost($visited);
+            $childCost = $childCost ?? (float) ($child->cost_price ?? 0);
+        } else {
+            $childCost = (float) ($child->cost_price ?? 0);
+        }
+
+        return $bom->quantity * $scrapMultiplier * $childCost;
     }
 }

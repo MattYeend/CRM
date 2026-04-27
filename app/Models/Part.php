@@ -69,8 +69,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * $primaryImage = $part->primaryImage; // Get the primary image
  * $stockMovements = $part->stockMovements; // Get all stock movements
  * $serialNumbers = $part->serialNumbers; // Get all serial numbers
- * $billOfMaterials = $part->billOfMaterials; // Get BOM entries (if manufactured)
- * $usedInAssemblies = $part->usedInAssemblies; // Get BOMs using this as component
+ * $billOfMaterials = $part->billOfMaterials; // Get BOM entries
+ *  (if manufactured)
+ * $usedInAssemblies = $part->usedInAssemblies; // Get BOMs using this as
+ *  component
  * $creator = $part->creator; // Get the user that created this part
  * ```
  *
@@ -114,7 +116,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * - scopeManufactured($query): Filter to parts that are marked as
  *      manufactured in-house.
  * - scopeSerialised($query): Filter to parts that are marked as serialised.
- * - scopeBatchTracked($query): Filter to parts that are marked as batch tracked.
+ * - scopeBatchTracked($query): Filter to parts that are marked as batch
+ *      tracked.
  * - scopeReal($query): Filter to parts that are not marked as test data.
  * - scopeSearch($query, $term): Search parts by SKU, part number, name,
  *      or description.
@@ -122,7 +125,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Example usage of query scopes:
  * ```php
  * $activeParts = Part::active()->get(); // Get all active parts
- * $lowStockParts = Part::lowStock()->get(); // Get all parts that are low on stock
+ * $lowStockParts = Part::lowStock()->get(); // Get all parts that are low on
+ * stock
  * $outOfStockParts = Part::outOfStock()->get(); // Get all parts out of stock
  * $rawMaterials = Part::ofType(Part::RAW_MATERIAL_PART_TYPE)->get();
  * $manufacturedParts = Part::manufactured()->get(); // Get manufactured parts
@@ -406,9 +410,10 @@ class Part extends Model
      * Get the bill of materials entries where this part is the manufacturable
      * (parent assembly).
      *
-     * This polymorphic relationship is only populated when is_manufactured is true.
-     * Each BOM entry represents a component (child part) required to manufacture
-     * this part.
+     * This polymorphic relationship is only populated when is_manufactured
+     * is true.
+     * Each BOM entry represents a component (child part) required to
+     * manufacture this part.
      *
      * @return MorphMany<BillOfMaterial>
      */
@@ -532,7 +537,7 @@ class Part extends Model
      * The $visited array prevents infinite loops in circular BOM structures.
      *
      * @param  array<int> $visited Part IDs already visited in the current
-     *                             traversal, passed through to prevent circular references.
+     *  traversal, passed through to prevent circular references.
      *
      * @return float The summed cost of all BOM lines.
      */
@@ -546,7 +551,8 @@ class Part extends Model
     /**
      * Get the total cost of the part including BOM costs if applicable.
      *
-     * For manufactured parts (those with a BOM), returns the calculated BOM cost.
+     * For manufactured parts (those with a BOM), returns the calculated
+     * BOM cost.
      * For purchased parts, returns the price directly.
      *
      * @return float|null

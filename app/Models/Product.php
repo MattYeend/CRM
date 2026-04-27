@@ -378,12 +378,12 @@ class Product extends Model
     }
 
     /**
-     * Get the bill of materials entries where this product is the manufacturable
-     * (parent assembly).
+     * Get the bill of materials entries where this product is the
+     * manufacturable (parent assembly).
      *
      * This polymorphic relationship allows products to be assembled from parts.
-     * Each BOM entry represents a component (child part) required to manufacture
-     * this product.
+     * Each BOM entry represents a component (child part) required to
+     * manufacture this product.
      *
      * @return MorphMany<BillOfMaterial>
      */
@@ -484,8 +484,8 @@ class Product extends Model
      * Traverses the BOM tree to calculate the sum of all component costs.
      * The $visited array prevents infinite loops in circular BOM structures.
      *
-     * @param  array<int> $visited Product/Part IDs already visited in the current
-     *                             traversal, passed through to prevent circular references.
+     * @param  array<int> $visited Product/Part IDs already visited in the
+     * current traversal, passed through to prevent circular references.
      *
      * @return float The summed cost of all BOM lines.
      */
