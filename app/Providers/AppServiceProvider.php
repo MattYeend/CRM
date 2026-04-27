@@ -6,6 +6,8 @@ use App\Models\Company;
 use App\Models\Deal;
 use App\Models\InvoiceItem;
 use App\Models\Order;
+use App\Models\Part;
+use App\Models\Product;
 use App\Models\Task;
 use App\Models\User;
 use App\Observers\InvoiceItemObserver;
@@ -55,6 +57,8 @@ class AppServiceProvider extends ServiceProvider
             'company' => Company::class,
             'deal' => Deal::class,
             'task' => Task::class,
+            'part' => Part::class,
+            'product' => Product::class,
             'user' => User::class,
         ]);
 

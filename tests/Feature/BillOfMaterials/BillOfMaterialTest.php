@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Part;
+use App\Models\Product;
 use App\Models\BillOfMaterial;
 use App\Models\Permission;
 use App\Models\Role;
@@ -38,6 +39,7 @@ beforeEach(function () {
     $this->withoutMiddleware(ThrottleRequests::class);
 
     $this->part = Part::factory()->create(['is_manufactured' => true]);
+    $this->product = Product::factory()->create();
 });
 
 /**
@@ -46,9 +48,9 @@ beforeEach(function () {
  * -------------------------------------------------------------
  */
 test('index returns paginated bill of materials for a part', function () {
-    BillOfMaterial::factory()->count(12)->create(['parent_part_id' => $this->part->id]);
+    BillOfMaterial::factory()->count(12)->forPart($this->part)->create();
 
-    $response = $this->getJson(route('api.billOfMaterials.index', [
+    $response = $this->getJson(route('api.billOfMaterials.parts.index', [
         'part' => $this->part,
         'per_page' => 5,
     ]));
@@ -58,25 +60,41 @@ test('index returns paginated bill of materials for a part', function () {
     $this->assertCount(5, $response->json('data'));
 });
 
-test('index returns all bill of materials when no pagination specified', function () {
-    BillOfMaterial::factory()->count(3)->create(['parent_part_id' => $this->part->id]);
+test('index returns paginated bill of materials for a product', function () {
+    BillOfMaterial::factory()->count(8)->forProduct($this->product)->create();
 
-    $response = $this->getJson(route('api.billOfMaterials.index', [
-        'part' => $this->part,
+    $response = $this->getJson(route('api.billOfMaterials.products.index', [
+        'product' => $this->product,
+        'per_page' => 5,
     ]));
 
     $response->assertStatus(200);
-    $this->assertCount(3, $response->json('data'));
+    $response->assertJsonPath('per_page', 5);
+    $this->assertCount(5, $response->json('data'));
 });
 
 test('index only returns bill of materials scoped to the given part', function () {
     $otherPart = Part::factory()->create(['is_manufactured' => true]);
 
-    BillOfMaterial::factory()->count(2)->create(['parent_part_id' => $this->part->id]);
-    BillOfMaterial::factory()->count(3)->create(['parent_part_id' => $otherPart->id]);
+    BillOfMaterial::factory()->count(2)->forPart($this->part)->create();
+    BillOfMaterial::factory()->count(3)->forPart($otherPart)->create();
 
-    $response = $this->getJson(route('api.billOfMaterials.index', [
+    $response = $this->getJson(route('api.billOfMaterials.parts.index', [
         'part' => $this->part,
+    ]));
+
+    $response->assertStatus(200);
+    $this->assertCount(2, $response->json('data'));
+});
+
+test('index only returns bill of materials scoped to the given product', function () {
+    $otherProduct = Product::factory()->create();
+
+    BillOfMaterial::factory()->count(2)->forProduct($this->product)->create();
+    BillOfMaterial::factory()->count(3)->forProduct($otherProduct)->create();
+
+    $response = $this->getJson(route('api.billOfMaterials.products.index', [
+        'product' => $this->product,
     ]));
 
     $response->assertStatus(200);
@@ -91,7 +109,7 @@ test('index returns 403 when user lacks permission', function () {
 
     $this->actingAs($user, 'sanctum');
 
-    $response = $this->getJson(route('api.billOfMaterials.index', [
+    $response = $this->getJson(route('api.billOfMaterials.parts.index', [
         'part' => $this->part,
     ]));
 
@@ -99,7 +117,7 @@ test('index returns 403 when user lacks permission', function () {
 });
 
 test('index returns 404 for non-existent part', function () {
-    $response = $this->getJson(route('api.billOfMaterials.index', [
+    $response = $this->getJson(route('api.billOfMaterials.parts.index', [
         'part' => 999999,
     ]));
 
@@ -111,7 +129,7 @@ test('index returns 404 for non-existent part', function () {
  * --------------------------- Store ---------------------------
  * -------------------------------------------------------------
  */
-test('store creates a new bill of material and returns 201', function () {
+test('store creates a new bill of material for a part and returns 201', function () {
     $childPart = Part::factory()->create();
 
     $payload = [
@@ -121,54 +139,50 @@ test('store creates a new bill of material and returns 201', function () {
         'notes' => 'Test BOM entry',
     ];
 
-    $response = $this->postJson(route('api.billOfMaterials.store', [
+    $response = $this->postJson(route('api.billOfMaterials.parts.store', [
         'part' => $this->part,
     ]), $payload);
 
     $response->assertStatus(201);
     $response->assertJsonFragment([
         'child_part_id' => $childPart->id,
-        'parent_part_id' => $this->part->id,
+        'manufacturable_id' => $this->part->id,
     ]);
     $this->assertDatabaseHas('bill_of_materials', [
-        'parent_part_id' => $this->part->id,
+        'manufacturable_type' => Part::class,
+        'manufacturable_id' => $this->part->id,
         'child_part_id' => $childPart->id,
     ]);
 });
 
-test('store returns 422 when part is not manufactured', function () {
-    $nonManufacturedPart = Part::factory()->create(['is_manufactured' => false]);
+test('store creates a new bill of material for a product and returns 201', function () {
     $childPart = Part::factory()->create();
 
     $payload = [
         'child_part_id' => $childPart->id,
         'quantity' => 2,
         'unit_of_measure' => 'each',
+        'notes' => 'Product BOM entry',
     ];
 
-    $response = $this->postJson(route('api.billOfMaterials.store', [
-        'part' => $nonManufacturedPart,
+    $response = $this->postJson(route('api.billOfMaterials.products.store', [
+        'product' => $this->product,
     ]), $payload);
 
-    $response->assertStatus(422);
-});
-
-test('store returns 422 when child part is the same as parent part', function () {
-    $payload = [
-        'child_part_id' => $this->part->id,
-        'quantity' => 1,
-        'unit_of_measure' => 'each',
-    ];
-
-    $response = $this->postJson(route('api.billOfMaterials.store', [
-        'part' => $this->part,
-    ]), $payload);
-
-    $response->assertStatus(422);
+    $response->assertStatus(201);
+    $response->assertJsonFragment([
+        'child_part_id' => $childPart->id,
+        'manufacturable_id' => $this->product->id,
+    ]);
+    $this->assertDatabaseHas('bill_of_materials', [
+        'manufacturable_type' => Product::class,
+        'manufacturable_id' => $this->product->id,
+        'child_part_id' => $childPart->id,
+    ]);
 });
 
 test('store returns 422 when required fields are missing', function () {
-    $response = $this->postJson(route('api.billOfMaterials.store', [
+    $response = $this->postJson(route('api.billOfMaterials.parts.store', [
         'part' => $this->part,
     ]), []);
 
@@ -186,7 +200,7 @@ test('store returns 403 when user lacks permission', function () {
 
     $childPart = Part::factory()->create();
 
-    $response = $this->postJson(route('api.billOfMaterials.store', [
+    $response = $this->postJson(route('api.billOfMaterials.parts.store', [
         'part' => $this->part,
     ]), [
         'child_part_id' => $childPart->id,
@@ -202,21 +216,20 @@ test('store returns 403 when user lacks permission', function () {
  * -------------------------- Update --------------------------
  * ------------------------------------------------------------
  */
-test('update modifies an existing bill of material', function () {
+test('update modifies an existing part bill of material', function () {
     $childPart = Part::factory()->create();
 
-    $billOfMaterial = BillOfMaterial::factory()->create([
-        'parent_part_id' => $this->part->id,
-        'child_part_id' => $childPart->id,
-        'quantity' => 1,
-    ]);
+    $billOfMaterial = BillOfMaterial::factory()
+        ->forPart($this->part)
+        ->withChildPart($childPart)
+        ->create(['quantity' => 1]);
 
     $payload = [
         'quantity' => 5,
         'notes' => 'Updated notes',
     ];
 
-    $response = $this->putJson(route('api.billOfMaterials.update', [
+    $response = $this->putJson(route('api.billOfMaterials.parts.update', [
         'part' => $this->part,
         'billOfMaterial' => $billOfMaterial,
     ]), $payload);
@@ -229,10 +242,35 @@ test('update modifies an existing bill of material', function () {
     ]);
 });
 
-test('update returns 403 when user lacks permission', function () {
-    $billOfMaterial = BillOfMaterial::factory()->create([
-        'parent_part_id' => $this->part->id,
+test('update modifies an existing product bill of material', function () {
+    $childPart = Part::factory()->create();
+
+    $billOfMaterial = BillOfMaterial::factory()
+        ->forProduct($this->product)
+        ->withChildPart($childPart)
+        ->create(['quantity' => 2]);
+
+    $payload = [
+        'quantity' => 10,
+        'scrap_percentage' => 5,
+    ];
+
+    $response = $this->putJson(route('api.billOfMaterials.products.update', [
+        'product' => $this->product,
+        'billOfMaterial' => $billOfMaterial,
+    ]), $payload);
+
+    $response->assertStatus(200);
+    $response->assertJsonFragment(['quantity' => '10.0000']);
+    $this->assertDatabaseHas('bill_of_materials', [
+        'id' => $billOfMaterial->id,
+        'quantity' => '10.0000',
+        'scrap_percentage' => '5.00',
     ]);
+});
+
+test('update returns 403 when user lacks permission', function () {
+    $billOfMaterial = BillOfMaterial::factory()->forPart($this->part)->create();
 
     $user = User::factory()->create();
     $role = Role::factory()->create(['name' => 'user']);
@@ -241,7 +279,7 @@ test('update returns 403 when user lacks permission', function () {
 
     $this->actingAs($user, 'sanctum');
 
-    $response = $this->putJson(route('api.billOfMaterials.update', [
+    $response = $this->putJson(route('api.billOfMaterials.parts.update', [
         'part' => $this->part,
         'billOfMaterial' => $billOfMaterial,
     ]), ['quantity' => 5]);
@@ -250,7 +288,7 @@ test('update returns 403 when user lacks permission', function () {
 });
 
 test('update returns 404 for non-existent bill of material', function () {
-    $response = $this->putJson(route('api.billOfMaterials.update', [
+    $response = $this->putJson(route('api.billOfMaterials.parts.update', [
         'part' => $this->part,
         'billOfMaterial' => 999999,
     ]), ['quantity' => 5]);
@@ -263,12 +301,10 @@ test('update returns 404 for non-existent bill of material', function () {
  * -------------------------- Destroy --------------------------
  * -------------------------------------------------------------
  */
-test('destroy soft deletes a bill of material and returns 204', function () {
-    $billOfMaterial = BillOfMaterial::factory()->create([
-        'parent_part_id' => $this->part->id,
-    ]);
+test('destroy soft deletes a part bill of material and returns 204', function () {
+    $billOfMaterial = BillOfMaterial::factory()->forPart($this->part)->create();
 
-    $response = $this->deleteJson(route('api.billOfMaterials.destroy', [
+    $response = $this->deleteJson(route('api.billOfMaterials.parts.destroy', [
         'part' => $this->part,
         'billOfMaterial' => $billOfMaterial,
     ]));
@@ -277,10 +313,20 @@ test('destroy soft deletes a bill of material and returns 204', function () {
     $this->assertSoftDeleted('bill_of_materials', ['id' => $billOfMaterial->id]);
 });
 
+test('destroy soft deletes a product bill of material and returns 204', function () {
+    $billOfMaterial = BillOfMaterial::factory()->forProduct($this->product)->create();
+
+    $response = $this->deleteJson(route('api.billOfMaterials.products.destroy', [
+        'product' => $this->product,
+        'billOfMaterial' => $billOfMaterial,
+    ]));
+
+    $response->assertStatus(204);
+    $this->assertSoftDeleted('bill_of_materials', ['id' => $billOfMaterial->id]);
+});
+
 test('destroy returns 403 when user lacks permission', function () {
-    $billOfMaterial = BillOfMaterial::factory()->create([
-        'parent_part_id' => $this->part->id,
-    ]);
+    $billOfMaterial = BillOfMaterial::factory()->forPart($this->part)->create();
 
     $user = User::factory()->create();
     $role = Role::factory()->create(['name' => 'user']);
@@ -289,7 +335,7 @@ test('destroy returns 403 when user lacks permission', function () {
 
     $this->actingAs($user, 'sanctum');
 
-    $response = $this->deleteJson(route('api.billOfMaterials.destroy', [
+    $response = $this->deleteJson(route('api.billOfMaterials.parts.destroy', [
         'part' => $this->part,
         'billOfMaterial' => $billOfMaterial,
     ]));
@@ -298,7 +344,7 @@ test('destroy returns 403 when user lacks permission', function () {
 });
 
 test('destroy returns 404 for non-existent bill of material', function () {
-    $response = $this->deleteJson(route('api.billOfMaterials.destroy', [
+    $response = $this->deleteJson(route('api.billOfMaterials.parts.destroy', [
         'part' => $this->part,
         'billOfMaterial' => 999999,
     ]));
@@ -311,17 +357,34 @@ test('destroy returns 404 for non-existent bill of material', function () {
  * -------------------------- Restore --------------------------
  * -------------------------------------------------------------
  */
-test('restore recovers a soft deleted bill of material', function () {
-    $billOfMaterial = BillOfMaterial::factory()->create([
-        'parent_part_id' => $this->part->id,
-    ]);
+test('restore recovers a soft deleted part bill of material', function () {
+    $billOfMaterial = BillOfMaterial::factory()->forPart($this->part)->create();
     $billOfMaterial->delete();
 
     $this->assertSoftDeleted('bill_of_materials', ['id' => $billOfMaterial->id]);
 
-    $response = $this->postJson(route('api.billOfMaterials.restore', [
+    $response = $this->postJson(route('api.billOfMaterials.parts.restore', [
         'part' => $this->part,
-        'billOfMaterial' => $billOfMaterial->id,
+        'id' => $billOfMaterial->id,
+    ]));
+
+    $response->assertStatus(200);
+    $response->assertJsonFragment(['id' => $billOfMaterial->id]);
+    $this->assertDatabaseHas('bill_of_materials', [
+        'id' => $billOfMaterial->id,
+        'deleted_at' => null,
+    ]);
+});
+
+test('restore recovers a soft deleted product bill of material', function () {
+    $billOfMaterial = BillOfMaterial::factory()->forProduct($this->product)->create();
+    $billOfMaterial->delete();
+
+    $this->assertSoftDeleted('bill_of_materials', ['id' => $billOfMaterial->id]);
+
+    $response = $this->postJson(route('api.billOfMaterials.products.restore', [
+        'product' => $this->product,
+        'id' => $billOfMaterial->id,
     ]));
 
     $response->assertStatus(200);
@@ -333,9 +396,7 @@ test('restore recovers a soft deleted bill of material', function () {
 });
 
 test('restore returns 403 when user lacks permission', function () {
-    $billOfMaterial = BillOfMaterial::factory()->create([
-        'parent_part_id' => $this->part->id,
-    ]);
+    $billOfMaterial = BillOfMaterial::factory()->forPart($this->part)->create();
     $billOfMaterial->delete();
 
     $user = User::factory()->create();
@@ -345,32 +406,87 @@ test('restore returns 403 when user lacks permission', function () {
 
     $this->actingAs($user, 'sanctum');
 
-    $response = $this->postJson(route('api.billOfMaterials.restore', [
+    $response = $this->postJson(route('api.billOfMaterials.parts.restore', [
         'part' => $this->part,
-        'billOfMaterial' => $billOfMaterial->id,
+        'id' => $billOfMaterial->id,
     ]));
 
     $response->assertStatus(403);
 });
 
 test('restore returns 404 for non-existent bill of material', function () {
-    $response = $this->postJson(route('api.billOfMaterials.restore', [
+    $response = $this->postJson(route('api.billOfMaterials.parts.restore', [
         'part' => $this->part,
-        'billOfMaterial' => 999999,
+        'id' => 999999,
     ]));
 
     $response->assertStatus(404);
 });
 
 test('restore returns 404 when bill of material is not deleted', function () {
-    $billOfMaterial = BillOfMaterial::factory()->create([
-        'parent_part_id' => $this->part->id,
-    ]);
+    $billOfMaterial = BillOfMaterial::factory()->forPart($this->part)->create();
 
-    $response = $this->postJson(route('api.billOfMaterials.restore', [
+    $response = $this->postJson(route('api.billOfMaterials.parts.restore', [
         'part' => $this->part,
-        'billOfMaterial' => $billOfMaterial->id,
+        'id' => $billOfMaterial->id,
     ]));
 
     $response->assertStatus(404);
+});
+
+/**
+ * -------------------------------------------------------------
+ * -------------------- Polymorphic Tests ----------------------
+ * -------------------------------------------------------------
+ */
+test('parts and products can have separate boms with same child part', function () {
+    $childPart = Part::factory()->create();
+
+    $partBom = BillOfMaterial::factory()
+        ->forPart($this->part)
+        ->withChildPart($childPart)
+        ->create(['quantity' => 2]);
+
+    $productBom = BillOfMaterial::factory()
+        ->forProduct($this->product)
+        ->withChildPart($childPart)
+        ->create(['quantity' => 5]);
+
+    $this->assertDatabaseCount('bill_of_materials', 2);
+    
+    expect($partBom->manufacturable)->toBeInstanceOf(Part::class);
+    expect($partBom->manufacturable->id)->toBe($this->part->id);
+    expect($partBom->quantity)->toBe('2.0000');
+
+    expect($productBom->manufacturable)->toBeInstanceOf(Product::class);
+    expect($productBom->manufacturable->id)->toBe($this->product->id);
+    expect($productBom->quantity)->toBe('5.0000');
+});
+
+test('bom cost calculation works for both parts and products', function () {
+    $childPart1 = Part::factory()->create(['cost_price' => 10.00]);
+    $childPart2 = Part::factory()->create(['cost_price' => 5.00]);
+
+    // Part BOM
+    BillOfMaterial::factory()
+        ->forPart($this->part)
+        ->withChildPart($childPart1)
+        ->create(['quantity' => 2, 'scrap_percentage' => 0]);
+
+    BillOfMaterial::factory()
+        ->forPart($this->part)
+        ->withChildPart($childPart2)
+        ->create(['quantity' => 4, 'scrap_percentage' => 0]);
+
+    // Product BOM
+    BillOfMaterial::factory()
+        ->forProduct($this->product)
+        ->withChildPart($childPart1)
+        ->create(['quantity' => 3, 'scrap_percentage' => 0]);
+
+    $this->part->refresh();
+    $this->product->refresh();
+
+    expect($this->part->bomCost())->toBe(40.0); // (2 * 10) + (4 * 5)
+    expect($this->product->bomCost())->toBe(30.0); // (3 * 10)
 });
