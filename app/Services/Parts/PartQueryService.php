@@ -275,7 +275,7 @@ class PartQueryService
             'is_low_stock' => $part->getIsLowStock(),
             'is_out_of_stock' => $part->getIsOutOfStock(),
             'margin_percentage' => $part->getMarginPercentage(),
-            'has_bom' => $part->getHasBom(),
+            'has_bom' => $part->hasBom(),
         ];
     }
 

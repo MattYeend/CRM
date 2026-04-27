@@ -772,9 +772,9 @@ Built-in helpers:
 ```bash
 $part->getIsLowStock()        # bool
 $part->getIsOutOfStock()      # bool
-$part->getMarginPercentage()  # float|null — (price - cost_price) / price * 100
-$part->getBomCost()           # float|null — recursive BOM cost
-$part->getHasBom()            # bool
+$part->getMarginPercentage()  # float|null - (price - cost_price) / price * 100
+$part->getBomCost()           # float|null - recursive BOM cost
+$part->hasBom().              # bool
 ```
 
 ### Part Images
