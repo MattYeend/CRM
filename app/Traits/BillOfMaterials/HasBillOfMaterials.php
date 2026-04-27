@@ -36,16 +36,16 @@ trait HasBillOfMaterials
     /**
      * Calculate the total BOM cost for this entity, including sub-assemblies.
      *
-     * Recursively traverses the bill of materials tree. Returns the entity's
-     * own cost price if it has no BOM entries. Circular references are
-     * prevented via the visited array.
+     * Recursively traverses the bill of materials tree. Returns null if the
+     * entity has no BOM entries. Circular references are prevented via the
+     * visited array.
      *
      * @param  array $visited Entity IDs already visited in the current
      * traversal, used to prevent infinite recursion.
      *
      * @return float|null The total BOM cost, or null if unresolvable.
      */
-    public function bomCost(array &$visited = []): float
+    public function bomCost(array &$visited = []): ?float
     {
         $key = static::class . '-' . $this->id;
 
@@ -57,12 +57,10 @@ trait HasBillOfMaterials
 
         $billOfMaterials = $this->billOfMaterials()->with('childPart')->get();
 
-        // Base case: no BOM children, return own cost
         if ($billOfMaterials->isEmpty()) {
-            return (float) ($this->cost_price ?? 0);
+            return null;
         }
 
-        // Sum up all BOM line costs
         return $billOfMaterials->sum(function ($bom) use (&$visited) {
             $child = $bom->childPart;
 
@@ -72,9 +70,12 @@ trait HasBillOfMaterials
 
             $scrapMultiplier = 1 + (($bom->scrap_percentage ?? 0) / 100);
 
-            $childCost = $child->hasBom()
-                ? $child->bomCost($visited)
-                : (float) ($child->cost_price ?? 0);
+            if ($child->hasBom()) {
+                $childCost = $child->bomCost($visited);
+                $childCost = $childCost ?? (float) ($child->cost_price ?? 0);
+            } else {
+                $childCost = (float) ($child->cost_price ?? 0);
+            }
 
             return $bom->quantity * $scrapMultiplier * $childCost;
         });

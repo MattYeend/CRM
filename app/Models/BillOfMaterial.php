@@ -19,38 +19,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Tracks the required quantity, scrap allowance, and unit of measure for each
  * component, and provides methods for calculating both direct and recursive
  * assembly costs.
- *
- * Relationships defined in this model include:
- * - manufacturable(): The polymorphic parent entity that requires the
- * component.
- * - childPart(): The component part that is consumed by the parent.
- * - creator(): The user that created the BOM entry.
- * - updater(): The user that last updated the BOM entry.
- * - deleter(): The user that deleted the BOM entry (if soft-deleted).
- * - restorer(): The user that restored the BOM entry (if soft-deleted).
- *
- * Example usage of relationships:
- * ```php
- * $bomEntry = BillOfMaterial::find(1);
- * $parent = $bomEntry->manufacturable; // Get the parent (Part, Product, etc.)
- * $child = $bomEntry->childPart; // Get the child part
- * $creator = $bomEntry->creator; // Get the user that created this BOM entry
- * ```
- *
- * Accessor methods include:
- * - effectiveQuantity(): Calculates the quantity required including scrap
- * allowance.
- * - lineCost(): Calculates the direct cost for this BOM entry based on the
- * child part's cost price.
- * - totalCost(): Recursively calculates the total cost for this BOM entry,
- * including all sub-assemblies.
- *
- * Query scopes include:
- * - scopeForManufacturable($query, $model): Filter BOM entries by
- *      manufacturable entity.
- * - scopeForChildPart($query, $partId): Filter BOM entries by child part ID.
- * - scopeTestEntries($query): Filter BOM entries that are marked as test data.
- * - scopeReal($query): Filter BOM entries that are not marked as test data.
  */
 class BillOfMaterial extends Model
 {
@@ -62,19 +30,17 @@ class BillOfMaterial extends Model
         SoftDeletes;
 
     /**
-     * The fully-qualified class name used as the manufactured type for Part
-     * BOM.
+     * The morph map alias used for Part BOM.
      */
-    public const BOM_PART = Part::class;
+    public const BOM_PART = 'part';
 
     /**
-     * The fully-qualified class name used as the manufactured type for Product
-     * BOM.
+     * The morph map alias used for Product BOM.
      */
-    public const BOM_PRODUCT = Product::class;
+    public const BOM_PRODUCT = 'product';
 
     /**
-     * All valid subject types that an activity can be associated with.
+     * All valid BOM types (morph aliases).
      */
     public const BOM_TYPES = [
         self::BOM_PART,

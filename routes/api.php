@@ -721,7 +721,7 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
      */
 
     Route::prefix('{type}')
-        ->whereIn('type', ['parts', 'products'])
+        ->whereIn('type', ['part', 'product'])
         ->group(function () {
             Route::prefix('{manufacturable}')
                 ->scopeBindings()

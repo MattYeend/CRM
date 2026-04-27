@@ -531,9 +531,9 @@ class Part extends Model
      *
      * @return bool
      */
-    public function getHasBom(): bool
+    public function hasBom(): bool
     {
-        return $this->billOfMaterials()->exists();
+        return (bool) $this->is_manufactured;
     }
 
     /**

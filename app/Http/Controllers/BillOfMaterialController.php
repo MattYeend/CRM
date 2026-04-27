@@ -102,7 +102,10 @@ class BillOfMaterialController extends Controller
     {
         $manufacturable = $this->resolveManufacturable($request);
 
-        $billOfMaterial = $this->management->store($request, $manufacturable);
+        $billOfMaterial = $this->management->store(
+            $request,
+            $manufacturable
+        );
 
         $this->logger->billOfMaterialCreated(
             $request->user(),
@@ -132,7 +135,7 @@ class BillOfMaterialController extends Controller
 
         abort_unless(
             $billOfMaterial->manufacturable_id === $model->id &&
-            $billOfMaterial->manufacturable_type === $model::class,
+            $billOfMaterial->manufacturable_type === $model->getMorphClass(),
             404
         );
         $billOfMaterial = $this->management->update($request, $billOfMaterial);
@@ -165,7 +168,7 @@ class BillOfMaterialController extends Controller
 
         abort_unless(
             $billOfMaterial->manufacturable_id === $model->id &&
-            $billOfMaterial->manufacturable_type === $model::class,
+            $billOfMaterial->manufacturable_type === $model->getMorphClass(),
             404
         );
 
@@ -199,7 +202,7 @@ class BillOfMaterialController extends Controller
 
         abort_unless(
             $billOfMaterial->manufacturable_id === $model->id &&
-            $billOfMaterial->manufacturable_type === $model::class,
+            $billOfMaterial->manufacturable_type === $model->getMorphClass(),
             404
         );
 
@@ -229,8 +232,8 @@ class BillOfMaterialController extends Controller
         $id = $request->route('manufacturable');
 
         return match ($type) {
-            'parts' => Part::findOrFail($id),
-            'products' => Product::findOrFail($id),
+            'part' => Part::findOrFail($id),
+            'product' => Product::findOrFail($id),
             default => abort(404, 'Invalid manufacturable type'),
         };
     }

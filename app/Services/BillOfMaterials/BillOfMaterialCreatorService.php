@@ -4,6 +4,7 @@ namespace App\Services\BillOfMaterials;
 
 use App\Http\Requests\StoreBillOfMaterialRequest;
 use App\Models\BillOfMaterial;
+use App\Models\Part;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
@@ -37,22 +38,22 @@ class BillOfMaterialCreatorService
         Model $manufacturable
     ): BillOfMaterial {
         if (
-            property_exists($manufacturable, 'is_manufactured') &&
-            ! $manufacturable->is_manufactured
+            ! $manufacturable->hasBom()
         ) {
-            abort(422, 'This item is not manufactured.');
+            abort(422, 'This item cannot have a BOM.');
         }
 
-        if ($request->child_part_id === $manufacturable->id) {
+        if (
+            $manufacturable instanceof Part &&
+            $request->child_part_id === $manufacturable->id
+        ) {
             abort(422, 'An item cannot contain itself.');
         }
 
-        $billOfMaterial = BillOfMaterial::create([
+        return BillOfMaterial::create([
             ...$request->validated(),
             'manufacturable_type' => $manufacturable->getMorphClass(),
             'manufacturable_id' => $manufacturable->id,
-        ]);
-
-        return $billOfMaterial->load('childPart', 'manufacturable');
+        ])->load('childPart', 'manufacturable');
     }
 }

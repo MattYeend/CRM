@@ -16,37 +16,27 @@ class BillOfMaterialFactory extends Factory
     /**
      * Define the model's default state.
      *
+     * CRITICAL: Uses morph map aliases ('part', 'product') to match
+     * how the application queries records via getMorphClass().
+     *
      * @return array<string, mixed>
      */
     public function definition(): array
     {
-        $models = [
+        $aliases = ['part', 'product'];
+        $alias = fake()->randomElement($aliases);
+        
+        $modelClass = match($alias) {
             'part' => Part::class,
             'product' => Product::class,
-        ];
-
-        $alias = fake()->randomElement(array_keys($models));
-        $modelClass = $models[$alias];
+        };
 
         $manufacturable = $modelClass::factory()->create(
             $alias === 'part' ? ['is_manufactured' => true] : []
         );
 
-        if (! $manufacturable) {
-            return [
-                'child_part_id' => Part::inRandomOrder()->first()?->id,
-                'quantity' => fake()->randomFloat(4, 0.1, 50),
-                'scrap_percentage' => fake()->randomFloat(2, 0, 10),
-                'unit_of_measure' => fake()->randomElement(['each', 'kg', 'litre', 'metre']),
-                'notes' => fake()->optional()->sentence(),
-                'is_test' => true,
-                'meta' => [],
-                'created_by' => User::inRandomOrder()->first()?->id,
-            ];
-        }
-
         return [
-            'manufacturable_type' => $alias, 
+            'manufacturable_type' => $alias,
             'manufacturable_id' => $manufacturable->id,
             'child_part_id' => Part::factory(),
             'quantity' => fake()->randomFloat(4, 0.1, 50),
@@ -69,9 +59,10 @@ class BillOfMaterialFactory extends Factory
     {
         $part = $part ?? Part::factory()->create(['is_manufactured' => true]);
 
-        return $this->state(fn () => [
-            'manufacturable_type' => Part::class,
+        return $this->state(fn (array $attributes) => [
+            'manufacturable_type' => 'part',
             'manufacturable_id' => $part->id,
+            'child_part_id' => $attributes['child_part_id'] ?? Part::factory(),
         ]);
     }
 
@@ -85,9 +76,10 @@ class BillOfMaterialFactory extends Factory
     {
         $product = $product ?? Product::factory()->create();
 
-        return $this->state(fn () => [
-            'manufacturable_type' => Product::class,
+        return $this->state(fn (array $attributes) => [
+            'manufacturable_type' => 'product',
             'manufacturable_id' => $product->id,
+            'child_part_id' => $attributes['child_part_id'] ?? Part::factory(),
         ]);
     }
 
