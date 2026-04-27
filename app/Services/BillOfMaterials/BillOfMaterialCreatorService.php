@@ -24,14 +24,15 @@ class BillOfMaterialCreatorService
      *
      * @param  StoreBillOfMaterialRequest $request The validated request
      * data for creating the BOM.
-     * @param  Model $manufacturable The parent part to which the child part will be added.
+     * @param  Model $manufacturable The parent part to which the child part
+     * will be added.
      *
      * @return BillOfMaterial The newly created BOM entry with loaded relations.
      *
      * @throws HttpResponseException If the parent part is not manufactured
      *         or if the part attempts to contain itself.
      */
-     public function create(
+    public function create(
         StoreBillOfMaterialRequest $request,
         Model $manufacturable
     ): BillOfMaterial {
@@ -49,7 +50,7 @@ class BillOfMaterialCreatorService
         $billOfMaterial = BillOfMaterial::create([
             ...$request->validated(),
             'manufacturable_type' => $manufacturable->getMorphClass(),
-            'manufacturable_id'   => $manufacturable->id,
+            'manufacturable_id' => $manufacturable->id,
         ]);
 
         return $billOfMaterial->load('childPart', 'manufacturable');

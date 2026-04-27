@@ -21,13 +21,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * assembly costs.
  *
  * Relationships defined in this model include:
- * - manufacturable(): The polymorphic parent entity that requires the component.
+ * - manufacturable(): The polymorphic parent entity that requires the
+ * component.
  * - childPart(): The component part that is consumed by the parent.
  * - creator(): The user that created the BOM entry.
  * - updater(): The user that last updated the BOM entry.
  * - deleter(): The user that deleted the BOM entry (if soft-deleted).
  * - restorer(): The user that restored the BOM entry (if soft-deleted).
- * 
+ *
  * Example usage of relationships:
  * ```php
  * $bomEntry = BillOfMaterial::find(1);
@@ -37,12 +38,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * ```
  *
  * Accessor methods include:
- * - effectiveQuantity(): Calculates the quantity required including scrap allowance.
- * - lineCost(): Calculates the direct cost for this BOM entry based on the child part's cost price.
- * - totalCost(): Recursively calculates the total cost for this BOM entry, including all sub-assemblies.
- * 
+ * - effectiveQuantity(): Calculates the quantity required including scrap
+ * allowance.
+ * - lineCost(): Calculates the direct cost for this BOM entry based on the
+ * child part's cost price.
+ * - totalCost(): Recursively calculates the total cost for this BOM entry,
+ * including all sub-assemblies.
+ *
  * Query scopes include:
- * - scopeForManufacturable($query, $model): Filter BOM entries by manufacturable entity.
+ * - scopeForManufacturable($query, $model): Filter BOM entries by
+ *      manufacturable entity.
  * - scopeForChildPart($query, $partId): Filter BOM entries by child part ID.
  * - scopeTestEntries($query): Filter BOM entries that are marked as test data.
  * - scopeReal($query): Filter BOM entries that are not marked as test data.
@@ -55,6 +60,26 @@ class BillOfMaterial extends Model
      */
     use HasFactory,
         SoftDeletes;
+
+    /**
+     * The fully-qualified class name used as the manufactured type for Part
+     * BOM.
+     */
+    public const BOM_PART = Part::class;
+
+    /**
+     * The fully-qualified class name used as the manufactured type for Product
+     * BOM.
+     */
+    public const BOM_PRODUCT = Product::class;
+
+    /**
+     * All valid subject types that an activity can be associated with.
+     */
+    public const BOM_TYPES = [
+        self::BOM_PART,
+        self::BOM_PRODUCT,
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -221,7 +246,8 @@ class BillOfMaterial extends Model
     }
 
     /**
-     * Scope a query to only include BOM entries for a specific manufacturable entity.
+     * Scope a query to only include BOM entries for a specific
+     * manufacturable entity.
      *
      * @param  Builder<BillOfMaterial> $query The query builder instance.
      * @param  Model $model The manufacturable model instance to filter by.

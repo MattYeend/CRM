@@ -11,10 +11,8 @@ use App\Services\BillOfMaterials\BillOfMaterialLogService;
 use App\Services\BillOfMaterials\BillOfMaterialManagementService;
 use App\Services\BillOfMaterials\BillOfMaterialQueryService;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * Handles HTTP requests for the BillOfMaterial resource.
@@ -75,28 +73,6 @@ class BillOfMaterialController extends Controller
         $this->query = $query;
     }
 
-    private function resolveManufacturable(Request $request): Model
-    {
-        $type = $request->route('type');
-
-        $manufacturable = $request->route('manufacturable');
-
-        if (! $manufacturable) {
-            abort(404, 'Manufacturable not found.');
-        }
-
-        if ($type === 'parts' && $manufacturable instanceof Part) {
-            return $manufacturable;
-        }
-
-        if ($type === 'products' && $manufacturable instanceof Product) {
-            return $manufacturable;
-        }
-
-        abort(404, 'Invalid manufacturable type.');
-    }
-
-
     /**
      * Display a listing of the resource.
      *
@@ -108,12 +84,10 @@ class BillOfMaterialController extends Controller
     {
         $this->authorize('viewAny', BillOfMaterial::class);
 
-        $request->merge([
-            'manufacturable' => $this->resolveManufacturable($request),
-        ]);
+        $manufacturable = $this->resolveManufacturable($request);
 
         return response()->json(
-            $this->query->list($request)
+            $this->query->list($request, $manufacturable)
         );
     }
 
@@ -148,8 +122,19 @@ class BillOfMaterialController extends Controller
      *
      * @return JsonResponse
      */
-    public function update(UpdateBillOfMaterialRequest $request, BillOfMaterial $billOfMaterial): JsonResponse
-    {
+    public function update(
+        UpdateBillOfMaterialRequest $request,
+        string $type,
+        string $manufacturable,
+        BillOfMaterial $billOfMaterial
+    ): JsonResponse {
+        $model = $this->resolveManufacturable($request);
+
+        abort_unless(
+            $billOfMaterial->manufacturable_id === $model->id &&
+            $billOfMaterial->manufacturable_type === $model::class,
+            404
+        );
         $billOfMaterial = $this->management->update($request, $billOfMaterial);
 
         $this->logger->billOfMaterialUpdated(
@@ -161,7 +146,6 @@ class BillOfMaterialController extends Controller
         return response()->json($billOfMaterial);
     }
 
-
     /**
      * Remove the specified resource from storage.
      *
@@ -170,9 +154,20 @@ class BillOfMaterialController extends Controller
      *
      * @return JsonResponse
      */
-    public function destroy(Request $request, BillOfMaterial $billOfMaterial): JsonResponse
-    {
+    public function destroy(
+        Request $request,
+        string $type,
+        string $manufacturable,
+        BillOfMaterial $billOfMaterial
+    ): JsonResponse {
         $this->authorize('delete', $billOfMaterial);
+        $model = $this->resolveManufacturable($request);
+
+        abort_unless(
+            $billOfMaterial->manufacturable_id === $model->id &&
+            $billOfMaterial->manufacturable_type === $model::class,
+            404
+        );
 
         $this->logger->billOfMaterialDeleted(
             $request->user(),
@@ -189,13 +184,24 @@ class BillOfMaterialController extends Controller
      * Restore the specified resource from soft deletion.
      *
      * @param  Model $manufacturable
-     * @param  int $id
+     * @param  int|string $id
      *
      * @return JsonResponse
      */
-    public function restore(Request $request, int $id): JsonResponse
-    {
+    public function restore(
+        Request $request,
+        string $type,
+        string $manufacturable,
+        string $id
+    ): JsonResponse {
         $billOfMaterial = BillOfMaterial::withTrashed()->findOrFail($id);
+        $model = $this->resolveManufacturable($request);
+
+        abort_unless(
+            $billOfMaterial->manufacturable_id === $model->id &&
+            $billOfMaterial->manufacturable_type === $model::class,
+            404
+        );
 
         $this->authorize('restore', $billOfMaterial);
 
@@ -212,5 +218,20 @@ class BillOfMaterialController extends Controller
         );
 
         return response()->json($restored);
+    }
+
+    /**
+     * Resolve the manufacturable model from route parameters.
+     */
+    private function resolveManufacturable(Request $request): Model
+    {
+        $type = $request->route('type');
+        $id = $request->route('manufacturable');
+
+        return match ($type) {
+            'parts' => Part::findOrFail($id),
+            'products' => Product::findOrFail($id),
+            default => abort(404, 'Invalid manufacturable type'),
+        };
     }
 }

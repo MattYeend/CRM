@@ -50,17 +50,12 @@ class BillOfMaterialQueryService
      * Return a paginated list of BOM entries for a given manufacturable entity.
      *
      * @param  Model $manufacturable
+     * @param  Request $request
      *
      * @return array
      */
-    public function list(Request $request): array
+    public function list(Request $request, Model $manufacturable): array
     {
-        $manufacturable = $request->get('manufacturable');
-
-        if (! $manufacturable) {
-            abort(404, 'Manufacturable not found.');
-        }
-
         $query = BillOfMaterial::query()
             ->where('manufacturable_type', $manufacturable->getMorphClass())
             ->where('manufacturable_id', $manufacturable->id)
@@ -69,10 +64,10 @@ class BillOfMaterialQueryService
         $this->sorting->applySorting($query, $request);
         $this->trashFilter->applyTrashFilters($query, $request);
 
-        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
+        $paginator = $this->paginate($query, $request);
 
         return array_merge(
-            $query->paginate($perPage)->toArray(),
+            $paginator,
             ['permissions' => $this->getPermissions()]
         );
     }
@@ -91,7 +86,9 @@ class BillOfMaterialQueryService
 
         return $query->paginate($perPage)
             ->appends($request->query())
-            ->through(fn (BillOfMaterial $bom) => $this->formatBOM($bom))
+            ->through(
+                fn (BillOfMaterial $bom): array => $this->formatBOM($bom)
+            )
             ->toArray();
     }
 

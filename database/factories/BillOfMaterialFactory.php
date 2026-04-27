@@ -20,11 +20,33 @@ class BillOfMaterialFactory extends Factory
      */
     public function definition(): array
     {
-        // Default to Part as the manufacturable
-        $manufacturable = Part::factory()->create(['is_manufactured' => true]);
+        $models = [
+            'part' => Part::class,
+            'product' => Product::class,
+        ];
+
+        $alias = fake()->randomElement(array_keys($models));
+        $modelClass = $models[$alias];
+
+        $manufacturable = $modelClass::factory()->create(
+            $alias === 'part' ? ['is_manufactured' => true] : []
+        );
+
+        if (! $manufacturable) {
+            return [
+                'child_part_id' => Part::inRandomOrder()->first()?->id,
+                'quantity' => fake()->randomFloat(4, 0.1, 50),
+                'scrap_percentage' => fake()->randomFloat(2, 0, 10),
+                'unit_of_measure' => fake()->randomElement(['each', 'kg', 'litre', 'metre']),
+                'notes' => fake()->optional()->sentence(),
+                'is_test' => true,
+                'meta' => [],
+                'created_by' => User::inRandomOrder()->first()?->id,
+            ];
+        }
 
         return [
-            'manufacturable_type' => get_class($manufacturable),
+            'manufacturable_type' => $alias, 
             'manufacturable_id' => $manufacturable->id,
             'child_part_id' => Part::factory(),
             'quantity' => fake()->randomFloat(4, 0.1, 50),
@@ -40,14 +62,14 @@ class BillOfMaterialFactory extends Factory
     /**
      * Set the manufacturable to a Part.
      *
-     * @param  Part|null  $part
+     * @param  Part|null $part
      * @return static
      */
     public function forPart(?Part $part = null): static
     {
         $part = $part ?? Part::factory()->create(['is_manufactured' => true]);
 
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn () => [
             'manufacturable_type' => Part::class,
             'manufacturable_id' => $part->id,
         ]);
@@ -56,14 +78,14 @@ class BillOfMaterialFactory extends Factory
     /**
      * Set the manufacturable to a Product.
      *
-     * @param  Product|null  $product
+     * @param  Product|null $product
      * @return static
      */
     public function forProduct(?Product $product = null): static
     {
         $product = $product ?? Product::factory()->create();
 
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn () => [
             'manufacturable_type' => Product::class,
             'manufacturable_id' => $product->id,
         ]);
@@ -77,7 +99,7 @@ class BillOfMaterialFactory extends Factory
      */
     public function withChildPart(Part $part): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn () => [
             'child_part_id' => $part->id,
         ]);
     }

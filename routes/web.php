@@ -804,7 +804,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('BillOfMaterials/Index', [
             'manufacturable' => $part,
             'manufacturableType' => 'part',
-            'billOfMaterials' => $service->list($part, $request),
+            'billOfMaterials' => $service->list($request, $part),
         ]);
     })->name('parts.billOfMaterials.index');
 
@@ -1331,11 +1331,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('BillOfMaterials/Index', [
             'manufacturable' => $product,
             'manufacturableType' => 'product',
-            'billOfMaterials' => $service->list($product, $request),
+            'billOfMaterials' => $service->list($request, $product),
         ]);
     })->name('products.billOfMaterials.index');
 
-    Route::get('/products/{product}/bill-of-materials/create', function (Product $product) {
+    Route::get('/products/{product}/bill-of-materials/create', function (
+        Product $product
+    ) {
         return Inertia::render('BillOfMaterials/Create', [
             'manufacturable' => $product,
             'manufacturableType' => 'product',

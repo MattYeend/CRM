@@ -37,7 +37,8 @@ class BillOfMaterialManagementService
      *
      * @param  StoreBillOfMaterialRequest $request The request containing
      * BOM data.
-     * @param  Model $manufacturable The parent part to which the BOM will be attached.
+     * @param  Model $manufacturable The parent part to which the BOM
+     * will be attached.
      *
      * @return BillOfMaterial The newly created BOM entry.
      */

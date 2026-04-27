@@ -719,60 +719,37 @@ Route::middleware(['web', 'auth:sanctum', 'throttle:api'])->group(function () {
      * -------------------- Bill Of Materials ---------------------
      * ------------------------------------------------------------
      */
-    // Route::prefix('parts/{part}')->group(function () {
-    //     Route::get('bom', [BillOfMaterialController::class, 'index'])
-    //         ->name('api.billOfMaterials.parts.index');
 
-    //     Route::post('bom', [BillOfMaterialController::class, 'store'])
-    //         ->name('api.billOfMaterials.parts.store');
+    Route::prefix('{type}')
+        ->whereIn('type', ['parts', 'products'])
+        ->group(function () {
+            Route::prefix('{manufacturable}')
+                ->scopeBindings()
+                ->group(function () {
+                    Route::get(
+                        'bom',
+                        [BillOfMaterialController::class, 'index']
+                    )->name('api.billOfMaterials.index');
 
-    //     Route::put('bom/{billOfMaterial}', [BillOfMaterialController::class, 'update'])
-    //         ->name('api.billOfMaterials.parts.update');
+                    Route::post(
+                        'bom',
+                        [BillOfMaterialController::class, 'store']
+                    )->name('api.billOfMaterials.store');
 
-    //     Route::delete('bom/{billOfMaterial}', [BillOfMaterialController::class, 'destroy'])
-    //         ->name('api.billOfMaterials.parts.destroy');
+                    Route::put(
+                        'bom/{billOfMaterial}',
+                        [BillOfMaterialController::class, 'update']
+                    )->name('api.billOfMaterials.update');
 
-    //     Route::post('bom/{id}/restore', [BillOfMaterialController::class, 'restore'])
-    //         ->name('api.billOfMaterials.parts.restore');
-    // });
+                    Route::delete(
+                        'bom/{billOfMaterial}',
+                        [BillOfMaterialController::class, 'destroy']
+                    )->name('api.billOfMaterials.destroy');
 
-    // Route::prefix('products/{product}')->group(function () {
-    //     Route::get('bom', [BillOfMaterialController::class, 'index'])
-    //         ->name('api.billOfMaterials.products.index');
-
-    //     Route::post('bom', [BillOfMaterialController::class, 'store'])
-    //         ->name('api.billOfMaterials.products.store');
-
-    //     Route::put('bom/{billOfMaterial}', [BillOfMaterialController::class, 'update'])
-    //         ->name('api.billOfMaterials.products.update');
-
-    //     Route::delete('bom/{billOfMaterial}', [BillOfMaterialController::class, 'destroy'])
-    //         ->name('api.billOfMaterials.products.destroy');
-
-    //     Route::post('bom/{id}/restore', [BillOfMaterialController::class, 'restore'])
-    //         ->name('api.billOfMaterials.products.restore');
-    // });
-    
-Route::prefix('{type}/{manufacturable}')
-    ->whereIn('type', ['parts', 'products'])
-    ->group(function () {
-
-        Route::get('bom', [BillOfMaterialController::class, 'index'])
-            ->name('api.billOfMaterials.index');
-
-        Route::post('bom', [BillOfMaterialController::class, 'store'])
-            ->name('api.billOfMaterials.store');
-
-        Route::put('bom/{billOfMaterial}', [BillOfMaterialController::class, 'update'])
-            ->whereNumber('billOfMaterial')
-            ->name('api.billOfMaterials.update');
-
-        Route::delete('bom/{billOfMaterial}', [BillOfMaterialController::class, 'destroy'])
-            ->whereNumber('billOfMaterial')
-            ->name('api.billOfMaterials.destroy');
-
-        Route::post('bom/{billOfMaterial}/restore', [BillOfMaterialController::class, 'restore'])
-            ->whereNumber('billOfMaterial')
-            ->name('api.billOfMaterials.restore');
-    });
+                    Route::post(
+                        'bom/{id}/restore',
+                        [BillOfMaterialController::class, 'restore']
+                    )->name('api.billOfMaterials.restore');
+                });
+        });
 });

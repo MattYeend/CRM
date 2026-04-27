@@ -380,9 +380,9 @@ class Product extends Model
      * @return HasMany<BillOfMaterial>
      */
     public function billOfMaterials(): MorphMany
-{
-    return $this->morphMany(BillOfMaterial::class, 'manufacturable');
-}
+    {
+        return $this->morphMany(BillOfMaterial::class, 'manufacturable');
+    }
 
     /**
      * Determine if the part is low on stock.

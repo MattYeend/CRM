@@ -55,25 +55,28 @@ trait HasBillOfMaterials
 
         $visited[] = $key;
 
-        $billOfMaterials = $this->billOfMaterials()->get();
+        $billOfMaterials = $this->billOfMaterials()->with('childPart')->get();
 
         // Base case: no BOM children, return own cost
         if ($billOfMaterials->isEmpty()) {
             return (float) ($this->cost_price ?? 0);
         }
 
+        // Sum up all BOM line costs
         return $billOfMaterials->sum(function ($bom) use (&$visited) {
             $child = $bom->childPart;
 
-            if (!$child) {
+            if (! $child) {
                 return 0;
             }
 
             $scrapMultiplier = 1 + (($bom->scrap_percentage ?? 0) / 100);
 
-            return $bom->quantity
-                * $scrapMultiplier
-                * $child->bomCost($visited);
+            $childCost = $child->hasBom()
+                ? $child->bomCost($visited)
+                : (float) ($child->cost_price ?? 0);
+
+            return $bom->quantity * $scrapMultiplier * $childCost;
         });
     }
 }
