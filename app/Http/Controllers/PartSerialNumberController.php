@@ -211,9 +211,11 @@ class PartSerialNumberController extends Controller
      *
      * @throws HttpException If the part serial number is not trashed (404).
      */
-    public function restore($id): JsonResponse
+    public function restore(Part $part, $id): JsonResponse
     {
-        $serialNumber = PartSerialNumber::withTrashed()->findOrFail($id);
+        $serialNumber = PartSerialNumber::withTrashed()
+        ->where('part_id', $part->id)
+        ->findOrFail($id);
         $this->authorize('restore', $serialNumber);
 
         if (! $serialNumber->trashed()) {

@@ -334,15 +334,14 @@ class ProductController extends Controller
      * Looks up the product including trashed records, then delegates to the
      * product management service to dissociate the given deal.
      *
-     * @param int|string $id The primary key of the product, including trashed
-     * records.
+     * @param Product $product Route-model-bound product instance to restore
+     * the deal to.
      * @param Deal $deal Route-model-bound deal instance to remove.
      *
      * @return JsonResponse Confirmation message on success.
      */
-    public function removeDeal(int $id, Deal $deal): JsonResponse
+    public function removeDeal(Product $product, Deal $deal): JsonResponse
     {
-        $product = Product::withTrashed()->findOrFail($id);
         $this->management->removeDeal($product->id, $deal->id);
 
         return response()->json(['message' => 'Deal removed from product']);
